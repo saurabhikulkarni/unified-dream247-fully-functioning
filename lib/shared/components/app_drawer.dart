@@ -72,6 +72,14 @@ class AppDrawer extends StatelessWidget {
             },
           ),
           _DrawerItem(
+            icon: Icons.person_outlined,
+            title: 'Profile',
+            onTap: () {
+              Navigator.pop(context);
+              context.go(RouteNames.profile);
+            },
+          ),
+          _DrawerItem(
             icon: Icons.account_balance_wallet_outlined,
             title: 'Wallet',
             onTap: () {
