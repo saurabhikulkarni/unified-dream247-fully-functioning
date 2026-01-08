@@ -68,7 +68,13 @@ class AuthService {
 
   /// Logout and clear session
   Future<void> logout() async {
-    await _prefs?.clear();
+    // Clear only auth-related keys
+    await _prefs?.remove(StorageConstants.userId);
+    await _prefs?.remove(StorageConstants.authToken);
+    await _prefs?.remove('mobile_number');
+    await _prefs?.remove(StorageConstants.userEmail);
+    await _prefs?.remove('user_name');
+    await _prefs?.setBool(StorageConstants.isLoggedIn, false);
   }
 
   /// Update user profile

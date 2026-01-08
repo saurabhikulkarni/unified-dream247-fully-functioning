@@ -48,10 +48,10 @@ class _LoginViewState extends State<_LoginView> {
       // Remove any non-digit characters
       final cleanPhone = phone.replaceAll(RegExp(r'[^\d]'), '');
       
-      // Ensure phone number starts with country code
-      final phoneWithCountryCode = cleanPhone.startsWith('91') 
-          ? cleanPhone 
-          : '91$cleanPhone';
+      // Ensure phone number has country code
+      final phoneWithCountryCode = cleanPhone.length == 10
+          ? '91$cleanPhone' 
+          : cleanPhone;
       
       // Navigate to OTP verification page
       context.go(RouteNames.otpVerification, extra: phoneWithCountryCode);

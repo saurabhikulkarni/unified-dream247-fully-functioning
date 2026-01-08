@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -49,6 +50,7 @@ class _OtpVerificationViewState extends State<_OtpVerificationView> {
   bool _isOtpComplete = false;
   int _resendTimer = 60;
   bool _canResend = false;
+  Timer? _timer;
 
   @override
   void initState() {
@@ -56,20 +58,32 @@ class _OtpVerificationViewState extends State<_OtpVerificationView> {
     _startResendTimer();
   }
 
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
   void _startResendTimer() {
-    Future.doWhile(() async {
-      await Future.delayed(const Duration(seconds: 1));
+    _timer?.cancel();
+    setState(() {
+      _resendTimer = 60;
+      _canResend = false;
+    });
+
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (mounted) {
         setState(() {
           if (_resendTimer > 0) {
             _resendTimer--;
           } else {
             _canResend = true;
+            timer.cancel();
           }
         });
-        return _resendTimer > 0;
+      } else {
+        timer.cancel();
       }
-      return false;
     });
   }
 
