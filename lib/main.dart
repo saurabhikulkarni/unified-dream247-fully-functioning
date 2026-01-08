@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+// import 'package:firebase_core/firebase_core.dart';
+// import 'firebase_options.dart';
 import 'app.dart';
 import 'core/di/injection_container.dart';
 
@@ -22,7 +24,8 @@ void main() async {
   // Initialize dependency injection
   await configureDependencies();
 
-  // TODO: Initialize Firebase
+  // Initialize Firebase
+  // Uncomment when Firebase configuration files are added
   // await Firebase.initializeApp(
   //   options: DefaultFirebaseOptions.currentPlatform,
   // );
