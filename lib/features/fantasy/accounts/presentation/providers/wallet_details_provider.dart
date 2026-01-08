@@ -124,7 +124,7 @@ class WalletDetailsProvider extends ChangeNotifier {
   /// P2P transfer to another user
   Future<bool> transferToUser(String userId, double amount) async {
     if (_walletBalance < amount) {
-      debugPrint('Insufficient balance for transfer');
+      debugPrint('Insufficient balance for transfer. Available: ₹$_walletBalance, Requested: ₹$amount');
       return false;
     }
 

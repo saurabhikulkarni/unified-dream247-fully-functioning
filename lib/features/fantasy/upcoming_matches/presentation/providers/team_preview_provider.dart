@@ -3,6 +3,14 @@ import 'package:flutter/foundation.dart';
 /// Provider for team preview functionality
 /// Shows team composition and validates team before saving
 class TeamPreviewProvider extends ChangeNotifier {
+  // Team composition constants
+  static const int requiredTeamSize = 11;
+  static const int minWicketKeepers = 1;
+  static const int minBatters = 3;
+  static const int minAllRounders = 1;
+  static const int minBowlers = 3;
+  static const double maxTeamCredits = 100.0;
+  
   List<Map<String, dynamic>> _selectedPlayers = [];
   String? _captainId;
   String? _viceCaptainId;
@@ -20,7 +28,7 @@ class TeamPreviewProvider extends ChangeNotifier {
 
   /// Add player to team
   void addPlayer(Map<String, dynamic> player) {
-    if (_selectedPlayers.length < 11) {
+    if (_selectedPlayers.length < requiredTeamSize) {
       _selectedPlayers.add(player);
       _validateTeam();
       notifyListeners();
@@ -59,11 +67,11 @@ class TeamPreviewProvider extends ChangeNotifier {
 
   /// Validate team composition
   void _validateTeam() {
-    _isValid = _selectedPlayers.length == 11 &&
-        wicketKeepersCount >= 1 &&
-        battersCount >= 3 &&
-        allRoundersCount >= 1 &&
-        bowlersCount >= 3 &&
+    _isValid = _selectedPlayers.length == requiredTeamSize &&
+        wicketKeepersCount >= minWicketKeepers &&
+        battersCount >= minBatters &&
+        allRoundersCount >= minAllRounders &&
+        bowlersCount >= minBowlers &&
         _captainId != null &&
         _viceCaptainId != null &&
         _captainId != _viceCaptainId;

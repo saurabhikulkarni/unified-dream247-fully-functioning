@@ -31,7 +31,10 @@ class GraphQLService {
 
   GraphQLClient get client {
     if (_client == null) {
-      throw Exception('GraphQL client not initialized. Call initialize() first.');
+      throw Exception(
+        'GraphQL client not initialized. Call initialize() first.\n'
+        'Example: graphQLService.initialize("https://your-endpoint.hygraph.com", authToken: "your-token");'
+      );
     }
     return _client!;
   }
