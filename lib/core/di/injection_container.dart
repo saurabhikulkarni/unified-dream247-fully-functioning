@@ -4,6 +4,15 @@ import 'package:get_it/get_it.dart';
 import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../features/authentication/data/datasources/auth_local_datasource.dart';
+import '../../features/authentication/data/datasources/auth_remote_datasource.dart';
+import '../../features/authentication/data/repositories/auth_repository_impl.dart';
+import '../../features/authentication/domain/repositories/auth_repository.dart';
+import '../../features/authentication/domain/usecases/login_usecase.dart';
+import '../../features/authentication/domain/usecases/logout_usecase.dart';
+import '../../features/authentication/domain/usecases/register_usecase.dart';
+import '../../features/authentication/domain/usecases/verify_otp_usecase.dart';
+import '../../features/authentication/presentation/bloc/auth_bloc.dart';
 import '../network/api_client.dart';
 import '../network/graphql_client.dart';
 import '../network/network_info.dart';
@@ -35,6 +44,40 @@ Future<void> configureDependencies() async {
     ),
   );
 
-  // Note: Feature-specific dependencies will be registered separately
-  // in their respective modules using @injectable annotation
+  // Authentication
+  // Data sources
+  getIt.registerLazySingleton<AuthLocalDataSource>(
+    () => AuthLocalDataSourceImpl(
+      secureStorage: getIt(),
+      sharedPreferences: getIt(),
+    ),
+  );
+  getIt.registerLazySingleton<AuthRemoteDataSource>(
+    () => AuthRemoteDataSourceImpl(restClient: getIt()),
+  );
+
+  // Repository
+  getIt.registerLazySingleton<AuthRepository>(
+    () => AuthRepositoryImpl(
+      remoteDataSource: getIt(),
+      localDataSource: getIt(),
+      networkInfo: getIt(),
+    ),
+  );
+
+  // Use cases
+  getIt.registerLazySingleton(() => LoginUseCase(getIt()));
+  getIt.registerLazySingleton(() => RegisterUseCase(getIt()));
+  getIt.registerLazySingleton(() => VerifyOtpUseCase(getIt()));
+  getIt.registerLazySingleton(() => LogoutUseCase(getIt()));
+
+  // BLoC
+  getIt.registerFactory(
+    () => AuthBloc(
+      loginUseCase: getIt(),
+      registerUseCase: getIt(),
+      verifyOtpUseCase: getIt(),
+      logoutUseCase: getIt(),
+    ),
+  );
 }
