@@ -46,18 +46,22 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Top bar with coins and gems
+              // Top bar with user profile, coins and gems
               _buildTopBar(context),
-              const SizedBox(height: 16),
-              // Banner
+              const SizedBox(height: 20),
+              
+              // Banner - Play FREE with GAME TOKENS
               _buildPromoBanner(context),
               const SizedBox(height: 24),
+              
               // Game Zone and Shop cards
               _buildActionCards(context),
-              const SizedBox(height: 24),
+              const SizedBox(height: 32),
+              
               // Trend Starts Here section
               _buildTrendSection(context),
-              const SizedBox(height: 24),
+              const SizedBox(height: 32),
+              
               // Top Picks section
               _buildTopPicksSection(context),
               const SizedBox(height: 24),
@@ -72,72 +76,82 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
   Widget _buildTopBar(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.shadow,
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
       child: Row(
         children: [
-          Text(
-            'DREAM247',
-            style: TextStyles.h5.copyWith(
-              fontWeight: FontWeight.bold,
-              color: AppColors.primary,
+          // User profile icon
+          GestureDetector(
+            onTap: () => context.go(RouteNames.profile),
+            child: Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: const Color(0xFF6441A5).withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.person_outline,
+                color: Color(0xFF6441A5),
+                size: 24,
+              ),
             ),
           ),
+          
           const Spacer(),
-          // Coins
+          
+          // Coin balance
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: AppColors.warning.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(16),
+              color: const Color(0xFFFFA726).withOpacity(0.1),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: const Color(0xFFFFA726).withOpacity(0.3),
+                width: 1,
+              ),
             ),
             child: Row(
               children: [
-                const Icon(
-                  Icons.monetization_on,
-                  color: AppColors.warning,
-                  size: 18,
+                const Text(
+                  '🪙',
+                  style: TextStyle(fontSize: 18),
                 ),
                 const SizedBox(width: 4),
                 Text(
                   '$_coins',
                   style: TextStyles.bodyMedium.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: AppColors.warning,
+                    color: const Color(0xFFFFA726),
                   ),
                 ),
               ],
             ),
           ),
+          
           const SizedBox(width: 8),
-          // Gems
+          
+          // Gem balance
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: AppColors.info.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(16),
+              color: const Color(0xFF29B6F6).withOpacity(0.1),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: const Color(0xFF29B6F6).withOpacity(0.3),
+                width: 1,
+              ),
             ),
             child: Row(
               children: [
-                const Icon(
-                  Icons.diamond,
-                  color: AppColors.info,
-                  size: 18,
+                const Text(
+                  '💎',
+                  style: TextStyle(fontSize: 18),
                 ),
                 const SizedBox(width: 4),
                 Text(
                   '$_gems',
                   style: TextStyles.bodyMedium.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: AppColors.info,
+                    color: const Color(0xFF29B6F6),
                   ),
                 ),
               ],
@@ -151,56 +165,100 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
   Widget _buildPromoBanner(BuildContext context) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
-      padding: const EdgeInsets.all(20),
+      height: 160,
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [AppColors.primary, AppColors.primaryDark],
+        gradient: const LinearGradient(
+          colors: [
+            Color(0xFF6441A5),
+            Color(0xFF472575),
+            Color(0xFF2A0845),
+          ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withOpacity(0.3),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
+            color: const Color(0xFF6441A5).withOpacity(0.3),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
           ),
         ],
       ),
-      child: Row(
+      child: Stack(
         children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          // Background pattern
+          Positioned(
+            right: -20,
+            top: -20,
+            child: Container(
+              width: 150,
+              height: 150,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white.withOpacity(0.05),
+              ),
+            ),
+          ),
+          
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Row(
               children: [
-                Text(
-                  'Play FREE with',
-                  style: TextStyles.bodyLarge.copyWith(
-                    color: AppColors.textWhite,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Play FREE with',
+                        style: TextStyles.bodyLarge.copyWith(
+                          color: Colors.white.withOpacity(0.9),
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'GAME TOKENS',
+                        style: TextStyles.h3.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      ElevatedButton(
+                        onPressed: () => context.go(RouteNames.matches),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: const Color(0xFF6441A5),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 24,
+                            vertical: 10,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                        ),
+                        child: Text(
+                          'Play now',
+                          style: TextStyles.bodyMedium.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  'GAME TOKENS',
-                  style: TextStyles.h4.copyWith(
-                    color: AppColors.textWhite,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Start your gaming journey today!',
-                  style: TextStyles.bodySmall.copyWith(
-                    color: AppColors.textWhite.withOpacity(0.9),
-                  ),
+                
+                // Cricket players illustration
+                const Icon(
+                  Icons.sports_cricket,
+                  size: 80,
+                  color: Colors.white24,
                 ),
               ],
             ),
-          ),
-          const Icon(
-            Icons.rocket_launch,
-            color: AppColors.textWhite,
-            size: 48,
           ),
         ],
       ),
@@ -216,8 +274,12 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
             child: _ActionCard(
               title: 'GAME ZONE',
               icon: Icons.emoji_events,
+              emoji: '🏆',
               gradient: const LinearGradient(
-                colors: [AppColors.gamingAccent, AppColors.gamingAccentLight],
+                colors: [
+                  Color(0xFF6441A5),
+                  Color(0xFF472575),
+                ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
@@ -229,8 +291,12 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
             child: _ActionCard(
               title: 'SHOP',
               icon: Icons.card_giftcard,
+              emoji: '🎁',
               gradient: const LinearGradient(
-                colors: [AppColors.ecommerceAccent, AppColors.ecommerceAccentLight],
+                colors: [
+                  Color(0xFFE91E63),
+                  Color(0xFFC2185B),
+                ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
@@ -248,25 +314,29 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 'TREND STARTS HERE',
                 style: TextStyles.h5.copyWith(
                   fontWeight: FontWeight.bold,
+                  letterSpacing: 0.5,
                 ),
               ),
-              TextButton(
-                onPressed: () => context.go(RouteNames.products),
-                child: const Text('View All'),
+              const SizedBox(height: 4),
+              Text(
+                'Shop the Latest Trends Now',
+                style: TextStyles.bodyMedium.copyWith(
+                  color: AppColors.textSecondary,
+                ),
               ),
             ],
           ),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 16),
         SizedBox(
-          height: 180,
+          height: 200,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -286,23 +356,15 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'TOP PICKS',
-                style: TextStyles.h5.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              TextButton(
-                onPressed: () => context.go(RouteNames.products),
-                child: const Text('View All'),
-              ),
-            ],
+          child: Text(
+            'TOP PICKS',
+            style: TextStyles.h5.copyWith(
+              fontWeight: FontWeight.bold,
+              letterSpacing: 0.5,
+            ),
           ),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 16),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: GridView.builder(
@@ -328,12 +390,14 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
 class _ActionCard extends StatelessWidget {
   final String title;
   final IconData icon;
+  final String emoji;
   final Gradient gradient;
   final VoidCallback onTap;
 
   const _ActionCard({
     required this.title,
     required this.icon,
+    required this.emoji,
     required this.gradient,
     required this.onTap,
   });
@@ -342,34 +406,34 @@ class _ActionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(20),
       child: Container(
-        height: 140,
+        height: 160,
         decoration: BoxDecoration(
           gradient: gradient,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 8,
-              offset: const Offset(0, 4),
+              color: Colors.black.withOpacity(0.15),
+              blurRadius: 12,
+              offset: const Offset(0, 6),
             ),
           ],
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              icon,
-              size: 48,
-              color: AppColors.textWhite,
+            Text(
+              emoji,
+              style: const TextStyle(fontSize: 56),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 16),
             Text(
               title,
-              style: TextStyles.bodyLarge.copyWith(
-                color: AppColors.textWhite,
+              style: TextStyles.h6.copyWith(
+                color: Colors.white,
                 fontWeight: FontWeight.bold,
+                letterSpacing: 1,
               ),
             ),
           ],
@@ -387,16 +451,16 @@ class _TrendProductCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 140,
+      width: 160,
       margin: const EdgeInsets.symmetric(horizontal: 4),
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
             color: AppColors.shadow,
-            blurRadius: 4,
-            offset: const Offset(0, 2),
+            blurRadius: 6,
+            offset: const Offset(0, 3),
           ),
         ],
       ),
@@ -404,37 +468,37 @@ class _TrendProductCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            height: 100,
+            height: 120,
             decoration: BoxDecoration(
               color: AppColors.surfaceVariant,
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
             ),
             child: Center(
               child: Icon(
                 Icons.shopping_bag,
-                size: 40,
-                color: AppColors.textSecondary,
+                size: 48,
+                color: AppColors.textSecondary.withOpacity(0.5),
               ),
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(8),
+            padding: const EdgeInsets.all(12),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Product ${index + 1}',
+                  'Trending Product ${index + 1}',
                   style: TextStyles.bodyMedium.copyWith(
                     fontWeight: FontWeight.w600,
                   ),
-                  maxLines: 1,
+                  maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 6),
                 Text(
                   '₹${(index + 1) * 999}',
-                  style: TextStyles.bodySmall.copyWith(
-                    color: AppColors.primary,
+                  style: TextStyles.bodyMedium.copyWith(
+                    color: const Color(0xFF6441A5),
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -457,12 +521,12 @@ class _TopPickCard extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
             color: AppColors.shadow,
-            blurRadius: 4,
-            offset: const Offset(0, 2),
+            blurRadius: 6,
+            offset: const Offset(0, 3),
           ),
         ],
       ),
@@ -473,13 +537,13 @@ class _TopPickCard extends StatelessWidget {
             child: Container(
               decoration: BoxDecoration(
                 color: AppColors.surfaceVariant,
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
               ),
               child: Center(
                 child: Icon(
                   Icons.shopping_bag,
-                  size: 48,
-                  color: AppColors.textSecondary,
+                  size: 56,
+                  color: AppColors.textSecondary.withOpacity(0.5),
                 ),
               ),
             ),
@@ -497,11 +561,11 @@ class _TopPickCard extends StatelessWidget {
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 6),
                 Text(
                   '₹${(index + 1) * 1499}',
-                  style: TextStyles.bodySmall.copyWith(
-                    color: AppColors.primary,
+                  style: TextStyles.bodyMedium.copyWith(
+                    color: const Color(0xFF6441A5),
                     fontWeight: FontWeight.bold,
                   ),
                 ),
