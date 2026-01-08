@@ -4,11 +4,12 @@ import 'package:go_router/go_router.dart';
 import '../../features/authentication/presentation/pages/login_page.dart';
 import '../../features/authentication/presentation/pages/otp_verification_page.dart';
 import '../../features/authentication/presentation/pages/register_page.dart';
+import '../../features/authentication/presentation/pages/splash_page.dart';
 import '../../features/ecommerce/products/presentation/pages/product_detail_page.dart';
 import '../../features/ecommerce/products/presentation/pages/products_page.dart';
 import '../../features/gaming/matches/presentation/pages/match_detail_page.dart';
 import '../../features/gaming/matches/presentation/pages/matches_page.dart';
-import '../../features/home/presentation/pages/home_page.dart';
+import '../../features/home/presentation/pages/unified_home_page.dart';
 import '../../features/profile/presentation/pages/profile_page.dart';
 import '../../features/wallet/presentation/pages/add_money_page.dart';
 import '../../features/wallet/presentation/pages/wallet_page.dart';
@@ -17,9 +18,19 @@ import 'route_names.dart';
 /// GoRouter configuration for the application
 class AppRouter {
   static final GoRouter router = GoRouter(
-    initialLocation: RouteNames.login,
+    initialLocation: RouteNames.splash,
     debugLogDiagnostics: true,
     routes: [
+      // Splash screen
+      GoRoute(
+        path: RouteNames.splash,
+        name: 'splash',
+        pageBuilder: (context, state) => MaterialPage(
+          key: state.pageKey,
+          child: const SplashPage(),
+        ),
+      ),
+      
       // Authentication routes
       GoRoute(
         path: RouteNames.login,
@@ -55,7 +66,7 @@ class AppRouter {
         name: 'home',
         pageBuilder: (context, state) => MaterialPage(
           key: state.pageKey,
-          child: const HomePage(),
+          child: const UnifiedHomePage(),
         ),
       ),
       

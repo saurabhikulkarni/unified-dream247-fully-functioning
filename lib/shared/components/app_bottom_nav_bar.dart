@@ -45,17 +45,12 @@ class AppBottomNavBar extends StatelessWidget {
           BottomNavigationBarItem(
             icon: Icon(Icons.sports_cricket_outlined),
             activeIcon: Icon(Icons.sports_cricket),
-            label: 'Gaming',
+            label: 'Game',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.account_balance_wallet_outlined),
             activeIcon: Icon(Icons.account_balance_wallet),
             label: 'Wallet',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
-            activeIcon: Icon(Icons.person),
-            label: 'Profile',
           ),
         ],
       ),
@@ -75,9 +70,6 @@ class AppBottomNavBar extends StatelessWidget {
         break;
       case 3:
         context.go(RouteNames.wallet);
-        break;
-      case 4:
-        context.go(RouteNames.profile);
         break;
     }
   }
