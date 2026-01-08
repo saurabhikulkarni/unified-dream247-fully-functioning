@@ -12,7 +12,7 @@ import '../bloc/auth_bloc.dart';
 import '../bloc/auth_event.dart';
 import '../bloc/auth_state.dart';
 
-/// Login page
+/// Login page with MSG91 OTP authentication
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
 
@@ -35,23 +35,26 @@ class _LoginView extends StatefulWidget {
 class _LoginViewState extends State<_LoginView> {
   final _formKey = GlobalKey<FormState>();
   final _phoneController = TextEditingController();
-  final _passwordController = TextEditingController();
 
   @override
   void dispose() {
     _phoneController.dispose();
-    _passwordController.dispose();
     super.dispose();
   }
 
-  void _onLoginPressed() {
+  void _onSendOtpPressed() {
     if (_formKey.currentState!.validate()) {
-      context.read<AuthBloc>().add(
-            LoginEvent(
-              phone: _phoneController.text.trim(),
-              password: _passwordController.text,
-            ),
-          );
+      final phone = _phoneController.text.trim();
+      // Remove any non-digit characters
+      final cleanPhone = phone.replaceAll(RegExp(r'[^\d]'), '');
+      
+      // Ensure phone number has country code
+      final phoneWithCountryCode = cleanPhone.length == 10
+          ? '91$cleanPhone' 
+          : cleanPhone;
+      
+      // Navigate to OTP verification page
+      context.go(RouteNames.otpVerification, extra: phoneWithCountryCode);
     }
   }
 
@@ -61,9 +64,7 @@ class _LoginViewState extends State<_LoginView> {
       backgroundColor: AppColors.background,
       body: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
-          if (state is Authenticated) {
-            context.go(RouteNames.home);
-          } else if (state is AuthError) {
+          if (state is AuthError) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(state.message),
@@ -83,72 +84,120 @@ class _LoginViewState extends State<_LoginView> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    const SizedBox(height: 40),
-                    // Logo or app name
-                    const Icon(
-                      Icons.shopping_bag,
-                      size: 80,
-                      color: AppColors.primary,
+                    const SizedBox(height: 60),
+                    
+                    // Logo with gradient background
+                    Container(
+                      width: 100,
+                      height: 100,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            const Color(0xFF6441A5),
+                            const Color(0xFF472575),
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color(0xFF6441A5).withOpacity(0.3),
+                            blurRadius: 20,
+                            offset: const Offset(0, 10),
+                          ),
+                        ],
+                      ),
+                      child: const Icon(
+                        Icons.sports_esports,
+                        size: 50,
+                        color: Colors.white,
+                      ),
                     ),
-                    const SizedBox(height: 16),
+                    
+                    const SizedBox(height: 32),
+                    
                     Text(
-                      'Welcome Back!',
-                      style: TextStyles.h2,
+                      'Welcome to DREAM247',
+                      style: TextStyles.h2.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
                       textAlign: TextAlign.center,
                     ),
+                    
                     const SizedBox(height: 8),
+                    
                     Text(
-                      'Login to continue',
+                      'Enter your mobile number to continue',
                       style: TextStyles.bodyMedium.copyWith(
                         color: AppColors.textSecondary,
                       ),
                       textAlign: TextAlign.center,
                     ),
-                    const SizedBox(height: 40),
+                    
+                    const SizedBox(height: 48),
+                    
                     // Phone number field
                     CustomTextField(
                       controller: _phoneController,
-                      labelText: 'Phone Number',
-                      hintText: 'Enter your phone number',
+                      labelText: 'Mobile Number',
+                      hintText: 'Enter 10 digit mobile number',
                       keyboardType: TextInputType.phone,
                       prefixIcon: const Icon(Icons.phone_outlined),
-                      validator: Validators.validatePhone,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter mobile number';
+                        }
+                        final cleaned = value.replaceAll(RegExp(r'[^\d]'), '');
+                        if (cleaned.length < 10) {
+                          return 'Please enter valid 10 digit mobile number';
+                        }
+                        return null;
+                      },
                       enabled: !isLoading,
+                      onSubmitted: (_) => _onSendOtpPressed(),
                     ),
-                    const SizedBox(height: 16),
-                    // Password field
-                    CustomTextField(
-                      controller: _passwordController,
-                      labelText: 'Password',
-                      hintText: 'Enter your password',
-                      obscureText: true,
-                      prefixIcon: const Icon(Icons.lock_outlined),
-                      validator: Validators.validatePassword,
-                      enabled: !isLoading,
-                      onSubmitted: (_) => _onLoginPressed(),
-                    ),
-                    const SizedBox(height: 24),
-                    // Login button
+                    
+                    const SizedBox(height: 32),
+                    
+                    // Send OTP button
                     CustomButton(
-                      text: 'Login',
-                      onPressed: isLoading ? null : _onLoginPressed,
+                      text: 'Send OTP',
+                      onPressed: isLoading ? null : _onSendOtpPressed,
                       isLoading: isLoading,
                       width: double.infinity,
                     ),
-                    const SizedBox(height: 16),
-                    // Register link
+                    
+                    const SizedBox(height: 24),
+                    
+                    // Terms and conditions
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Text(
+                        'By continuing, you agree to our Terms of Service and Privacy Policy',
+                        style: TextStyles.bodySmall.copyWith(
+                          color: AppColors.textSecondary,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    
+                    const SizedBox(height: 32),
+                    
+                    // Register link (if needed)
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          'Don\'t have an account? ',
+                          'New user? ',
                           style: TextStyles.bodyMedium,
                         ),
                         TextButton(
                           onPressed: isLoading
                               ? null
                               : () => context.go(RouteNames.register),
-                          child: const Text('Register'),
+                          child: const Text('Create Account'),
                         ),
                       ],
                     ),

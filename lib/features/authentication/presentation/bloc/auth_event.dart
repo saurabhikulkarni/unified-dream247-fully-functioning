@@ -22,6 +22,18 @@ class LoginEvent extends AuthEvent {
   List<Object?> get props => [phone, password];
 }
 
+/// Send OTP event
+class SendOtpEvent extends AuthEvent {
+  final String phone;
+
+  const SendOtpEvent({
+    required this.phone,
+  });
+
+  @override
+  List<Object?> get props => [phone];
+}
+
 /// Register event
 class RegisterEvent extends AuthEvent {
   final String name;

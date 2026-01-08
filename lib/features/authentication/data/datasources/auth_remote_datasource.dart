@@ -1,10 +1,16 @@
 import '../../../../core/constants/api_constants.dart';
 import '../../../../core/error/exceptions.dart';
 import '../../../../core/network/rest_client.dart';
+import '../../../../config/msg91_config.dart';
 import '../models/auth_response_model.dart';
 
 /// Remote data source for authentication
 abstract class AuthRemoteDataSource {
+  /// Send OTP via MSG91
+  Future<void> sendOtp({
+    required String phone,
+  });
+
   /// Login with phone and password
   Future<AuthResponseModel> login({
     required String phone,
@@ -33,6 +39,30 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   final RestClient restClient;
 
   AuthRemoteDataSourceImpl({required this.restClient});
+
+  @override
+  Future<void> sendOtp({
+    required String phone,
+  }) async {
+    try {
+      final response = await restClient.post(
+        Msg91Config.sendOtpEndpoint,
+        data: {
+          'mobileNumber': phone,
+        },
+      );
+
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        throw ServerException(
+          'Failed to send OTP',
+          statusCode: response.statusCode,
+        );
+      }
+    } catch (e) {
+      if (e is ServerException) rethrow;
+      throw ServerException('Failed to send OTP: ${e.toString()}');
+    }
+  }
 
   @override
   Future<AuthResponseModel> login({
@@ -101,9 +131,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }) async {
     try {
       final response = await restClient.post(
-        ApiConstants.verifyOtpEndpoint,
+        Msg91Config.verifyOtpEndpoint,
         data: {
-          'phone': phone,
+          'mobileNumber': phone,
           'otp': otp,
         },
       );
