@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart';
 import '../../../../core/error/exceptions.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/network/network_info.dart';
+import '../../../../core/services/auth_service.dart';
 import '../../domain/entities/user.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../datasources/auth_local_datasource.dart';
@@ -18,6 +19,26 @@ class AuthRepositoryImpl implements AuthRepository {
     required this.localDataSource,
     required this.networkInfo,
   });
+
+  @override
+  Future<Either<Failure, void>> sendOtp({
+    required String phone,
+  }) async {
+    if (!await networkInfo.isConnected) {
+      return const Left(NetworkFailure('No internet connection'));
+    }
+
+    try {
+      await remoteDataSource.sendOtp(phone: phone);
+      return const Right(null);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message, code: e.statusCode));
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } catch (e) {
+      return Left(UnknownFailure('An unexpected error occurred: ${e.toString()}'));
+    }
+  }
 
   @override
   Future<Either<Failure, User>> login({
@@ -109,6 +130,15 @@ class AuthRepositoryImpl implements AuthRepository {
         await localDataSource.saveRefreshToken(authResponse.refreshToken!);
       }
 
+      // Save session using shared AuthService
+      await authService.saveUserSession(
+        userId: authResponse.user.id,
+        authToken: authResponse.accessToken,
+        mobileNumber: phone,
+        email: authResponse.user.email,
+        name: authResponse.user.name,
+      );
+
       return Right(authResponse.user.toEntity());
     } on ServerException catch (e) {
       return Left(ServerFailure(e.message, code: e.statusCode));
@@ -126,13 +156,19 @@ class AuthRepositoryImpl implements AuthRepository {
         await remoteDataSource.logout();
       }
       await localDataSource.clearAuthData();
+      
+      // Clear session using shared AuthService
+      await authService.logout();
+      
       return const Right(null);
     } on ServerException catch (e) {
       // Still clear local data even if server logout fails
       await localDataSource.clearAuthData();
+      await authService.logout();
       return Left(ServerFailure(e.message, code: e.statusCode));
     } catch (e) {
       await localDataSource.clearAuthData();
+      await authService.logout();
       return Left(UnknownFailure('An unexpected error occurred: ${e.toString()}'));
     }
   }
