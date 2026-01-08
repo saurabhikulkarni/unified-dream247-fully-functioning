@@ -4,6 +4,11 @@ import '../entities/user.dart';
 
 /// Authentication repository interface
 abstract class AuthRepository {
+  /// Send OTP to phone number via MSG91
+  Future<Either<Failure, void>> sendOtp({
+    required String phone,
+  });
+
   /// Login with phone and password
   Future<Either<Failure, User>> login({
     required String phone,
