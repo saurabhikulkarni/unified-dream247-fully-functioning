@@ -6,6 +6,8 @@ import '../../../../config/theme/text_styles.dart';
 import '../../../../core/di/injection_container.dart';
 import '../../../../core/services/user_service.dart';
 import '../../../../shared/components/app_bottom_nav_bar.dart';
+import '../../../shop/home/screens/shop_home_screen.dart';
+import '../../../fantasy/landing/presentation/screens/fantasy_home_page.dart';
 
 /// Unified home screen that serves as the main dashboard
 class UnifiedHomePage extends StatefulWidget {
@@ -228,7 +230,14 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
                       ),
                       const SizedBox(height: 16),
                       ElevatedButton(
-                        onPressed: () => context.go(RouteNames.matches),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const FantasyHomePage(),
+                            ),
+                          );
+                        },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.white,
                           foregroundColor: const Color(0xFF6441A5),
@@ -283,7 +292,14 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
-              onTap: () => context.go(RouteNames.matches),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const FantasyHomePage(),
+                  ),
+                );
+              },
             ),
           ),
           const SizedBox(width: 16),
@@ -300,7 +316,14 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
-              onTap: () => context.go(RouteNames.products),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const ShopHomeScreen(),
+                  ),
+                );
+              },
             ),
           ),
         ],
