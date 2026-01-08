@@ -142,7 +142,16 @@ open coverage/html/index.html
 
 ## Architecture
 
-This project follows **Clean Architecture** principles:
+This project follows **Clean Architecture** principles with **BLoC pattern** for state management:
+
+### State Management Strategy
+
+The app primarily uses **BLoC (Business Logic Component)** pattern for state management:
+- Authentication flows use AuthBloc
+- Complex features with business logic use BLoC
+- Simple state can use StatefulWidget when appropriate
+
+**Note**: While Provider and Get dependencies are included for potential future enhancements or third-party integrations, the primary state management pattern is BLoC to maintain consistency and predictability.
 
 ### Layers
 

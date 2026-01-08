@@ -3,11 +3,39 @@ import 'package:go_router/go_router.dart';
 import '../../../../config/routes/route_names.dart';
 import '../../../../config/theme/app_colors.dart';
 import '../../../../config/theme/text_styles.dart';
+import '../../../../core/di/injection_container.dart';
+import '../../../../core/services/user_service.dart';
 import '../../../../shared/components/app_bottom_nav_bar.dart';
 
 /// Unified home screen that serves as the main dashboard
-class UnifiedHomePage extends StatelessWidget {
+class UnifiedHomePage extends StatefulWidget {
   const UnifiedHomePage({super.key});
+
+  @override
+  State<UnifiedHomePage> createState() => _UnifiedHomePageState();
+}
+
+class _UnifiedHomePageState extends State<UnifiedHomePage> {
+  final UserService _userService = getIt<UserService>();
+  int _coins = 100;
+  int _gems = 100;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    final coins = await _userService.getCoins();
+    final gems = await _userService.getGems();
+    if (mounted) {
+      setState(() {
+        _coins = coins;
+        _gems = gems;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -80,7 +108,7 @@ class UnifiedHomePage extends StatelessWidget {
                 ),
                 const SizedBox(width: 4),
                 Text(
-                  '100',
+                  '$_coins',
                   style: TextStyles.bodyMedium.copyWith(
                     fontWeight: FontWeight.bold,
                     color: AppColors.warning,
@@ -106,7 +134,7 @@ class UnifiedHomePage extends StatelessWidget {
                 ),
                 const SizedBox(width: 4),
                 Text(
-                  '100',
+                  '$_gems',
                   style: TextStyles.bodyMedium.copyWith(
                     fontWeight: FontWeight.bold,
                     color: AppColors.info,

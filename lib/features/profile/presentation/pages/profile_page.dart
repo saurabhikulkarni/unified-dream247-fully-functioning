@@ -39,6 +39,9 @@ class ProfilePage extends StatelessWidget {
                           color: AppColors.textWhite,
                         ),
                       ),
+                      // Camera button - disabled for now
+                      // Uncomment and implement when image upload is ready
+                      /*
                       Positioned(
                         right: 0,
                         bottom: 0,
@@ -55,12 +58,15 @@ class ProfilePage extends StatelessWidget {
                           ),
                           child: IconButton(
                             icon: const Icon(Icons.camera_alt, size: 20),
-                            onPressed: () {},
+                            onPressed: () {
+                              // TODO: Implement image upload
+                            },
                             padding: const EdgeInsets.all(8),
                             constraints: const BoxConstraints(),
                           ),
                         ),
                       ),
+                      */
                     ],
                   ),
                   const SizedBox(height: 16),
