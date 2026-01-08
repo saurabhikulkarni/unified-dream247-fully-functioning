@@ -17,6 +17,7 @@ import '../network/api_client.dart';
 import '../network/graphql_client.dart';
 import '../network/network_info.dart';
 import '../network/rest_client.dart';
+import '../services/user_service.dart';
 
 final getIt = GetIt.instance;
 
@@ -43,6 +44,9 @@ Future<void> configureDependencies() async {
       restClient: getIt(),
     ),
   );
+  
+  // Services
+  getIt.registerLazySingleton(() => UserService(getIt()));
 
   // Authentication
   // Data sources
