@@ -1,41 +1,24 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:Dream247/core/utils/app_storage.dart';
+import 'package:Dream247/features/my_matches/data/models/match_player_teams_model.dart';
 
-/// Provider for player statistics in live matches
-/// Shows player performance and fantasy points
 class PlayerStatsProvider extends ChangeNotifier {
-  Map<String, Map<String, dynamic>> _playerStats = {};
-  bool _isLoading = false;
-  String? _error;
+  final Map<String, List<MatchPlayerTeamsModel>> _matchPlayer = {};
+  String? _matchKey = "";
 
-  Map<String, Map<String, dynamic>> get playerStats => Map.unmodifiable(_playerStats);
-  bool get isLoading => _isLoading;
-  String? get error => _error;
+  Map<String, List<MatchPlayerTeamsModel>> get matchPlayer => _matchPlayer;
+  String? get matchKey => _matchKey;
 
-  /// Fetch player stats for a match
-  Future<void> fetchPlayerStats(String matchId) async {
-    _isLoading = true;
-    _error = null;
+  void setMatchPlayers(List<MatchPlayerTeamsModel>? value, String matchKey) {
+    _matchPlayer[matchKey] = value ?? [];
+    _matchKey = matchKey;
     notifyListeners();
-
-    try {
-      // TODO: Implement API call to fetch player stats
-      await Future.delayed(const Duration(milliseconds: 800));
-      
-      // Mock player stats
-      _playerStats = {};
-      
-      debugPrint('Player stats fetched for match: $matchId');
-    } catch (e) {
-      _error = 'Error fetching player stats: $e';
-      debugPrint(_error);
-    } finally {
-      _isLoading = false;
-      notifyListeners();
-    }
   }
 
-  /// Get stats for a specific player
-  Map<String, dynamic>? getPlayerStat(String playerId) {
-    return _playerStats[playerId];
+  void clearUserData() async {
+    _matchPlayer.clear();
+    _matchKey = null;
+    await AppStorage.clear();
+    notifyListeners();
   }
 }
