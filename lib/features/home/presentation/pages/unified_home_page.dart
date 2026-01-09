@@ -231,10 +231,11 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
                       const SizedBox(height: 16),
                       ElevatedButton(
                         onPressed: () {
+                          final userId = _userService.getUserId();
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => const FantasyHomePage(),
+                              builder: (context) => FantasyHomePage(userId: userId),
                             ),
                           );
                         },
@@ -293,10 +294,11 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
                 end: Alignment.bottomRight,
               ),
               onTap: () {
+                final userId = _userService.getUserId();
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const FantasyHomePage(),
+                    builder: (context) => FantasyHomePage(userId: userId),
                   ),
                 );
               },
@@ -317,10 +319,11 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
                 end: Alignment.bottomRight,
               ),
               onTap: () {
+                final userId = _userService.getUserId();
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const ShopHomeScreen(),
+                    builder: (context) => ShopHomeScreen(userId: userId),
                   ),
                 );
               },
