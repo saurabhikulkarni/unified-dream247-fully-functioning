@@ -1,6 +1,6 @@
 // ignore_for_file: use_build_context_synchronously, unrelated_type_equality_checks
 
-import 'dart:ffi';
+// dart:ffi not needed - removed to support web compilation
 
 import 'package:unified_dream247/features/fantasy/core/app_constants/images.dart';
 import 'package:unified_dream247/features/fantasy/core/utils/app_utils.dart';

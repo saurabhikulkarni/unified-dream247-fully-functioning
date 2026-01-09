@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:unified_dream247/features/shop/constants.dart';
 import 'package:unified_dream247/features/shop/models/product_model.dart';
 import 'package:unified_dream247/features/shop/services/search_service.dart';
@@ -199,12 +200,8 @@ class _SearchScreenState extends State<SearchScreen> {
                                 title: Text(product.title),
                                 subtitle: Text("${product.price.toInt()} tokens"),
                                 onTap: () {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          ProductDetailsScreen(product: product),
-                                    ),
-                                  );
+                                  context.push('/shop/product/${product.id}',
+                                      extra: {'product': product});
                                 },
                               );
                             },
