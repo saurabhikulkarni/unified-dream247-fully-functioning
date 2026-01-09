@@ -1,9 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'config/routes/app_router.dart';
 import 'config/theme/app_theme.dart';
 
-/// Main application widget
+// Fantasy providers (all 11 providers as specified)
+import 'features/fantasy/accounts/presentation/providers/wallet_details_provider.dart';
+import 'features/fantasy/menu_items/presentation/providers/user_data_provider.dart';
+import 'features/fantasy/my_matches/presentation/provider/joined_live_contest_provider.dart';
+import 'features/fantasy/my_matches/presentation/provider/live_leaderboard_provider.dart';
+import 'features/fantasy/my_matches/presentation/provider/live_score_provider.dart';
+import 'features/fantasy/my_matches/presentation/provider/player_stats_provider.dart';
+import 'features/fantasy/my_matches/presentation/provider/scorecard_provider.dart';
+import 'features/fantasy/upcoming_matches/presentation/providers/all_players_provider.dart';
+import 'features/fantasy/upcoming_matches/presentation/providers/myteams_provider.dart';
+import 'features/fantasy/upcoming_matches/presentation/providers/team_preview_provider.dart';
+import 'features/fantasy/user_verification/presentation/providers/kyc_details_provider.dart';
+
+/// Main application widget with unified providers
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -12,13 +27,36 @@ class MyApp extends StatelessWidget {
     // Setup global BLoC observer
     Bloc.observer = GlobalBlocObserver();
 
-    return MaterialApp.router(
-      title: 'Unified Dream247',
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.light,
-      routerConfig: AppRouter.router,
+    return ScreenUtilInit(
+      designSize: const Size(390, 844),
+      minTextAdapt: true,
+      splitScreenMode: true,
+      builder: (context, child) {
+        return MultiProvider(
+          providers: [
+            // Fantasy gaming providers (11 providers)
+            ChangeNotifierProvider(create: (_) => UserDataProvider()),
+            ChangeNotifierProvider(create: (_) => MyTeamsProvider()),
+            ChangeNotifierProvider(create: (_) => TeamPreviewProvider()),
+            ChangeNotifierProvider(create: (_) => AllPlayersProvider()),
+            ChangeNotifierProvider(create: (_) => WalletDetailsProvider()),
+            ChangeNotifierProvider(create: (_) => KycDetailsProvider()),
+            ChangeNotifierProvider(create: (_) => PlayerStatsProvider()),
+            ChangeNotifierProvider(create: (_) => ScorecardProvider()),
+            ChangeNotifierProvider(create: (_) => LiveScoreProvider()),
+            ChangeNotifierProvider(create: (_) => JoinedLiveContestProvider()),
+            ChangeNotifierProvider(create: (_) => LiveLeaderboardProvider()),
+          ],
+          child: MaterialApp.router(
+            title: 'DREAM 247',
+            debugShowCheckedModeBanner: false,
+            theme: AppTheme.lightTheme,
+            darkTheme: AppTheme.darkTheme,
+            themeMode: ThemeMode.light,
+            routerConfig: AppRouter.router,
+          ),
+        );
+      },
     );
   }
 }

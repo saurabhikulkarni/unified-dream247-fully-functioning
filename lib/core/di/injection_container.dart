@@ -8,6 +8,7 @@ import '../../features/authentication/data/datasources/auth_local_datasource.dar
 import '../../features/authentication/data/datasources/auth_remote_datasource.dart';
 import '../../features/authentication/data/repositories/auth_repository_impl.dart';
 import '../../features/authentication/domain/repositories/auth_repository.dart';
+import '../../features/authentication/domain/usecases/send_otp_usecase.dart';
 import '../../features/authentication/domain/usecases/login_usecase.dart';
 import '../../features/authentication/domain/usecases/logout_usecase.dart';
 import '../../features/authentication/domain/usecases/register_usecase.dart';
@@ -17,6 +18,7 @@ import '../network/api_client.dart';
 import '../network/graphql_client.dart';
 import '../network/network_info.dart';
 import '../network/rest_client.dart';
+import '../services/user_service.dart';
 
 final getIt = GetIt.instance;
 
@@ -43,6 +45,9 @@ Future<void> configureDependencies() async {
       restClient: getIt(),
     ),
   );
+  
+  // Services
+  getIt.registerLazySingleton(() => UserService(getIt()));
 
   // Authentication
   // Data sources
@@ -66,6 +71,7 @@ Future<void> configureDependencies() async {
   );
 
   // Use cases
+  getIt.registerLazySingleton(() => SendOtpUseCase(getIt()));
   getIt.registerLazySingleton(() => LoginUseCase(getIt()));
   getIt.registerLazySingleton(() => RegisterUseCase(getIt()));
   getIt.registerLazySingleton(() => VerifyOtpUseCase(getIt()));
@@ -74,6 +80,7 @@ Future<void> configureDependencies() async {
   // BLoC
   getIt.registerFactory(
     () => AuthBloc(
+      sendOtpUseCase: getIt(),
       loginUseCase: getIt(),
       registerUseCase: getIt(),
       verifyOtpUseCase: getIt(),

@@ -1,0 +1,17 @@
+KycServerUrl="http://143.244.140.102:4000/kyc/";
+LeaderboardServerUrl="http://143.244.140.102:4000/leaderboard/";
+UserServerUrl="http://143.244.140.102:4000/user/";
+TeamsServerUrl="http://143.244.140.102:4000/team/";
+MatchServerUrl="http://143.244.140.102:4000/match/";
+ContestServerUrl="http://143.244.140.102:4000/contest/";
+DepositServerUrl="http://143.244.140.102:4000/deposit/";
+WithdrawServerUrl="http://143.244.140.102:4000/withdraw/";
+JoinContestServerUrl="http://143.244.140.102:4000/joincontest/";
+LiveMatchServerUrl="http://143.244.140.102:4000/live-match/";
+MyJoinContestServerUrl="http://143.244.140.102:4000/myjoined-contest/";
+MyTeamsServerUrl="http://143.244.140.102:4000/getmyteams/";
+CompletedMatchServerUrl="http://143.244.140.102:4000/completed-match/";
+OtherApiServerUrl="http://143.244.140.102:4000/other/";
+ENV=profile
+
+# http://143.244.140.102:500
