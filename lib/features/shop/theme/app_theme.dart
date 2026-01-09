@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:shop/theme/button_theme.dart';
-import 'package:shop/theme/input_decoration_theme.dart';
+import 'package:unified_dream247/features/shop/theme/button_theme.dart';
+import 'package:unified_dream247/features/shop/theme/input_decoration_theme.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../constants.dart';

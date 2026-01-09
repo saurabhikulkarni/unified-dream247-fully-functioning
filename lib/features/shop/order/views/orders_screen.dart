@@ -1,11 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:shop/constants.dart';
-import 'package:shop/components/network_image_with_loader.dart';
-import 'package:shop/screens/order/views/order_tracking_screen.dart';
-import 'package:shop/services/order_service_graphql.dart';
-import 'package:shop/models/order_models.dart';
+import 'package:unified_dream247/features/shop/constants.dart';
+import 'package:unified_dream247/features/shop/components/network_image_with_loader.dart';
+import 'package:unified_dream247/features/shop/screens/order/views/order_tracking_screen.dart';
+import 'package:unified_dream247/features/shop/services/order_service_graphql.dart';
+import 'package:unified_dream247/features/shop/models/order_models.dart';
 
 class OrdersScreen extends StatefulWidget {
   const OrdersScreen({super.key});

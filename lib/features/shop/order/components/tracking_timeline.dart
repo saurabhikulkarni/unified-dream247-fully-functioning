@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:shop/constants.dart';
-import 'package:shop/services/shiprocket_service.dart';
-import 'package:shop/utils/responsive_extension.dart';
+import 'package:unified_dream247/features/shop/constants.dart';
+import 'package:unified_dream247/features/shop/services/shiprocket_service.dart';
+import 'package:unified_dream247/features/shop/utils/responsive_extension.dart';
 
 class TrackingTimeline extends StatelessWidget {
   final List<TrackingEvent> events;

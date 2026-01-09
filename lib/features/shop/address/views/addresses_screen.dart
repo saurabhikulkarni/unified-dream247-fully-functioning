@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:shop/constants.dart';
-import 'package:shop/route/screen_export.dart';
-import 'package:shop/models/address_model.dart';
-import 'package:shop/services/address_service.dart';
-import 'package:shop/services/user_service.dart';
+import 'package:unified_dream247/features/shop/constants.dart';
+import 'package:unified_dream247/features/shop/route/screen_export.dart';
+import 'package:unified_dream247/features/shop/models/address_model.dart';
+import 'package:unified_dream247/features/shop/services/address_service.dart';
+import 'package:unified_dream247/features/shop/services/user_service.dart';
 
 class AddressesScreen extends StatefulWidget {
   const AddressesScreen({super.key});

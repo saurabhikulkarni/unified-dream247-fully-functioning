@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:shop/components/network_image_with_loader.dart';
-import 'package:shop/utils/responsive_extension.dart';
+import 'package:unified_dream247/features/shop/components/network_image_with_loader.dart';
+import 'package:unified_dream247/features/shop/utils/responsive_extension.dart';
 
 import '../../../../constants.dart';
 

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:shop/constants.dart';
-import 'package:shop/models/payment_model.dart';
-import 'package:shop/screens/checkout/components/payment_method_card.dart';
-import 'package:shop/services/razorpay_service.dart';
-import 'package:shop/services/payment_service.dart';
+import 'package:unified_dream247/features/shop/constants.dart';
+import 'package:unified_dream247/features/shop/models/payment_model.dart';
+import 'package:unified_dream247/features/shop/screens/checkout/components/payment_method_card.dart';
+import 'package:unified_dream247/features/shop/services/razorpay_service.dart';
+import 'package:unified_dream247/features/shop/services/payment_service.dart';
 
 class PaymentHistoryScreen extends StatefulWidget {
   const PaymentHistoryScreen({super.key});

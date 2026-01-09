@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:shop/services/notification_service.dart';
-import 'package:shop/services/user_service.dart';
-import 'package:shop/route/route_constants.dart';
+import 'package:unified_dream247/features/shop/services/notification_service.dart';
+import 'package:unified_dream247/features/shop/services/user_service.dart';
+import 'package:unified_dream247/features/shop/route/route_constants.dart';
 
 class NotificationsScreen extends StatefulWidget {
   const NotificationsScreen({super.key});

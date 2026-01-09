@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:shop/constants.dart';
-import 'package:shop/models/payment_model.dart';
-import 'package:shop/services/razorpay_service.dart';
-import 'package:shop/services/auth_service.dart';
+import 'package:unified_dream247/features/shop/constants.dart';
+import 'package:unified_dream247/features/shop/models/payment_model.dart';
+import 'package:unified_dream247/features/shop/services/razorpay_service.dart';
+import 'package:unified_dream247/features/shop/services/auth_service.dart';
 import '../components/payment_method_card.dart';
 
 class PaymentMethodSelectionScreen extends StatefulWidget {

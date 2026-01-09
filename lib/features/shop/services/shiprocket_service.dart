@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:shop/config/shiprocket_config.dart';
+import 'package:unified_dream247/features/shop/config/shiprocket_config.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
 class ShiprocketOrderData {

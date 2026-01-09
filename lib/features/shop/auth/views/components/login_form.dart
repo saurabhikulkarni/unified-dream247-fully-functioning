@@ -2,15 +2,15 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:shop/components/gradient_button.dart';
-import 'package:shop/services/auth_service.dart';
-import 'package:shop/services/graphql_client.dart';
-import 'package:shop/services/graphql_queries.dart';
-import 'package:shop/services/msg91_service.dart';
-import 'package:shop/services/user_service.dart';
-import 'package:shop/services/wishlist_service.dart';
-import 'package:shop/services/cart_service.dart';
-import 'package:shop/route/route_constants.dart';
+import 'package:unified_dream247/features/shop/components/gradient_button.dart';
+import 'package:unified_dream247/features/shop/services/auth_service.dart';
+import 'package:unified_dream247/features/shop/services/graphql_client.dart';
+import 'package:unified_dream247/features/shop/services/graphql_queries.dart';
+import 'package:unified_dream247/features/shop/services/msg91_service.dart';
+import 'package:unified_dream247/features/shop/services/user_service.dart';
+import 'package:unified_dream247/features/shop/services/wishlist_service.dart';
+import 'package:unified_dream247/features/shop/services/cart_service.dart';
+import 'package:unified_dream247/features/shop/route/route_constants.dart';
 
 import '../../../../constants.dart';
 

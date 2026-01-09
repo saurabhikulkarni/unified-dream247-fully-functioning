@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:shop/screens/auth/views/login_screen.dart';
-import 'package:shop/services/auth_service.dart';
-import 'package:shop/route/route_constants.dart';
+import 'package:unified_dream247/features/shop/screens/auth/views/login_screen.dart';
+import 'package:unified_dream247/features/shop/services/auth_service.dart';
+import 'package:unified_dream247/features/shop/route/route_constants.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});

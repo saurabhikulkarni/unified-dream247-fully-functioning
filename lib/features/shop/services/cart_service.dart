@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:shop/models/product_model.dart';
-import 'package:shop/services/graphql_client.dart';
-import 'package:shop/services/graphql_queries.dart';
-import 'package:shop/services/user_service.dart';
+import 'package:unified_dream247/features/shop/models/product_model.dart';
+import 'package:unified_dream247/features/shop/services/graphql_client.dart';
+import 'package:unified_dream247/features/shop/services/graphql_queries.dart';
+import 'package:unified_dream247/features/shop/services/user_service.dart';
 
 class CartService {
   static final CartService _instance = CartService._internal();

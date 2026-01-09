@@ -1,12 +1,12 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:shop/services/graphql_client.dart';
-import 'package:shop/services/graphql_queries.dart';
-import 'package:shop/services/wallet_service.dart';
-import 'package:shop/services/wishlist_service.dart';
-import 'package:shop/services/cart_service.dart';
-import 'package:shop/services/user_service.dart';
-import 'package:shop/constants.dart';
+import 'package:unified_dream247/features/shop/services/graphql_client.dart';
+import 'package:unified_dream247/features/shop/services/graphql_queries.dart';
+import 'package:unified_dream247/features/shop/services/wallet_service.dart';
+import 'package:unified_dream247/features/shop/services/wishlist_service.dart';
+import 'package:unified_dream247/features/shop/services/cart_service.dart';
+import 'package:unified_dream247/features/shop/services/user_service.dart';
+import 'package:unified_dream247/features/shop/constants.dart';
 
 class AuthService {
   static final AuthService _instance = AuthService._internal();

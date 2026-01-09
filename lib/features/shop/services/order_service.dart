@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
-import 'package:shop/models/product_model.dart';
-import 'package:shop/services/shiprocket_service.dart';
-import 'package:shop/services/wallet_service.dart';
-import 'package:shop/services/cart_service.dart';
+import 'package:unified_dream247/features/shop/models/product_model.dart';
+import 'package:unified_dream247/features/shop/services/shiprocket_service.dart';
+import 'package:unified_dream247/features/shop/services/wallet_service.dart';
+import 'package:unified_dream247/features/shop/services/cart_service.dart';
 import 'package:uuid/uuid.dart';
 
 class OrderItem {

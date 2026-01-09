@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:shop/constants.dart';
-import 'package:shop/models/category_model.dart';
-import 'package:shop/route/route_constants.dart';
-import 'package:shop/screens/search/views/components/search_form.dart';
+import 'package:unified_dream247/features/shop/constants.dart';
+import 'package:unified_dream247/features/shop/models/category_model.dart';
+import 'package:unified_dream247/features/shop/route/route_constants.dart';
+import 'package:unified_dream247/features/shop/screens/search/views/components/search_form.dart';
 
 class DiscoverScreen extends StatelessWidget {
   const DiscoverScreen({super.key});

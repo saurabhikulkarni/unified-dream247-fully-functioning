@@ -1,6 +1,6 @@
-import 'package:shop/models/product_model.dart';
-import 'package:shop/models/address_model.dart';
-import 'package:shop/services/shiprocket_service.dart';
+import 'package:unified_dream247/features/shop/models/product_model.dart';
+import 'package:unified_dream247/features/shop/models/address_model.dart';
+import 'package:unified_dream247/features/shop/services/shiprocket_service.dart';
 
 /// OrderStatus enum for order status
 enum OrderStatus {

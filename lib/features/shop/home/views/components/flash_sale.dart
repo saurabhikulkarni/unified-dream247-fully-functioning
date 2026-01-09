@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:shop/route/route_constants.dart';
-import 'package:shop/services/product_service.dart';
+import 'package:unified_dream247/features/shop/route/route_constants.dart';
+import 'package:unified_dream247/features/shop/services/product_service.dart';
 
 import '/components/Banner/M/banner_m_with_counter.dart';
 import '../../../../components/product/product_card.dart';

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:shop/constants.dart';
+import 'package:unified_dream247/features/shop/constants.dart';
 
 class ChatMessage {
   final String text;

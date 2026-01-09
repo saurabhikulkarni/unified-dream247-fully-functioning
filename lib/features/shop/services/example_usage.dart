@@ -3,8 +3,8 @@
 
 /*
 import 'package:flutter/material.dart';
-import 'package:shop/models/product_model.dart';
-import 'package:shop/services/product_service.dart';
+import 'package:unified_dream247/features/shop/models/product_model.dart';
+import 'package:unified_dream247/features/shop/services/product_service.dart';
 
 class ExampleProductListWidget extends StatefulWidget {
   @override
@@ -81,7 +81,7 @@ class _ExampleProductListWidgetState extends State<ExampleProductListWidget> {
 
 // Example using Query widget from graphql_flutter
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:shop/services/graphql_queries.dart';
+import 'package:unified_dream247/features/shop/services/graphql_queries.dart';
 
 class ExampleQueryWidget extends StatelessWidget {
   @override

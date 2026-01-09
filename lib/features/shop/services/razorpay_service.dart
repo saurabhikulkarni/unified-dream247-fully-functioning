@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'dart:convert';
-import 'package:shop/config/razorpay_config.dart';
-import 'package:shop/models/payment_model.dart';
+import 'package:unified_dream247/features/shop/config/razorpay_config.dart';
+import 'package:unified_dream247/features/shop/models/payment_model.dart';
 import 'package:http/http.dart' as http;
 
 // Conditional imports for platform-specific Razorpay implementation

@@ -1,8 +1,8 @@
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'dart:convert';
-import 'package:shop/config/razorpay_config.dart';
-import 'package:shop/config/razorpay_backend_config.dart';
-import 'package:shop/models/payment_model.dart';
+import 'package:unified_dream247/features/shop/config/razorpay_config.dart';
+import 'package:unified_dream247/features/shop/config/razorpay_backend_config.dart';
+import 'package:unified_dream247/features/shop/models/payment_model.dart';
 import 'package:http/http.dart' as http;
 
 typedef PaymentSuccessCallback = void Function(RazorpayPaymentResponse response);

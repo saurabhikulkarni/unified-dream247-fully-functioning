@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:shop/components/product/product_card.dart';
-import 'package:shop/models/product_model.dart';
-import 'package:shop/services/wishlist_service.dart';
-import 'package:shop/services/cart_service.dart';
-import 'package:shop/route/route_constants.dart';
+import 'package:unified_dream247/features/shop/components/product/product_card.dart';
+import 'package:unified_dream247/features/shop/models/product_model.dart';
+import 'package:unified_dream247/features/shop/services/wishlist_service.dart';
+import 'package:unified_dream247/features/shop/services/cart_service.dart';
+import 'package:unified_dream247/features/shop/route/route_constants.dart';
 
 import '../../../constants.dart';
 import '../../../utils/responsive_extension.dart';

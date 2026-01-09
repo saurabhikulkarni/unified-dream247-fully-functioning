@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:shop/constants.dart';
-import 'package:shop/services/razorpay_service.dart';
-import 'package:shop/services/user_service.dart';
-import 'package:shop/services/auth_service.dart';
-import 'package:shop/utils/responsive_extension.dart';
+import 'package:unified_dream247/features/shop/constants.dart';
+import 'package:unified_dream247/features/shop/services/razorpay_service.dart';
+import 'package:unified_dream247/features/shop/services/user_service.dart';
+import 'package:unified_dream247/features/shop/services/auth_service.dart';
+import 'package:unified_dream247/features/shop/utils/responsive_extension.dart';
 
 import 'components/wallet_balance_card.dart';
 

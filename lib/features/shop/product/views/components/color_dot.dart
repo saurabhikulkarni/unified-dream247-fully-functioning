@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shop/components/check_mark.dart';
+import 'package:unified_dream247/features/shop/components/check_mark.dart';
 
 import '../../../../constants.dart';
 

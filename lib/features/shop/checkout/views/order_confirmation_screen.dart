@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:shop/constants.dart';
-import 'package:shop/route/route_constants.dart';
-import 'package:shop/models/order_models.dart';
+import 'package:unified_dream247/features/shop/constants.dart';
+import 'package:unified_dream247/features/shop/route/route_constants.dart';
+import 'package:unified_dream247/features/shop/models/order_models.dart';
 
 class OrderConfirmationScreen extends StatelessWidget {
   final String orderId;

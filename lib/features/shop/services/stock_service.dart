@@ -1,7 +1,7 @@
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:shop/services/graphql_client.dart';
-import 'package:shop/services/graphql_queries.dart';
-import 'package:shop/services/notification_service.dart';
+import 'package:unified_dream247/features/shop/services/graphql_client.dart';
+import 'package:unified_dream247/features/shop/services/graphql_queries.dart';
+import 'package:unified_dream247/features/shop/services/notification_service.dart';
 
 /// Service for managing product stock/inventory in Hygraph
 class StockService {

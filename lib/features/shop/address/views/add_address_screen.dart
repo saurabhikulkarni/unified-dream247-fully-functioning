@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:shop/components/gradient_button.dart';
-import 'package:shop/constants.dart';
-import 'package:shop/models/address_model.dart';
-import 'package:shop/services/address_service.dart';
-import 'package:shop/services/user_service.dart';
+import 'package:unified_dream247/features/shop/components/gradient_button.dart';
+import 'package:unified_dream247/features/shop/constants.dart';
+import 'package:unified_dream247/features/shop/models/address_model.dart';
+import 'package:unified_dream247/features/shop/services/address_service.dart';
+import 'package:unified_dream247/features/shop/services/user_service.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:shop/constants.dart';
-import 'package:shop/route/route_constants.dart';
-import 'package:shop/components/gradient_button.dart';
-import 'package:shop/utils/responsive_extension.dart';
+import 'package:unified_dream247/features/shop/constants.dart';
+import 'package:unified_dream247/features/shop/route/route_constants.dart';
+import 'package:unified_dream247/features/shop/components/gradient_button.dart';
+import 'package:unified_dream247/features/shop/utils/responsive_extension.dart';
 
 import 'components/login_form.dart';
 

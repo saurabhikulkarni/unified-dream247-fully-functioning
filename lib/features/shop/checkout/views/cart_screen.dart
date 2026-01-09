@@ -1,18 +1,18 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:shop/components/gradient_button.dart';
-import 'package:shop/components/network_image_with_loader.dart';
-import 'package:shop/constants.dart';
-import 'package:shop/models/product_model.dart';
-import 'package:shop/models/order_models.dart';
-import 'package:shop/services/cart_service.dart';
-import 'package:shop/services/address_service.dart';
-import 'package:shop/services/order_service_graphql.dart';
-import 'package:shop/route/route_constants.dart';
-import 'package:shop/services/wallet_service.dart';
-import 'package:shop/services/user_service.dart';
-import 'package:shop/services/shiprocket_service.dart';
+import 'package:unified_dream247/features/shop/components/gradient_button.dart';
+import 'package:unified_dream247/features/shop/components/network_image_with_loader.dart';
+import 'package:unified_dream247/features/shop/constants.dart';
+import 'package:unified_dream247/features/shop/models/product_model.dart';
+import 'package:unified_dream247/features/shop/models/order_models.dart';
+import 'package:unified_dream247/features/shop/services/cart_service.dart';
+import 'package:unified_dream247/features/shop/services/address_service.dart';
+import 'package:unified_dream247/features/shop/services/order_service_graphql.dart';
+import 'package:unified_dream247/features/shop/route/route_constants.dart';
+import 'package:unified_dream247/features/shop/services/wallet_service.dart';
+import 'package:unified_dream247/features/shop/services/user_service.dart';
+import 'package:unified_dream247/features/shop/services/shiprocket_service.dart';
 
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});

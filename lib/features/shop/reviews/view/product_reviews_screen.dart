@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:shop/constants.dart';
+import 'package:unified_dream247/features/shop/constants.dart';
 
 class ProductReviewsScreen extends StatefulWidget {
   const ProductReviewsScreen({super.key});

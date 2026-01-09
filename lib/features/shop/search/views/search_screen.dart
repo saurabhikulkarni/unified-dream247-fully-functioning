@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:shop/constants.dart';
-import 'package:shop/models/product_model.dart';
-import 'package:shop/services/search_service.dart';
-import 'package:shop/components/network_image_with_loader.dart';
-import 'package:shop/route/screen_export.dart';
+import 'package:unified_dream247/features/shop/constants.dart';
+import 'package:unified_dream247/features/shop/models/product_model.dart';
+import 'package:unified_dream247/features/shop/services/search_service.dart';
+import 'package:unified_dream247/features/shop/components/network_image_with_loader.dart';
+import 'package:unified_dream247/features/shop/route/screen_export.dart';
 import 'dart:async';
 
 class SearchScreen extends StatefulWidget {

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:shop/constants.dart';
-import 'package:shop/models/payment_model.dart';
-import 'package:shop/services/razorpay_service.dart';
-import 'package:shop/utils/responsive_extension.dart';
+import 'package:unified_dream247/features/shop/constants.dart';
+import 'package:unified_dream247/features/shop/models/payment_model.dart';
+import 'package:unified_dream247/features/shop/services/razorpay_service.dart';
+import 'package:unified_dream247/features/shop/utils/responsive_extension.dart';
 
 class PaymentMethodCard extends StatelessWidget {
   final PaymentMethod method;

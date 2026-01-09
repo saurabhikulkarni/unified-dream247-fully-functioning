@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shop/utils/responsive_helper.dart';
+import 'package:unified_dream247/features/shop/utils/responsive_helper.dart';
 
 /// Extension on BuildContext for responsive helpers
 extension ResponsiveContext on BuildContext {

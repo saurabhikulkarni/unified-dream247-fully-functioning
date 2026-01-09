@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:shop/components/category_banner_card.dart';
-import 'package:shop/constants.dart';
-import 'package:shop/models/category_model.dart';
-import 'package:shop/route/route_constants.dart';
+import 'package:unified_dream247/features/shop/components/category_banner_card.dart';
+import 'package:unified_dream247/features/shop/constants.dart';
+import 'package:unified_dream247/features/shop/models/category_model.dart';
+import 'package:unified_dream247/features/shop/route/route_constants.dart';
 
 class CategoryBannersCarousel extends StatefulWidget {
   const CategoryBannersCarousel({super.key});

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:shop/theme/input_decoration_theme.dart';
+import 'package:unified_dream247/features/shop/theme/input_decoration_theme.dart';
 
 import '../../../constants.dart';
 

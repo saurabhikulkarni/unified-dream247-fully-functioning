@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:shop/services/auth_service.dart';
-import 'package:shop/services/msg91_service.dart';
+import 'package:unified_dream247/features/shop/services/auth_service.dart';
+import 'package:unified_dream247/features/shop/services/msg91_service.dart';
 
 import '../../../../constants.dart';
 

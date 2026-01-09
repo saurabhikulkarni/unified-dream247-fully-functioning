@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:shop/models/product_model.dart';
+import 'package:unified_dream247/features/shop/models/product_model.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'dart:convert';
 import 'graphql_client.dart';

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:shop/components/product/secondary_product_card.dart';
-import 'package:shop/components/skleton/product/secondery_produts_skelton.dart';
-import 'package:shop/models/product_model.dart';
-import 'package:shop/services/product_service.dart';
+import 'package:unified_dream247/features/shop/components/product/secondary_product_card.dart';
+import 'package:unified_dream247/features/shop/components/skleton/product/secondery_produts_skelton.dart';
+import 'package:unified_dream247/features/shop/models/product_model.dart';
+import 'package:unified_dream247/features/shop/services/product_service.dart';
 
 import '../../../../constants.dart';
 import '../../../../route/route_constants.dart';

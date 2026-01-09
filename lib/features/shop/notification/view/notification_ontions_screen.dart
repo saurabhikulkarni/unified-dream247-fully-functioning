@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shop/constants.dart';
+import 'package:unified_dream247/features/shop/constants.dart';
 
 class NotificationOptionsScreen extends StatefulWidget {
   const NotificationOptionsScreen({super.key});

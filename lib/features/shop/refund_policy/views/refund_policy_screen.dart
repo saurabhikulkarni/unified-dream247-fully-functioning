@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shop/constants.dart';
+import 'package:unified_dream247/features/shop/constants.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class RefundPolicyScreen extends StatelessWidget {

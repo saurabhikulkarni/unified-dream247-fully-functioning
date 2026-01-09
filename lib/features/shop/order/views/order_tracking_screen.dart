@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:shop/constants.dart';
-import 'package:shop/services/shiprocket_service.dart';
-import 'package:shop/config/shiprocket_config.dart';
+import 'package:unified_dream247/features/shop/constants.dart';
+import 'package:unified_dream247/features/shop/services/shiprocket_service.dart';
+import 'package:unified_dream247/features/shop/config/shiprocket_config.dart';
 import '../components/delivery_partner_card.dart';
 import '../components/tracking_timeline.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;

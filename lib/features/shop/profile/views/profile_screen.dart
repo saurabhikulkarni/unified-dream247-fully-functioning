@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:shop/constants.dart';
-import 'package:shop/route/screen_export.dart';
-import 'package:shop/services/auth_service.dart';
+import 'package:unified_dream247/features/shop/constants.dart';
+import 'package:unified_dream247/features/shop/route/screen_export.dart';
+import 'package:unified_dream247/features/shop/services/auth_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'components/profile_card.dart';

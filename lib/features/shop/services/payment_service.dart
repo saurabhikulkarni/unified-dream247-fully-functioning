@@ -1,8 +1,8 @@
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:shop/models/payment_model.dart';
-import 'package:shop/services/graphql_client.dart';
-import 'package:shop/services/graphql_queries.dart';
-import 'package:shop/services/user_service.dart';
+import 'package:unified_dream247/features/shop/models/payment_model.dart';
+import 'package:unified_dream247/features/shop/services/graphql_client.dart';
+import 'package:unified_dream247/features/shop/services/graphql_queries.dart';
+import 'package:unified_dream247/features/shop/services/user_service.dart';
 
 class PaymentService {
   static final PaymentService _instance = PaymentService._internal();

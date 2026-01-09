@@ -1,6 +1,6 @@
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:shop/config/graphql_config.dart';
+import 'package:unified_dream247/features/shop/config/graphql_config.dart';
 
 class GraphQLService {
   // Hygraph endpoint URL from config
