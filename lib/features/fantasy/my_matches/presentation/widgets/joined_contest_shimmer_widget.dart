@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:Dream247/core/app_constants/app_colors.dart';
-import 'package:Dream247/core/app_constants/images.dart';
-import 'package:Dream247/core/global_widgets/common_shimmer_view_widget.dart';
+import 'package:unified_dream247/features/fantasy/core/app_constants/app_colors.dart';
+import 'package:unified_dream247/features/fantasy/core/app_constants/images.dart';
+import 'package:unified_dream247/features/fantasy/core/global_widgets/common_shimmer_view_widget.dart';
 
 class JoinedContestShimmerWidget extends StatelessWidget {
   const JoinedContestShimmerWidget({super.key});

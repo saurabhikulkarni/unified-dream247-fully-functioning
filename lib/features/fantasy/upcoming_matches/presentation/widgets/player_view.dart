@@ -1,13 +1,13 @@
-import 'package:Dream247/core/global_widgets/safe_network_image.dart';
+import 'package:unified_dream247/features/fantasy/core/global_widgets/safe_network_image.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/material.dart';
-import 'package:Dream247/core/app_constants/app_colors.dart';
-import 'package:Dream247/core/app_constants/app_pages.dart';
-import 'package:Dream247/core/app_constants/images.dart';
-import 'package:Dream247/features/landing/data/singleton/app_singleton.dart';
-import 'package:Dream247/features/upcoming_matches/data/models/players_model.dart';
-import 'package:Dream247/features/upcoming_matches/data/models/teams_model.dart';
+import 'package:unified_dream247/features/fantasy/core/app_constants/app_colors.dart';
+import 'package:unified_dream247/features/fantasy/core/app_constants/app_pages.dart';
+import 'package:unified_dream247/features/fantasy/core/app_constants/images.dart';
+import 'package:unified_dream247/features/fantasy/features/landing/data/singleton/app_singleton.dart';
+import 'package:unified_dream247/features/fantasy/features/upcoming_matches/data/models/players_model.dart';
+import 'package:unified_dream247/features/fantasy/features/upcoming_matches/data/models/teams_model.dart';
 
 class SinglePlayer extends StatefulWidget {
   final CreateTeamPlayersData data;

@@ -1,6 +1,6 @@
-import 'package:Dream247/features/landing/data/models/app_data.dart';
-import 'package:Dream247/features/landing/data/models/match_list_model.dart';
-import 'package:Dream247/features/upcoming_matches/data/models/all_contests_model.dart';
+import 'package:unified_dream247/features/fantasy/features/landing/data/models/app_data.dart';
+import 'package:unified_dream247/features/fantasy/features/landing/data/models/match_list_model.dart';
+import 'package:unified_dream247/features/fantasy/features/upcoming_matches/data/models/all_contests_model.dart';
 
 class AppSingleton {
   static final AppSingleton singleton = AppSingleton._internal();

@@ -2,18 +2,18 @@
 
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
-import 'package:Dream247/core/api_server_constants/api_server_impl/api_impl.dart';
-import 'package:Dream247/core/api_server_constants/api_server_impl/api_impl_header.dart';
-import 'package:Dream247/core/app_constants/app_colors.dart';
-import 'package:Dream247/core/app_constants/app_pages.dart';
-import 'package:Dream247/core/global_widgets/app_toast.dart';
-import 'package:Dream247/core/global_widgets/custom_textfield.dart';
-import 'package:Dream247/features/landing/data/singleton/app_singleton.dart';
-import 'package:Dream247/features/upcoming_matches/data/models/teams_model.dart';
-import 'package:Dream247/features/upcoming_matches/data/upcoming_match_datsource.dart';
-import 'package:Dream247/features/upcoming_matches/domain/use_cases/upcoming_match_usecase.dart';
-import 'package:Dream247/features/upcoming_matches/presentation/providers/myteams_provider.dart';
-import 'package:Dream247/features/upcoming_matches/presentation/widgets/join_contest_bottomsheet.dart';
+import 'package:unified_dream247/features/fantasy/core/api_server_constants/api_server_impl/api_impl.dart';
+import 'package:unified_dream247/features/fantasy/core/api_server_constants/api_server_impl/api_impl_header.dart';
+import 'package:unified_dream247/features/fantasy/core/app_constants/app_colors.dart';
+import 'package:unified_dream247/features/fantasy/core/app_constants/app_pages.dart';
+import 'package:unified_dream247/features/fantasy/core/global_widgets/app_toast.dart';
+import 'package:unified_dream247/features/fantasy/core/global_widgets/custom_textfield.dart';
+import 'package:unified_dream247/features/fantasy/features/landing/data/singleton/app_singleton.dart';
+import 'package:unified_dream247/features/fantasy/features/upcoming_matches/data/models/teams_model.dart';
+import 'package:unified_dream247/features/fantasy/features/upcoming_matches/data/upcoming_match_datsource.dart';
+import 'package:unified_dream247/features/fantasy/features/upcoming_matches/domain/use_cases/upcoming_match_usecase.dart';
+import 'package:unified_dream247/features/fantasy/features/upcoming_matches/presentation/providers/myteams_provider.dart';
+import 'package:unified_dream247/features/fantasy/features/upcoming_matches/presentation/widgets/join_contest_bottomsheet.dart';
 
 class JoinByCodeContest extends StatefulWidget {
   const JoinByCodeContest({super.key});

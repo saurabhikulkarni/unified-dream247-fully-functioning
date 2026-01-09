@@ -1,18 +1,18 @@
 // ignore_for_file: constant_identifier_names, use_build_context_synchronously
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:Dream247/core/api_server_constants/api_server_impl/api_impl_header.dart';
-import 'package:Dream247/core/app_constants/app_colors.dart';
-import 'package:Dream247/core/app_constants/images.dart';
-import 'package:Dream247/core/app_constants/strings.dart';
-import 'package:Dream247/core/global_widgets/app_toast.dart';
-import 'package:Dream247/core/global_widgets/common_widgets.dart';
-import 'package:Dream247/core/global_widgets/main_button.dart';
-import 'package:Dream247/core/global_widgets/sub_container.dart';
-import 'package:Dream247/core/utils/app_utils.dart';
-import 'package:Dream247/features/menu_items/data/user_datasource.dart';
-import 'package:Dream247/features/menu_items/domain/use_cases/user_usecases.dart';
-import 'package:Dream247/features/menu_items/presentation/providers/user_data_provider.dart';
+import 'package:unified_dream247/features/fantasy/core/api_server_constants/api_server_impl/api_impl_header.dart';
+import 'package:unified_dream247/features/fantasy/core/app_constants/app_colors.dart';
+import 'package:unified_dream247/features/fantasy/core/app_constants/images.dart';
+import 'package:unified_dream247/features/fantasy/core/app_constants/strings.dart';
+import 'package:unified_dream247/features/fantasy/core/global_widgets/app_toast.dart';
+import 'package:unified_dream247/features/fantasy/core/global_widgets/common_widgets.dart';
+import 'package:unified_dream247/features/fantasy/core/global_widgets/main_button.dart';
+import 'package:unified_dream247/features/fantasy/core/global_widgets/sub_container.dart';
+import 'package:unified_dream247/features/fantasy/core/utils/app_utils.dart';
+import 'package:unified_dream247/features/fantasy/features/menu_items/data/user_datasource.dart';
+import 'package:unified_dream247/features/fantasy/features/menu_items/domain/use_cases/user_usecases.dart';
+import 'package:unified_dream247/features/fantasy/features/menu_items/presentation/providers/user_data_provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 

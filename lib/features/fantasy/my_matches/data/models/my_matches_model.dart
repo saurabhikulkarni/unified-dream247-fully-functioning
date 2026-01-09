@@ -1,4 +1,4 @@
-import 'package:Dream247/core/utils/model_parsers.dart';
+import 'package:unified_dream247/features/fantasy/core/utils/model_parsers.dart';
 
 class MyMatchesModel {
   String? matchkey;

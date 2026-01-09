@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:Dream247/features/winners/data/models/winners_model.dart';
-import 'package:Dream247/features/winners/data/models/stories_model.dart';
-import 'package:Dream247/features/winners/domain/repositories/winners_repositories.dart';
+import 'package:unified_dream247/features/fantasy/features/winners/data/models/winners_model.dart';
+import 'package:unified_dream247/features/fantasy/features/winners/data/models/stories_model.dart';
+import 'package:unified_dream247/features/fantasy/features/winners/domain/repositories/winners_repositories.dart';
 
 class WinnersUsecases {
   WinnersRepositories winnersRepositories;

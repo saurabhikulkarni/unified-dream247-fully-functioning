@@ -1,5 +1,5 @@
-import 'package:Dream247/core/app_constants/app_colors.dart';
-import 'package:Dream247/core/app_constants/images.dart';
+import 'package:unified_dream247/features/fantasy/core/app_constants/app_colors.dart';
+import 'package:unified_dream247/features/fantasy/core/app_constants/images.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 

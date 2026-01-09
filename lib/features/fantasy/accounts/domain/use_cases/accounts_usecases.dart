@@ -1,15 +1,15 @@
-import 'package:Dream247/features/accounts/data/models/token_tier_model.dart';
+import 'package:unified_dream247/features/fantasy/features/accounts/data/models/token_tier_model.dart';
 import 'package:flutter/material.dart';
-import 'package:Dream247/features/accounts/data/models/bank_transfer_model.dart';
-import 'package:Dream247/features/accounts/domain/repositories/accounts_repositories.dart';
-import 'package:Dream247/features/accounts/data/models/balance_model.dart';
-import 'package:Dream247/features/accounts/data/models/p2p_payment_done_model.dart';
-import 'package:Dream247/features/accounts/data/models/tds_dashboard_model.dart';
-import 'package:Dream247/features/accounts/data/models/tds_transaction_history_list.dart';
-import 'package:Dream247/features/accounts/data/models/transactions_model.dart';
-import 'package:Dream247/features/accounts/data/models/user_transaction_detail_model.dart';
-import 'package:Dream247/features/accounts/data/models/wallet_payment_done_model.dart';
-import 'package:Dream247/features/menu_items/data/models/offers_model.dart';
+import 'package:unified_dream247/features/fantasy/features/accounts/data/models/bank_transfer_model.dart';
+import 'package:unified_dream247/features/fantasy/features/accounts/domain/repositories/accounts_repositories.dart';
+import 'package:unified_dream247/features/fantasy/features/accounts/data/models/balance_model.dart';
+import 'package:unified_dream247/features/fantasy/features/accounts/data/models/p2p_payment_done_model.dart';
+import 'package:unified_dream247/features/fantasy/features/accounts/data/models/tds_dashboard_model.dart';
+import 'package:unified_dream247/features/fantasy/features/accounts/data/models/tds_transaction_history_list.dart';
+import 'package:unified_dream247/features/fantasy/features/accounts/data/models/transactions_model.dart';
+import 'package:unified_dream247/features/fantasy/features/accounts/data/models/user_transaction_detail_model.dart';
+import 'package:unified_dream247/features/fantasy/features/accounts/data/models/wallet_payment_done_model.dart';
+import 'package:unified_dream247/features/fantasy/features/menu_items/data/models/offers_model.dart';
 
 class AccountsUsecases {
   AccountsRepositories accountsRepositories;

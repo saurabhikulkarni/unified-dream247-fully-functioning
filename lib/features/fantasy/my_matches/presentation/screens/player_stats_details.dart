@@ -1,9 +1,9 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/material.dart';
-import 'package:Dream247/core/app_constants/app_colors.dart';
-import 'package:Dream247/core/app_constants/images.dart';
-import 'package:Dream247/features/my_matches/data/models/match_player_teams_model.dart';
+import 'package:unified_dream247/features/fantasy/core/app_constants/app_colors.dart';
+import 'package:unified_dream247/features/fantasy/core/app_constants/images.dart';
+import 'package:unified_dream247/features/fantasy/features/my_matches/data/models/match_player_teams_model.dart';
 
 class PlayerStatsDetails extends StatefulWidget {
   final String fantasyType;

@@ -1,8 +1,8 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
-import 'package:Dream247/features/landing/data/models/banners_get_set.dart';
-import 'package:Dream247/features/onboarding/domain/repositories/onboarding_repositories.dart';
+import 'package:unified_dream247/features/fantasy/features/landing/data/models/banners_get_set.dart';
+import 'package:unified_dream247/features/fantasy/features/onboarding/domain/repositories/onboarding_repositories.dart';
 
 class OnboardingUsecases {
   OnboardingRepositories onboardingRepositories;

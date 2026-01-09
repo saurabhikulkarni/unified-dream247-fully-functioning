@@ -1,13 +1,13 @@
 import 'dart:math';
 
-import 'package:Dream247/core/app_constants/app_colors.dart';
-import 'package:Dream247/core/app_constants/images.dart';
-import 'package:Dream247/core/app_constants/strings.dart';
-import 'package:Dream247/core/global_widgets/app_toast.dart';
-import 'package:Dream247/core/global_widgets/common_shimmer_view_widget.dart';
-import 'package:Dream247/core/global_widgets/sub_container.dart';
-import 'package:Dream247/core/utils/app_utils.dart';
-import 'package:Dream247/features/menu_items/data/models/offers_model.dart';
+import 'package:unified_dream247/features/fantasy/core/app_constants/app_colors.dart';
+import 'package:unified_dream247/features/fantasy/core/app_constants/images.dart';
+import 'package:unified_dream247/features/fantasy/core/app_constants/strings.dart';
+import 'package:unified_dream247/features/fantasy/core/global_widgets/app_toast.dart';
+import 'package:unified_dream247/features/fantasy/core/global_widgets/common_shimmer_view_widget.dart';
+import 'package:unified_dream247/features/fantasy/core/global_widgets/sub_container.dart';
+import 'package:unified_dream247/features/fantasy/core/utils/app_utils.dart';
+import 'package:unified_dream247/features/fantasy/features/menu_items/data/models/offers_model.dart';
 import 'package:flutter/material.dart';
 
 class PromoCode extends StatefulWidget {

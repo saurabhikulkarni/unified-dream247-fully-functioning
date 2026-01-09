@@ -1,25 +1,25 @@
 // ignore_for_file: use_build_context_synchronously, unused_import
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:Dream247/core/app_constants/app_colors.dart';
-import 'package:Dream247/core/app_constants/strings.dart';
-import 'package:Dream247/core/global_widgets/sub_container.dart';
-import 'package:Dream247/features/menu_items/presentation/widgets/logout_dialogbox.dart';
-import 'package:Dream247/features/onboarding/presentation/controllers/login_controller.dart';
+import 'package:unified_dream247/features/fantasy/core/app_constants/app_colors.dart';
+import 'package:unified_dream247/features/fantasy/core/app_constants/strings.dart';
+import 'package:unified_dream247/features/fantasy/core/global_widgets/sub_container.dart';
+import 'package:unified_dream247/features/fantasy/features/menu_items/presentation/widgets/logout_dialogbox.dart';
+import 'package:unified_dream247/features/fantasy/features/onboarding/presentation/controllers/login_controller.dart';
 import 'package:provider/provider.dart';
-import 'package:Dream247/core/app_constants/app_storage_keys.dart';
-import 'package:Dream247/core/utils/app_storage.dart';
-import 'package:Dream247/features/accounts/presentation/providers/wallet_details_provider.dart';
-import 'package:Dream247/features/menu_items/presentation/providers/user_data_provider.dart';
-import 'package:Dream247/features/my_matches/presentation/provider/joined_live_contest_provider.dart';
-import 'package:Dream247/features/my_matches/presentation/provider/live_leaderboard_provider.dart';
-import 'package:Dream247/features/my_matches/presentation/provider/live_score_provider.dart';
-import 'package:Dream247/features/my_matches/presentation/provider/player_stats_provider.dart';
-import 'package:Dream247/features/my_matches/presentation/provider/scorecard_provider.dart';
-import 'package:Dream247/features/onboarding/presentation/screens/login_screen.dart';
-import 'package:Dream247/features/upcoming_matches/presentation/providers/myteams_provider.dart';
-import 'package:Dream247/features/upcoming_matches/presentation/providers/team_preview_provider.dart';
-import 'package:Dream247/features/user_verification/presentation/providers/kyc_details_provider.dart';
+import 'package:unified_dream247/features/fantasy/core/app_constants/app_storage_keys.dart';
+import 'package:unified_dream247/features/fantasy/core/utils/app_storage.dart';
+import 'package:unified_dream247/features/fantasy/features/accounts/presentation/providers/wallet_details_provider.dart';
+import 'package:unified_dream247/features/fantasy/features/menu_items/presentation/providers/user_data_provider.dart';
+import 'package:unified_dream247/features/fantasy/features/my_matches/presentation/provider/joined_live_contest_provider.dart';
+import 'package:unified_dream247/features/fantasy/features/my_matches/presentation/provider/live_leaderboard_provider.dart';
+import 'package:unified_dream247/features/fantasy/features/my_matches/presentation/provider/live_score_provider.dart';
+import 'package:unified_dream247/features/fantasy/features/my_matches/presentation/provider/player_stats_provider.dart';
+import 'package:unified_dream247/features/fantasy/features/my_matches/presentation/provider/scorecard_provider.dart';
+import 'package:unified_dream247/features/fantasy/features/onboarding/presentation/screens/login_screen.dart';
+import 'package:unified_dream247/features/fantasy/features/upcoming_matches/presentation/providers/myteams_provider.dart';
+import 'package:unified_dream247/features/fantasy/features/upcoming_matches/presentation/providers/team_preview_provider.dart';
+import 'package:unified_dream247/features/fantasy/features/user_verification/presentation/providers/kyc_details_provider.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});

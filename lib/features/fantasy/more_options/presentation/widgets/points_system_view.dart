@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:Dream247/core/api_server_constants/api_server_impl/api_impl.dart';
-import 'package:Dream247/core/api_server_constants/api_server_impl/api_impl_header.dart';
-import 'package:Dream247/core/app_constants/app_colors.dart';
-import 'package:Dream247/core/global_widgets/common_shimmer_view_widget.dart';
-import 'package:Dream247/features/more_options/presentation/data/models/fantasy_points_system_model.dart';
-import 'package:Dream247/features/more_options/presentation/data/more_datasource.dart';
-import 'package:Dream247/features/more_options/presentation/domain/use_cases/more_usecases.dart';
-import 'package:Dream247/features/more_options/presentation/widgets/expansion_tile_widget.dart';
+import 'package:unified_dream247/features/fantasy/core/api_server_constants/api_server_impl/api_impl.dart';
+import 'package:unified_dream247/features/fantasy/core/api_server_constants/api_server_impl/api_impl_header.dart';
+import 'package:unified_dream247/features/fantasy/core/app_constants/app_colors.dart';
+import 'package:unified_dream247/features/fantasy/core/global_widgets/common_shimmer_view_widget.dart';
+import 'package:unified_dream247/features/fantasy/features/more_options/presentation/data/models/fantasy_points_system_model.dart';
+import 'package:unified_dream247/features/fantasy/features/more_options/presentation/data/more_datasource.dart';
+import 'package:unified_dream247/features/fantasy/features/more_options/presentation/domain/use_cases/more_usecases.dart';
+import 'package:unified_dream247/features/fantasy/features/more_options/presentation/widgets/expansion_tile_widget.dart';
 
 class PointsSystemView extends StatefulWidget {
   final String gameType;

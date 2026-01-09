@@ -1,17 +1,17 @@
-import 'package:Dream247/core/app_constants/images.dart';
+import 'package:unified_dream247/features/fantasy/core/app_constants/images.dart';
 import 'package:flutter/material.dart';
-import 'package:Dream247/core/api_server_constants/api_server_impl/api_impl.dart';
-import 'package:Dream247/core/api_server_constants/api_server_impl/api_impl_header.dart';
-import 'package:Dream247/core/app_constants/app_colors.dart';
-import 'package:Dream247/core/global_widgets/common_shimmer_view_widget.dart';
-import 'package:Dream247/core/global_widgets/no_data_widget.dart';
-import 'package:Dream247/features/upcoming_matches/data/models/all_contests_model.dart';
-import 'package:Dream247/features/upcoming_matches/data/models/team_type_model.dart';
-import 'package:Dream247/features/upcoming_matches/data/upcoming_match_datsource.dart';
-import 'package:Dream247/features/upcoming_matches/domain/use_cases/upcoming_match_usecase.dart';
-import 'package:Dream247/features/upcoming_matches/presentation/widgets/contest_shimmer_view_widget.dart';
-import 'package:Dream247/features/upcoming_matches/presentation/widgets/my_contest_list_view.dart';
-import 'package:Dream247/features/upcoming_matches/presentation/widgets/team_type_widget.dart';
+import 'package:unified_dream247/features/fantasy/core/api_server_constants/api_server_impl/api_impl.dart';
+import 'package:unified_dream247/features/fantasy/core/api_server_constants/api_server_impl/api_impl_header.dart';
+import 'package:unified_dream247/features/fantasy/core/app_constants/app_colors.dart';
+import 'package:unified_dream247/features/fantasy/core/global_widgets/common_shimmer_view_widget.dart';
+import 'package:unified_dream247/features/fantasy/core/global_widgets/no_data_widget.dart';
+import 'package:unified_dream247/features/fantasy/features/upcoming_matches/data/models/all_contests_model.dart';
+import 'package:unified_dream247/features/fantasy/features/upcoming_matches/data/models/team_type_model.dart';
+import 'package:unified_dream247/features/fantasy/features/upcoming_matches/data/upcoming_match_datsource.dart';
+import 'package:unified_dream247/features/fantasy/features/upcoming_matches/domain/use_cases/upcoming_match_usecase.dart';
+import 'package:unified_dream247/features/fantasy/features/upcoming_matches/presentation/widgets/contest_shimmer_view_widget.dart';
+import 'package:unified_dream247/features/fantasy/features/upcoming_matches/presentation/widgets/my_contest_list_view.dart';
+import 'package:unified_dream247/features/fantasy/features/upcoming_matches/presentation/widgets/team_type_widget.dart';
 
 class MyContests extends StatefulWidget {
   final String? teamType;

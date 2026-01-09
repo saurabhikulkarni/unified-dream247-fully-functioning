@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:Dream247/features/landing/data/models/banners_get_set.dart';
+import 'package:unified_dream247/features/fantasy/features/landing/data/models/banners_get_set.dart';
 
 abstract class OnboardingRepositories {
   Future<Map<String, dynamic>?> sendOtp(

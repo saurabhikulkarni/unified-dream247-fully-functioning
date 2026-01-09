@@ -1,23 +1,23 @@
 // ignore_for_file: use_build_context_synchronously
 import 'dart:async';
 import 'dart:io';
-import 'package:Dream247/core/utils/apk_referral_helper.dart';
+import 'package:unified_dream247/features/fantasy/core/utils/apk_referral_helper.dart';
 import 'package:flutter/material.dart';
-import 'package:Dream247/features/onboarding/presentation/screens/onboard_banner_screen.dart';
+import 'package:unified_dream247/features/fantasy/features/onboarding/presentation/screens/onboard_banner_screen.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:Dream247/core/api_server_constants/api_server_impl/api_impl.dart';
-import 'package:Dream247/core/api_server_constants/api_server_impl/api_impl_header.dart';
-import 'package:Dream247/core/app_constants/app_colors.dart';
-import 'package:Dream247/core/app_constants/app_storage_keys.dart';
-import 'package:Dream247/core/app_constants/images.dart';
-import 'package:Dream247/core/utils/app_storage.dart';
-import 'package:Dream247/features/landing/data/home_datasource.dart';
-import 'package:Dream247/features/landing/data/singleton/app_singleton.dart';
-import 'package:Dream247/features/landing/domain/use_cases/home_usecases.dart';
-import 'package:Dream247/features/onboarding/data/onboarding_datasource.dart';
-import 'package:Dream247/features/onboarding/domain/use_cases/onboarding_usecases.dart';
-import 'package:Dream247/features/onboarding/presentation/widgets/app_update_dialog.dart';
-import 'package:Dream247/features/onboarding/presentation/widgets/maintenance_dialog.dart';
+import 'package:unified_dream247/features/fantasy/core/api_server_constants/api_server_impl/api_impl.dart';
+import 'package:unified_dream247/features/fantasy/core/api_server_constants/api_server_impl/api_impl_header.dart';
+import 'package:unified_dream247/features/fantasy/core/app_constants/app_colors.dart';
+import 'package:unified_dream247/features/fantasy/core/app_constants/app_storage_keys.dart';
+import 'package:unified_dream247/features/fantasy/core/app_constants/images.dart';
+import 'package:unified_dream247/features/fantasy/core/utils/app_storage.dart';
+import 'package:unified_dream247/features/fantasy/features/landing/data/home_datasource.dart';
+import 'package:unified_dream247/features/fantasy/features/landing/data/singleton/app_singleton.dart';
+import 'package:unified_dream247/features/fantasy/features/landing/domain/use_cases/home_usecases.dart';
+import 'package:unified_dream247/features/fantasy/features/onboarding/data/onboarding_datasource.dart';
+import 'package:unified_dream247/features/fantasy/features/onboarding/domain/use_cases/onboarding_usecases.dart';
+import 'package:unified_dream247/features/fantasy/features/onboarding/presentation/widgets/app_update_dialog.dart';
+import 'package:unified_dream247/features/fantasy/features/onboarding/presentation/widgets/maintenance_dialog.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});

@@ -1,8 +1,8 @@
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/material.dart';
-import 'package:Dream247/core/app_constants/app_colors.dart';
-import 'package:Dream247/core/app_constants/strings.dart';
-import 'package:Dream247/core/global_widgets/sub_container.dart';
+import 'package:unified_dream247/features/fantasy/core/app_constants/app_colors.dart';
+import 'package:unified_dream247/features/fantasy/core/app_constants/strings.dart';
+import 'package:unified_dream247/features/fantasy/core/global_widgets/sub_container.dart';
 
 class ReferUsersList extends StatefulWidget {
   const ReferUsersList({super.key});

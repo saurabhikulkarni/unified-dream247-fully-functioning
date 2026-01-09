@@ -1,7 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 import 'package:flutter/material.dart';
-import 'package:Dream247/core/app_constants/app_colors.dart';
-import 'package:Dream247/features/landing/data/singleton/app_singleton.dart';
+import 'package:unified_dream247/features/fantasy/core/app_constants/app_colors.dart';
+import 'package:unified_dream247/features/fantasy/features/landing/data/singleton/app_singleton.dart';
 
 class WalletTransferWidget extends StatefulWidget {
   final String? amount;

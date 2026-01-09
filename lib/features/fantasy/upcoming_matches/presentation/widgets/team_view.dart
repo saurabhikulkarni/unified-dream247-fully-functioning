@@ -1,22 +1,22 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'package:Dream247/core/global_widgets/safe_network_image.dart';
+import 'package:unified_dream247/features/fantasy/core/global_widgets/safe_network_image.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:Dream247/core/api_server_constants/api_server_impl/api_impl.dart';
-import 'package:Dream247/core/api_server_constants/api_server_impl/api_impl_header.dart';
-import 'package:Dream247/core/app_constants/app_colors.dart';
-import 'package:Dream247/core/app_constants/app_pages.dart';
-import 'package:Dream247/core/app_constants/images.dart';
-import 'package:Dream247/core/global_widgets/main_container.dart';
-import 'package:Dream247/features/landing/data/singleton/app_singleton.dart';
-import 'package:Dream247/features/menu_items/presentation/providers/user_data_provider.dart';
-import 'package:Dream247/features/upcoming_matches/data/models/teams_model.dart';
-import 'package:Dream247/features/upcoming_matches/data/models/user_teams_model.dart';
-import 'package:Dream247/features/upcoming_matches/data/upcoming_match_datsource.dart';
-import 'package:Dream247/features/upcoming_matches/domain/use_cases/upcoming_match_usecase.dart';
+import 'package:unified_dream247/features/fantasy/core/api_server_constants/api_server_impl/api_impl.dart';
+import 'package:unified_dream247/features/fantasy/core/api_server_constants/api_server_impl/api_impl_header.dart';
+import 'package:unified_dream247/features/fantasy/core/app_constants/app_colors.dart';
+import 'package:unified_dream247/features/fantasy/core/app_constants/app_pages.dart';
+import 'package:unified_dream247/features/fantasy/core/app_constants/images.dart';
+import 'package:unified_dream247/features/fantasy/core/global_widgets/main_container.dart';
+import 'package:unified_dream247/features/fantasy/features/landing/data/singleton/app_singleton.dart';
+import 'package:unified_dream247/features/fantasy/features/menu_items/presentation/providers/user_data_provider.dart';
+import 'package:unified_dream247/features/fantasy/features/upcoming_matches/data/models/teams_model.dart';
+import 'package:unified_dream247/features/fantasy/features/upcoming_matches/data/models/user_teams_model.dart';
+import 'package:unified_dream247/features/fantasy/features/upcoming_matches/data/upcoming_match_datsource.dart';
+import 'package:unified_dream247/features/fantasy/features/upcoming_matches/domain/use_cases/upcoming_match_usecase.dart';
 
 class TeamView extends StatefulWidget {
   final String teamType;

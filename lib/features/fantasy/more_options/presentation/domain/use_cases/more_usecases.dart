@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:Dream247/features/more_options/presentation/data/models/fantasy_points_system_model.dart';
-import 'package:Dream247/features/more_options/presentation/domain/repositories/more_repositories.dart';
+import 'package:unified_dream247/features/fantasy/features/more_options/presentation/data/models/fantasy_points_system_model.dart';
+import 'package:unified_dream247/features/fantasy/features/more_options/presentation/domain/repositories/more_repositories.dart';
 
 class MoreUsecases {
   MoreRepositories moreRepositories;

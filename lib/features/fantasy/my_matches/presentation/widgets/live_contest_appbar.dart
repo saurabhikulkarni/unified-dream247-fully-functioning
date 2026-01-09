@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:Dream247/core/app_constants/app_colors.dart';
-import 'package:Dream247/core/app_constants/app_pages.dart';
-import 'package:Dream247/core/app_constants/images.dart';
-import 'package:Dream247/features/accounts/presentation/screens/my_balance_page.dart';
-import 'package:Dream247/features/my_matches/presentation/widgets/live_contest_timer.dart';
+import 'package:unified_dream247/features/fantasy/core/app_constants/app_colors.dart';
+import 'package:unified_dream247/features/fantasy/core/app_constants/app_pages.dart';
+import 'package:unified_dream247/features/fantasy/core/app_constants/images.dart';
+import 'package:unified_dream247/features/fantasy/features/accounts/presentation/screens/my_balance_page.dart';
+import 'package:unified_dream247/features/fantasy/features/my_matches/presentation/widgets/live_contest_timer.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class LiveContestAppBar extends StatelessWidget implements PreferredSizeWidget {

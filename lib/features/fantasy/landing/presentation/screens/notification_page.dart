@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:Dream247/core/app_constants/app_colors.dart';
-import 'package:Dream247/core/app_constants/images.dart';
-import 'package:Dream247/core/app_constants/strings.dart';
-import 'package:Dream247/core/global_widgets/common_shimmer_view_widget.dart';
-import 'package:Dream247/core/global_widgets/sub_container.dart';
-import 'package:Dream247/core/utils/app_utils.dart';
-import 'package:Dream247/features/landing/data/models/notification_model.dart';
+import 'package:unified_dream247/features/fantasy/core/app_constants/app_colors.dart';
+import 'package:unified_dream247/features/fantasy/core/app_constants/images.dart';
+import 'package:unified_dream247/features/fantasy/core/app_constants/strings.dart';
+import 'package:unified_dream247/features/fantasy/core/global_widgets/common_shimmer_view_widget.dart';
+import 'package:unified_dream247/features/fantasy/core/global_widgets/sub_container.dart';
+import 'package:unified_dream247/features/fantasy/core/utils/app_utils.dart';
+import 'package:unified_dream247/features/fantasy/features/landing/data/models/notification_model.dart';
 
 class NotificationPage extends StatefulWidget {
   const NotificationPage({super.key});

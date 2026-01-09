@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:Dream247/core/utils/app_storage.dart';
-import 'package:Dream247/features/my_matches/data/models/match_livescore_model.dart';
+import 'package:unified_dream247/features/fantasy/core/utils/app_storage.dart';
+import 'package:unified_dream247/features/fantasy/features/my_matches/data/models/match_livescore_model.dart';
 
 class LiveScoreProvider extends ChangeNotifier {
   final Map<String, List<MatchLiveScoreModel>> _liveScore = {};

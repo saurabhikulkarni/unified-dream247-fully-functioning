@@ -1,5 +1,5 @@
-import 'package:Dream247/core/utils/model_parsers.dart';
-import 'package:Dream247/features/landing/data/models/games_get_set.dart';
+import 'package:unified_dream247/features/fantasy/core/utils/model_parsers.dart';
+import 'package:unified_dream247/features/fantasy/features/landing/data/models/games_get_set.dart';
 
 class AppVersionResponse {
   int? version;

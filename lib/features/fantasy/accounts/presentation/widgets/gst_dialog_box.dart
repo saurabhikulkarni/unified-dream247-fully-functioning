@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:Dream247/core/app_constants/app_colors.dart';
-import 'package:Dream247/core/app_constants/strings.dart';
-import 'package:Dream247/features/accounts/presentation/widgets/gst_container.dart';
+import 'package:unified_dream247/features/fantasy/core/app_constants/app_colors.dart';
+import 'package:unified_dream247/features/fantasy/core/app_constants/strings.dart';
+import 'package:unified_dream247/features/fantasy/features/accounts/presentation/widgets/gst_container.dart';
 
 class GstDialogBox extends StatefulWidget {
   final String amount;

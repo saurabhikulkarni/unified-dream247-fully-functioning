@@ -1,8 +1,8 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
-import 'package:Dream247/features/user_verification/data/models/kyc_detail_model.dart';
-import 'package:Dream247/features/user_verification/domain/repositories/verification_repositories.dart';
+import 'package:unified_dream247/features/fantasy/features/user_verification/data/models/kyc_detail_model.dart';
+import 'package:unified_dream247/features/fantasy/features/user_verification/domain/repositories/verification_repositories.dart';
 
 class VerificationUsecases {
   VerificationRepositories verificationRepositories;

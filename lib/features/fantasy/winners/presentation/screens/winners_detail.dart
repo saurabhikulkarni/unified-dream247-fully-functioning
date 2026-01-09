@@ -2,21 +2,21 @@
 
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/material.dart';
-import 'package:Dream247/core/api_server_constants/api_server_impl/api_impl_header.dart';
-import 'package:Dream247/core/api_server_constants/api_server_urls.dart';
-import 'package:Dream247/core/app_constants/app_colors.dart';
-import 'package:Dream247/core/app_constants/app_pages.dart';
-import 'package:Dream247/core/app_constants/images.dart';
-import 'package:Dream247/core/app_constants/strings.dart';
-import 'package:Dream247/core/global_widgets/main_container.dart';
-import 'package:Dream247/core/global_widgets/sub_container.dart';
-import 'package:Dream247/core/utils/app_utils.dart';
-import 'package:Dream247/features/my_matches/data/my_matches_datasource.dart';
-import 'package:Dream247/features/my_matches/domain/use_cases/my_matches_usecases.dart';
-import 'package:Dream247/features/upcoming_matches/data/models/user_teams_model.dart';
-import 'package:Dream247/features/winners/data/models/winners_model.dart';
-import 'package:Dream247/features/winners/data/winners_datasource.dart';
-import 'package:Dream247/features/winners/domain/use_cases/winners_usecases.dart';
+import 'package:unified_dream247/features/fantasy/core/api_server_constants/api_server_impl/api_impl_header.dart';
+import 'package:unified_dream247/features/fantasy/core/api_server_constants/api_server_urls.dart';
+import 'package:unified_dream247/features/fantasy/core/app_constants/app_colors.dart';
+import 'package:unified_dream247/features/fantasy/core/app_constants/app_pages.dart';
+import 'package:unified_dream247/features/fantasy/core/app_constants/images.dart';
+import 'package:unified_dream247/features/fantasy/core/app_constants/strings.dart';
+import 'package:unified_dream247/features/fantasy/core/global_widgets/main_container.dart';
+import 'package:unified_dream247/features/fantasy/core/global_widgets/sub_container.dart';
+import 'package:unified_dream247/features/fantasy/core/utils/app_utils.dart';
+import 'package:unified_dream247/features/fantasy/features/my_matches/data/my_matches_datasource.dart';
+import 'package:unified_dream247/features/fantasy/features/my_matches/domain/use_cases/my_matches_usecases.dart';
+import 'package:unified_dream247/features/fantasy/features/upcoming_matches/data/models/user_teams_model.dart';
+import 'package:unified_dream247/features/fantasy/features/winners/data/models/winners_model.dart';
+import 'package:unified_dream247/features/fantasy/features/winners/data/winners_datasource.dart';
+import 'package:unified_dream247/features/fantasy/features/winners/domain/use_cases/winners_usecases.dart';
 
 class WinnersDetail extends StatefulWidget {
   final WinnersModel? data;

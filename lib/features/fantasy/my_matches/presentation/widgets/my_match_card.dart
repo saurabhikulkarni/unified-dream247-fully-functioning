@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:Dream247/core/app_constants/app_colors.dart';
-import 'package:Dream247/core/app_constants/app_pages.dart';
-import 'package:Dream247/core/app_constants/images.dart';
-import 'package:Dream247/core/app_constants/strings.dart';
-import 'package:Dream247/core/utils/app_utils.dart';
-import 'package:Dream247/features/landing/data/models/match_list_model.dart';
-import 'package:Dream247/features/landing/data/singleton/app_singleton.dart';
-import 'package:Dream247/features/my_matches/data/models/my_matches_model.dart';
+import 'package:unified_dream247/features/fantasy/core/app_constants/app_colors.dart';
+import 'package:unified_dream247/features/fantasy/core/app_constants/app_pages.dart';
+import 'package:unified_dream247/features/fantasy/core/app_constants/images.dart';
+import 'package:unified_dream247/features/fantasy/core/app_constants/strings.dart';
+import 'package:unified_dream247/features/fantasy/core/utils/app_utils.dart';
+import 'package:unified_dream247/features/fantasy/features/landing/data/models/match_list_model.dart';
+import 'package:unified_dream247/features/fantasy/features/landing/data/singleton/app_singleton.dart';
+import 'package:unified_dream247/features/fantasy/features/my_matches/data/models/my_matches_model.dart';
 
 class MyMatchCard extends StatefulWidget {
   final MyMatchesModel data;

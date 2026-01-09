@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:Dream247/core/global_widgets/sub_container.dart';
+import 'package:unified_dream247/features/fantasy/core/global_widgets/sub_container.dart';
 
 class PaymentWebViewScreen extends StatefulWidget {
   final String htmlContent;

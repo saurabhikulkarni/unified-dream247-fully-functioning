@@ -4,16 +4,16 @@ import 'dart:math';
 
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/material.dart';
-import 'package:Dream247/core/api_server_constants/api_server_impl/api_impl_header.dart';
-import 'package:Dream247/core/app_constants/app_colors.dart';
-import 'package:Dream247/core/app_constants/images.dart';
-import 'package:Dream247/core/app_constants/strings.dart';
-import 'package:Dream247/core/global_widgets/cached_images.dart';
-import 'package:Dream247/core/global_widgets/sub_container.dart';
-import 'package:Dream247/features/my_matches/data/models/team_compare_model.dart';
-import 'package:Dream247/features/my_matches/data/my_matches_datasource.dart';
-import 'package:Dream247/features/my_matches/domain/use_cases/my_matches_usecases.dart';
-import 'package:Dream247/features/my_matches/presentation/widgets/team_compare_shimmer.dart';
+import 'package:unified_dream247/features/fantasy/core/api_server_constants/api_server_impl/api_impl_header.dart';
+import 'package:unified_dream247/features/fantasy/core/app_constants/app_colors.dart';
+import 'package:unified_dream247/features/fantasy/core/app_constants/images.dart';
+import 'package:unified_dream247/features/fantasy/core/app_constants/strings.dart';
+import 'package:unified_dream247/features/fantasy/core/global_widgets/cached_images.dart';
+import 'package:unified_dream247/features/fantasy/core/global_widgets/sub_container.dart';
+import 'package:unified_dream247/features/fantasy/features/my_matches/data/models/team_compare_model.dart';
+import 'package:unified_dream247/features/fantasy/features/my_matches/data/my_matches_datasource.dart';
+import 'package:unified_dream247/features/fantasy/features/my_matches/domain/use_cases/my_matches_usecases.dart';
+import 'package:unified_dream247/features/fantasy/features/my_matches/presentation/widgets/team_compare_shimmer.dart';
 
 class TeamCompare extends StatefulWidget {
   final String team1Id;

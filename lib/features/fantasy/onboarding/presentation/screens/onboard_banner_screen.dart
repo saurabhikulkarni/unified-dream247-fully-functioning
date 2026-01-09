@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:Dream247/core/api_server_constants/api_server_impl/api_impl.dart';
-import 'package:Dream247/core/app_constants/app_colors.dart';
-import 'package:Dream247/core/app_constants/app_pages.dart';
-import 'package:Dream247/features/landing/data/models/banners_get_set.dart';
-import 'package:Dream247/features/onboarding/data/onboarding_datasource.dart';
-import 'package:Dream247/features/onboarding/domain/use_cases/onboarding_usecases.dart';
+import 'package:unified_dream247/features/fantasy/core/api_server_constants/api_server_impl/api_impl.dart';
+import 'package:unified_dream247/features/fantasy/core/app_constants/app_colors.dart';
+import 'package:unified_dream247/features/fantasy/core/app_constants/app_pages.dart';
+import 'package:unified_dream247/features/fantasy/features/landing/data/models/banners_get_set.dart';
+import 'package:unified_dream247/features/fantasy/features/onboarding/data/onboarding_datasource.dart';
+import 'package:unified_dream247/features/fantasy/features/onboarding/domain/use_cases/onboarding_usecases.dart';
 
 class OnboardBannerScreen extends StatefulWidget {
   final bool isLoggedIn;

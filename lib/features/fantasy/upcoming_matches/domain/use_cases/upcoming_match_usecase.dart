@@ -1,13 +1,13 @@
-import 'package:Dream247/features/upcoming_matches/data/models/leaderboard_model.dart';
+import 'package:unified_dream247/features/fantasy/features/upcoming_matches/data/models/leaderboard_model.dart';
 import 'package:flutter/material.dart';
-import 'package:Dream247/features/upcoming_matches/data/models/all_contests_model.dart';
-import 'package:Dream247/features/upcoming_matches/data/models/expert_advice_model.dart';
-import 'package:Dream247/features/upcoming_matches/data/models/guru_teams_model.dart';
-import 'package:Dream247/features/upcoming_matches/data/models/players_model.dart';
-import 'package:Dream247/features/upcoming_matches/data/models/team_type_model.dart';
-import 'package:Dream247/features/upcoming_matches/data/models/teams_model.dart';
-import 'package:Dream247/features/upcoming_matches/data/models/user_teams_model.dart';
-import 'package:Dream247/features/upcoming_matches/domain/repositories/upcoming_match_repositories.dart';
+import 'package:unified_dream247/features/fantasy/features/upcoming_matches/data/models/all_contests_model.dart';
+import 'package:unified_dream247/features/fantasy/features/upcoming_matches/data/models/expert_advice_model.dart';
+import 'package:unified_dream247/features/fantasy/features/upcoming_matches/data/models/guru_teams_model.dart';
+import 'package:unified_dream247/features/fantasy/features/upcoming_matches/data/models/players_model.dart';
+import 'package:unified_dream247/features/fantasy/features/upcoming_matches/data/models/team_type_model.dart';
+import 'package:unified_dream247/features/fantasy/features/upcoming_matches/data/models/teams_model.dart';
+import 'package:unified_dream247/features/fantasy/features/upcoming_matches/data/models/user_teams_model.dart';
+import 'package:unified_dream247/features/fantasy/features/upcoming_matches/domain/repositories/upcoming_match_repositories.dart';
 
 class UpcomingMatchUsecase {
   UpcomingMatchRepositories upcomingMatchRepositories;

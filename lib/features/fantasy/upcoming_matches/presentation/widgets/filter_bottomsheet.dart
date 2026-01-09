@@ -1,8 +1,8 @@
 // import 'package:flutter/material.dart';
 // import 'package:google_fonts/google_fonts.dart';
-// import 'package:Dream247/core/app_constants/app_colors.dart';
-// import 'package:Dream247/core/app_constants/strings.dart';
-// import 'package:Dream247/core/global_widgets/main_button.dart';
+// import 'package:unified_dream247/features/fantasy/core/app_constants/app_colors.dart';
+// import 'package:unified_dream247/features/fantasy/core/app_constants/strings.dart';
+// import 'package:unified_dream247/features/fantasy/core/global_widgets/main_button.dart';
 
 // class FilterBottomSheet extends StatefulWidget {
 //   final Function(Set<String>) onApplyFilters;
@@ -242,11 +242,11 @@
 //   }
 // }
 
-import 'package:Dream247/core/app_constants/images.dart';
+import 'package:unified_dream247/features/fantasy/core/app_constants/images.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:Dream247/core/app_constants/app_colors.dart';
-import 'package:Dream247/core/app_constants/strings.dart';
+import 'package:unified_dream247/features/fantasy/core/app_constants/app_colors.dart';
+import 'package:unified_dream247/features/fantasy/core/app_constants/strings.dart';
 
 class FilterBottomSheet extends StatefulWidget {
   final Function(Set<String>) onApplyFilters;

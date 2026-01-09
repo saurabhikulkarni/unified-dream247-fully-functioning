@@ -2,15 +2,15 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:Dream247/core/api_server_constants/api_server_impl/api_impl_header.dart';
-import 'package:Dream247/core/api_server_constants/api_server_keys.dart';
-import 'package:Dream247/core/api_server_constants/api_server_urls.dart';
-import 'package:Dream247/core/api_server_constants/api_server_utils.dart';
-import 'package:Dream247/core/app_constants/app_storage_keys.dart';
-import 'package:Dream247/features/accounts/presentation/providers/wallet_details_provider.dart';
-import 'package:Dream247/features/user_verification/data/models/kyc_detail_model.dart';
-import 'package:Dream247/features/user_verification/domain/repositories/verification_repositories.dart';
-import 'package:Dream247/features/user_verification/presentation/providers/kyc_details_provider.dart';
+import 'package:unified_dream247/features/fantasy/core/api_server_constants/api_server_impl/api_impl_header.dart';
+import 'package:unified_dream247/features/fantasy/core/api_server_constants/api_server_keys.dart';
+import 'package:unified_dream247/features/fantasy/core/api_server_constants/api_server_urls.dart';
+import 'package:unified_dream247/features/fantasy/core/api_server_constants/api_server_utils.dart';
+import 'package:unified_dream247/features/fantasy/core/app_constants/app_storage_keys.dart';
+import 'package:unified_dream247/features/fantasy/features/accounts/presentation/providers/wallet_details_provider.dart';
+import 'package:unified_dream247/features/fantasy/features/user_verification/data/models/kyc_detail_model.dart';
+import 'package:unified_dream247/features/fantasy/features/user_verification/domain/repositories/verification_repositories.dart';
+import 'package:unified_dream247/features/fantasy/features/user_verification/presentation/providers/kyc_details_provider.dart';
 
 class VerificationDatasource implements VerificationRepositories {
   ApiImplWithAccessToken clientWithToken;
