@@ -231,13 +231,7 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
                       const SizedBox(height: 16),
                       ElevatedButton(
                         onPressed: () {
-                          final userId = _userService.getUserId();
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => FantasyHomePage(userId: userId),
-                            ),
-                          );
+                          context.go('/fantasy/home');
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.white,
@@ -294,13 +288,7 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
                 end: Alignment.bottomRight,
               ),
               onTap: () {
-                final userId = _userService.getUserId();
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => FantasyHomePage(userId: userId),
-                  ),
-                );
+                context.go('/fantasy/home');
               },
             ),
           ),
@@ -319,13 +307,7 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
                 end: Alignment.bottomRight,
               ),
               onTap: () {
-                final userId = _userService.getUserId();
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ShopHomeScreen(userId: userId),
-                  ),
-                );
+                context.go('/shop/home');
               },
             ),
           ),

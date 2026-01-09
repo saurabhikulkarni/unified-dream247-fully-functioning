@@ -3,9 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-// import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_core/firebase_core.dart';
 // import 'package:firebase_messaging/firebase_messaging.dart';
-// import 'firebase_options.dart';
+import 'firebase_options.dart';
 import 'app.dart';
 import 'core/di/injection_container.dart';
 import 'core/services/auth_service.dart';
@@ -45,10 +45,10 @@ void main() async {
     }
 
     // Initialize Firebase (for fantasy features)
-    // Uncomment when Firebase configuration files are added
-    // await Firebase.initializeApp(
-    //   options: DefaultFirebaseOptions.currentPlatform,
-    // );
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    // Uncomment when FCM service is implemented
     // await FCMService.init();
 
     // Initialize dependency injection
