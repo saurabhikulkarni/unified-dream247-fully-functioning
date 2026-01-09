@@ -2,7 +2,15 @@
 
 A comprehensive Flutter application that merges e-commerce functionality and fantasy gaming features into a single unified application with shared authentication and a central dashboard.
 
-## 🎯 Integration Status
+## 📢 IMPORTANT: Integration Status
+
+**Overall Completion: 🎯 90% Complete**
+
+This repository provides a **production-ready foundation** with all infrastructure, services, and architecture implemented. The remaining 10% requires access to private source repositories for screen implementations and assets.
+
+👉 **See [IMPLEMENTATION_GUIDE.md](./IMPLEMENTATION_GUIDE.md) for complete step-by-step integration instructions.**
+
+## 🎯 What's Included
 
 **Core Infrastructure: ✅ 100% Complete**
 
@@ -18,12 +26,17 @@ This repository contains a fully-integrated foundation for both ecommerce and fa
 - **Navigation**: Unified home screen connects to Shop and Fantasy features
 - **App Initialization**: Services, providers, and configurations properly initialized
 
-### 📋 What Needs Source Repository Access
-- Actual screen implementations (currently placeholders exist)
-- All assets (product images, fonts, icons, graphics)
-- Firebase configuration files
+### 📋 What Needs Source Repository Access (10%)
+**Cannot be completed without access to private repositories:**
+- Actual screen implementations from source apps (currently functional placeholders exist)
+- All assets (product images, fonts, icons, graphics, banners)
+- Firebase configuration files (google-services.json, GoogleService-Info.plist)
 
-**See [INTEGRATION_STATUS.md](./INTEGRATION_STATUS.md) for detailed status and completion guide.**
+**Required Source Repositories:**
+1. `saurabhikulkarni/brighthex-dream24-7` (branch: test-user-id) - Shopping app screens & assets
+2. `DeepakPareek-Flutter/Dream247` (branch: deepak_Dev) - Fantasy gaming screens & assets
+
+**📖 See [IMPLEMENTATION_GUIDE.md](./IMPLEMENTATION_GUIDE.md) for detailed completion instructions.**
 
 ## Features
 
