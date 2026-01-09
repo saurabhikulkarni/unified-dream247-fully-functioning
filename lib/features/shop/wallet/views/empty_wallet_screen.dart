@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:unified_dream247/features/shop/../constants.dart';
+import 'package:unified_dream247/features/shop/constants.dart';
 import 'components/wallet_balance_card.dart';
 
 class EmptyWalletScreen extends StatelessWidget {

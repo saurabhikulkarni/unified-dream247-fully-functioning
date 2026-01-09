@@ -10,7 +10,7 @@ import 'package:unified_dream247/features/shop/services/user_service.dart';
 import 'package:unified_dream247/features/shop/services/wishlist_service.dart';
 import 'package:unified_dream247/features/shop/services/cart_service.dart';
 
-import 'package:unified_dream247/features/shop/../constants.dart';
+import 'package:unified_dream247/features/shop/constants.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});

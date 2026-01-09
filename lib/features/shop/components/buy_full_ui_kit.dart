@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../constants.dart';
+import 'package:unified_dream247/features/shop/constants.dart';
 
 class BuyFullKit extends StatefulWidget {
   const BuyFullKit({super.key, required this.images});

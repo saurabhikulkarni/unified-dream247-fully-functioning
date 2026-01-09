@@ -14,7 +14,7 @@ import 'package:unified_dream247/features/shop/services/wishlist_service.dart';
 import 'package:unified_dream247/features/shop/services/user_service.dart';
 import 'package:unified_dream247/features/shop/services/notification_service.dart';
 
-import 'package:unified_dream247/features/shop/../constants.dart';
+import 'package:unified_dream247/features/shop/constants.dart';
 import 'components/product_quantity.dart';
 import 'components/selected_size.dart';
 import 'components/unit_price.dart';

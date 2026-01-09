@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../constants.dart';
+import 'package:unified_dream247/features/shop/constants.dart';
 
 CheckboxThemeData checkboxThemeData = CheckboxThemeData(
   checkColor: WidgetStateProperty.all(Colors.white),
