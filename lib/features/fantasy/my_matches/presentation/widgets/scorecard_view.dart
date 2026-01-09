@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/app_colors.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/images.dart';
-import 'package:unified_dream247/features/fantasy/features/my_matches/data/models/scorecard_model.dart';
+import 'package:unified_dream247/features/fantasy/my_matches/data/models/scorecard_model.dart';
 
 class ScorecardView extends StatelessWidget {
   final ScorecardModel data;

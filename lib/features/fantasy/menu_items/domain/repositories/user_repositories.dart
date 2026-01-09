@@ -1,8 +1,8 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:unified_dream247/features/fantasy/features/menu_items/data/models/level_reward_model.dart';
-import 'package:unified_dream247/features/fantasy/features/menu_items/data/models/refer_users_model.dart';
+import 'package:unified_dream247/features/fantasy/menu_items/data/models/level_reward_model.dart';
+import 'package:unified_dream247/features/fantasy/menu_items/data/models/refer_users_model.dart';
 
 abstract class UserRepositories {
   Future<bool?> getUserDetails(BuildContext context);

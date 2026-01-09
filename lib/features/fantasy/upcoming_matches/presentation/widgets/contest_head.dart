@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/app_colors.dart';
-import 'package:unified_dream247/features/fantasy/features/my_matches/presentation/widgets/live_contest_appbar.dart';
-import 'package:unified_dream247/features/fantasy/features/upcoming_matches/presentation/widgets/upcoming_contest_appbar.dart';
+import 'package:unified_dream247/features/fantasy/my_matches/presentation/widgets/live_contest_appbar.dart';
+import 'package:unified_dream247/features/fantasy/upcoming_matches/presentation/widgets/upcoming_contest_appbar.dart';
 
 class ContestHead extends StatelessWidget {
   final bool showAppBar;

@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:unified_dream247/features/fantasy/features/my_matches/data/models/live_challenges_model.dart';
-import 'package:unified_dream247/features/fantasy/features/my_matches/data/models/match_livescore_model.dart';
-import 'package:unified_dream247/features/fantasy/features/my_matches/data/models/match_player_teams_model.dart';
-import 'package:unified_dream247/features/fantasy/features/my_matches/data/models/my_matches_model.dart';
-import 'package:unified_dream247/features/fantasy/features/my_matches/data/models/player_preview_model.dart';
-import 'package:unified_dream247/features/fantasy/features/my_matches/data/models/scorecard_model.dart';
-import 'package:unified_dream247/features/fantasy/features/my_matches/data/models/team_compare_model.dart';
-import 'package:unified_dream247/features/fantasy/features/my_matches/data/models/team_pdf_range_model.dart';
-import 'package:unified_dream247/features/fantasy/features/my_matches/domain/repositories/my_matches_repositories.dart';
-import 'package:unified_dream247/features/fantasy/features/upcoming_matches/data/models/player_details_model.dart';
-import 'package:unified_dream247/features/fantasy/features/upcoming_matches/data/models/teams_model.dart';
-import 'package:unified_dream247/features/fantasy/features/upcoming_matches/data/models/user_teams_model.dart';
+import 'package:unified_dream247/features/fantasy/my_matches/data/models/live_challenges_model.dart';
+import 'package:unified_dream247/features/fantasy/my_matches/data/models/match_livescore_model.dart';
+import 'package:unified_dream247/features/fantasy/my_matches/data/models/match_player_teams_model.dart';
+import 'package:unified_dream247/features/fantasy/my_matches/data/models/my_matches_model.dart';
+import 'package:unified_dream247/features/fantasy/my_matches/data/models/player_preview_model.dart';
+import 'package:unified_dream247/features/fantasy/my_matches/data/models/scorecard_model.dart';
+import 'package:unified_dream247/features/fantasy/my_matches/data/models/team_compare_model.dart';
+import 'package:unified_dream247/features/fantasy/my_matches/data/models/team_pdf_range_model.dart';
+import 'package:unified_dream247/features/fantasy/my_matches/domain/repositories/my_matches_repositories.dart';
+import 'package:unified_dream247/features/fantasy/upcoming_matches/data/models/player_details_model.dart';
+import 'package:unified_dream247/features/fantasy/upcoming_matches/data/models/teams_model.dart';
+import 'package:unified_dream247/features/fantasy/upcoming_matches/data/models/user_teams_model.dart';
 
 class MyMatchesUsecases {
   MyMatchesRepositories myMatchesRepositories;

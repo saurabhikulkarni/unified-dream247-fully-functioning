@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:unified_dream247/features/fantasy/features/upcoming_matches/data/models/players_model.dart';
+import 'package:unified_dream247/features/fantasy/upcoming_matches/data/models/players_model.dart';
 
 class AllPlayersProvider extends ChangeNotifier {
   List<CreateTeamPlayersData>? _allPlayersList;

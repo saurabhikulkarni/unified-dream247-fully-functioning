@@ -5,13 +5,13 @@ import 'package:unified_dream247/features/fantasy/core/api_server_constants/api_
 import 'package:unified_dream247/features/fantasy/core/app_constants/app_colors.dart';
 import 'package:unified_dream247/features/fantasy/core/global_widgets/common_shimmer_view_widget.dart';
 import 'package:unified_dream247/features/fantasy/core/global_widgets/no_data_widget.dart';
-import 'package:unified_dream247/features/fantasy/features/upcoming_matches/data/models/all_contests_model.dart';
-import 'package:unified_dream247/features/fantasy/features/upcoming_matches/data/models/team_type_model.dart';
-import 'package:unified_dream247/features/fantasy/features/upcoming_matches/data/upcoming_match_datsource.dart';
-import 'package:unified_dream247/features/fantasy/features/upcoming_matches/domain/use_cases/upcoming_match_usecase.dart';
-import 'package:unified_dream247/features/fantasy/features/upcoming_matches/presentation/widgets/contest_shimmer_view_widget.dart';
-import 'package:unified_dream247/features/fantasy/features/upcoming_matches/presentation/widgets/my_contest_list_view.dart';
-import 'package:unified_dream247/features/fantasy/features/upcoming_matches/presentation/widgets/team_type_widget.dart';
+import 'package:unified_dream247/features/fantasy/upcoming_matches/data/models/all_contests_model.dart';
+import 'package:unified_dream247/features/fantasy/upcoming_matches/data/models/team_type_model.dart';
+import 'package:unified_dream247/features/fantasy/upcoming_matches/data/upcoming_match_datsource.dart';
+import 'package:unified_dream247/features/fantasy/upcoming_matches/domain/use_cases/upcoming_match_usecase.dart';
+import 'package:unified_dream247/features/fantasy/upcoming_matches/presentation/widgets/contest_shimmer_view_widget.dart';
+import 'package:unified_dream247/features/fantasy/upcoming_matches/presentation/widgets/my_contest_list_view.dart';
+import 'package:unified_dream247/features/fantasy/upcoming_matches/presentation/widgets/team_type_widget.dart';
 
 class MyContests extends StatefulWidget {
   final String? teamType;

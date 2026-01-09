@@ -9,16 +9,16 @@ import 'package:unified_dream247/features/fantasy/core/api_server_constants/api_
 import 'package:unified_dream247/features/fantasy/core/app_constants/app_colors.dart';
 import 'package:unified_dream247/features/fantasy/core/global_widgets/no_data_widget.dart';
 import 'package:unified_dream247/features/fantasy/core/global_widgets/size_widget.dart';
-import 'package:unified_dream247/features/fantasy/features/landing/data/home_datasource.dart';
-import 'package:unified_dream247/features/fantasy/features/landing/data/models/banners_get_set.dart';
-import 'package:unified_dream247/features/fantasy/features/landing/data/models/joined_matches_model.dart';
-import 'package:unified_dream247/features/fantasy/features/landing/data/models/match_list_model.dart';
-import 'package:unified_dream247/features/fantasy/features/landing/domain/use_cases/home_usecases.dart';
-import 'package:unified_dream247/features/fantasy/features/landing/presentation/widgets/match_card.dart';
-import 'package:unified_dream247/features/fantasy/features/landing/presentation/widgets/match_list_shimmer_widget.dart';
-import 'package:unified_dream247/features/fantasy/features/landing/presentation/widgets/recent_match_card.dart';
-import 'package:unified_dream247/features/fantasy/features/onboarding/data/onboarding_datasource.dart';
-import 'package:unified_dream247/features/fantasy/features/onboarding/domain/use_cases/onboarding_usecases.dart';
+import 'package:unified_dream247/features/fantasy/landing/data/home_datasource.dart';
+import 'package:unified_dream247/features/fantasy/landing/data/models/banners_get_set.dart';
+import 'package:unified_dream247/features/fantasy/landing/data/models/joined_matches_model.dart';
+import 'package:unified_dream247/features/fantasy/landing/data/models/match_list_model.dart';
+import 'package:unified_dream247/features/fantasy/landing/domain/use_cases/home_usecases.dart';
+import 'package:unified_dream247/features/fantasy/landing/presentation/widgets/match_card.dart';
+import 'package:unified_dream247/features/fantasy/landing/presentation/widgets/match_list_shimmer_widget.dart';
+import 'package:unified_dream247/features/fantasy/landing/presentation/widgets/recent_match_card.dart';
+import 'package:unified_dream247/features/fantasy/onboarding/data/onboarding_datasource.dart';
+import 'package:unified_dream247/features/fantasy/onboarding/domain/use_cases/onboarding_usecases.dart';
 
 class HomePage extends StatefulWidget {
   final String? gameType;

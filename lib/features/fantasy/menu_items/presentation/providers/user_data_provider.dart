@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/app_pages.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/app_storage_keys.dart';
 import 'package:unified_dream247/features/fantasy/core/utils/app_storage.dart';
-import 'package:unified_dream247/features/fantasy/features/menu_items/data/models/user_data.dart';
-import 'package:unified_dream247/features/fantasy/features/onboarding/presentation/screens/login_screen.dart';
+import 'package:unified_dream247/features/fantasy/menu_items/data/models/user_data.dart';
+import 'package:unified_dream247/features/fantasy/onboarding/presentation/screens/login_screen.dart';
 
 class UserDataProvider extends ChangeNotifier {
   UserFullDetailsResponse? _userData;

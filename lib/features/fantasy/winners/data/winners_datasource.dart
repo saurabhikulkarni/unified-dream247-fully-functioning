@@ -5,9 +5,9 @@ import 'package:unified_dream247/features/fantasy/core/api_server_constants/api_
 import 'package:unified_dream247/features/fantasy/core/api_server_constants/api_server_urls.dart';
 import 'package:unified_dream247/features/fantasy/core/api_server_constants/api_server_utils.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/app_storage_keys.dart';
-import 'package:unified_dream247/features/fantasy/features/winners/data/models/winners_model.dart';
-import 'package:unified_dream247/features/fantasy/features/winners/data/models/stories_model.dart';
-import 'package:unified_dream247/features/fantasy/features/winners/domain/repositories/winners_repositories.dart';
+import 'package:unified_dream247/features/fantasy/winners/data/models/winners_model.dart';
+import 'package:unified_dream247/features/fantasy/winners/data/models/stories_model.dart';
+import 'package:unified_dream247/features/fantasy/winners/domain/repositories/winners_repositories.dart';
 
 class WinnersDatasource extends WinnersRepositories {
   ApiImplWithAccessToken clientwithToken;

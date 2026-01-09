@@ -9,11 +9,11 @@ import 'package:unified_dream247/features/fantasy/core/app_constants/strings.dar
 import 'package:unified_dream247/features/fantasy/core/global_widgets/common_shimmer_view_widget.dart';
 import 'package:unified_dream247/features/fantasy/core/global_widgets/sub_container.dart';
 import 'package:unified_dream247/features/fantasy/core/utils/app_utils.dart';
-import 'package:unified_dream247/features/fantasy/features/accounts/data/accounts_datasource.dart';
-import 'package:unified_dream247/features/fantasy/features/accounts/data/models/transactions_model.dart';
-import 'package:unified_dream247/features/fantasy/features/accounts/domain/use_cases/accounts_usecases.dart';
-import 'package:unified_dream247/features/fantasy/features/landing/data/singleton/app_singleton.dart';
-import 'package:unified_dream247/features/fantasy/features/menu_items/presentation/providers/user_data_provider.dart';
+import 'package:unified_dream247/features/fantasy/accounts/data/accounts_datasource.dart';
+import 'package:unified_dream247/features/fantasy/accounts/data/models/transactions_model.dart';
+import 'package:unified_dream247/features/fantasy/accounts/domain/use_cases/accounts_usecases.dart';
+import 'package:unified_dream247/features/fantasy/landing/data/singleton/app_singleton.dart';
+import 'package:unified_dream247/features/fantasy/menu_items/presentation/providers/user_data_provider.dart';
 
 class MyTransactions extends StatefulWidget {
   const MyTransactions({super.key});

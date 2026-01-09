@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:unified_dream247/features/fantasy/core/utils/app_storage.dart';
-import 'package:unified_dream247/features/fantasy/features/user_verification/data/models/kyc_detail_model.dart';
+import 'package:unified_dream247/features/fantasy/user_verification/data/models/kyc_detail_model.dart';
 
 class KycDetailsProvider extends ChangeNotifier {
   KycDetailsModel? _kycData;

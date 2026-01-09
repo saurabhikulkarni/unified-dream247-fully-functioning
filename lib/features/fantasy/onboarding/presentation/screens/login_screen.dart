@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/app_colors.dart';
-import 'package:unified_dream247/features/fantasy/features/onboarding/presentation/controllers/login_controller.dart';
+import 'package:unified_dream247/features/fantasy/onboarding/presentation/controllers/login_controller.dart';
 
 // class LoginScreen extends StatelessWidget {
 //   LoginScreen({super.key});

@@ -6,9 +6,9 @@ import 'package:unified_dream247/features/fantasy/core/app_constants/app_colors.
 import 'package:unified_dream247/features/fantasy/core/app_constants/images.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/strings.dart';
 import 'package:unified_dream247/features/fantasy/core/global_widgets/sub_container.dart';
-import 'package:unified_dream247/features/fantasy/features/landing/data/singleton/app_singleton.dart';
-import 'package:unified_dream247/features/fantasy/features/menu_items/presentation/providers/user_data_provider.dart';
-import 'package:unified_dream247/features/fantasy/features/menu_items/presentation/screens/refer_users_list.dart';
+import 'package:unified_dream247/features/fantasy/landing/data/singleton/app_singleton.dart';
+import 'package:unified_dream247/features/fantasy/menu_items/presentation/providers/user_data_provider.dart';
+import 'package:unified_dream247/features/fantasy/menu_items/presentation/screens/refer_users_list.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 

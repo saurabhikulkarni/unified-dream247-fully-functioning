@@ -1,7 +1,7 @@
 import 'package:unified_dream247/features/fantasy/core/app_constants/app_colors.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/images.dart';
-import 'package:unified_dream247/features/fantasy/features/accounts/data/models/token_tier_model.dart';
-import 'package:unified_dream247/features/fantasy/features/accounts/domain/use_cases/accounts_usecases.dart';
+import 'package:unified_dream247/features/fantasy/accounts/data/models/token_tier_model.dart';
+import 'package:unified_dream247/features/fantasy/accounts/domain/use_cases/accounts_usecases.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shimmer/shimmer.dart';

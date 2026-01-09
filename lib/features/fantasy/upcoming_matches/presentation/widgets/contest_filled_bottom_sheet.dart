@@ -8,9 +8,9 @@ import 'package:unified_dream247/features/fantasy/core/app_constants/app_colors.
 import 'package:unified_dream247/features/fantasy/core/app_constants/images.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/strings.dart';
 import 'package:unified_dream247/features/fantasy/core/global_widgets/main_button.dart';
-import 'package:unified_dream247/features/fantasy/features/landing/data/singleton/app_singleton.dart';
-import 'package:unified_dream247/features/fantasy/features/upcoming_matches/data/upcoming_match_datsource.dart';
-import 'package:unified_dream247/features/fantasy/features/upcoming_matches/domain/use_cases/upcoming_match_usecase.dart';
+import 'package:unified_dream247/features/fantasy/landing/data/singleton/app_singleton.dart';
+import 'package:unified_dream247/features/fantasy/upcoming_matches/data/upcoming_match_datsource.dart';
+import 'package:unified_dream247/features/fantasy/upcoming_matches/domain/use_cases/upcoming_match_usecase.dart';
 
 class ContestFilledBottomSheet extends StatefulWidget {
   final String entryFee;

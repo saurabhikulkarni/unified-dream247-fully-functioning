@@ -2,10 +2,10 @@
 import 'package:flutter/material.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/app_colors.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/images.dart';
-import 'package:unified_dream247/features/fantasy/features/landing/data/singleton/app_singleton.dart';
-import 'package:unified_dream247/features/fantasy/features/upcoming_matches/data/models/players_model.dart';
-import 'package:unified_dream247/features/fantasy/features/upcoming_matches/presentation/widgets/player_card_shimmer.dart';
-import 'package:unified_dream247/features/fantasy/features/upcoming_matches/presentation/widgets/player_view.dart';
+import 'package:unified_dream247/features/fantasy/landing/data/singleton/app_singleton.dart';
+import 'package:unified_dream247/features/fantasy/upcoming_matches/data/models/players_model.dart';
+import 'package:unified_dream247/features/fantasy/upcoming_matches/presentation/widgets/player_card_shimmer.dart';
+import 'package:unified_dream247/features/fantasy/upcoming_matches/presentation/widgets/player_view.dart';
 
 class SingleTabPlayer extends StatefulWidget {
   List<CreateTeamPlayersData> list = [];

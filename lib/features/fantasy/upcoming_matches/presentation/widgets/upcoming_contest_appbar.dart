@@ -6,8 +6,8 @@ import 'package:get/get.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/app_colors.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/app_pages.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/images.dart';
-import 'package:unified_dream247/features/fantasy/features/accounts/presentation/screens/my_balance_page.dart';
-import 'package:unified_dream247/features/fantasy/features/upcoming_matches/presentation/widgets/upcoming_contest_timer.dart';
+import 'package:unified_dream247/features/fantasy/accounts/presentation/screens/my_balance_page.dart';
+import 'package:unified_dream247/features/fantasy/upcoming_matches/presentation/widgets/upcoming_contest_timer.dart';
 
 class UpcomingContestAppBar extends StatelessWidget
     implements PreferredSizeWidget {
