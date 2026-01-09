@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:unified_dream247/features/fantasy/features/more_options/presentation/data/models/fantasy_points_system_model.dart';
+import 'package:unified_dream247/features/fantasy/more_options/presentation/data/models/fantasy_points_system_model.dart';
 
 abstract class MoreRepositories {
   Future<List<FantasyPointsSystemData>?>? pointsSystem(BuildContext context);

@@ -6,14 +6,14 @@ import 'package:unified_dream247/features/fantasy/core/api_server_constants/api_
 import 'package:unified_dream247/features/fantasy/core/app_constants/app_colors.dart';
 import 'package:unified_dream247/features/fantasy/core/global_widgets/main_appbar.dart';
 import 'package:unified_dream247/features/fantasy/core/utils/app_utils.dart';
-import 'package:unified_dream247/features/fantasy/features/landing/data/home_datasource.dart';
-import 'package:unified_dream247/features/fantasy/features/landing/domain/use_cases/home_usecases.dart';
-import 'package:unified_dream247/features/fantasy/features/landing/presentation/screens/home_page.dart';
-import 'package:unified_dream247/features/fantasy/features/landing/presentation/widgets/image_popup_dialog.dart';
-import 'package:unified_dream247/features/fantasy/features/menu_items/presentation/screens/app_drawer.dart';
-import 'package:unified_dream247/features/fantasy/features/more_options/presentation/screens/more_options_page.dart';
-import 'package:unified_dream247/features/fantasy/features/my_matches/presentation/screens/my_matches_page.dart';
-import 'package:unified_dream247/features/fantasy/features/winners/presentation/screens/winners_page.dart';
+import 'package:unified_dream247/features/fantasy/landing/data/home_datasource.dart';
+import 'package:unified_dream247/features/fantasy/landing/domain/use_cases/home_usecases.dart';
+import 'package:unified_dream247/features/fantasy/landing/presentation/screens/home_page.dart';
+import 'package:unified_dream247/features/fantasy/landing/presentation/widgets/image_popup_dialog.dart';
+import 'package:unified_dream247/features/fantasy/menu_items/presentation/screens/app_drawer.dart';
+import 'package:unified_dream247/features/fantasy/more_options/presentation/screens/more_options_page.dart';
+import 'package:unified_dream247/features/fantasy/my_matches/presentation/screens/my_matches_page.dart';
+import 'package:unified_dream247/features/fantasy/winners/presentation/screens/winners_page.dart';
 
 class LandingPage extends StatefulWidget {
   final int? index;

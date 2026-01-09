@@ -2,7 +2,7 @@
 
 import 'dart:convert';
 
-import 'package:unified_dream247/features/fantasy/features/accounts/data/models/token_tier_model.dart';
+import 'package:unified_dream247/features/fantasy/accounts/data/models/token_tier_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:unified_dream247/features/fantasy/core/api_server_constants/api_server_impl/api_impl.dart';
@@ -13,17 +13,17 @@ import 'package:unified_dream247/features/fantasy/core/api_server_constants/api_
 import 'package:unified_dream247/features/fantasy/core/app_constants/app_pages.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/app_storage_keys.dart';
 import 'package:unified_dream247/features/fantasy/core/utils/app_storage.dart';
-import 'package:unified_dream247/features/fantasy/features/accounts/data/models/balance_model.dart';
-import 'package:unified_dream247/features/fantasy/features/accounts/data/models/bank_transfer_model.dart';
-import 'package:unified_dream247/features/fantasy/features/accounts/data/models/p2p_payment_done_model.dart';
-import 'package:unified_dream247/features/fantasy/features/accounts/data/models/tds_dashboard_model.dart';
-import 'package:unified_dream247/features/fantasy/features/accounts/data/models/tds_transaction_history_list.dart';
-import 'package:unified_dream247/features/fantasy/features/accounts/data/models/transactions_model.dart';
-import 'package:unified_dream247/features/fantasy/features/accounts/data/models/user_transaction_detail_model.dart';
-import 'package:unified_dream247/features/fantasy/features/accounts/data/models/wallet_payment_done_model.dart';
-import 'package:unified_dream247/features/fantasy/features/accounts/domain/repositories/accounts_repositories.dart';
-import 'package:unified_dream247/features/fantasy/features/accounts/presentation/providers/wallet_details_provider.dart';
-import 'package:unified_dream247/features/fantasy/features/menu_items/data/models/offers_model.dart';
+import 'package:unified_dream247/features/fantasy/accounts/data/models/balance_model.dart';
+import 'package:unified_dream247/features/fantasy/accounts/data/models/bank_transfer_model.dart';
+import 'package:unified_dream247/features/fantasy/accounts/data/models/p2p_payment_done_model.dart';
+import 'package:unified_dream247/features/fantasy/accounts/data/models/tds_dashboard_model.dart';
+import 'package:unified_dream247/features/fantasy/accounts/data/models/tds_transaction_history_list.dart';
+import 'package:unified_dream247/features/fantasy/accounts/data/models/transactions_model.dart';
+import 'package:unified_dream247/features/fantasy/accounts/data/models/user_transaction_detail_model.dart';
+import 'package:unified_dream247/features/fantasy/accounts/data/models/wallet_payment_done_model.dart';
+import 'package:unified_dream247/features/fantasy/accounts/domain/repositories/accounts_repositories.dart';
+import 'package:unified_dream247/features/fantasy/accounts/presentation/providers/wallet_details_provider.dart';
+import 'package:unified_dream247/features/fantasy/menu_items/data/models/offers_model.dart';
 
 class AccountsDatasource implements AccountsRepositories {
   ApiImpl client;

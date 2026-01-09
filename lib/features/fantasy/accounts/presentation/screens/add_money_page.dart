@@ -2,10 +2,10 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:unified_dream247/features/fantasy/core/global_widgets/dashed_underline_text.dart';
-import 'package:unified_dream247/features/fantasy/features/accounts/presentation/widgets/token_tier_bottomsheet.dart';
-import 'package:unified_dream247/features/fantasy/features/menu_items/data/models/user_data.dart';
-import 'package:unified_dream247/features/fantasy/features/menu_items/presentation/providers/user_data_provider.dart';
-import 'package:unified_dream247/features/fantasy/features/more_options/presentation/widgets/web_view.dart';
+import 'package:unified_dream247/features/fantasy/accounts/presentation/widgets/token_tier_bottomsheet.dart';
+import 'package:unified_dream247/features/fantasy/menu_items/data/models/user_data.dart';
+import 'package:unified_dream247/features/fantasy/menu_items/presentation/providers/user_data_provider.dart';
+import 'package:unified_dream247/features/fantasy/more_options/presentation/widgets/web_view.dart';
 import 'package:confetti/confetti.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
@@ -24,11 +24,11 @@ import 'package:unified_dream247/features/fantasy/core/global_widgets/dashed_bor
 import 'package:unified_dream247/features/fantasy/core/global_widgets/main_button.dart';
 import 'package:unified_dream247/features/fantasy/core/global_widgets/sub_container.dart';
 import 'package:unified_dream247/features/fantasy/core/utils/app_utils.dart';
-import 'package:unified_dream247/features/fantasy/features/accounts/data/accounts_datasource.dart';
-import 'package:unified_dream247/features/fantasy/features/accounts/domain/use_cases/accounts_usecases.dart';
-import 'package:unified_dream247/features/fantasy/features/accounts/presentation/providers/wallet_details_provider.dart';
-import 'package:unified_dream247/features/fantasy/features/landing/data/singleton/app_singleton.dart';
-import 'package:unified_dream247/features/fantasy/features/menu_items/data/models/offers_model.dart';
+import 'package:unified_dream247/features/fantasy/accounts/data/accounts_datasource.dart';
+import 'package:unified_dream247/features/fantasy/accounts/domain/use_cases/accounts_usecases.dart';
+import 'package:unified_dream247/features/fantasy/accounts/presentation/providers/wallet_details_provider.dart';
+import 'package:unified_dream247/features/fantasy/landing/data/singleton/app_singleton.dart';
+import 'package:unified_dream247/features/fantasy/menu_items/data/models/offers_model.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 class AddMoneyPage extends StatefulWidget {

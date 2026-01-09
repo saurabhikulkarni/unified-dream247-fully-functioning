@@ -9,18 +9,18 @@ import 'package:unified_dream247/features/fantasy/core/api_server_constants/api_
 import 'package:unified_dream247/features/fantasy/core/app_constants/app_colors.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/app_pages.dart';
 import 'package:unified_dream247/features/fantasy/core/utils/app_utils.dart';
-import 'package:unified_dream247/features/fantasy/features/landing/data/singleton/app_singleton.dart';
-import 'package:unified_dream247/features/fantasy/features/my_matches/data/models/match_livescore_model.dart';
-import 'package:unified_dream247/features/fantasy/features/my_matches/data/my_matches_datasource.dart';
-import 'package:unified_dream247/features/fantasy/features/my_matches/domain/use_cases/my_matches_usecases.dart';
-import 'package:unified_dream247/features/fantasy/features/my_matches/presentation/provider/live_score_provider.dart';
-import 'package:unified_dream247/features/fantasy/features/my_matches/presentation/screens/live_my_contest.dart';
-import 'package:unified_dream247/features/fantasy/features/my_matches/presentation/screens/scorecard.dart';
-import 'package:unified_dream247/features/fantasy/features/my_matches/presentation/screens/player_stats.dart';
-import 'package:unified_dream247/features/fantasy/features/my_matches/presentation/widgets/scoreboard.dart';
-import 'package:unified_dream247/features/fantasy/features/upcoming_matches/data/models/user_teams_model.dart';
-import 'package:unified_dream247/features/fantasy/features/upcoming_matches/presentation/screens/my_teams.dart';
-import 'package:unified_dream247/features/fantasy/features/upcoming_matches/presentation/widgets/contest_head.dart';
+import 'package:unified_dream247/features/fantasy/landing/data/singleton/app_singleton.dart';
+import 'package:unified_dream247/features/fantasy/my_matches/data/models/match_livescore_model.dart';
+import 'package:unified_dream247/features/fantasy/my_matches/data/my_matches_datasource.dart';
+import 'package:unified_dream247/features/fantasy/my_matches/domain/use_cases/my_matches_usecases.dart';
+import 'package:unified_dream247/features/fantasy/my_matches/presentation/provider/live_score_provider.dart';
+import 'package:unified_dream247/features/fantasy/my_matches/presentation/screens/live_my_contest.dart';
+import 'package:unified_dream247/features/fantasy/my_matches/presentation/screens/scorecard.dart';
+import 'package:unified_dream247/features/fantasy/my_matches/presentation/screens/player_stats.dart';
+import 'package:unified_dream247/features/fantasy/my_matches/presentation/widgets/scoreboard.dart';
+import 'package:unified_dream247/features/fantasy/upcoming_matches/data/models/user_teams_model.dart';
+import 'package:unified_dream247/features/fantasy/upcoming_matches/presentation/screens/my_teams.dart';
+import 'package:unified_dream247/features/fantasy/upcoming_matches/presentation/widgets/contest_head.dart';
 
 class LiveMatchDetails extends StatefulWidget {
   final String? mode;

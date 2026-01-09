@@ -18,15 +18,15 @@ import 'package:unified_dream247/features/fantasy/core/global_widgets/main_butto
 import 'package:unified_dream247/features/fantasy/core/global_widgets/sub_container.dart';
 import 'package:unified_dream247/features/fantasy/core/global_widgets/verification_textfield.dart';
 import 'package:unified_dream247/features/fantasy/core/utils/app_utils.dart';
-import 'package:unified_dream247/features/fantasy/features/accounts/presentation/providers/wallet_details_provider.dart';
-import 'package:unified_dream247/features/fantasy/features/menu_items/presentation/providers/user_data_provider.dart';
-import 'package:unified_dream247/features/fantasy/features/user_verification/data/models/kyc_detail_model.dart';
-import 'package:unified_dream247/features/fantasy/features/user_verification/data/verification_datasource.dart';
-import 'package:unified_dream247/features/fantasy/features/user_verification/domain/use_cases/verification_usecases.dart';
-import 'package:unified_dream247/features/fantasy/features/user_verification/presentation/providers/kyc_details_provider.dart';
-import 'package:unified_dream247/features/fantasy/features/user_verification/presentation/widgets/verification_border_widget.dart';
-import 'package:unified_dream247/features/fantasy/features/user_verification/presentation/widgets/verification_shimmer_widget.dart';
-import 'package:unified_dream247/features/fantasy/features/user_verification/presentation/widgets/verification_top_container.dart';
+import 'package:unified_dream247/features/fantasy/accounts/presentation/providers/wallet_details_provider.dart';
+import 'package:unified_dream247/features/fantasy/menu_items/presentation/providers/user_data_provider.dart';
+import 'package:unified_dream247/features/fantasy/user_verification/data/models/kyc_detail_model.dart';
+import 'package:unified_dream247/features/fantasy/user_verification/data/verification_datasource.dart';
+import 'package:unified_dream247/features/fantasy/user_verification/domain/use_cases/verification_usecases.dart';
+import 'package:unified_dream247/features/fantasy/user_verification/presentation/providers/kyc_details_provider.dart';
+import 'package:unified_dream247/features/fantasy/user_verification/presentation/widgets/verification_border_widget.dart';
+import 'package:unified_dream247/features/fantasy/user_verification/presentation/widgets/verification_shimmer_widget.dart';
+import 'package:unified_dream247/features/fantasy/user_verification/presentation/widgets/verification_top_container.dart';
 
 class VerifyDetailsPage extends StatefulWidget {
   const VerifyDetailsPage({super.key});

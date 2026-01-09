@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/app_colors.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/images.dart';
-import 'package:unified_dream247/features/fantasy/features/accounts/presentation/screens/my_balance_page.dart';
+import 'package:unified_dream247/features/fantasy/accounts/presentation/screens/my_balance_page.dart';
 
 class SecondAppbar extends StatelessWidget implements PreferredSizeWidget {
   final bool showWalletIcon;

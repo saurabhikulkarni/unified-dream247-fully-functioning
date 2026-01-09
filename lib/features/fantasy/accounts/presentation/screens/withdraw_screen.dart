@@ -17,16 +17,16 @@ import 'package:unified_dream247/features/fantasy/core/app_constants/strings.dar
 import 'package:unified_dream247/features/fantasy/core/global_widgets/app_toast.dart';
 import 'package:unified_dream247/features/fantasy/core/global_widgets/sub_container.dart';
 import 'package:unified_dream247/features/fantasy/core/utils/model_parsers.dart';
-import 'package:unified_dream247/features/fantasy/features/accounts/data/accounts_datasource.dart';
-import 'package:unified_dream247/features/fantasy/features/accounts/domain/use_cases/accounts_usecases.dart';
-import 'package:unified_dream247/features/fantasy/features/accounts/presentation/providers/wallet_details_provider.dart';
-import 'package:unified_dream247/features/fantasy/features/accounts/presentation/widgets/bank_transfer_widget.dart';
-import 'package:unified_dream247/features/fantasy/features/accounts/presentation/widgets/tds_bottomsheet.dart';
-import 'package:unified_dream247/features/fantasy/features/accounts/presentation/widgets/wallet_transfer_widget.dart';
-import 'package:unified_dream247/features/fantasy/features/landing/data/singleton/app_singleton.dart';
-import 'package:unified_dream247/features/fantasy/features/user_verification/data/models/kyc_detail_model.dart';
-import 'package:unified_dream247/features/fantasy/features/user_verification/data/verification_datasource.dart';
-import 'package:unified_dream247/features/fantasy/features/user_verification/domain/use_cases/verification_usecases.dart';
+import 'package:unified_dream247/features/fantasy/accounts/data/accounts_datasource.dart';
+import 'package:unified_dream247/features/fantasy/accounts/domain/use_cases/accounts_usecases.dart';
+import 'package:unified_dream247/features/fantasy/accounts/presentation/providers/wallet_details_provider.dart';
+import 'package:unified_dream247/features/fantasy/accounts/presentation/widgets/bank_transfer_widget.dart';
+import 'package:unified_dream247/features/fantasy/accounts/presentation/widgets/tds_bottomsheet.dart';
+import 'package:unified_dream247/features/fantasy/accounts/presentation/widgets/wallet_transfer_widget.dart';
+import 'package:unified_dream247/features/fantasy/landing/data/singleton/app_singleton.dart';
+import 'package:unified_dream247/features/fantasy/user_verification/data/models/kyc_detail_model.dart';
+import 'package:unified_dream247/features/fantasy/user_verification/data/verification_datasource.dart';
+import 'package:unified_dream247/features/fantasy/user_verification/domain/use_cases/verification_usecases.dart';
 
 enum MoneyTransfer { walletTransfer, bankTransfer, p2pTransfer }
 

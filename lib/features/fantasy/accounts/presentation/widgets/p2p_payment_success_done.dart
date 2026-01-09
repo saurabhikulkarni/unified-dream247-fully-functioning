@@ -4,8 +4,8 @@ import 'package:unified_dream247/features/fantasy/core/app_constants/app_colors.
 import 'package:unified_dream247/features/fantasy/core/app_constants/images.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/strings.dart';
 import 'package:unified_dream247/features/fantasy/core/global_widgets/main_button.dart';
-import 'package:unified_dream247/features/fantasy/features/accounts/data/models/p2p_payment_done_model.dart';
-import 'package:unified_dream247/features/fantasy/features/accounts/presentation/widgets/account_global_widget.dart';
+import 'package:unified_dream247/features/fantasy/accounts/data/models/p2p_payment_done_model.dart';
+import 'package:unified_dream247/features/fantasy/accounts/presentation/widgets/account_global_widget.dart';
 
 class PaymentSuccessDoneP2P extends StatefulWidget {
   final P2pPaymentDoneModel? data;

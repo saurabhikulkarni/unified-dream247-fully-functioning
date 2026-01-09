@@ -8,11 +8,11 @@ import 'package:unified_dream247/features/fantasy/core/global_widgets/main_conta
 import 'package:unified_dream247/features/fantasy/core/global_widgets/no_data_widget.dart';
 import 'package:unified_dream247/features/fantasy/core/global_widgets/size_widget.dart';
 import 'package:unified_dream247/features/fantasy/core/utils/app_utils.dart';
-import 'package:unified_dream247/features/fantasy/features/winners/data/models/winners_model.dart';
-import 'package:unified_dream247/features/fantasy/features/winners/data/models/stories_model.dart';
-import 'package:unified_dream247/features/fantasy/features/winners/data/winners_datasource.dart';
-import 'package:unified_dream247/features/fantasy/features/winners/domain/use_cases/winners_usecases.dart';
-import 'package:unified_dream247/features/fantasy/features/winners/presentation/widgets/winner_shimmer.dart';
+import 'package:unified_dream247/features/fantasy/winners/data/models/winners_model.dart';
+import 'package:unified_dream247/features/fantasy/winners/data/models/stories_model.dart';
+import 'package:unified_dream247/features/fantasy/winners/data/winners_datasource.dart';
+import 'package:unified_dream247/features/fantasy/winners/domain/use_cases/winners_usecases.dart';
+import 'package:unified_dream247/features/fantasy/winners/presentation/widgets/winner_shimmer.dart';
 
 class WinnersPage extends StatefulWidget {
   const WinnersPage({super.key});

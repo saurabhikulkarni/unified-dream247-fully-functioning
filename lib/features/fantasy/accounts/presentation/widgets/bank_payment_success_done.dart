@@ -4,8 +4,8 @@ import 'package:unified_dream247/features/fantasy/core/app_constants/app_colors.
 import 'package:unified_dream247/features/fantasy/core/app_constants/images.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/strings.dart';
 import 'package:unified_dream247/features/fantasy/core/global_widgets/main_button.dart';
-import 'package:unified_dream247/features/fantasy/features/accounts/data/models/bank_transfer_model.dart';
-import 'package:unified_dream247/features/fantasy/features/accounts/presentation/widgets/account_global_widget.dart';
+import 'package:unified_dream247/features/fantasy/accounts/data/models/bank_transfer_model.dart';
+import 'package:unified_dream247/features/fantasy/accounts/presentation/widgets/account_global_widget.dart';
 
 class BankPaymentSuccessDone extends StatefulWidget {
   final BankTransferModel? data;

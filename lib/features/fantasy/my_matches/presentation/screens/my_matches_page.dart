@@ -6,11 +6,11 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:unified_dream247/features/fantasy/core/api_server_constants/api_server_impl/api_impl_header.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/app_colors.dart';
 import 'package:unified_dream247/features/fantasy/core/global_widgets/no_data_widget.dart';
-import 'package:unified_dream247/features/fantasy/features/my_matches/data/models/my_matches_model.dart';
-import 'package:unified_dream247/features/fantasy/features/my_matches/data/my_matches_datasource.dart';
-import 'package:unified_dream247/features/fantasy/features/my_matches/domain/use_cases/my_matches_usecases.dart';
-import 'package:unified_dream247/features/fantasy/features/my_matches/presentation/widgets/my_match_card.dart';
-import 'package:unified_dream247/features/fantasy/features/my_matches/presentation/widgets/my_match_shimmer_view_widget.dart';
+import 'package:unified_dream247/features/fantasy/my_matches/data/models/my_matches_model.dart';
+import 'package:unified_dream247/features/fantasy/my_matches/data/my_matches_datasource.dart';
+import 'package:unified_dream247/features/fantasy/my_matches/domain/use_cases/my_matches_usecases.dart';
+import 'package:unified_dream247/features/fantasy/my_matches/presentation/widgets/my_match_card.dart';
+import 'package:unified_dream247/features/fantasy/my_matches/presentation/widgets/my_match_shimmer_view_widget.dart';
 
 class MyMatchesPage extends StatefulWidget {
   final Function(int) updateIndex;
