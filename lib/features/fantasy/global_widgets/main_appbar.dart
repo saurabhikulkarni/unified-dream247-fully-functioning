@@ -1,0 +1,105 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:Dream247/core/app_constants/app_colors.dart';
+import 'package:Dream247/core/app_constants/app_pages.dart';
+import 'package:Dream247/core/app_constants/images.dart';
+import 'package:Dream247/core/utils/app_utils.dart';
+import 'package:Dream247/features/accounts/presentation/screens/my_balance_page.dart';
+import 'package:Dream247/features/menu_items/presentation/providers/user_data_provider.dart';
+import 'package:provider/provider.dart';
+
+class MainAppbar extends StatelessWidget implements PreferredSizeWidget {
+  final String title;
+  final SystemUiOverlayStyle systemUiOverlayStyle = const SystemUiOverlayStyle(
+    statusBarColor: AppColors.white,
+    statusBarIconBrightness: Brightness.light,
+    statusBarBrightness: Brightness.dark,
+  );
+  const MainAppbar({super.key, required this.title});
+
+  @override
+  Widget build(BuildContext context) {
+    final userData =
+        Provider.of<UserDataProvider>(context, listen: true).userData;
+    return Container(
+      decoration: BoxDecoration(gradient: AppColors.appBarGradient),
+      child: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10),
+          child: SizedBox(
+            height: kToolbarHeight,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                // Left profile icon
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: GestureDetector(
+                    onTap: () {
+                      AppUtils.scaffoldKey.currentState?.openDrawer();
+                    },
+                    child: CircleAvatar(
+                      radius: 20,
+                      backgroundColor: AppColors.white.withAlpha(140),
+                      backgroundImage: (userData?.image != null &&
+                              (userData?.image ?? "").isNotEmpty)
+                          ? NetworkImage(userData?.image ?? "")
+                          : const AssetImage(Images.imageDefalutPlayer)
+                              as ImageProvider,
+                    ),
+                  ),
+                ),
+                Image(
+                  image: AssetImage(Images.nameLogo),
+                  color: AppColors.white,
+                  height: 45,
+                  width: 100,
+                  fit: BoxFit.cover,
+                ),
+                // Right side icons
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          AppNavigation.gotoNotificationPage(context);
+                        },
+                        child: Image.asset(
+                          Images.matchToken,
+                          height: 20,
+                        ),
+                      ),
+                      const SizedBox(width: 15),
+                      GestureDetector(
+                        onTap: () {
+                          Get.to(
+                            () => const MyBalancePage(),
+                            transition: Transition.cupertino,
+                          );
+                        },
+                        child: Image.asset(
+                          Images.tokenImage,
+                          // Images.imageWallet,
+                          height: 25.h,
+                          width: 25.w,
+                          // color: AppColors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+}

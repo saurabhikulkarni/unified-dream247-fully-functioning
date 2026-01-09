@@ -1,45 +1,24 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:unified_dream247/features/fantasy/core/utils/app_storage.dart';
+import 'package:unified_dream247/features/fantasy/features/my_matches/data/models/live_challenges_model.dart';
 
-/// Provider for joined live contests
-/// Manages contests user has joined for ongoing matches
 class JoinedLiveContestProvider extends ChangeNotifier {
-  List<Map<String, dynamic>> _contests = [];
-  bool _isLoading = false;
-  String? _error;
+  final Map<String, LiveChallengesModel> _joinedContest = {};
+  String? _matchKey = "";
 
-  List<Map<String, dynamic>> get contests => List.unmodifiable(_contests);
-  bool get isLoading => _isLoading;
-  String? get error => _error;
+  Map<String, LiveChallengesModel> get joinedContest => _joinedContest;
+  String? get matchKey => _matchKey;
 
-  /// Fetch joined contests for a match
-  Future<void> fetchJoinedContests(String matchId) async {
-    _isLoading = true;
-    _error = null;
+  void setjoinedContest(LiveChallengesModel? value, String matchKey) {
+    _joinedContest[matchKey] = value!;
+    _matchKey = matchKey;
     notifyListeners();
-
-    try {
-      // TODO: Implement API call to fetch joined contests
-      await Future.delayed(const Duration(milliseconds: 800));
-      
-      // Mock contests
-      _contests = [];
-      
-      debugPrint('Joined contests fetched for match: $matchId');
-    } catch (e) {
-      _error = 'Error fetching joined contests: $e';
-      debugPrint(_error);
-    } finally {
-      _isLoading = false;
-      notifyListeners();
-    }
   }
 
-  /// Get contest by ID
-  Map<String, dynamic>? getContestById(String contestId) {
-    try {
-      return _contests.firstWhere((c) => c['id'] == contestId);
-    } catch (e) {
-      return null;
-    }
+  void clearjoinedContest() async {
+    _joinedContest.clear();
+    _matchKey = null;
+    await AppStorage.clear();
+    notifyListeners();
   }
 }

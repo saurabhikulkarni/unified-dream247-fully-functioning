@@ -1,39 +1,24 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:unified_dream247/features/fantasy/core/utils/app_storage.dart';
+import 'package:unified_dream247/features/fantasy/features/my_matches/data/models/scorecard_model.dart';
 
-/// Provider for match scorecard
-/// Shows detailed scorecard with innings breakdown
 class ScorecardProvider extends ChangeNotifier {
-  Map<String, dynamic>? _scorecard;
-  bool _isLoading = false;
-  String? _error;
+  final Map<String, List<ScorecardModel>> _scorecard = {};
+  String? _matchKey = "";
 
-  Map<String, dynamic>? get scorecard => _scorecard;
-  bool get isLoading => _isLoading;
-  String? get error => _error;
+  Map<String, List<ScorecardModel>> get scoreCard => _scorecard;
+  String? get matchKey => _matchKey;
 
-  /// Fetch scorecard for a match
-  Future<void> fetchScorecard(String matchId) async {
-    _isLoading = true;
-    _error = null;
+  void setScorecard(List<ScorecardModel>? value, String matchKey) {
+    _scorecard[matchKey] = value ?? [];
+    _matchKey = matchKey;
     notifyListeners();
+  }
 
-    try {
-      // TODO: Implement API call to fetch scorecard
-      await Future.delayed(const Duration(seconds: 1));
-      
-      // Mock scorecard data
-      _scorecard = {
-        'matchId': matchId,
-        'innings': [],
-      };
-      
-      debugPrint('Scorecard fetched for match: $matchId');
-    } catch (e) {
-      _error = 'Error fetching scorecard: $e';
-      debugPrint(_error);
-    } finally {
-      _isLoading = false;
-      notifyListeners();
-    }
+  void clearScoreCard() async {
+    _scorecard.clear();
+    _matchKey = null;
+    await AppStorage.clear();
+    notifyListeners();
   }
 }

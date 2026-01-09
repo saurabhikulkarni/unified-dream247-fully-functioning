@@ -1,81 +1,28 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:unified_dream247/features/fantasy/features/upcoming_matches/data/models/players_model.dart';
 
-/// Provider for all players list
-/// Manages player data for team selection
 class AllPlayersProvider extends ChangeNotifier {
-  List<Map<String, dynamic>> _players = [];
-  bool _isLoading = false;
-  String? _error;
-  String _filterRole = 'ALL';
-  String _filterTeam = 'ALL';
+  List<CreateTeamPlayersData>? _allPlayersList;
 
-  List<Map<String, dynamic>> get players {
-    var filtered = _players;
-    
-    if (_filterRole != 'ALL') {
-      filtered = filtered.where((p) => p['role'] == _filterRole).toList();
-    }
-    
-    if (_filterTeam != 'ALL') {
-      filtered = filtered.where((p) => p['team'] == _filterTeam).toList();
-    }
-    
-    return List.unmodifiable(filtered);
-  }
-  
-  bool get isLoading => _isLoading;
-  String? get error => _error;
-  String get filterRole => _filterRole;
-  String get filterTeam => _filterTeam;
+  List<CreateTeamPlayersData>? get allPlayersList => _allPlayersList;
 
-  /// Fetch players for a match
-  Future<void> fetchPlayers(String matchId) async {
-    _isLoading = true;
-    _error = null;
-    notifyListeners();
-
-    try {
-      // TODO: Implement API call to fetch players
-      await Future.delayed(const Duration(seconds: 1));
-      
-      // Mock players data
-      _players = [];
-      
-      debugPrint('Players fetched for match: $matchId');
-    } catch (e) {
-      _error = 'Error fetching players: $e';
-      debugPrint(_error);
-    } finally {
-      _isLoading = false;
-      notifyListeners();
-    }
-  }
-
-  /// Set role filter
-  void setRoleFilter(String role) {
-    _filterRole = role;
+  setAllPlayers(List<CreateTeamPlayersData>? value) {
+    _allPlayersList = value;
     notifyListeners();
   }
 
-  /// Set team filter
-  void setTeamFilter(String team) {
-    _filterTeam = team;
+  void updateAllPlayers(List<CreateTeamPlayersData>? newallPlayersList) {
+    _allPlayersList = newallPlayersList;
     notifyListeners();
   }
 
-  /// Clear all filters
-  void clearFilters() {
-    _filterRole = 'ALL';
-    _filterTeam = 'ALL';
-    notifyListeners();
-  }
+  void updateSelectedPlayers(CreateTeamPlayersData newallPlayersList) {
+    var newPlayersList = _allPlayersList;
+    newPlayersList
+        ?.firstWhere(
+            (element) => element.playerid == newallPlayersList.playerid)
+        .isSelectedPlayer = newallPlayersList.isSelectedPlayer;
 
-  /// Get player by ID
-  Map<String, dynamic>? getPlayerById(String playerId) {
-    try {
-      return _players.firstWhere((p) => p['id'] == playerId);
-    } catch (e) {
-      return null;
-    }
+    notifyListeners();
   }
 }
