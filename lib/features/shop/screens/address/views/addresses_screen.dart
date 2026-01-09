@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:unified_dream247/features/shop/constants.dart';
 import 'package:unified_dream247/features/shop/route/screen_export.dart';
 import 'package:unified_dream247/features/shop/models/address_model.dart';
@@ -158,7 +159,7 @@ class _AddressesScreenState extends State<AddressesScreen> {
           IconButton(
             icon: const Icon(Icons.add),
             onPressed: () async {
-              final result = await Navigator.pushNamed(context, addAddressScreenRoute);
+              final result = await context.push('/shop/add-address');
               if (result != null && result is Map && result['success'] == true) {
                 // Add small delay to ensure Hygraph has published the address
                 await Future.delayed(const Duration(milliseconds: 500));
@@ -266,21 +267,17 @@ class _AddressesScreenState extends State<AddressesScreen> {
                                 IconButton(
                                   icon: const Icon(Icons.edit_outlined, size: 20),
                                   onPressed: () {
-                                    Navigator.pushNamed(
-                                      context,
-                                      addAddressScreenRoute,
-                                      arguments: {
-                                        'addressId': address.id,
-                                        'fullName': address.fullName,
-                                        'phoneNumber': address.phoneNumber,
-                                        'addressLine1': address.addressLine1,
-                                        'addressLine2': address.addressLine2,
-                                        'pincode': address.pincode,
-                                        'city': address.city,
-                                        'state': address.state,
-                                        'country': address.country,
-                                      },
-                                    ).then((result) {
+                                    context.push('/shop/add-address', extra: {
+                                      'addressId': address.id,
+                                      'fullName': address.fullName,
+                                      'phoneNumber': address.phoneNumber,
+                                      'addressLine1': address.addressLine1,
+                                      'addressLine2': address.addressLine2,
+                                      'pincode': address.pincode,
+                                      'city': address.city,
+                                      'state': address.state,
+                                      'country': address.country,
+                                    }).then((result) {
                                       if (result != null && result is Map && result['success'] == true) {
                                         _loadAddresses();
                                       }

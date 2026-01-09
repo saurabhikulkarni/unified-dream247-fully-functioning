@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:unified_dream247/features/shop/components/cart_button.dart';
 import 'package:unified_dream247/features/shop/components/custom_modal_bottom_sheet.dart';
 import 'package:unified_dream247/features/shop/components/product/product_card.dart';
@@ -349,7 +350,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
               title: "Reviews",
               isShowBottomBorder: true,
               press: () {
-                Navigator.pushNamed(context, productReviewsScreenRoute);
+                context.push('/shop/reviews/${widget.product.id}');
               },
             ),
             SliverPadding(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:unified_dream247/features/shop/constants.dart';
 import 'package:unified_dream247/features/shop/components/product/product_card.dart';
 import 'package:unified_dream247/features/shop/models/product_model.dart';
@@ -121,9 +122,8 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
                           priceAfetDiscount: _products[index].priceAfetDiscount,
                           product: _products[index],
                           press: () {
-                            Navigator.pushNamed(
-                                context, productDetailsScreenRoute,
-                                arguments: {'product': _products[index]});
+                            context.push('/shop/product/${_products[index].id}',
+                                extra: {'product': _products[index]});
                           },
                         ),
                       ),

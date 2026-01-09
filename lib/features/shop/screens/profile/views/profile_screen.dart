@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:unified_dream247/features/shop/constants.dart';
 import 'package:unified_dream247/features/shop/route/screen_export.dart';
 import 'package:unified_dream247/features/shop/services/auth_service.dart';
@@ -116,7 +117,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             // proLableText: "Sliver",
             // isPro: true, if the user is pro
             press: () {
-              Navigator.pushNamed(context, userInfoScreenRoute);
+              context.push('/shop/profile/user-info');
             },
           ),
           Padding(
@@ -131,28 +132,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
             text: "Orders",
             svgSrc: "assets/icons/Order.svg",
             press: () {
-              Navigator.pushNamed(context, ordersScreenRoute);
+              context.push('/shop/orders');
             },
           ),
           ProfileMenuListTile(
             text: "Wishlist",
             svgSrc: "assets/icons/Wishlist.svg",
             press: () {
-              Navigator.pushNamed(context, wishlistScreenRoute);
+              context.push('/shop/wishlist');
             },
           ),
           ProfileMenuListTile(
             text: "Addresses",
             svgSrc: "assets/icons/Address.svg",
             press: () {
-              Navigator.pushNamed(context, addressesScreenRoute);
+              context.push('/shop/addresses');
             },
           ),
           ProfileMenuListTile(
             text: "Wallet",
             svgSrc: "assets/icons/Wallet.svg",
             press: () {
-              Navigator.pushNamed(context, walletScreenRoute);
+              context.push('/shop/wallet');
             },
           ),
           const SizedBox(height: defaultPadding),
@@ -168,7 +169,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             text: "Get Help",
             svgSrc: "assets/icons/Help.svg",
             press: () {
-              Navigator.pushNamed(context, getHelpScreenRoute);
+              context.push('/shop/help');
             },
           ),
           ProfileMenuListTile(
@@ -182,28 +183,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
             text: "Terms & Conditions",
             svgSrc: "assets/icons/info.svg",
             press: () {
-              Navigator.pushNamed(context, termsAndConditionsScreenRoute);
+              context.push('/shop/terms');
             },
           ),
           ProfileMenuListTile(
             text: "Privacy Policy",
             svgSrc: "assets/icons/Lock.svg",
             press: () {
-              Navigator.pushNamed(context, privacyPolicyScreenRoute);
+              context.push('/shop/privacy');
             },
           ),
           ProfileMenuListTile(
             text: "Refund Policy",
             svgSrc: "assets/icons/Return.svg",
             press: () {
-              Navigator.pushNamed(context, refundPolicyScreenRoute);
+              context.push('/shop/refund-policy');
             },
           ),
           ProfileMenuListTile(
             text: "Shipping Policy",
             svgSrc: "assets/icons/Delivery.svg",
             press: () {
-              Navigator.pushNamed(context, shippingPolicyScreenRoute);
+              context.push('/shop/shipping-policy');
             },
             isShowDivider: false,
           ),
@@ -228,11 +229,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         await AuthService().logout();
                         if (!context.mounted) return;
                         Navigator.pop(context);
-                        Navigator.pushNamedAndRemoveUntil(
-                          context,
-                          logInScreenRoute,
-                          (route) => false,
-                        );
+                        context.go('/auth/login');
                       },
                       child: const Text(
                         "Log Out",
