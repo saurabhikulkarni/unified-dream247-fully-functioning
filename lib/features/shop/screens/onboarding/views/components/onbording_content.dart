@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:unified_dream247/features/shop/../../constants.dart';
+import 'package:unified_dream247/features/shop/constants.dart';
 
 class OnbordingContent extends StatelessWidget {
   const OnbordingContent({

@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import 'package:unified_dream247/features/shop/../../constants.dart';
+import 'package:unified_dream247/features/shop/constants.dart';
 
 class NotifyMeCard extends StatelessWidget {
   const NotifyMeCard({

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:unified_dream247/features/shop/components/check_mark.dart';
 
-import 'package:unified_dream247/features/shop/../../constants.dart';
+import 'package:unified_dream247/features/shop/constants.dart';
 
 class ColorDot extends StatelessWidget {
   const ColorDot({

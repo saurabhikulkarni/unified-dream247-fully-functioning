@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:unified_dream247/features/shop/services/auth_service.dart';
 import 'package:unified_dream247/features/shop/services/msg91_service.dart';
 
-import 'package:unified_dream247/features/shop/../../constants.dart';
+import 'package:unified_dream247/features/shop/constants.dart';
 
 class SignUpForm extends StatefulWidget {
   const SignUpForm({

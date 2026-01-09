@@ -6,7 +6,7 @@ import 'package:unified_dream247/features/shop/services/product_service.dart';
 import 'package:unified_dream247/features/shop/route/screen_export.dart';
 import 'package:unified_dream247/features/shop/utils/responsive_extension.dart';
 
-import 'package:unified_dream247/features/shop/../../constants.dart';
+import 'package:unified_dream247/features/shop/constants.dart';
 
 class PopularProducts extends StatefulWidget {
   const PopularProducts({

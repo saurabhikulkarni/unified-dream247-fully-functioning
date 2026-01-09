@@ -7,7 +7,7 @@ import 'package:unified_dream247/features/shop/components/Banner/M/banner_m_styl
 import 'package:unified_dream247/features/shop/components/Banner/M/banner_m_style_4.dart';
 import 'package:unified_dream247/features/shop/components/dot_indicators.dart';
 
-import 'package:unified_dream247/features/shop/../../constants.dart';
+import 'package:unified_dream247/features/shop/constants.dart';
 
 class OffersCarousel extends StatefulWidget {
   const OffersCarousel({
