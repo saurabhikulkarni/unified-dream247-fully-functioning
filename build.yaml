@@ -1,0 +1,12 @@
+targets:
+  $default:
+    builders:
+      injectable_generator:injectable_builder:
+        enabled: true
+        generate_for:
+          - lib/core/di/injection_container.dart
+      
+      hive_generator:hive_generator:
+        enabled: true
+        options:
+          # Add any Hive options if needed

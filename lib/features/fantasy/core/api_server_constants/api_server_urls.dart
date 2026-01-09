@@ -116,34 +116,34 @@ class APIServerUrl {
       "players-fantasy-score-cards?matchkey=";
   static const String getExpertAdvice = "expert-advice-list";
 
-  // server urls
+  // server urls with fallbacks
   static String kycServerUrl =
-      dotenv.env['KycServerUrl'] ?? (throw Exception("BASE_URL not found"));
+      dotenv.env['KycServerUrl'] ?? 'http://143.244.140.102:4000/kyc/';
   static String leaderboardServerUrl = dotenv.env['LeaderboardServerUrl'] ??
-      (throw Exception("BASE_URL not found"));
+      'http://143.244.140.102:4000/leaderboard/';
   static String userServerUrl =
-      dotenv.env['UserServerUrl'] ?? (throw Exception("BASE_URL not found"));
+      dotenv.env['UserServerUrl'] ?? 'http://143.244.140.102:4000/user/';
   static String teamsServerUrl =
-      dotenv.env['TeamsServerUrl'] ?? (throw Exception("BASE_URL not found"));
+      dotenv.env['TeamsServerUrl'] ?? 'http://143.244.140.102:4000/team/';
   static String matchServerUrl =
-      dotenv.env['MatchServerUrl'] ?? (throw Exception("BASE_URL not found"));
+      dotenv.env['MatchServerUrl'] ?? 'http://143.244.140.102:4000/match/';
   static String contestServerUrl =
-      dotenv.env['ContestServerUrl'] ?? (throw Exception("BASE_URL not found"));
+      dotenv.env['ContestServerUrl'] ?? 'http://143.244.140.102:4000/contest/';
   static String depositServerUrl =
-      dotenv.env['DepositServerUrl'] ?? (throw Exception("BASE_URL not found"));
+      dotenv.env['DepositServerUrl'] ?? 'http://143.244.140.102:4000/deposit/';
   static String withdrawServerUrl = dotenv.env['WithdrawServerUrl'] ??
-      (throw Exception("BASE_URL not found"));
+      'http://143.244.140.102:4000/withdraw/';
   static String joinContestServerUrl = dotenv.env['JoinContestServerUrl'] ??
-      (throw Exception("BASE_URL not found"));
+      'http://143.244.140.102:4000/joincontest/';
   static String liveMatchServerUrl = dotenv.env['LiveMatchServerUrl'] ??
-      (throw Exception("BASE_URL not found"));
+      'http://143.244.140.102:4000/live-match/';
   static String myJoinContestServerUrl = dotenv.env['MyJoinContestServerUrl'] ??
-      (throw Exception("BASE_URL not found"));
+      'http://143.244.140.102:4000/myjoined-contest/';
   static String getMyTeamsServerUrl =
-      dotenv.env['MyTeamsServerUrl'] ?? (throw Exception("BASE_URL not found"));
+      dotenv.env['MyTeamsServerUrl'] ?? 'http://143.244.140.102:4000/getmyteams/';
   static String completedMatchServerUrl =
       dotenv.env['CompletedMatchServerUrl'] ??
-          (throw Exception("BASE_URL not found"));
+          'http://143.244.140.102:4000/completed-match/';
   static String otherApiServerUrl = dotenv.env['OtherApiServerUrl'] ??
-      (throw Exception("BASE_URL not found"));
+      'http://143.244.140.102:4000/other/';
 }
