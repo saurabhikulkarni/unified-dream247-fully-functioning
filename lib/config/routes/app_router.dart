@@ -32,12 +32,7 @@ import '../../features/shop/screens/checkout/views/order_confirmation_screen.dar
 
 // Fantasy screen imports
 import '../../features/fantasy/landing/presentation/screens/landing_page.dart';
-import '../../features/fantasy/landing/presentation/screens/fantasy_home_page.dart';
 import '../../features/fantasy/upcoming_matches/presentation/screens/contest_page.dart';
-import '../../features/fantasy/upcoming_matches/presentation/screens/contest_details.dart';
-import '../../features/fantasy/upcoming_matches/presentation/screens/create_team.dart';
-import '../../features/fantasy/upcoming_matches/presentation/screens/my_teams_challenges.dart';
-import '../../features/fantasy/upcoming_matches/presentation/screens/captain_vc.dart';
 import '../../features/fantasy/my_matches/presentation/screens/my_matches_page.dart';
 import '../../features/fantasy/my_matches/presentation/screens/live_match_details_screen.dart';
 import '../../features/fantasy/accounts/presentation/screens/my_balance_page.dart';
@@ -283,9 +278,13 @@ class AppRouter {
         name: 'shop_category_products',
         pageBuilder: (context, state) {
           final categoryId = state.pathParameters['id']!;
+          final categoryName = state.uri.queryParameters['name'] ?? 'Category';
           return MaterialPage(
             key: state.pageKey,
-            child: CategoryProductsScreen(categoryId: categoryId),
+            child: CategoryProductsScreen(
+              categoryId: categoryId,
+              categoryName: categoryName,
+            ),
           );
         },
       ),
@@ -311,55 +310,10 @@ class AppRouter {
         path: '/fantasy/match/:matchKey',
         name: 'fantasy_match_details',
         pageBuilder: (context, state) {
-          final matchKey = state.pathParameters['matchKey']!;
+          final matchKey = state.pathParameters['matchKey'];
           return MaterialPage(
             key: state.pageKey,
-            child: ContestPage(matchKey: matchKey),
-          );
-        },
-      ),
-      GoRoute(
-        path: '/fantasy/contest/:matchKey/:challengeId',
-        name: 'fantasy_contest_details',
-        pageBuilder: (context, state) {
-          final matchKey = state.pathParameters['matchKey']!;
-          final challengeId = state.pathParameters['challengeId']!;
-          return MaterialPage(
-            key: state.pageKey,
-            child: ContestDetails(matchKey: matchKey, challengeId: challengeId),
-          );
-        },
-      ),
-      GoRoute(
-        path: '/fantasy/create-team/:matchKey',
-        name: 'fantasy_create_team',
-        pageBuilder: (context, state) {
-          final matchKey = state.pathParameters['matchKey']!;
-          return MaterialPage(
-            key: state.pageKey,
-            child: CreateTeam(matchKey: matchKey),
-          );
-        },
-      ),
-      GoRoute(
-        path: '/fantasy/my-teams/:matchKey',
-        name: 'fantasy_my_teams',
-        pageBuilder: (context, state) {
-          final matchKey = state.pathParameters['matchKey']!;
-          return MaterialPage(
-            key: state.pageKey,
-            child: MyTeamsChallenges(matchKey: matchKey),
-          );
-        },
-      ),
-      GoRoute(
-        path: '/fantasy/captain/:matchKey',
-        name: 'fantasy_select_captain',
-        pageBuilder: (context, state) {
-          final matchKey = state.pathParameters['matchKey']!;
-          return MaterialPage(
-            key: state.pageKey,
-            child: CaptainVc(matchKey: matchKey),
+            child: ContestPage(mode: matchKey),
           );
         },
       ),
