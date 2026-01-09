@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/app_colors.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/strings.dart';
 import 'package:unified_dream247/features/fantasy/core/global_widgets/sub_container.dart';
-import 'package:unified_dream247/features/fantasy/features/more_options/presentation/widgets/points_system_view.dart';
+import 'package:unified_dream247/features/fantasy/more_options/presentation/widgets/points_system_view.dart';
 
 class FantasyPointsSystem extends StatelessWidget {
   const FantasyPointsSystem({super.key});

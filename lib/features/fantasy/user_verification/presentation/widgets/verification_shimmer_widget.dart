@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:unified_dream247/features/fantasy/core/global_widgets/common_shimmer_view_widget.dart';
-import 'package:unified_dream247/features/fantasy/features/user_verification/presentation/widgets/verification_border_widget.dart';
+import 'package:unified_dream247/features/fantasy/user_verification/presentation/widgets/verification_border_widget.dart';
 
 class VerificationShimmerWidget extends StatelessWidget {
   final String image;

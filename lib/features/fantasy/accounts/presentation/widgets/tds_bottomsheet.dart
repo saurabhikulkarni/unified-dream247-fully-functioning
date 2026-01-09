@@ -16,9 +16,9 @@ import 'package:unified_dream247/features/fantasy/core/global_widgets/app_toast.
 import 'package:unified_dream247/features/fantasy/core/global_widgets/custom_textfield.dart';
 import 'package:unified_dream247/features/fantasy/core/global_widgets/main_button.dart';
 import 'package:unified_dream247/features/fantasy/core/utils/app_utils.dart';
-import 'package:unified_dream247/features/fantasy/features/accounts/data/accounts_datasource.dart';
-import 'package:unified_dream247/features/fantasy/features/accounts/domain/use_cases/accounts_usecases.dart';
-import 'package:unified_dream247/features/fantasy/features/landing/data/singleton/app_singleton.dart';
+import 'package:unified_dream247/features/fantasy/accounts/data/accounts_datasource.dart';
+import 'package:unified_dream247/features/fantasy/accounts/domain/use_cases/accounts_usecases.dart';
+import 'package:unified_dream247/features/fantasy/landing/data/singleton/app_singleton.dart';
 
 class TdsBottomsheet extends StatefulWidget {
   final String tdsAmount;

@@ -12,15 +12,15 @@ import 'package:unified_dream247/features/fantasy/core/app_constants/app_pages.d
 import 'package:unified_dream247/features/fantasy/core/app_constants/images.dart';
 import 'package:unified_dream247/features/fantasy/core/global_widgets/app_toast.dart';
 import 'package:unified_dream247/features/fantasy/core/utils/app_utils.dart';
-import 'package:unified_dream247/features/fantasy/features/accounts/data/accounts_datasource.dart';
-import 'package:unified_dream247/features/fantasy/features/accounts/domain/use_cases/accounts_usecases.dart';
-import 'package:unified_dream247/features/fantasy/features/landing/data/singleton/app_singleton.dart';
-import 'package:unified_dream247/features/fantasy/features/upcoming_matches/data/models/players_model.dart';
-import 'package:unified_dream247/features/fantasy/features/upcoming_matches/data/models/user_teams_model.dart';
-import 'package:unified_dream247/features/fantasy/features/upcoming_matches/data/upcoming_match_datsource.dart';
-import 'package:unified_dream247/features/fantasy/features/upcoming_matches/domain/use_cases/upcoming_match_usecase.dart';
-import 'package:unified_dream247/features/fantasy/features/upcoming_matches/presentation/widgets/contest_head.dart';
-import 'package:unified_dream247/features/fantasy/features/upcoming_matches/presentation/widgets/join_contest_bottomsheet.dart';
+import 'package:unified_dream247/features/fantasy/accounts/data/accounts_datasource.dart';
+import 'package:unified_dream247/features/fantasy/accounts/domain/use_cases/accounts_usecases.dart';
+import 'package:unified_dream247/features/fantasy/landing/data/singleton/app_singleton.dart';
+import 'package:unified_dream247/features/fantasy/upcoming_matches/data/models/players_model.dart';
+import 'package:unified_dream247/features/fantasy/upcoming_matches/data/models/user_teams_model.dart';
+import 'package:unified_dream247/features/fantasy/upcoming_matches/data/upcoming_match_datsource.dart';
+import 'package:unified_dream247/features/fantasy/upcoming_matches/domain/use_cases/upcoming_match_usecase.dart';
+import 'package:unified_dream247/features/fantasy/upcoming_matches/presentation/widgets/contest_head.dart';
+import 'package:unified_dream247/features/fantasy/upcoming_matches/presentation/widgets/join_contest_bottomsheet.dart';
 
 class CaptainViceCaptain extends StatefulWidget {
   final bool? hasChanges;

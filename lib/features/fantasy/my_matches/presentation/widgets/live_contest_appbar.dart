@@ -4,8 +4,8 @@ import 'package:get/get.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/app_colors.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/app_pages.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/images.dart';
-import 'package:unified_dream247/features/fantasy/features/accounts/presentation/screens/my_balance_page.dart';
-import 'package:unified_dream247/features/fantasy/features/my_matches/presentation/widgets/live_contest_timer.dart';
+import 'package:unified_dream247/features/fantasy/accounts/presentation/screens/my_balance_page.dart';
+import 'package:unified_dream247/features/fantasy/my_matches/presentation/widgets/live_contest_timer.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class LiveContestAppBar extends StatelessWidget implements PreferredSizeWidget {

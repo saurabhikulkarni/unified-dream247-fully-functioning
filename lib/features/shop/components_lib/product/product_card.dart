@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../../constants.dart';
-import '../../utils/responsive_extension.dart';
+import 'package:unified_dream247/features/shop/constants.dart';
+import 'package:unified_dream247/features/shop/utils/responsive_extension.dart';
 import '../network_image_with_loader.dart';
-import '../../services/wishlist_service.dart';
+import 'package:unified_dream247/features/shop/services/wishlist_service.dart';
 
 class ProductCard extends StatefulWidget {
   const ProductCard({

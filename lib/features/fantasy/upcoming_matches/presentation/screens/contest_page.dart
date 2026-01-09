@@ -1,5 +1,5 @@
 // ignore_for_file: use_build_context_synchronously
-import 'package:unified_dream247/features/fantasy/features/upcoming_matches/presentation/screens/statistics_screen.dart';
+import 'package:unified_dream247/features/fantasy/upcoming_matches/presentation/screens/statistics_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -9,17 +9,17 @@ import 'package:unified_dream247/features/fantasy/core/app_constants/app_colors.
 import 'package:unified_dream247/features/fantasy/core/app_constants/app_pages.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/strings.dart';
 import 'package:unified_dream247/features/fantasy/core/utils/app_utils.dart';
-import 'package:unified_dream247/features/fantasy/features/landing/data/singleton/app_singleton.dart';
-import 'package:unified_dream247/features/fantasy/features/upcoming_matches/data/models/all_contests_model.dart';
-import 'package:unified_dream247/features/fantasy/features/upcoming_matches/data/models/teams_model.dart';
-import 'package:unified_dream247/features/fantasy/features/upcoming_matches/data/upcoming_match_datsource.dart';
-import 'package:unified_dream247/features/fantasy/features/upcoming_matches/domain/use_cases/upcoming_match_usecase.dart';
-import 'package:unified_dream247/features/fantasy/features/upcoming_matches/presentation/providers/myteams_provider.dart';
-import 'package:unified_dream247/features/fantasy/features/upcoming_matches/presentation/screens/all_contest.dart';
-import 'package:unified_dream247/features/fantasy/features/upcoming_matches/presentation/screens/guru_teams.dart';
-import 'package:unified_dream247/features/fantasy/features/upcoming_matches/presentation/screens/my_contest.dart';
-import 'package:unified_dream247/features/fantasy/features/upcoming_matches/presentation/screens/my_teams.dart';
-import 'package:unified_dream247/features/fantasy/features/upcoming_matches/presentation/widgets/contest_head.dart';
+import 'package:unified_dream247/features/fantasy/landing/data/singleton/app_singleton.dart';
+import 'package:unified_dream247/features/fantasy/upcoming_matches/data/models/all_contests_model.dart';
+import 'package:unified_dream247/features/fantasy/upcoming_matches/data/models/teams_model.dart';
+import 'package:unified_dream247/features/fantasy/upcoming_matches/data/upcoming_match_datsource.dart';
+import 'package:unified_dream247/features/fantasy/upcoming_matches/domain/use_cases/upcoming_match_usecase.dart';
+import 'package:unified_dream247/features/fantasy/upcoming_matches/presentation/providers/myteams_provider.dart';
+import 'package:unified_dream247/features/fantasy/upcoming_matches/presentation/screens/all_contest.dart';
+import 'package:unified_dream247/features/fantasy/upcoming_matches/presentation/screens/guru_teams.dart';
+import 'package:unified_dream247/features/fantasy/upcoming_matches/presentation/screens/my_contest.dart';
+import 'package:unified_dream247/features/fantasy/upcoming_matches/presentation/screens/my_teams.dart';
+import 'package:unified_dream247/features/fantasy/upcoming_matches/presentation/widgets/contest_head.dart';
 
 class ContestPage extends StatefulWidget {
   final String? mode;

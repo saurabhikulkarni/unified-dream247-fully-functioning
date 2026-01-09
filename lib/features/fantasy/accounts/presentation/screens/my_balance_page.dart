@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/material.dart';
-import 'package:unified_dream247/features/fantasy/features/landing/data/singleton/app_singleton.dart';
+import 'package:unified_dream247/features/fantasy/landing/data/singleton/app_singleton.dart';
 import 'package:provider/provider.dart';
 import 'package:unified_dream247/features/fantasy/core/api_server_constants/api_server_impl/api_impl.dart';
 import 'package:unified_dream247/features/fantasy/core/api_server_constants/api_server_impl/api_impl_header.dart';
@@ -12,10 +12,10 @@ import 'package:unified_dream247/features/fantasy/core/app_constants/images.dart
 import 'package:unified_dream247/features/fantasy/core/app_constants/strings.dart';
 import 'package:unified_dream247/features/fantasy/core/global_widgets/sub_container.dart';
 import 'package:unified_dream247/features/fantasy/core/utils/app_utils.dart';
-import 'package:unified_dream247/features/fantasy/features/accounts/data/accounts_datasource.dart';
-import 'package:unified_dream247/features/fantasy/features/accounts/domain/use_cases/accounts_usecases.dart';
-import 'package:unified_dream247/features/fantasy/features/accounts/presentation/providers/wallet_details_provider.dart';
-import 'package:unified_dream247/features/fantasy/features/accounts/presentation/screens/add_money_page.dart';
+import 'package:unified_dream247/features/fantasy/accounts/data/accounts_datasource.dart';
+import 'package:unified_dream247/features/fantasy/accounts/domain/use_cases/accounts_usecases.dart';
+import 'package:unified_dream247/features/fantasy/accounts/presentation/providers/wallet_details_provider.dart';
+import 'package:unified_dream247/features/fantasy/accounts/presentation/screens/add_money_page.dart';
 
 class MyBalancePage extends StatefulWidget {
   const MyBalancePage({super.key});

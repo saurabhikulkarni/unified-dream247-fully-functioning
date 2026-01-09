@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/app_colors.dart';
-import 'package:unified_dream247/features/fantasy/features/landing/data/singleton/app_singleton.dart';
-import 'package:unified_dream247/features/fantasy/features/my_matches/data/models/match_livescore_model.dart';
+import 'package:unified_dream247/features/fantasy/landing/data/singleton/app_singleton.dart';
+import 'package:unified_dream247/features/fantasy/my_matches/data/models/match_livescore_model.dart';
 
 class Scoreboard extends StatelessWidget {
   final List<MatchLiveScoreModel>? list;

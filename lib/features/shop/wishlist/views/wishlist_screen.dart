@@ -6,8 +6,8 @@ import 'package:unified_dream247/features/shop/services/wishlist_service.dart';
 import 'package:unified_dream247/features/shop/services/cart_service.dart';
 import 'package:unified_dream247/features/shop/route/route_constants.dart';
 
-import '../../../constants.dart';
-import '../../../utils/responsive_extension.dart';
+import 'package:unified_dream247/features/shop/constants.dart';
+import 'package:unified_dream247/features/shop/utils/responsive_extension.dart';
 
 class WishlistScreen extends StatefulWidget {
   const WishlistScreen({super.key});

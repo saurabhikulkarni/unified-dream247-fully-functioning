@@ -3,7 +3,7 @@ import 'package:unified_dream247/features/shop/theme/button_theme.dart';
 import 'package:unified_dream247/features/shop/theme/input_decoration_theme.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../constants.dart';
+import 'package:unified_dream247/features/shop/constants.dart';
 import 'checkbox_themedata.dart';
 import 'theme_data.dart';
 

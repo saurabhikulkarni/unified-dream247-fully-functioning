@@ -4,8 +4,8 @@ import 'package:unified_dream247/features/fantasy/core/app_constants/app_colors.
 import 'package:unified_dream247/features/fantasy/core/app_constants/images.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/strings.dart';
 import 'package:unified_dream247/features/fantasy/core/utils/app_utils.dart';
-import 'package:unified_dream247/features/fantasy/features/landing/data/singleton/app_singleton.dart';
-import 'package:unified_dream247/features/fantasy/features/upcoming_matches/data/models/all_contests_model.dart';
+import 'package:unified_dream247/features/fantasy/landing/data/singleton/app_singleton.dart';
+import 'package:unified_dream247/features/fantasy/upcoming_matches/data/models/all_contests_model.dart';
 
 class PriceCard extends StatefulWidget {
   final String? mode;
