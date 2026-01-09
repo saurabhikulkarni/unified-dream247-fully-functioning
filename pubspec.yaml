@@ -76,7 +76,7 @@ dependencies:
   firebase_core: ^4.3.0
   firebase_auth: ^6.1.3
   firebase_messaging: ^16.1.0
-  firebase_analytics: ^10.7.4
+  firebase_analytics: ^12.1.0
   google_sign_in: ^6.2.1
   flutter_local_notifications: ^19.5.0
   
@@ -97,6 +97,7 @@ dev_dependencies:
   injectable_generator: ^2.4.1
   hive_generator: ^2.0.1
   mockito: ^5.4.4
+  flutter_launcher_icons: ^0.13.1
 
 flutter:
   uses-material-design: true
@@ -147,3 +148,11 @@ flutter:
     - family: Racing Hard
       fonts:
         - asset: assets/fonts/racing_hard/RACING HARD.ttf
+
+# Flutter Launcher Icons Configuration
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/appicon.png"
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: "assets/images/appicon.png"
