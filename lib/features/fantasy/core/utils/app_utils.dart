@@ -2,7 +2,8 @@
 
 import 'dart:io';
 
-import 'package:apk_installer/apk_installer.dart';
+// Conditional import for apk_installer - only works on Android
+// import 'package:apk_installer/apk_installer.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -566,7 +567,25 @@ class AppUtils {
   static Future<void> installApk(BuildContext context, String apkPath) async {
     try {
       if (Platform.isAndroid) {
-        await ApkInstaller.installApk(filePath: apkPath);
+        // TODO: Add apk_installer package or use alternative method
+        // await ApkInstaller.installApk(filePath: apkPath);
+        
+        // For now, show a dialog to manually install
+        if (context.mounted) {
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('APK Downloaded'),
+              content: Text('APK saved to: $apkPath\nPlease install manually.'),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('OK'),
+                ),
+              ],
+            ),
+          );
+        }
       }
     } catch (e) {
       debugPrint('Error: $e');

@@ -40,7 +40,7 @@ import '../../features/fantasy/accounts/presentation/screens/add_money_page.dart
 import '../../features/fantasy/accounts/presentation/screens/withdraw_screen.dart';
 import '../../features/fantasy/accounts/presentation/screens/my_transactions.dart';
 import '../../features/fantasy/user_verification/presentation/screens/verify_details_page.dart';
-import '../../features/fantasy/menu_items/presentation/screens/edit_profile_page.dart';
+import '../../features/fantasy/menu_items/presentation/screens/edit_profile_page.dart' show EditProfile;
 import '../../features/fantasy/menu_items/presentation/screens/refer_and_earn_page.dart';
 
 import 'route_names.dart';
@@ -381,7 +381,7 @@ class AppRouter {
         name: 'fantasy_profile',
         pageBuilder: (context, state) => MaterialPage(
           key: state.pageKey,
-          child: const EditProfilePage(),
+          child: const EditProfile(),
         ),
       ),
       GoRoute(

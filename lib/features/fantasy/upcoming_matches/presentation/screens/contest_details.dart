@@ -13,7 +13,7 @@ import 'package:unified_dream247/features/fantasy/upcoming_matches/presentation/
 import 'package:unified_dream247/features/fantasy/upcoming_matches/presentation/widgets/contest_head.dart';
 import 'package:unified_dream247/features/fantasy/upcoming_matches/presentation/widgets/upcoming_leaderboard.dart';
 import 'package:unified_dream247/features/fantasy/upcoming_matches/presentation/widgets/price_card.dart';
-import 'package:unified_dream247/features/fantasy/main.dart';
+// Note: fantasy/main.dart doesn't exist - this import is not needed
 
 class ContestDetails extends StatefulWidget {
   final String? mode;
@@ -80,7 +80,7 @@ class _ContestDetails extends State<ContestDetails> with RouteAware {
   @override
   void dispose() {
     AppUtils.isSelected.value = false;
-    routeObserver.unsubscribe(this);
+    // routeObserver.unsubscribe(this); // TODO: Define routeObserver if needed
     super.dispose();
   }
 

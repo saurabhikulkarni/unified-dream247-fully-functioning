@@ -9,16 +9,16 @@ class NetworkInfo {
   /// Check if device is connected to the internet
   Future<bool> get isConnected async {
     final result = await _connectivity.checkConnectivity();
-    return result != ConnectivityResult.none;
+    return !result.contains(ConnectivityResult.none);
   }
 
   /// Get current connectivity status
-  Future<ConnectivityResult> get connectivityStatus async {
+  Future<List<ConnectivityResult>> get connectivityStatus async {
     return await _connectivity.checkConnectivity();
   }
 
   /// Stream of connectivity changes
-  Stream<ConnectivityResult> get onConnectivityChanged {
+  Stream<List<ConnectivityResult>> get onConnectivityChanged {
     return _connectivity.onConnectivityChanged;
   }
 }

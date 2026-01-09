@@ -58,7 +58,6 @@ void main() async {
     await authService.initialize();
     
     // Initialize ecommerce services
-    await UserService.initialize();
     await wishlistService.initialize();
     await cartService.initialize();
     await searchService.initialize();
