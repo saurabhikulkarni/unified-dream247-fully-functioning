@@ -45,12 +45,21 @@ void main() async {
       debugPrint('⚠️ Environment file not loaded: $e');
     }
 
-    // Initialize Firebase (for fantasy features)
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
-    // Uncomment when FCM service is implemented
-    // await FCMService.init();
+    // Initialize Firebase (for fantasy features) - Skip on web for now
+    if (!kIsWeb) {
+      try {
+        await Firebase.initializeApp(
+          options: DefaultFirebaseOptions.currentPlatform,
+        );
+        debugPrint('✅ Firebase initialized successfully');
+        // Uncomment when FCM service is implemented
+        // await FCMService.init();
+      } catch (e) {
+        debugPrint('⚠️ Firebase initialization error: $e');
+      }
+    } else {
+      debugPrint('ℹ️ Skipping Firebase initialization on web platform');
+    }
 
     // Initialize dependency injection
     await configureDependencies();
