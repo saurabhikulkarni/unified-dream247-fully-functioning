@@ -238,23 +238,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           } catch (e) {
                             // Publishing failed, but user is created
                           }
-                          // Save login session with userId from Hygraph
-                          final authService = AuthService();
-                          await authService.saveLoginSession(
-                            phone: phone,
-                            name: name,
-                            phoneVerified: true,
-                            userId: userId,
+                          
+                          // Save unified session using signup form method
+                          await _signUpFormState.saveSignupSession(
+                            userId,
+                            phone,
+                            name,
+                            email: null,
                           );
                           
-                          // Sync wishlist and cart from backend after successful signup
-                          await wishlistService.syncWithBackend();
-                          await cartService.syncWithBackend();
-                          
                           if (!mounted) return;
-                          Navigator.of(context).pop(); // Hide loading
-                          Navigator.pushReplacementNamed(
-                              context, entryPointScreenRoute);
+                          Navigator.of(context).pop();
+                          Navigator.pushReplacementNamed(context, entryPointScreenRoute);
                         } else {
                           if (mounted) {
                             Navigator.of(context).pop(); // Hide loading

@@ -58,22 +58,52 @@ class _SplashScreenState extends State<SplashScreen>
 
     if (!mounted) return;
 
-    // Check if user is already logged in
-    final isLoggedIn = await authService.isLoggedIn();
+    try {
+      debugPrint('🚀 Starting navigation from splash...');
+      
+      final authServiceInstance = AuthService();
+      final isLoggedIn = await authServiceInstance.isUnifiedLoggedIn();
+      
+      debugPrint('🔐 Login status: $isLoggedIn');
 
-    if (isLoggedIn) {
-      // Check if phone is verified
-      final isPhoneVerified = await authService.isPhoneVerified();
-
-      if (isPhoneVerified) {
-        // User is logged in and phone is verified - go to home
-        Navigator.of(context).pushReplacementNamed(entryPointScreenRoute);
+      if (isLoggedIn) {
+        final userId = await authServiceInstance.getUnifiedUserId();
+        final phone = await authServiceInstance.getUserPhone();
+        
+        debugPrint('👤 User ID: $userId, Phone: $phone');
+        
+        if (userId != null && userId.isNotEmpty) {
+          final isPhoneVerified = await authServiceInstance.isPhoneVerified();
+          
+          if (isPhoneVerified) {
+            debugPrint('✅ Navigating to home');
+            if (!mounted) return;
+            Navigator.of(context).pushReplacementNamed(entryPointScreenRoute);
+          } else {
+            debugPrint('⚠️ Navigating to verification');
+            if (!mounted) return;
+            Navigator.of(context).pushReplacementNamed(
+              signUpVerificationScreenRoute,
+              arguments: {'phone': phone},
+            );
+          }
+        } else {
+          debugPrint('⚠️ No valid user ID - going to login');
+          if (!mounted) return;
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => const LoginScreen()),
+          );
+        }
       } else {
-        // Phone not verified - take to verification
-        Navigator.of(context).pushReplacementNamed(signUpVerificationScreenRoute);
+        debugPrint('ℹ️ Not logged in - going to login');
+        if (!mounted) return;
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const LoginScreen()),
+        );
       }
-    } else {
-      // Not logged in - go to login
+    } catch (e) {
+      debugPrint('❌ Error during navigation: $e');
+      if (!mounted) return;
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (context) => const LoginScreen()),
       );

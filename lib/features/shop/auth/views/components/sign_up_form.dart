@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:unified_dream247/features/shop/services/auth_service.dart';
 import 'package:unified_dream247/features/shop/services/msg91_service.dart';
+import 'package:unified_dream247/features/shop/services/wishlist_service.dart';
+import 'package:unified_dream247/features/shop/services/cart_service.dart';
 
 import 'package:unified_dream247/features/shop/constants.dart';
 
@@ -182,6 +184,30 @@ class _SignUpFormState extends State<SignUpForm> {
     final firstName = _firstNameController.text.trim();
     final lastName = _lastNameController.text.trim();
     return '$firstName $lastName'.trim();
+  }
+
+  Future<void> saveSignupSession(String userId, String phone, String name, {String? email}) async {
+    try {
+      debugPrint('💾 Saving unified signup session...');
+      
+      final authServiceInstance = AuthService();
+      await authServiceInstance.saveUnifiedLoginSession(
+        phone: phone,
+        name: name,
+        phoneVerified: true,
+        userId: userId,
+        email: email,
+        authToken: userId,
+      );
+      
+      await wishlistService.syncWithBackend();
+      await cartService.syncWithBackend();
+      
+      debugPrint('✅ Signup session saved - unified!');
+    } catch (e) {
+      debugPrint('❌ Error saving signup session: $e');
+      rethrow;
+    }
   }
 
   @override

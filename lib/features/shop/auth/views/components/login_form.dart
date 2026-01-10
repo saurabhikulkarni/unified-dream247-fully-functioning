@@ -266,149 +266,96 @@ class _LogInFormState extends State<LogInForm> {
   }
 
   Future<void> saveLoginSession() async {
-    final phone = getVerifiedPhone();
-    if (phone != null) {
-      final authService = AuthService();
+    try {
+      final phone = _phoneController.text.replaceAll(RegExp(r'[^\d]'), '');
+      final name = _nameController.text.trim();
       
-      // Check if it's test user - use direct login
-      if (authService.isTestUser(phone)) {
-        final success = await authService.loginTestUser();
-        if (success && mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('🧪 Test user logged in successfully!'),
-              backgroundColor: Colors.green,
-            ),
-          );
-        }
-        return;
-      }
+      debugPrint('💾 Saving unified session for phone: $phone');
+
+      // Get or create user in Hygraph
+      final graphQLClient = GraphQLService.getClient();
       
-      final name = getUserName();
+      final QueryOptions queryOptions = QueryOptions(
+        document: gql(GraphQLQueries.getUserByMobileNumber),
+        variables: {'mobileNumber': phone},
+        fetchPolicy: FetchPolicy.networkOnly,
+      );
       
-      try {
-        // First, try to find existing user by mobile number
-        final graphQLClient = GraphQLService.getClient();
+      final QueryResult queryResult = await graphQLClient.query(queryOptions);
+      
+      String? userId;
+      String? existingName;
+      String? email;
+      
+      if (queryResult.data != null && 
+          queryResult.data!['userDetails'] != null && 
+          queryResult.data!['userDetails'].isNotEmpty) {
+        final userData = queryResult.data!['userDetails'][0];
+        userId = userData['id']?.toString();
+        existingName = '${userData['firstName'] ?? ''} ${userData['lastName'] ?? ''}'.trim();
+        email = userData['email'];
+        debugPrint('✅ Found existing user: $userId');
+      } else {
+        debugPrint('📝 Creating new user...');
+        final nameParts = name.split(' ');
+        final firstName = nameParts.isNotEmpty ? nameParts[0] : name;
+        final lastName = nameParts.length > 1 ? nameParts.sublist(1).join(' ') : '';
         
-        // Clean phone number (remove non-digit characters)
-        final cleanPhone = phone.replaceAll(RegExp(r'[^\d]'), '');
-        
-        print('📱 [LOGIN] Original phone: $phone');
-        print('📱 [LOGIN] Cleaned phone: $cleanPhone');
-        print('📱 [LOGIN] Phone length: ${cleanPhone.length}');
-        
-        // Validate phone number is exactly 10 digits
-        if (cleanPhone.length != 10) {
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('Invalid phone number. Must be exactly 10 digits. Got: ${cleanPhone.length} digits'),
-                backgroundColor: Colors.red,
-              ),
-            );
-          }
-          return;
-        }
-        
-        // Query for existing user
-        final QueryOptions queryOptions = QueryOptions(
-          document: gql(GraphQLQueries.getUserByMobileNumber),
-          variables: {'mobileNumber': cleanPhone},
+        final MutationOptions createOptions = MutationOptions(
+          document: gql(GraphQLQueries.createUser),
+          variables: {
+            'firstName': firstName,
+            'lastName': lastName,
+            'username': phone,
+            'mobileNumber': phone,
+          },
         );
         
-        QueryResult queryResult = await graphQLClient.query(queryOptions);
-        String? userId;
-
-        if (!queryResult.hasException && queryResult.data != null) {
-          final users = queryResult.data?['userDetails'] as List?;
-          if (users != null && users.isNotEmpty) {
-            userId = users[0]?['id']?.toString();
-          }
-        }
-
-        // If user doesn't exist, create new user
-        if (userId == null) {
-          print('📝 [LOGIN] Creating new user with:');
-          print('   firstName: $name');
-          print('   lastName: (empty)');
-          print('   username: $name');
-          print('   mobileNumber: $cleanPhone');
-          
-          final MutationOptions options = MutationOptions(
-            document: gql(GraphQLQueries.createUser),
-            variables: {
-              'firstName': name,
-              'lastName': '',
-              'username': name, // Use name as username, not phone!
-              'mobileNumber': cleanPhone, // Use cleaned phone as String
-            },
-          );
-          
-          print('📤 [LOGIN] Sending GraphQL mutation with variables: ${options.variables}');
-          
-          final QueryResult result = await graphQLClient.mutate(options);
-          
-          if (result.hasException) {
-            print('❌ [LOGIN] Error creating user: ${result.exception}');
-            if (mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Error creating account: ${result.exception?.toString() ?? "Unknown error"}'),
-                  backgroundColor: Colors.red,
-                ),
-              );
-            }
-            return;
-          }
-          
-          userId = result.data?['createUserDetail']?['id']?.toString();
-          
-          // Publish user (required for Hygraph)
-          if (userId != null) {
-            try {
-              final publishOptions = MutationOptions(
-                document: gql(GraphQLQueries.publishUser),
-                variables: {'id': userId},
-              );
-              await graphQLClient.mutate(publishOptions);
-            } catch (e) {
-              // Publishing failed, but user is created
-            }
-          }
+        final QueryResult createResult = await graphQLClient.mutate(createOptions);
+        
+        if (createResult.hasException) {
+          throw Exception('Failed to create user: ${createResult.exception}');
         }
         
+        userId = createResult.data?['createUserDetail']?['id']?.toString();
+        
         if (userId != null && userId.isNotEmpty) {
-          // Save login session with userId from Hygraph
-          await authService.saveLoginSession(
-            phone: phone,
-            name: name,
-            phoneVerified: true,
-            userId: userId,
-          );
-          
-          // Sync wishlist and cart from backend after successful login
-          await wishlistService.syncWithBackend();
-          await cartService.syncWithBackend();
-        } else {
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Error during login. Please try again.'),
-                backgroundColor: Colors.red,
-              ),
+          try {
+            final publishOptions = MutationOptions(
+              document: gql(GraphQLQueries.publishUser),
+              variables: {'id': userId},
             );
+            await graphQLClient.mutate(publishOptions);
+            debugPrint('✅ User published');
+          } catch (e) {
+            debugPrint('⚠️ Publish failed: $e');
           }
         }
-      } catch (e) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Error: $e'),
-              backgroundColor: Colors.red,
-            ),
-          );
-        }
       }
+      
+      if (userId == null || userId.isEmpty) {
+        throw Exception('Failed to get/create user ID');
+      }
+      
+      // Save unified session
+      final authServiceInstance = AuthService();
+      await authServiceInstance.saveUnifiedLoginSession(
+        phone: phone,
+        name: existingName ?? name,
+        phoneVerified: true,
+        userId: userId,
+        email: email,
+        authToken: userId,
+      );
+      
+      // Sync services
+      await wishlistService.syncWithBackend();
+      await cartService.syncWithBackend();
+      
+      debugPrint('✅ Unified session saved - Shop & Fantasy ready!');
+    } catch (e) {
+      debugPrint('❌ Error saving session: $e');
+      rethrow;
     }
   }
 
