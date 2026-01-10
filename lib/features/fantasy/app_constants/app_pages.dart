@@ -227,7 +227,6 @@ import 'package:unified_dream247/features/fantasy/my_matches/presentation/screen
 import 'package:unified_dream247/features/fantasy/my_matches/presentation/screens/team_compare.dart';
 import 'package:go_router/go_router.dart';
 import 'package:unified_dream247/config/routes/route_names.dart';
-import 'package:unified_dream247/features/authentication/presentation/pages/splash_page.dart';
 import 'package:unified_dream247/features/fantasy/upcoming_matches/data/models/players_model.dart';
 import 'package:unified_dream247/features/fantasy/upcoming_matches/data/models/teams_model.dart';
 import 'package:unified_dream247/features/fantasy/upcoming_matches/data/models/user_teams_model.dart';
@@ -247,11 +246,10 @@ import 'package:unified_dream247/features/fantasy/winners/presentation/widgets/s
 
 class AppNavigation {
   static gotoSplashScreen(BuildContext context) async {
-    return await Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(builder: (context) => const SplashPage()),
-      (Route<dynamic> route) => false,
-    );
+    // Navigate to shop splash screen (app entry point) using GoRouter
+    if (context.mounted) {
+      context.go(RouteNames.splash);
+    }
   }
 
   static gotoLoginScreen(BuildContext context) async {
