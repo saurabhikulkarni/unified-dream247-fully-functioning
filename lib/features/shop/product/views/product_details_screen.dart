@@ -62,9 +62,10 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   }
 
   void _checkWishlistStatus() {
-    if (_product?.id != null) {
+    final productId = _product?.id;
+    if (productId != null) {
       setState(() {
-        _isInWishlist = wishlistService.isInWishlist(_product!.id!);
+        _isInWishlist = wishlistService.isInWishlist(productId);
       });
     }
   }
@@ -90,9 +91,10 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   }
 
   Future<void> _fetchSizes() async {
-    if (_product?.id == null) return;
+    final productId = _product?.id;
+    if (productId == null) return;
     try {
-      final sizes = await _productService.getSizesByProduct(_product!.id!);
+      final sizes = await _productService.getSizesByProduct(productId);
       if (mounted) {
         setState(() {
           _sizes = sizes;

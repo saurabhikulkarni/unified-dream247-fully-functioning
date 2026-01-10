@@ -162,7 +162,7 @@ context.go('/fantasy/match/IPL2024_MATCH_001');
 | `LandingPage` | `/fantasy/home` | - |
 | `ContestPage` | `/fantasy/match/:matchKey` | mode |
 | `MyMatchesPage` | `/fantasy/my-matches` | - |
-| `LiveMatchDetailsScreen` | `/fantasy/live-match/:matchKey` | matchKey |
+| `LiveMatchDetails` | `/fantasy/live-match/:matchKey` | mode (mapped from matchKey) |
 | `MyBalancePage` | `/fantasy/wallet` | - |
 | `AddMoneyPage` | `/fantasy/add-money` | - |
 | `WithdrawScreen` | `/fantasy/withdraw` | - |
