@@ -25,4 +25,14 @@ class AppStorage {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.clear();
   }
+
+  static Future<void> removeStorageValue(String key) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove(key);
+  }
+
+  static Future<bool?> getStorageBoolValue(String key) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(key);
+  }
 }

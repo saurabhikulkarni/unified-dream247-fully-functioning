@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:unified_dream247/features/shop/services/graphql_client.dart';
@@ -7,6 +8,9 @@ import 'package:unified_dream247/features/shop/services/wishlist_service.dart';
 import 'package:unified_dream247/features/shop/services/cart_service.dart';
 import 'package:unified_dream247/features/shop/services/user_service.dart';
 import 'package:unified_dream247/features/shop/constants.dart';
+import 'package:unified_dream247/features/fantasy/core/app_constants/app_storage_keys.dart';
+import 'package:unified_dream247/features/fantasy/core/utils/app_storage.dart';
+import 'package:unified_dream247/core/services/auth_service.dart' as core_auth;
 
 class AuthService {
   static final AuthService _instance = AuthService._internal();
@@ -297,6 +301,150 @@ class AuthService {
     } catch (e) {
       print('Exception in fetchUserProfile: $e');
       return null;
+    }
+  }
+
+  /// Save unified login session (compatible with Shop and Fantasy)
+  Future<void> saveUnifiedLoginSession({
+    required String phone,
+    required String name,
+    required bool phoneVerified,
+    required String userId,
+    String? email,
+    String? authToken,
+  }) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      
+      // Save for Shop module
+      await prefs.setBool(_isLoggedInKey, true);
+      await prefs.setString(_userPhoneKey, phone);
+      await prefs.setString(_userNameKey, name);
+      await prefs.setBool(_phoneVerifiedKey, phoneVerified);
+      await prefs.setString(_userIdKey, userId);
+      await prefs.setString(_lastLoginKey, DateTime.now().toIso8601String());
+      
+      if (email != null && email.isNotEmpty) {
+        await prefs.setString('user_email', email);
+      }
+      if (authToken != null && authToken.isNotEmpty) {
+        await prefs.setString(_authTokenKey, authToken);
+      }
+      
+      // Save for Fantasy module
+      await AppStorage.saveToStorageString(AppStorageKeys.loginToken, authToken ?? userId);
+      await AppStorage.saveToStorageString(AppStorageKeys.userId, userId);
+      await AppStorage.saveToStorageString(AppStorageKeys.userPhone, phone);
+      await AppStorage.saveToStorageString(AppStorageKeys.userName, name);
+      await AppStorage.saveToStorageBool(AppStorageKeys.isLoggedIn, true);
+      await AppStorage.saveToStorageBool('phone_verified', phoneVerified);
+      
+      if (email != null && email.isNotEmpty) {
+        await AppStorage.saveToStorageString('user_email', email);
+      }
+      
+      // Save to core AuthService
+      final coreAuthService = core_auth.authService;
+      await coreAuthService.saveUserSession(
+        userId: userId,
+        authToken: authToken ?? userId,
+        mobileNumber: phone,
+        email: email,
+        name: name,
+      );
+      
+      await UserService.setCurrentUserId(userId);
+      
+      debugPrint('✅ Unified login session saved - Shop & Fantasy ready');
+    } catch (e) {
+      debugPrint('❌ Error saving unified login session: $e');
+      rethrow;
+    }
+  }
+
+  /// Check if user is logged in (unified check)
+  Future<bool> isUnifiedLoggedIn() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final shopLoggedIn = prefs.getBool(_isLoggedInKey) ?? false;
+      final fantasyLoggedIn = await AppStorage.getStorageBoolValue(AppStorageKeys.isLoggedIn) ?? false;
+      return shopLoggedIn || fantasyLoggedIn;
+    } catch (e) {
+      debugPrint('❌ Error checking unified login: $e');
+      return false;
+    }
+  }
+
+  /// Get unified user ID
+  Future<String?> getUnifiedUserId() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      String? userId = prefs.getString(_userIdKey);
+      
+      if (userId == null || userId.isEmpty) {
+        userId = await AppStorage.getStorageValueString(AppStorageKeys.userId);
+      }
+      return userId;
+    } catch (e) {
+      debugPrint('❌ Error getting unified user ID: $e');
+      return null;
+    }
+  }
+
+  /// Get unified auth token
+  Future<String?> getUnifiedAuthToken() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString(_authTokenKey);
+      
+      if (token == null || token.isEmpty) {
+        token = await AppStorage.getStorageValueString(AppStorageKeys.loginToken);
+      }
+      return token;
+    } catch (e) {
+      debugPrint('❌ Error getting unified token: $e');
+      return null;
+    }
+  }
+
+  /// Unified logout (clears both Shop and Fantasy)
+  Future<void> unifiedLogout() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      
+      // Clear Shop data
+      await prefs.setBool(_isLoggedInKey, false);
+      await prefs.remove(_userPhoneKey);
+      await prefs.remove(_userNameKey);
+      await prefs.remove(_phoneVerifiedKey);
+      await prefs.remove(_walletBalanceKey);
+      await prefs.remove(_authTokenKey);
+      await prefs.remove(_lastLoginKey);
+      await prefs.remove(_userIdKey);
+      await prefs.remove('user_email');
+      
+      // Clear Fantasy data
+      await AppStorage.removeStorageValue(AppStorageKeys.loginToken);
+      await AppStorage.removeStorageValue(AppStorageKeys.userId);
+      await AppStorage.removeStorageValue(AppStorageKeys.userPhone);
+      await AppStorage.removeStorageValue(AppStorageKeys.userName);
+      await AppStorage.saveToStorageBool(AppStorageKeys.isLoggedIn, false);
+      await AppStorage.removeStorageValue('phone_verified');
+      await AppStorage.removeStorageValue('user_email');
+      
+      // Clear core auth
+      final coreAuthService = core_auth.authService;
+      await coreAuthService.logout();
+      
+      // Clear services
+      walletService.clear();
+      wishlistService.clear();
+      cartService.clear();
+      await UserService.setCurrentUserId('');
+      
+      debugPrint('✅ Unified logout completed');
+    } catch (e) {
+      debugPrint('❌ Error during logout: $e');
     }
   }
 }
