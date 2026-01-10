@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../shared/components/custom_app_bar.dart';
+import '../../../../../shared/components/custom_app_bar.dart';
 
 /// Product detail page
 class ProductDetailPage extends StatelessWidget {

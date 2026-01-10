@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'dart:io';
+// Use universal_io for cross-platform File/Directory support
+import 'package:universal_io/io.dart';
 
 // Conditional import for apk_installer - only works on Android
 // import 'package:apk_installer/apk_installer.dart';
@@ -565,8 +566,28 @@ class AppUtils {
   }
 
   static Future<void> installApk(BuildContext context, String apkPath) async {
+    // APK installation only available on Android
+    if (kIsWeb) {
+      if (context.mounted) {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Not Available'),
+            content: const Text('APK installation is not available on web platform.'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        );
+      }
+      return;
+    }
+    
     try {
-      if (Platform.isAndroid) {
+      if (!kIsWeb && Platform.isAndroid) {
         // TODO: Add apk_installer package or use alternative method
         // await ApkInstaller.installApk(filePath: apkPath);
         

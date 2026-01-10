@@ -1,6 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'dart:io';
+import 'package:universal_io/io.dart';
 
 import 'package:dio/dio.dart';
 import 'package:open_file/open_file.dart';

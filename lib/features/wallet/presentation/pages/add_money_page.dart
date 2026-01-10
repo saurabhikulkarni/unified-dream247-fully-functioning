@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../shared/components/custom_app_bar.dart';
+import '../../../../shared/components/custom_app_bar.dart';
 
 /// Add money page
 class AddMoneyPage extends StatelessWidget {
