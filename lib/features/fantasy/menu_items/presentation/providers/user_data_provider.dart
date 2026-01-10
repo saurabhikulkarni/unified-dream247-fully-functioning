@@ -75,8 +75,8 @@ class UserDataProvider extends ChangeNotifier {
   Future<void> clearUserData() async {
     _userData = null;
     await AppStorage.saveToStorageString("userData", "");
-    await AppStorage.saveToStorageString(AppStorageKeys.authToken, "");
-    await AppStorage.saveToStorageBool(AppStorageKeys.logedIn, false);
+    await AppStorage.saveToStorageString("authToken", "");
+    await AppStorage.saveToStorageBool("loggedIn", false);
     notifyListeners();
   }
 }

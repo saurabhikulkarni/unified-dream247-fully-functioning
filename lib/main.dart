@@ -69,7 +69,7 @@ void main() async {
     
     final shopAuthService = shop_auth.AuthService();
     
-    await UserService.initialize();
+    // Initialize ecommerce services
     await wishlistService.initialize();
     await cartService.initialize();
     await searchService.initialize();
