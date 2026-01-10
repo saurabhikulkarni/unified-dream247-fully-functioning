@@ -5,7 +5,7 @@ class UserModel extends User {
   const UserModel({
     required super.id,
     required super.name,
-    required super.email,
+    super.email,
     super.phone,
     super.profileImage,
   });
@@ -15,7 +15,7 @@ class UserModel extends User {
     return UserModel(
       id: json['id'] as String,
       name: json['name'] as String,
-      email: json['email'] as String,
+      email: json['email'] as String?,
       phone: json['phone'] as String?,
       profileImage: json['profileImage'] as String?,
     );
@@ -40,6 +40,17 @@ class UserModel extends User {
       email: email,
       phone: phone,
       profileImage: profileImage,
+    );
+  }
+
+  /// Create from entity
+  factory UserModel.fromEntity(User user) {
+    return UserModel(
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      phone: user.phone,
+      profileImage: user.profileImage,
     );
   }
 }
