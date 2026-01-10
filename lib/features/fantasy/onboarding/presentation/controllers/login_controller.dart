@@ -1,5 +1,14 @@
-// // ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously
 
+import 'package:get/get.dart';
+
+/// Stub LoginController to maintain compatibility
+/// This is no longer used - authentication is handled by shop AuthService
+class LoginController extends GetxController {
+  RxBool isOtpScreen = false.obs;
+}
+
+// Original implementation commented out - now using unified shop auth
 // import 'package:flutter/material.dart';
 // import 'package:get/get.dart';
 // import 'package:unified_dream247/features/fantasy/core/api_server_constants/api_server_impl/api_impl.dart';
