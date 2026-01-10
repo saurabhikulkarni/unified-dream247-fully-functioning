@@ -332,7 +332,7 @@ class AppRouter {
           final matchKey = state.pathParameters['matchKey']!;
           return MaterialPage(
             key: state.pageKey,
-            child: LiveMatchDetailsScreen(matchKey: matchKey),
+            child: LiveMatchDetails(mode: matchKey),
           );
         },
       ),
