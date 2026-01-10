@@ -5,6 +5,7 @@ import '../../domain/usecases/login_usecase.dart';
 import '../../domain/usecases/logout_usecase.dart';
 import '../../domain/usecases/register_usecase.dart';
 import '../../domain/usecases/verify_otp_usecase.dart';
+import '../../data/datasources/auth_local_datasource.dart';
 import '../../../shop/services/auth_service.dart' as shop_auth;
 import 'auth_event.dart';
 import 'auth_state.dart';
@@ -16,6 +17,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final RegisterUseCase registerUseCase;
   final VerifyOtpUseCase verifyOtpUseCase;
   final LogoutUseCase logoutUseCase;
+  final AuthLocalDataSource localDataSource;
 
   AuthBloc({
     required this.sendOtpUseCase,
@@ -23,6 +25,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     required this.registerUseCase,
     required this.verifyOtpUseCase,
     required this.logoutUseCase,
+    required this.localDataSource,
   }) : super(const AuthInitial()) {
     on<SendOtpEvent>(_onSendOtp);
     on<LoginEvent>(_onLogin);
@@ -56,6 +59,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       (user) async {
         // Save unified session for shop and fantasy
         try {
+          final authToken = await localDataSource.getAccessToken();
           final shopAuthService = shop_auth.AuthService();
           await shopAuthService.saveUnifiedLoginSession(
             phone: event.phone,
@@ -63,6 +67,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             userId: user.id,
             email: user.email,
             phoneVerified: true,
+            authToken: authToken,
           );
           emit(Authenticated(user));
         } catch (e) {
@@ -90,6 +95,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       (user) async {
         // Save unified session for shop and fantasy after registration
         try {
+          final authToken = await localDataSource.getAccessToken();
           final shopAuthService = shop_auth.AuthService();
           await shopAuthService.saveUnifiedLoginSession(
             phone: event.phone,
@@ -97,6 +103,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             userId: user.id,
             email: user.email,
             phoneVerified: true,
+            authToken: authToken,
           );
           emit(Authenticated(user));
         } catch (e) {
@@ -122,6 +129,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       (user) async {
         // Save unified session for shop and fantasy after successful OTP verification
         try {
+          final authToken = await localDataSource.getAccessToken();
           final shopAuthService = shop_auth.AuthService();
           await shopAuthService.saveUnifiedLoginSession(
             phone: event.phone,
@@ -129,10 +137,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             userId: user.id,
             email: user.email,
             phoneVerified: true,
+            authToken: authToken,
           );
           emit(Authenticated(user));
         } catch (e) {
-          emit(AuthError('Login successful but failed to save session: ${e.toString()}'));
+          emit(AuthError('OTP verification successful but failed to save session: ${e.toString()}'));
         }
       },
     );
