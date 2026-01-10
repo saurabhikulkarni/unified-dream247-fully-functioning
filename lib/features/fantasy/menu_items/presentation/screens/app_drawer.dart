@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:unified_dream247/features/fantasy/onboarding/presentation/controllers/login_controller.dart';
 import 'package:provider/provider.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/app_colors.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/app_pages.dart';
@@ -29,7 +28,6 @@ class AppDrawer extends StatelessWidget {
         Provider.of<UserDataProvider>(context, listen: true).userData;
     final walletData =
         Provider.of<WalletDetailsProvider>(context, listen: true).walletData;
-    Get.lazyPut<LoginController>(() => LoginController());
 
     return Drawer(
       backgroundColor: AppColors.transparent,

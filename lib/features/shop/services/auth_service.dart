@@ -340,7 +340,7 @@ class AuthService {
       await AppStorage.saveToStorageBool('phone_verified', phoneVerified);
       
       if (email != null && email.isNotEmpty) {
-        await AppStorage.saveToStorageString('user_email', email);
+        await AppStorage.saveToStorageString(AppStorageKeys.userEmail, email);
       }
       
       // Save to core AuthService
@@ -430,7 +430,7 @@ class AuthService {
       await AppStorage.removeStorageValue(AppStorageKeys.userName);
       await AppStorage.saveToStorageBool(AppStorageKeys.isLoggedIn, false);
       await AppStorage.removeStorageValue('phone_verified');
-      await AppStorage.removeStorageValue('user_email');
+      await AppStorage.removeStorageValue(AppStorageKeys.userEmail);
       
       // Clear core auth
       final coreAuthService = core_auth.authService;

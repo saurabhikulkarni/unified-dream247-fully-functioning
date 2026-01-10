@@ -11,6 +11,7 @@ class AppStorageKeys {
   static const isLoggedIn = "isLoggedIn";
   static const userPhone = "userPhone";
   static const userName = "userName";
+  static const userEmail = "userEmail";
 }
 
 class ApiResponseString {
