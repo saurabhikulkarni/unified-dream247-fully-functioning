@@ -350,7 +350,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
               title: "Reviews",
               isShowBottomBorder: true,
               press: () {
-                context.push('/shop/reviews/${widget.product.id}');
+                context.push('/shop/reviews/${_product?.id}');
               },
             ),
             SliverPadding(
