@@ -15,6 +15,7 @@ import '../../features/wallet/presentation/pages/add_money_page.dart';
 import '../../features/wallet/presentation/pages/wallet_page.dart';
 
 // Shop screen imports
+import '../../features/shop/splash/splash_screen.dart' as shop_splash;
 import '../../features/shop/home/screens/shop_home_screen.dart';
 import '../../features/shop/screens/product/views/product_details_screen.dart';
 import '../../features/shop/screens/checkout/views/cart_screen.dart';
@@ -51,13 +52,13 @@ class AppRouter {
     initialLocation: RouteNames.splash,
     debugLogDiagnostics: true,
     routes: [
-      // Splash screen (Authentication splash as entry point)
+      // Splash screen (Shop splash as entry point)
       GoRoute(
         path: RouteNames.splash,
         name: 'splash',
         pageBuilder: (context, state) => MaterialPage(
           key: state.pageKey,
-          child: const SplashPage(),
+          child: const shop_splash.SplashScreen(),
         ),
       ),
       
