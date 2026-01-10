@@ -1,12 +1,12 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/app_pages.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/strings.dart';
 import 'package:unified_dream247/features/fantasy/core/global_widgets/app_toast.dart';
 import 'package:unified_dream247/features/fantasy/menu_items/presentation/providers/user_data_provider.dart';
-import 'package:unified_dream247/features/shop/screens/auth/views/login_screen.dart';
+import 'package:unified_dream247/config/routes/route_names.dart';
 import 'package:unified_dream247/features/shop/services/auth_service.dart';
 import 'package:unified_dream247/features/fantasy/upcoming_matches/presentation/providers/myteams_provider.dart';
 import 'package:unified_dream247/features/fantasy/accounts/presentation/providers/wallet_details_provider.dart';
@@ -84,7 +84,7 @@ class ApiServerUtil {
           context,
           listen: false,
         ).clearliveJoinTeams();
-        Get.to(() => const LoginScreen());
+        context.go(RouteNames.login);
       }
     } else if (statusCode == 500) {
       appToast(Strings.internalServerError, context);
