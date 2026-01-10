@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:unified_dream247/features/shop/screens/auth/views/login_screen.dart';
+import 'package:go_router/go_router.dart';
+import 'package:unified_dream247/config/routes/route_names.dart';
 import 'package:unified_dream247/features/shop/services/auth_service.dart';
-import 'package:unified_dream247/features/shop/route/route_constants.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -50,33 +50,55 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   Future<void> _navigateToNextScreen() async {
+    print('🛒 SHOP SPLASH: Starting navigation check');
+    
     // Wait for typing to complete, then hold a little longer for tagline
     while (!_typingDone) {
       await Future.delayed(const Duration(milliseconds: 50));
     }
+    print('🛒 SHOP SPLASH: Typing done, waiting 2 seconds');
     await Future.delayed(const Duration(seconds: 2));
 
-    if (!mounted) return;
+    if (!mounted) {
+      print('🛒 SHOP SPLASH: Widget not mounted, returning');
+      return;
+    }
 
-    // Check if user is already logged in
-    final isLoggedIn = await authService.isLoggedIn();
+    try {
+      // Check if user is already logged in
+      print('🛒 SHOP SPLASH: Checking if user is logged in');
+      final isLoggedIn = await authService.isLoggedIn();
+      print('🛒 SHOP SPLASH: isLoggedIn = $isLoggedIn');
 
-    if (isLoggedIn) {
-      // Check if phone is verified
-      final isPhoneVerified = await authService.isPhoneVerified();
+      if (!mounted) return;
 
-      if (isPhoneVerified) {
-        // User is logged in and phone is verified - go to home
-        Navigator.of(context).pushReplacementNamed(entryPointScreenRoute);
+      if (isLoggedIn) {
+        // Check if phone is verified
+        final isPhoneVerified = await authService.isPhoneVerified();
+        print('🛒 SHOP SPLASH: isPhoneVerified = $isPhoneVerified');
+
+        if (isPhoneVerified) {
+          // User is logged in and phone is verified - go to home
+          print('🛒 SHOP SPLASH: Navigating to home');
+          context.go(RouteNames.home);
+        } else {
+          // Phone not verified - take to verification
+          print('🛒 SHOP SPLASH: Navigating to verification');
+          context.go(RouteNames.otpVerification);
+        }
       } else {
-        // Phone not verified - take to verification
-        Navigator.of(context).pushReplacementNamed(signUpVerificationScreenRoute);
+        // Not logged in - go to login
+        print('🛒 SHOP SPLASH: Navigating to login');
+        context.go(RouteNames.login);
+        print('🛒 SHOP SPLASH: Navigation to login completed');
       }
-    } else {
-      // Not logged in - go to login
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const LoginScreen()),
-      );
+    } catch (e, stackTrace) {
+      print('❌ SHOP SPLASH ERROR: $e');
+      print('❌ SHOP SPLASH STACK: $stackTrace');
+      // Fallback to login on error
+      if (mounted) {
+        context.go(RouteNames.login);
+      }
     }
   }
 

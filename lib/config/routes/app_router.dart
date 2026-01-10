@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../features/authentication/presentation/pages/login_page.dart';
 import '../../features/authentication/presentation/pages/otp_verification_page.dart';
 import '../../features/authentication/presentation/pages/register_page.dart';
-import '../../features/shop/splash/splash_screen.dart';
+import '../../features/shop/screens/splash/splash_screen.dart';
+import '../../features/shop/screens/auth/views/login_screen.dart';
 import '../../features/ecommerce/products/presentation/pages/product_detail_page.dart';
 import '../../features/ecommerce/products/presentation/pages/products_page.dart';
 import '../../features/gaming/matches/presentation/pages/match_detail_page.dart';
@@ -67,7 +67,7 @@ class AppRouter {
         name: 'login',
         pageBuilder: (context, state) => MaterialPage(
           key: state.pageKey,
-          child: const LoginPage(),
+          child: const LoginScreen(), // Shop login screen
         ),
       ),
       GoRoute(
