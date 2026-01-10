@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import '../../features/authentication/presentation/pages/login_page.dart';
 import '../../features/authentication/presentation/pages/otp_verification_page.dart';
 import '../../features/authentication/presentation/pages/register_page.dart';
-import '../../features/authentication/presentation/pages/splash_page.dart';
 import '../../features/ecommerce/products/presentation/pages/product_detail_page.dart';
 import '../../features/ecommerce/products/presentation/pages/products_page.dart';
 import '../../features/gaming/matches/presentation/pages/match_detail_page.dart';
