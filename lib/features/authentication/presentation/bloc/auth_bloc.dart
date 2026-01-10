@@ -5,6 +5,7 @@ import '../../domain/usecases/login_usecase.dart';
 import '../../domain/usecases/logout_usecase.dart';
 import '../../domain/usecases/register_usecase.dart';
 import '../../domain/usecases/verify_otp_usecase.dart';
+import '../../../shop/services/auth_service.dart' as shop_auth;
 import 'auth_event.dart';
 import 'auth_state.dart';
 
@@ -52,7 +53,22 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     result.fold(
       (failure) => emit(AuthError(ErrorHandler.getErrorMessage(failure))),
-      (user) => emit(Authenticated(user)),
+      (user) async {
+        // Save unified session for shop and fantasy
+        try {
+          final shopAuthService = shop_auth.AuthService();
+          await shopAuthService.saveUnifiedLoginSession(
+            phone: event.phone,
+            name: user.name,
+            userId: user.id,
+            email: user.email,
+            phoneVerified: true,
+          );
+          emit(Authenticated(user));
+        } catch (e) {
+          emit(AuthError('Login successful but failed to save session: ${e.toString()}'));
+        }
+      },
     );
   }
 
@@ -71,10 +87,21 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     result.fold(
       (failure) => emit(AuthError(ErrorHandler.getErrorMessage(failure))),
-      (user) {
-        // In a real app, you might send OTP after registration
-        // For now, we'll treat it as successful authentication
-        emit(Authenticated(user));
+      (user) async {
+        // Save unified session for shop and fantasy after registration
+        try {
+          final shopAuthService = shop_auth.AuthService();
+          await shopAuthService.saveUnifiedLoginSession(
+            phone: event.phone,
+            name: user.name,
+            userId: user.id,
+            email: user.email,
+            phoneVerified: true,
+          );
+          emit(Authenticated(user));
+        } catch (e) {
+          emit(AuthError('Registration successful but failed to save session: ${e.toString()}'));
+        }
       },
     );
   }
@@ -92,7 +119,22 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     result.fold(
       (failure) => emit(AuthError(ErrorHandler.getErrorMessage(failure))),
-      (user) => emit(Authenticated(user)),
+      (user) async {
+        // Save unified session for shop and fantasy after successful OTP verification
+        try {
+          final shopAuthService = shop_auth.AuthService();
+          await shopAuthService.saveUnifiedLoginSession(
+            phone: event.phone,
+            name: user.name,
+            userId: user.id,
+            email: user.email,
+            phoneVerified: true,
+          );
+          emit(Authenticated(user));
+        } catch (e) {
+          emit(AuthError('Login successful but failed to save session: ${e.toString()}'));
+        }
+      },
     );
   }
 

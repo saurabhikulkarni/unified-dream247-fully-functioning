@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:unified_dream247/config/routes/route_names.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/app_colors.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/strings.dart';
 import 'package:unified_dream247/features/fantasy/accounts/presentation/providers/wallet_details_provider.dart';
@@ -13,7 +14,6 @@ import 'package:unified_dream247/features/fantasy/my_matches/presentation/provid
 import 'package:unified_dream247/features/fantasy/upcoming_matches/presentation/providers/myteams_provider.dart';
 import 'package:unified_dream247/features/fantasy/upcoming_matches/presentation/providers/team_preview_provider.dart';
 import 'package:unified_dream247/features/fantasy/user_verification/presentation/providers/kyc_details_provider.dart';
-import 'package:unified_dream247/features/shop/screens/auth/views/login_screen.dart';
 import 'package:unified_dream247/features/shop/services/auth_service.dart';
 
 class LogoutDialog extends StatefulWidget {
@@ -40,7 +40,7 @@ class _LogoutDialogState extends State<LogoutDialog> {
             style: TextStyle(color: AppColors.blackColor),
           ),
           onPressed: () {
-            Get.back();
+            Navigator.of(context).pop();
           },
         ),
         TextButton(
@@ -83,6 +83,8 @@ class _LogoutDialogState extends State<LogoutDialog> {
         listen: false,
       ).clearliveJoinTeams();
     }
-    Get.offAll(() => const LoginScreen());
+    if (context.mounted) {
+      context.go(RouteNames.login);
+    }
   }
 }

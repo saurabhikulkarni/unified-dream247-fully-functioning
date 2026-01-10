@@ -13,4 +13,13 @@ class Msg91Config {
   /// OTP configuration
   static const int otpLength = 6;
   static const int otpTimeoutSeconds = 60;
+  
+  /// Request timeout duration (in seconds)
+  static const int requestTimeoutSeconds = 30;
+  
+  /// OTP expiry time (in minutes) - should match backend configuration
+  static const int otpExpiryMinutes = 10;
+  
+  /// Resend OTP cooldown (in seconds)
+  static const int resendCooldownSeconds = 30;
 }

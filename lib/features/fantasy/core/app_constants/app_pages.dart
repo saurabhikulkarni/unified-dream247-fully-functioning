@@ -225,8 +225,9 @@ import 'package:unified_dream247/features/fantasy/my_matches/data/models/live_ch
 import 'package:unified_dream247/features/fantasy/my_matches/presentation/screens/contest_live_details.dart';
 import 'package:unified_dream247/features/fantasy/my_matches/presentation/screens/live_match_details_screen.dart';
 import 'package:unified_dream247/features/fantasy/my_matches/presentation/screens/team_compare.dart';
-import 'package:unified_dream247/features/shop/screens/auth/views/login_screen.dart';
-import 'package:unified_dream247/features/shop/splash/splash_screen.dart';
+import 'package:go_router/go_router.dart';
+import 'package:unified_dream247/config/routes/route_names.dart';
+import 'package:unified_dream247/features/authentication/presentation/pages/splash_page.dart';
 import 'package:unified_dream247/features/fantasy/upcoming_matches/data/models/players_model.dart';
 import 'package:unified_dream247/features/fantasy/upcoming_matches/data/models/teams_model.dart';
 import 'package:unified_dream247/features/fantasy/upcoming_matches/data/models/user_teams_model.dart';
@@ -248,17 +249,16 @@ class AppNavigation {
   static gotoSplashScreen(BuildContext context) async {
     return await Navigator.pushAndRemoveUntil(
       context,
-      MaterialPageRoute(builder: (context) => const SplashScreen()),
+      MaterialPageRoute(builder: (context) => const SplashPage()),
       (Route<dynamic> route) => false,
     );
   }
 
   static gotoLoginScreen(BuildContext context) async {
-    return await Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(builder: (context) => const LoginScreen()),
-      (route) => false,
-    );
+    // Use GoRouter for navigation to login
+    if (context.mounted) {
+      context.go(RouteNames.login);
+    }
   }
 
   // static gotoVerifyOtpScreen(

@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
-import 'package:unified_dream247/features/shop/config/msg91_config.dart';
+import 'package:unified_dream247/config/msg91_config.dart';
 
 /// Service for MSG91 OTP verification via backend API
 /// 
