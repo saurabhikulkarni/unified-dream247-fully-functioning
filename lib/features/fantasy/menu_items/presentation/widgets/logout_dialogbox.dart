@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:unified_dream247/features/fantasy/onboarding/presentation/controllers/login_controller.dart';
 import 'package:provider/provider.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/app_colors.dart';
-import 'package:unified_dream247/features/fantasy/core/app_constants/app_storage_keys.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/strings.dart';
-import 'package:unified_dream247/features/fantasy/core/utils/app_storage.dart';
 import 'package:unified_dream247/features/fantasy/accounts/presentation/providers/wallet_details_provider.dart';
 import 'package:unified_dream247/features/fantasy/menu_items/presentation/providers/user_data_provider.dart';
 import 'package:unified_dream247/features/fantasy/my_matches/presentation/provider/joined_live_contest_provider.dart';
@@ -13,10 +10,11 @@ import 'package:unified_dream247/features/fantasy/my_matches/presentation/provid
 import 'package:unified_dream247/features/fantasy/my_matches/presentation/provider/live_score_provider.dart';
 import 'package:unified_dream247/features/fantasy/my_matches/presentation/provider/player_stats_provider.dart';
 import 'package:unified_dream247/features/fantasy/my_matches/presentation/provider/scorecard_provider.dart';
-import 'package:unified_dream247/features/fantasy/onboarding/presentation/screens/login_screen.dart';
 import 'package:unified_dream247/features/fantasy/upcoming_matches/presentation/providers/myteams_provider.dart';
 import 'package:unified_dream247/features/fantasy/upcoming_matches/presentation/providers/team_preview_provider.dart';
 import 'package:unified_dream247/features/fantasy/user_verification/presentation/providers/kyc_details_provider.dart';
+import 'package:unified_dream247/features/shop/screens/auth/views/login_screen.dart';
+import 'package:unified_dream247/features/shop/services/auth_service.dart';
 
 class LogoutDialog extends StatefulWidget {
   const LogoutDialog({super.key});
@@ -58,10 +56,11 @@ class _LogoutDialogState extends State<LogoutDialog> {
     );
   }
 
-  void logout(BuildContext context) {
-    AppStorage.saveToStorageBool(AppStorageKeys.logedIn, false);
-    AppStorage.saveToStorageString(AppStorageKeys.authToken, "");
-    AppStorage.clear();
+  void logout(BuildContext context) async {
+    // Use unified logout to clear both shop and fantasy data
+    final authService = AuthService();
+    await authService.unifiedLogout();
+    
     Navigator.of(context).pop();
     if (context.mounted) {
       Provider.of<UserDataProvider>(context, listen: false).clearUserData();
@@ -84,7 +83,6 @@ class _LogoutDialogState extends State<LogoutDialog> {
         listen: false,
       ).clearliveJoinTeams();
     }
-    Get.find<LoginController>().isOtpScreen.value = false;
-    Get.offAll(() => LoginScreen());
+    Get.offAll(() => const LoginScreen());
   }
 }

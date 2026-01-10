@@ -6,6 +6,11 @@ class AppStorageKeys {
   static const biometricLock = "biometricLock";
   static const notificationSound = "notificationSound";
   static const fcmToken = "fcmToken";
+  // Additional keys for unified auth
+  static const loginToken = "loginToken";
+  static const isLoggedIn = "isLoggedIn";
+  static const userPhone = "userPhone";
+  static const userName = "userName";
 }
 
 class ApiResponseString {
