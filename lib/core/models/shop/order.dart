@@ -1,3 +1,5 @@
+import 'address.dart';
+
 /// Order model for ecommerce orders
 class Order {
   final String id;

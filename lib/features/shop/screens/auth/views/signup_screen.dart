@@ -1,9 +1,15 @@
+﻿import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:unified_dream247/features/shop/constants.dart';
-import 'package:unified_dream247/features/shop/route/route_constants.dart';
+import 'package:go_router/go_router.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:unified_dream247/config/routes/route_names.dart';
+import 'package:unified_dream247/features/shop/screens/auth/views/components/sign_up_form.dart';
 import 'package:unified_dream247/features/shop/services/auth_service.dart';
+import 'package:unified_dream247/features/shop/services/graphql_client.dart';
+import 'package:unified_dream247/features/shop/services/graphql_queries.dart';
+import 'package:unified_dream247/features/shop/services/user_service.dart';
+import 'package:unified_dream247/features/shop/constants.dart';
 
-/// Shop Sign Up Screen
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
 
@@ -13,359 +19,295 @@ class SignUpScreen extends StatefulWidget {
 
 class _SignUpScreenState extends State<SignUpScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
-  final _phoneController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-  final _confirmPasswordController = TextEditingController();
-  bool _isLoading = false;
-  bool _obscurePassword = true;
-  bool _obscureConfirmPassword = true;
+  dynamic _signUpFormState;
+  bool _privacyAccepted = false;
 
   @override
-  void dispose() {
-    _nameController.dispose();
-    _phoneController.dispose();
-    _emailController.dispose();
-    _passwordController.dispose();
-    _confirmPasswordController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _onSignUpPressed() async {
-    if (_formKey.currentState!.validate()) {
-      setState(() => _isLoading = true);
-
-      try {
-        final authService = AuthService();
-        final name = _nameController.text.trim();
-        final phone = _phoneController.text.trim();
-        final email = _emailController.text.trim();
-        final password = _passwordController.text.trim();
-
-        // Attempt registration
-        final success = await authService.registerUser(
-          name: name,
-          phone: phone,
-          email: email,
-          password: password,
-        );
-
-        if (!mounted) return;
-
-        if (success) {
-          // Show success message
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Account created successfully!'),
-              backgroundColor: Colors.green,
-            ),
-          );
-          // Navigate to entry point on success
-          Navigator.pushReplacementNamed(context, entryPointScreenRoute);
-        } else {
-          _showError('Registration failed. Please try again.');
-        }
-      } catch (e) {
-        if (mounted) {
-          _showError('An error occurred. Please try again.');
-        }
-      } finally {
-        if (mounted) {
-          setState(() => _isLoading = false);
-        }
-      }
-    }
-  }
-
-  void _showError(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.red,
-      ),
-    );
+  void initState() {
+    super.initState();
+    // Preload the welcome image to avoid loading delay
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      precacheImage(
+        const AssetImage("assets/images/welcome-min.jpg"),
+        context,
+      );
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black87),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(defaultPadding),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const SizedBox(height: 20),
-                
-                // Title
-                Text(
-                  'Create Account',
-                  style: TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Sign up to get started',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.black54,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 32),
-                
-                // Name Field
-                TextFormField(
-                  controller: _nameController,
-                  keyboardType: TextInputType.name,
-                  textCapitalization: TextCapitalization.words,
-                  decoration: InputDecoration(
-                    labelText: 'Full Name',
-                    hintText: 'Enter your full name',
-                    prefixIcon: const Icon(Icons.person),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: Colors.grey.shade300),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: Color(0xFF6441A5), width: 2),
-                    ),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your name';
-                    }
-                    if (value.length < 3) {
-                      return 'Name must be at least 3 characters';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16),
-                
-                // Phone Number Field
-                TextFormField(
-                  controller: _phoneController,
-                  keyboardType: TextInputType.phone,
-                  decoration: InputDecoration(
-                    labelText: 'Phone Number',
-                    hintText: 'Enter your phone number',
-                    prefixIcon: const Icon(Icons.phone),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: Colors.grey.shade300),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: Color(0xFF6441A5), width: 2),
-                    ),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your phone number';
-                    }
-                    final cleanPhone = value.replaceAll(RegExp(r'[^\d]'), '');
-                    if (cleanPhone.length < 10) {
-                      return 'Please enter a valid phone number';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16),
-                
-                // Email Field
-                TextFormField(
-                  controller: _emailController,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: InputDecoration(
-                    labelText: 'Email',
-                    hintText: 'Enter your email',
-                    prefixIcon: const Icon(Icons.email),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: Colors.grey.shade300),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: Color(0xFF6441A5), width: 2),
-                    ),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your email';
-                    }
-                    if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
-                      return 'Please enter a valid email';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16),
-                
-                // Password Field
-                TextFormField(
-                  controller: _passwordController,
-                  obscureText: _obscurePassword,
-                  decoration: InputDecoration(
-                    labelText: 'Password',
-                    hintText: 'Enter your password',
-                    prefixIcon: const Icon(Icons.lock),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _obscurePassword ? Icons.visibility : Icons.visibility_off,
-                      ),
-                      onPressed: () {
-                        setState(() => _obscurePassword = !_obscurePassword);
-                      },
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: Colors.grey.shade300),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: Color(0xFF6441A5), width: 2),
-                    ),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your password';
-                    }
-                    if (value.length < 6) {
-                      return 'Password must be at least 6 characters';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16),
-                
-                // Confirm Password Field
-                TextFormField(
-                  controller: _confirmPasswordController,
-                  obscureText: _obscureConfirmPassword,
-                  decoration: InputDecoration(
-                    labelText: 'Confirm Password',
-                    hintText: 'Re-enter your password',
-                    prefixIcon: const Icon(Icons.lock_outline),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _obscureConfirmPassword ? Icons.visibility : Icons.visibility_off,
-                      ),
-                      onPressed: () {
-                        setState(() => _obscureConfirmPassword = !_obscureConfirmPassword);
-                      },
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: Colors.grey.shade300),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: Color(0xFF6441A5), width: 2),
-                    ),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please confirm your password';
-                    }
-                    if (value != _passwordController.text) {
-                      return 'Passwords do not match';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 32),
-                
-                // Sign Up Button
-                SizedBox(
-                  height: 56,
-                  child: ElevatedButton(
-                    onPressed: _isLoading ? null : _onSignUpPressed,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF6441A5),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      elevation: 4,
-                    ),
-                    child: _isLoading
-                        ? const SizedBox(
-                            height: 24,
-                            width: 24,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                            ),
-                          )
-                        : const Text(
-                            'Sign Up',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
-                  ),
-                ),
-                const SizedBox(height: 24),
-                
-                // Login Link
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(
-                      'Already have an account? ',
-                      style: TextStyle(color: Colors.black54),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: const Text(
-                        'Login',
-                        style: TextStyle(
-                          color: Color(0xFF6441A5),
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            // Top hero image: render within SafeArea and avoid fixed cache sizes
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.45,
+              width: double.infinity,
+              child: Image.asset(
+                "assets/images/welcome-min.jpg",
+                fit: BoxFit.cover,
+                alignment: Alignment.center,
+              ),
             ),
-          ),
+            Padding(
+              padding: const EdgeInsets.all(defaultPadding),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "LetΓÇÖs get started!",
+                    style: Theme.of(context).textTheme.headlineSmall,
+                  ),
+                  const SizedBox(height: defaultPadding / 2),
+                  const Text(
+                    "Please enter your valid data in order to create an account.",
+                  ),
+                  const SizedBox(height: defaultPadding),
+                  SignUpForm(
+                    formKey: _formKey,
+                    onFormCreated: (form) {
+                      _signUpFormState = form;
+                    },
+                  ),
+                  const SizedBox(height: defaultPadding),
+                  Row(
+                    children: [
+                      Checkbox(
+                        onChanged: (value) {
+                          setState(() {
+                            _privacyAccepted = value ?? false;
+                          });
+                        },
+                        value: _privacyAccepted,
+                      ),
+                      Expanded(
+                        child: Text.rich(
+                          TextSpan(
+                            text: "I agree with the",
+                            children: [
+                              TextSpan(
+                                recognizer: TapGestureRecognizer()
+                                  ..onTap = () {
+                                    // TODO: Navigate to terms page when route is added
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(content: Text('Terms of service page coming soon')),
+                                    );
+                                  },
+                                text: " Terms of service ",
+                                style: const TextStyle(
+                                  color: primaryColor,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              const TextSpan(
+                                text: "& privacy policy.",
+                              ),
+                            ],
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                  const SizedBox(height: defaultPadding * 2),
+                  ElevatedButton(
+                    onPressed: () async {
+                      if (!_formKey.currentState!.validate()) return;
+
+                      if (!_privacyAccepted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text(
+                                'Please accept the terms and privacy policy'),
+                          ),
+                        );
+                        return;
+                      }
+
+                      // First verify OTP
+                      final otpVerified = await _signUpFormState.verifyOtp();
+                      if (!mounted) return;
+                      
+                      if (!otpVerified) {
+                        return; // Error message already shown in verifyOtp
+                      }
+
+                      final name = _signUpFormState.getUserName();
+                      final phone = _signUpFormState.getVerifiedPhone();
+                      
+                      if (phone == null || phone.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Please verify your phone number with OTP'),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                        return;
+                      }
+
+                      // Show loading indicator
+                      showDialog(
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (context) => const Center(child: CircularProgressIndicator()),
+                      );
+
+                      try {
+                        // Check if user already exists with this phone number
+                        final UserService userService = UserService();
+                        final existingUser = await userService.getUserByMobileNumber(phone);
+                        
+                        if (existingUser != null) {
+                          if (mounted) {
+                            Navigator.of(context).pop(); // Hide loading dialog
+                            showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: const Text('Account Already Exists'),
+                                content: const Text('User with this mobile number already exists. Please try logging in or create an account with a different number.'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: const Text('Use Different Number'),
+                                  ),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                      context.go(RouteNames.login);
+                                    },
+                                    child: const Text('Login'),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }
+                          return;
+                        }
+
+                        // Extract first and last name from full name
+                        final nameParts = name.split(' ');
+                        final firstName = nameParts.isNotEmpty ? nameParts[0] : '';
+                        final lastName = nameParts.length > 1 ? nameParts.sublist(1).join(' ') : '';
+                        
+                        // Clean phone number (remove non-digit characters)
+                        final cleanPhone = phone.replaceAll(RegExp(r'[^\d]'), '');
+                        
+                        // Call GraphQL mutation to create user and get their ID
+                        final graphQLClient = GraphQLService.getClient();
+                        final MutationOptions options = MutationOptions(
+                          document: gql(GraphQLQueries.createUser),
+                          variables: {
+                            'firstName': firstName,
+                            'lastName': lastName,
+                            'username': phone, // Use phone as username
+                            'mobileNumber': cleanPhone, // Use cleaned phone as String
+                          },
+                        );
+                        
+                        final QueryResult result = await graphQLClient.mutate(options);
+                        
+                        if (result.hasException) {
+                          if (mounted) {
+                            Navigator.of(context).pop(); // Hide loading
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Error: ${result.exception}'),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                          }
+                          return;
+                        }
+                        
+                        // Extract userId from response
+                        final userId = result.data?['createUserDetail']?['id']?.toString();
+
+                        if (userId != null && userId.isNotEmpty) {
+                          // Publish user (required for Hygraph)
+                          try {
+                            final publishOptions = MutationOptions(
+                              document: gql(GraphQLQueries.publishUser),
+                              variables: {'id': userId},
+                            );
+                            await graphQLClient.mutate(publishOptions);
+                          } catch (e) {
+                            // Publishing failed, but user is created
+                          }
+                          
+                          // Fetch fantasy authentication token from backend
+                          String? fantasyToken;
+                          try {
+                            final authService = AuthService();
+                            fantasyToken = await authService.fetchFantasyToken(
+                              phone: phone,
+                              name: name,
+                              isNewUser: true, // Signup creates new user
+                            );
+                            
+                            if (fantasyToken == null) {
+                              print('⚠️ [SIGNUP] Failed to fetch fantasy token, continuing without it');
+                            }
+                          } catch (e) {
+                            print('❌ [SIGNUP] Error fetching fantasy token: $e');
+                            // Continue with signup even if fantasy token fetch fails
+                          }
+                          
+                          // Save login session with userId from Hygraph and fantasy token
+                          final authService = AuthService();
+                          await authService.saveLoginSession(
+                            phone: phone,
+                            name: name,
+                            phoneVerified: true,
+                            userId: userId,
+                            fantasyToken: fantasyToken,
+                          );
+                          
+                          if (!mounted) return;
+                          Navigator.of(context).pop(); // Hide loading
+                          context.go(RouteNames.home);
+                        } else {
+                          if (mounted) {
+                            Navigator.of(context).pop(); // Hide loading
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Error: Could not create user account'),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                          }
+                        }
+                      } catch (e) {
+                        if (mounted) {
+                          Navigator.of(context).pop(); // Hide loading
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Error: $e'),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        }
+                      }
+                    },
+                    child: const Text("Continue"),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text("Do you have an account?"),
+                      TextButton(
+                        onPressed: () {
+                          context.go(RouteNames.login);
+                        },
+                        child: const Text("Log in"),
+                      )
+                    ],
+                  ),
+                ],
+              ),
+            )
+          ],
         ),
       ),
     );

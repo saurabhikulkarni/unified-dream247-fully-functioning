@@ -1,6 +1,7 @@
 // ignore_for_file: unrelated_type_equality_checks
 
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
@@ -21,6 +22,47 @@ class ApiImplWithAccessToken {
           ),
         );
 
+  /// Check if JWT token is expired
+  bool _isTokenExpired(String token) {
+    try {
+      // JWT format: header.payload.signature
+      final parts = token.split('.');
+      if (parts.length != 3) {
+        debugPrint('⚠️ [TOKEN] Invalid JWT format');
+        return true;
+      }
+
+      // Decode payload (base64url)
+      final payload = parts[1];
+      final normalized = base64Url.normalize(payload);
+      final decoded = utf8.decode(base64Url.decode(normalized));
+      final payloadMap = json.decode(decoded) as Map<String, dynamic>;
+
+      // Check expiry
+      final exp = payloadMap['exp'];
+      if (exp == null) {
+        debugPrint('⚠️ [TOKEN] No expiry in token');
+        return false; // No expiry means it doesn't expire
+      }
+
+      final expiryTime = DateTime.fromMillisecondsSinceEpoch(exp * 1000);
+      final now = DateTime.now();
+      final isExpired = now.isAfter(expiryTime);
+
+      if (isExpired) {
+        debugPrint('⚠️ [TOKEN] Token expired at $expiryTime (now: $now)');
+      } else {
+        final remaining = expiryTime.difference(now);
+        debugPrint('✅ [TOKEN] Token valid for ${remaining.inMinutes} minutes');
+      }
+
+      return isExpired;
+    } catch (e) {
+      debugPrint('⚠️ [TOKEN] Error checking expiry: $e');
+      return true; // Assume expired on error
+    }
+  }
+
   Future<Response> _request(
     String method,
     String url, {
@@ -40,7 +82,27 @@ class ApiImplWithAccessToken {
         }
 
         final SharedPreferences prefs = await SharedPreferences.getInstance();
-        final token = prefs.getString(AppStorageKeys.authToken);
+        String? token = prefs.getString(AppStorageKeys.authToken);
+
+        // Debug: Log token status
+        if (token == null || token.isEmpty) {
+          debugPrint('⚠️ [FANTASY API] No auth token found in SharedPreferences!');
+          debugPrint('⚠️ [FANTASY API] Key checked: ${AppStorageKeys.authToken}');
+          debugPrint('⚠️ [FANTASY API] Available keys: ${prefs.getKeys()}');
+        } else {
+          debugPrint('✅ [FANTASY API] Token found: ${token.substring(0, 20)}...');
+          
+          // Check if token is expired
+          if (_isTokenExpired(token)) {
+            debugPrint('🔄 [FANTASY API] Token expired, needs refresh');
+            // For now, clear expired token - app should handle re-login
+            // In future, implement auto-refresh here
+            await prefs.remove(AppStorageKeys.authToken);
+            await prefs.remove('token'); // Clear both keys
+            token = null;
+            throw Exception('Token expired. Please log in again.');
+          }
+        }
 
         final Map<String, String> headers = {
           if (isJson) ApiServerKeys.contentType: ApiServerKeys.applicationJson,

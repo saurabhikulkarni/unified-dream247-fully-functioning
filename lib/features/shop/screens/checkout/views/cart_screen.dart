@@ -156,20 +156,20 @@ class _CartScreenState extends State<CartScreen> {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: const Text('Insufficient Tokens'),
+          title: const Text('Insufficient Shopping Tokens'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('You need $totalTokensNeeded tokens to complete this purchase.'),
+              Text('You need ₹$totalTokensNeeded ($totalTokensNeeded tokens) to complete this purchase.'),
               const SizedBox(height: defaultPadding / 2),
               Text(
-                'Your wallet has: ${walletBalance.toStringAsFixed(2)} tokens',
+                'Your wallet has: ₹${walletBalance.toInt()} (${walletBalance.toInt()} tokens)',
                 style: const TextStyle(fontWeight: FontWeight.w500),
               ),
               const SizedBox(height: defaultPadding / 2),
               Text(
-                'You need $tokensShort more tokens.',
+                'You need ₹$tokensShort ($tokensShort tokens) more.',
                 style: const TextStyle(
                   color: Colors.red,
                   fontWeight: FontWeight.w600,
@@ -378,6 +378,71 @@ class _CartScreenState extends State<CartScreen> {
       if (!mounted) return;
       Navigator.pop(context); // Close loading dialog
 
+      // Show success animation
+      await showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => Dialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 80,
+                  height: 80,
+                  decoration: BoxDecoration(
+                    color: Colors.green.shade50,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.check_circle,
+                    color: Colors.green,
+                    size: 60,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Text(
+                  'Order Placed Successfully!',
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  'Order #${order?.orderNumber ?? ""}',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Colors.grey[600],
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Your order is being processed',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 24),
+                ElevatedButton(
+                  onPressed: () => Navigator.pop(context),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: primaryColor,
+                    minimumSize: const Size(double.infinity, 48),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: const Text('Track Order'),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+
+      if (!mounted) return;
+
       // Navigate to order tracking screen with appropriate ID
       await Navigator.of(context).pushNamed(
         orderTrackingScreenRoute,
@@ -397,10 +462,64 @@ class _CartScreenState extends State<CartScreen> {
       if (!mounted) return;
       Navigator.pop(context); // Close loading dialog
       
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Failed to create order: ${e.toString()}'),
-          backgroundColor: Colors.red,
+      // Parse error message for user-friendly display
+      String errorMessage = 'Failed to create order';
+      String errorDetails = e.toString();
+      
+      if (errorDetails.contains('internet') || errorDetails.contains('connection')) {
+        errorMessage = 'Network Error';
+        errorDetails = 'Please check your internet connection and try again.';
+      } else if (errorDetails.contains('timeout')) {
+        errorMessage = 'Request Timeout';
+        errorDetails = 'The request took too long. Please try again.';
+      } else if (errorDetails.contains('User not logged in')) {
+        errorMessage = 'Authentication Error';
+        errorDetails = 'Please log in again to continue.';
+      } else if (errorDetails.contains('wallet') || errorDetails.contains('balance')) {
+        errorMessage = 'Insufficient Balance';
+        errorDetails = 'Unable to deduct from wallet. Please add funds.';
+      }
+      
+      // Show error dialog with retry option
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Row(
+            children: [
+              const Icon(Icons.error_outline, color: Colors.red, size: 28),
+              const SizedBox(width: 12),
+              Text(errorMessage),
+            ],
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(errorDetails),
+              const SizedBox(height: 16),
+              const Text(
+                'Would you like to try again?',
+                style: TextStyle(fontWeight: FontWeight.w500),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+                // Retry the order creation
+                _proceedToPayment(context);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: primaryColor,
+              ),
+              child: const Text('Retry'),
+            ),
+          ],
         ),
       );
     }

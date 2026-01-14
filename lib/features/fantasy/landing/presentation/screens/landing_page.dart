@@ -86,14 +86,21 @@ class _LandingPageState extends State<LandingPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: AppUtils.scaffoldKey,
-      appBar: MainAppbar(
-        title: _getAppBarTitle(),
+    return WillPopScope(
+      onWillPop: () async {
+        // Navigate back to unified home screen
+        Navigator.of(context).popUntil((route) => route.isFirst);
+        return false;
+      },
+      child: Scaffold(
+        key: AppUtils.scaffoldKey,
+        appBar: MainAppbar(
+          title: _getAppBarTitle(),
+        ),
+        drawer: AppDrawer(),
+        body: screens[_selectedIndex],
+        bottomNavigationBar: _buildPremiumBottomBar(),
       ),
-      drawer: AppDrawer(),
-      body: screens[_selectedIndex],
-      bottomNavigationBar: _buildPremiumBottomBar(),
     );
   }
 

@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../features/authentication/presentation/pages/login_page.dart';
 import '../../features/authentication/presentation/pages/otp_verification_page.dart';
-import '../../features/authentication/presentation/pages/register_page.dart';
 import '../../features/ecommerce/products/presentation/pages/product_detail_page.dart';
 import '../../features/ecommerce/products/presentation/pages/products_page.dart';
 import '../../features/gaming/matches/presentation/pages/match_detail_page.dart';
 import '../../features/gaming/matches/presentation/pages/matches_page.dart';
-import '../../features/home/presentation/pages/unified_home_page.dart';
 import '../../features/profile/presentation/pages/profile_page.dart';
 import '../../features/wallet/presentation/pages/add_money_page.dart';
 import '../../features/wallet/presentation/pages/wallet_page.dart';
+import '../../features/home/presentation/pages/unified_home_page.dart';
 
 // Shop screen imports
 import '../../features/shop/splash/splash_screen.dart' as shop_splash;
+import '../../features/shop/screens/auth/views/login_screen.dart' as shop_auth;
+import '../../features/shop/screens/auth/views/signup_screen.dart' as shop_signup;
 import '../../features/shop/home/screens/shop_home_screen.dart';
+import '../../features/shop/entry_point.dart';
 import '../../features/shop/screens/product/views/product_details_screen.dart';
 import '../../features/shop/screens/checkout/views/cart_screen.dart';
 import '../../features/shop/screens/order/views/orders_screen.dart';
@@ -29,6 +30,12 @@ import '../../features/shop/screens/discover/views/discover_screen.dart';
 import '../../features/shop/screens/category/views/category_products_screen.dart';
 import '../../features/shop/screens/checkout/views/address_selection_screen.dart';
 import '../../features/shop/screens/checkout/views/order_confirmation_screen.dart';
+import '../../features/shop/screens/wallet/views/wallet_screen.dart';
+import '../../features/shop/screens/user_info/views/user_info_screen.dart';
+import '../../features/shop/screens/terms_and_conditions/views/terms_and_conditions_screen.dart';
+import '../../features/shop/screens/privacy_policy/views/privacy_policy_screen.dart';
+import '../../features/shop/screens/refund_policy/views/refund_policy_screen.dart';
+import '../../features/shop/screens/shipping_policy/views/shipping_policy_screen.dart';
 
 // Fantasy screen imports
 import '../../features/fantasy/landing/presentation/screens/landing_page.dart';
@@ -61,13 +68,13 @@ class AppRouter {
         ),
       ),
       
-      // Authentication routes
+      // Authentication routes (Shop login/signup screens)
       GoRoute(
         path: RouteNames.login,
         name: 'login',
         pageBuilder: (context, state) => MaterialPage(
           key: state.pageKey,
-          child: const LoginPage(),
+          child: const shop_auth.LoginScreen(),
         ),
       ),
       GoRoute(
@@ -75,7 +82,7 @@ class AppRouter {
         name: 'register',
         pageBuilder: (context, state) => MaterialPage(
           key: state.pageKey,
-          child: const RegisterPage(),
+          child: const shop_signup.SignUpScreen(),
         ),
       ),
       GoRoute(
@@ -90,7 +97,7 @@ class AppRouter {
         },
       ),
       
-      // Main navigation routes with bottom navigation
+      // Main home - Unified Home Page with Game Zone & Shop sections
       GoRoute(
         path: RouteNames.home,
         name: 'home',
@@ -171,6 +178,14 @@ class AppRouter {
       ),
       
       // ========== Shopping Module Routes ==========
+      GoRoute(
+        path: '/shop/entry_point',
+        name: 'shop_entry_point',
+        pageBuilder: (context, state) => MaterialPage(
+          key: state.pageKey,
+          child: const EntryPoint(),
+        ),
+      ),
       GoRoute(
         path: '/shop/home',
         name: 'shop_home',
@@ -294,6 +309,92 @@ class AppRouter {
         pageBuilder: (context, state) => MaterialPage(
           key: state.pageKey,
           child: const OrderConfirmationScreen(),
+        ),
+      ),
+      GoRoute(
+        path: '/shop/wallet',
+        name: 'shop_wallet',
+        pageBuilder: (context, state) => MaterialPage(
+          key: state.pageKey,
+          child: const WalletScreen(),
+        ),
+      ),
+      GoRoute(
+        path: '/shop/profile/user-info',
+        name: 'shop_user_info',
+        pageBuilder: (context, state) => MaterialPage(
+          key: state.pageKey,
+          child: const UserInfoScreen(),
+        ),
+      ),
+      GoRoute(
+        path: '/shop/help',
+        name: 'shop_help',
+        pageBuilder: (context, state) => MaterialPage(
+          key: state.pageKey,
+          child: Scaffold(
+            appBar: AppBar(
+              title: const Text('Get Help'),
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () => context.pop(),
+              ),
+            ),
+            body: Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.help_outline, size: 80, color: Theme.of(context).primaryColor),
+                    const SizedBox(height: 24),
+                    const Text(
+                      'Need Help?',
+                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 16),
+                    const Text(
+                      'Contact our support team at\nsupport@dream247.com',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+      GoRoute(
+        path: '/shop/terms',
+        name: 'shop_terms',
+        pageBuilder: (context, state) => MaterialPage(
+          key: state.pageKey,
+          child: const TermsAndConditionsScreen(),
+        ),
+      ),
+      GoRoute(
+        path: '/shop/privacy',
+        name: 'shop_privacy',
+        pageBuilder: (context, state) => MaterialPage(
+          key: state.pageKey,
+          child: const PrivacyPolicyScreen(),
+        ),
+      ),
+      GoRoute(
+        path: '/shop/refund-policy',
+        name: 'shop_refund_policy',
+        pageBuilder: (context, state) => MaterialPage(
+          key: state.pageKey,
+          child: const RefundPolicyScreen(),
+        ),
+      ),
+      GoRoute(
+        path: '/shop/shipping-policy',
+        name: 'shop_shipping_policy',
+        pageBuilder: (context, state) => MaterialPage(
+          key: state.pageKey,
+          child: const ShippingPolicyScreen(),
         ),
       ),
       

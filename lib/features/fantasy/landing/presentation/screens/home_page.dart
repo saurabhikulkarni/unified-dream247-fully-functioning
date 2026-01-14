@@ -4,9 +4,12 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:unified_dream247/features/fantasy/core/api_server_constants/api_server_impl/api_impl.dart';
 import 'package:unified_dream247/features/fantasy/core/api_server_constants/api_server_impl/api_impl_header.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/app_colors.dart';
+import 'package:unified_dream247/features/fantasy/core/app_constants/app_storage_keys.dart';
 import 'package:unified_dream247/features/fantasy/core/global_widgets/no_data_widget.dart';
 import 'package:unified_dream247/features/fantasy/core/global_widgets/size_widget.dart';
 import 'package:unified_dream247/features/fantasy/landing/data/home_datasource.dart';
@@ -19,6 +22,7 @@ import 'package:unified_dream247/features/fantasy/landing/presentation/widgets/m
 import 'package:unified_dream247/features/fantasy/landing/presentation/widgets/recent_match_card.dart';
 import 'package:unified_dream247/features/fantasy/onboarding/data/onboarding_datasource.dart';
 import 'package:unified_dream247/features/fantasy/onboarding/domain/use_cases/onboarding_usecases.dart';
+import 'package:unified_dream247/features/shop/services/auth_service.dart';
 
 class HomePage extends StatefulWidget {
   final String? gameType;
@@ -55,6 +59,54 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    _checkAuthAndLoad();
+  }
+
+  Future<void> _checkAuthAndLoad() async {
+    // Check if user is logged in via shop app
+    final prefs = await SharedPreferences.getInstance();
+    final isLoggedIn = prefs.getBool('is_logged_in') ?? false;
+    final token = prefs.getString(AppStorageKeys.authToken);
+    
+    if (!mounted) return;
+    
+    if (!isLoggedIn) {
+      // Not logged in at all - redirect to shop login
+      debugPrint('⚠️ [FANTASY] User not logged in, redirecting to shop login');
+      context.go('/shop/login');
+      return;
+    }
+    
+    // User is logged in to shop, check if fantasy token exists
+    if (token == null || token.isEmpty) {
+      debugPrint('⚠️ [FANTASY] Shop login exists but no fantasy token, fetching token...');
+      // Fetch fantasy token automatically
+      final phone = prefs.getString('user_phone') ?? '';
+      final name = prefs.getString('user_name') ?? '';
+      
+      if (phone.isNotEmpty) {
+        try {
+          final authService = AuthService();
+          final fantasyToken = await authService.fetchFantasyToken(
+            phone: phone,
+            name: name,
+            isNewUser: false,
+          );
+          
+          if (fantasyToken != null && fantasyToken.isNotEmpty) {
+            await prefs.setString('token', fantasyToken);
+            debugPrint('✅ [FANTASY] Fantasy token fetched and saved automatically');
+          } else {
+            debugPrint('❌ [FANTASY] Failed to fetch fantasy token');
+          }
+        } catch (e) {
+          debugPrint('❌ [FANTASY] Error fetching fantasy token: $e');
+        }
+      }
+    } else {
+      debugPrint('✅ [FANTASY] Auth token found, loading fantasy data');
+    }
+    
     loadData();
   }
 

@@ -14,7 +14,7 @@ class EntryPoint extends StatefulWidget {
   State<EntryPoint> createState() => _EntryPointState();
 }
 
-class _EntryPointState extends State<EntryPoint> {
+class _EntryPointState extends State<EntryPoint> with WidgetsBindingObserver {
   double walletBalance = 0.0;
   int shoppingTokens = 0;
   int _currentIndex = 0;
@@ -37,7 +37,23 @@ class _EntryPointState extends State<EntryPoint> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _loadWalletBalance();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      // Auto-refresh wallet when app resumes from background
+      print('🔄 [ENTRY_POINT] App resumed, refreshing wallet balance');
+      _loadWalletBalance();
+    }
   }
 
   Future<void> _loadWalletBalance() async {
@@ -83,23 +99,33 @@ class _EntryPointState extends State<EntryPoint> {
     final double tokenSpacing = (screenWidth * 0.008).clamp(2.0, 4.0);
     final double rightPadding = (screenWidth * 0.04).clamp(12.0, 20.0); // Increased to bring tokens inside
 
-    return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(kToolbarHeight),
-        child: Container(
-          decoration: const BoxDecoration(
-            gradient: appPrimaryGradient,
-          ),
-          child: AppBar(
-            // pinned: true,
-            // floating: true,
-            // snap: true,
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            leading: const SizedBox(),
-            leadingWidth: 0,
-            centerTitle: false,
-            title: SvgPicture.asset(
+    return WillPopScope(
+      onWillPop: () async {
+        // Navigate back to unified home screen
+        Navigator.of(context).popUntil((route) => route.isFirst);
+        return false;
+      },
+      child: Scaffold(
+        appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(kToolbarHeight),
+          child: Container(
+            decoration: const BoxDecoration(
+              gradient: appPrimaryGradient,
+            ),
+            child: AppBar(
+              // pinned: true,
+              // floating: true,
+              // snap: true,
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back, color: Colors.white),
+                onPressed: () {
+                  Navigator.of(context).popUntil((route) => route.isFirst);
+                },
+              ),
+              centerTitle: false,
+              title: SvgPicture.asset(
               "assets/logo/dream247_logo.svg",
               height: (MediaQuery.of(context).size.height * 0.035)
                   .clamp(22.0, 34.0)
@@ -370,6 +396,7 @@ class _EntryPointState extends State<EntryPoint> {
             ),
           ],
         ),
+      ),
       ),
     );
   }

@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'dart:js' as js;
+// ignore: depend_on_referenced_packages
 import 'dart:js_util' as js_util;
 
 /// Web implementation of Razorpay using JavaScript Checkout

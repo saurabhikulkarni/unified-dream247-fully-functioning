@@ -33,14 +33,26 @@ class MainAppbar extends StatelessWidget implements PreferredSizeWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                // Left profile icon
+                // Back button and profile icon
                 Align(
                   alignment: Alignment.centerLeft,
-                  child: GestureDetector(
-                    onTap: () {
-                      AppUtils.scaffoldKey.currentState?.openDrawer();
-                    },
-                    child: CircleAvatar(
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Back button
+                      IconButton(
+                        icon: const Icon(Icons.arrow_back, color: AppColors.white),
+                        onPressed: () {
+                          Navigator.of(context).popUntil((route) => route.isFirst);
+                        },
+                      ),
+                      const SizedBox(width: 8),
+                      // Profile icon
+                      GestureDetector(
+                        onTap: () {
+                          AppUtils.scaffoldKey.currentState?.openDrawer();
+                        },
+                        child: CircleAvatar(
                       radius: 20,
                       backgroundColor: AppColors.white.withAlpha(140),
                       backgroundImage: (userData?.image != null &&
@@ -48,7 +60,9 @@ class MainAppbar extends StatelessWidget implements PreferredSizeWidget {
                           ? NetworkImage(userData?.image ?? "")
                           : const AssetImage(Images.imageDefalutPlayer)
                               as ImageProvider,
-                    ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 Image(

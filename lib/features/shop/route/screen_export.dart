@@ -1,8 +1,8 @@
 export '../screens/onboarding/views/onbording_screnn.dart';
-export '../screens/auth/views/login_screen.dart';
-export '../screens/auth/views/signup_screen.dart';
 
 export 'route_constants.dart';
+export '../screens/auth/views/login_screen.dart';
+export '../screens/auth/views/signup_screen.dart';
 export '../screens/wishlist/views/wishlist_screen.dart';
 export '../screens/discover/views/discover_screen.dart';
 export '../screens/home/views/home_screen.dart';

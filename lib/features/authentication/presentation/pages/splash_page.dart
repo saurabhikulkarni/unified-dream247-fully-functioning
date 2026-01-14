@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../config/routes/route_names.dart';
-import '../../../../config/theme/app_colors.dart';
 import '../../../../config/theme/text_styles.dart';
 import '../../../../core/di/injection_container.dart';
 import '../../data/datasources/auth_local_datasource.dart';

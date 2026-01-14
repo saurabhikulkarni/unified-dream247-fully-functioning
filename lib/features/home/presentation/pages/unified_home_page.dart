@@ -1,15 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../config/routes/route_names.dart';
-import '../../../../config/theme/app_colors.dart';
-import '../../../../config/theme/text_styles.dart';
-import '../../../../core/di/injection_container.dart';
-import '../../../../core/services/user_service.dart';
-import '../../../../shared/components/app_bottom_nav_bar.dart';
-import '../../../shop/home/screens/shop_home_screen.dart';
-import '../../../fantasy/landing/presentation/screens/fantasy_home_page.dart';
+import 'package:unified_dream247/config/routes/route_names.dart';
+import 'package:unified_dream247/features/shop/services/product_service.dart';
+import 'package:unified_dream247/features/shop/models/product_model.dart';
+import 'dart:math';
 
-/// Unified home screen that serves as the main dashboard
 class UnifiedHomePage extends StatefulWidget {
   const UnifiedHomePage({super.key});
 
@@ -18,142 +13,113 @@ class UnifiedHomePage extends StatefulWidget {
 }
 
 class _UnifiedHomePageState extends State<UnifiedHomePage> {
-  final UserService _userService = getIt<UserService>();
-  int _coins = 100;
-  int _gems = 100;
+  final ProductService _productService = ProductService();
+  List<ProductModel> _products = [];
+  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _loadUserData();
+    _loadProducts();
   }
 
-  Future<void> _loadUserData() async {
-    final coins = await _userService.getCoins();
-    final gems = await _userService.getGems();
-    if (mounted) {
+  Future<void> _loadProducts() async {
+    try {
+      final allProducts = await _productService.getAllProducts();
+      if (allProducts.isNotEmpty) {
+        // Shuffle and take random 4 products
+        allProducts.shuffle(Random());
+        setState(() {
+          _products = allProducts.take(4).toList();
+          _isLoading = false;
+        });
+      } else {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
       setState(() {
-        _coins = coins;
-        _gems = gems;
+        _isLoading = false;
       });
+      debugPrint('Error loading products: $e');
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+    final isSmallScreen = screenWidth < 360;
+    
+    // Responsive sizes
+    final bannerHeight = screenHeight * 0.11;
+    final cardHeight = screenHeight * 0.20;
+    final iconSize = screenWidth * 0.20; // 20% of screen width
+    final fontSize = screenWidth * 0.04; // 4% of screen width
+    final horizontalPadding = screenWidth * 0.04;
+    final cardSpacing = screenHeight * 0.01; // Spacing inside cards
+    
     return Scaffold(
-      backgroundColor: AppColors.background,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Top bar with user profile, coins and gems
-              _buildTopBar(context),
-              const SizedBox(height: 20),
-              
-              // Banner - Play FREE with GAME TOKENS
-              _buildPromoBanner(context),
-              const SizedBox(height: 24),
-              
-              // Game Zone and Shop cards
-              _buildActionCards(context),
-              const SizedBox(height: 32),
-              
-              // Trend Starts Here section
-              _buildTrendSection(context),
-              const SizedBox(height: 32),
-              
-              // Top Picks section
-              _buildTopPicksSection(context),
-              const SizedBox(height: 24),
-            ],
+      backgroundColor: const Color(0xFFF5F5F5),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        leading: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: GestureDetector(
+            onTap: () {
+              context.go('/shop/profile');
+            },
+            child: CircleAvatar(
+              radius: 20,
+              backgroundColor: const Color(0xFF6B4099),
+              child: const Icon(Icons.person, size: 24, color: Colors.white),
+            ),
           ),
         ),
-      ),
-      bottomNavigationBar: const AppBottomNavBar(currentIndex: 0),
-    );
-  }
-
-  Widget _buildTopBar(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: Row(
-        children: [
-          // User profile icon
-          GestureDetector(
-            onTap: () => context.go(RouteNames.profile),
-            child: Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: const Color(0xFF6441A5).withOpacity(0.1),
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                Icons.person_outline,
-                color: Color(0xFF6441A5),
-                size: 24,
-              ),
-            ),
-          ),
-          
-          const Spacer(),
-          
-          // Coin balance
+        actions: [
           Container(
+            margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: const Color(0xFFFFA726).withOpacity(0.1),
+              color: Colors.orange[50],
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: const Color(0xFFFFA726).withOpacity(0.3),
-                width: 1,
-              ),
             ),
             child: Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                const Text(
-                  '🪙',
-                  style: TextStyle(fontSize: 18),
-                ),
+                const Text('🪙', style: TextStyle(fontSize: 16)),
                 const SizedBox(width: 4),
-                Text(
-                  '$_coins',
-                  style: TextStyles.bodyMedium.copyWith(
+                const Text(
+                  '100',
+                  style: TextStyle(
+                    color: Colors.black87,
                     fontWeight: FontWeight.bold,
-                    color: const Color(0xFFFFA726),
+                    fontSize: 14,
                   ),
                 ),
               ],
             ),
           ),
-          
-          const SizedBox(width: 8),
-          
-          // Gem balance
           Container(
+            margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: const Color(0xFF29B6F6).withOpacity(0.1),
+              color: Colors.blue[50],
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: const Color(0xFF29B6F6).withOpacity(0.3),
-                width: 1,
-              ),
             ),
             child: Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                const Text(
-                  '💎',
-                  style: TextStyle(fontSize: 18),
-                ),
+                const Text('💎', style: TextStyle(fontSize: 16)),
                 const SizedBox(width: 4),
-                Text(
-                  '$_gems',
-                  style: TextStyles.bodyMedium.copyWith(
+                const Text(
+                  '100',
+                  style: TextStyle(
+                    color: Colors.black87,
                     fontWeight: FontWeight.bold,
-                    color: const Color(0xFF29B6F6),
+                    fontSize: 14,
                   ),
                 ),
               ],
@@ -161,424 +127,441 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildPromoBanner(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      height: 160,
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [
-            Color(0xFF6441A5),
-            Color(0xFF472575),
-            Color(0xFF2A0845),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFF6441A5).withOpacity(0.3),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
-      child: Stack(
-        children: [
-          // Background pattern
-          Positioned(
-            right: -20,
-            top: -20,
-            child: Container(
-              width: 150,
-              height: 150,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white.withOpacity(0.05),
-              ),
-            ),
-          ),
-          
-          Padding(
-            padding: const EdgeInsets.all(20),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Play FREE with',
-                        style: TextStyles.bodyLarge.copyWith(
-                          color: Colors.white.withOpacity(0.9),
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'GAME TOKENS',
-                        style: TextStyles.h3.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 1,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      ElevatedButton(
-                        onPressed: () {
-                          context.go('/fantasy/home');
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          foregroundColor: const Color(0xFF6441A5),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 24,
-                            vertical: 10,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                        ),
-                        child: Text(
-                          'Play now',
-                          style: TextStyles.bodyMedium.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                
-                // Cricket players illustration
-                const Icon(
-                  Icons.sports_cricket,
-                  size: 80,
-                  color: Colors.white24,
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildActionCards(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Row(
-        children: [
-          Expanded(
-            child: _ActionCard(
-              title: 'GAME ZONE',
-              icon: Icons.emoji_events,
-              emoji: '🏆',
-              gradient: const LinearGradient(
-                colors: [
-                  Color(0xFF6441A5),
-                  Color(0xFF472575),
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Game Tokens Banner
+            GestureDetector(
               onTap: () {
                 context.go('/fantasy/home');
               },
-            ),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: _ActionCard(
-              title: 'SHOP',
-              icon: Icons.card_giftcard,
-              emoji: '🎁',
-              gradient: const LinearGradient(
-                colors: [
-                  Color(0xFFE91E63),
-                  Color(0xFFC2185B),
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              onTap: () {
-                context.go('/shop/home');
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTrendSection(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'TREND STARTS HERE',
-                style: TextStyles.h5.copyWith(
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 0.5,
+              child: Container(
+                height: bannerHeight,
+                decoration: BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.2),
+                      spreadRadius: 1,
+                      blurRadius: 6,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: Image.asset(
+                  'assets/images/game.png',
+                  fit: BoxFit.fill,
+                  width: double.infinity,
+                  errorBuilder: (context, error, stackTrace) => Container(
+                    color: Colors.grey[300],
+                    child: const Center(
+                      child: Icon(
+                        Icons.sports_cricket,
+                        size: 60,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ),
                 ),
               ),
-              const SizedBox(height: 4),
-              Text(
-                'Shop the Latest Trends Now',
-                style: TextStyles.bodyMedium.copyWith(
-                  color: AppColors.textSecondary,
-                ),
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 16),
-        SizedBox(
-          height: 200,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            itemCount: 5,
-            itemBuilder: (context, index) {
-              return _TrendProductCard(index: index);
-            },
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildTopPicksSection(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Text(
-            'TOP PICKS',
-            style: TextStyles.h5.copyWith(
-              fontWeight: FontWeight.bold,
-              letterSpacing: 0.5,
             ),
-          ),
-        ),
-        const SizedBox(height: 16),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 12,
-              mainAxisSpacing: 12,
-              childAspectRatio: 0.75,
-            ),
-            itemCount: 4,
-            itemBuilder: (context, index) {
-              return _TopPickCard(index: index);
-            },
-          ),
-        ),
-      ],
-    );
-  }
-}
 
-class _ActionCard extends StatelessWidget {
-  final String title;
-  final IconData icon;
-  final String emoji;
-  final Gradient gradient;
-  final VoidCallback onTap;
-
-  const _ActionCard({
-    required this.title,
-    required this.icon,
-    required this.emoji,
-    required this.gradient,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(20),
-      child: Container(
-        height: 160,
-        decoration: BoxDecoration(
-          gradient: gradient,
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.15),
-              blurRadius: 12,
-              offset: const Offset(0, 6),
-            ),
-          ],
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              emoji,
-              style: const TextStyle(fontSize: 56),
-            ),
             const SizedBox(height: 16),
-            Text(
-              title,
-              style: TextStyles.h6.copyWith(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 1,
+
+            // Game Zone & Shop Cards
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+              child: Row(
+                children: [
+                  // Game Zone Card
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () {
+                        context.go('/fantasy/home');
+                      },
+                      child: Container(
+                        height: cardHeight,
+                        decoration: const BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [Color(0xFF773DD6), Color(0xFF482576), Color(0xFF341255)],
+                            stops: [0.0, 0.5, 1.0],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.all(Radius.circular(16)),
+                        ),
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(vertical: cardSpacing * 1.5),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Stack(
+                                children: [
+                                  // Stroke layer (gold outline)
+                                  Text(
+                                    'GAME ZONE',
+                                    style: TextStyle(
+                                      fontSize: fontSize,
+                                      fontWeight: FontWeight.bold,
+                                      letterSpacing: 1.0,
+                                      foreground: Paint()
+                                        ..style = PaintingStyle.stroke
+                                        ..strokeWidth = 1.5
+                                        ..color = const Color(0xFFD6B200),
+                                    ),
+                                  ),
+                                  // Fill layer (white with shadow)
+                                  Text(
+                                    'GAME ZONE',
+                                    style: TextStyle(
+                                      fontSize: fontSize,
+                                      fontWeight: FontWeight.bold,
+                                      letterSpacing: 1.0,
+                                    foreground: Paint()
+                                      ..style = PaintingStyle.fill
+                                      ..color = Colors.white,
+                                    shadows: [
+                                      Shadow(
+                                        color: Color.fromRGBO(218, 189, 0, 0.5),
+                                        offset: Offset(2, 1),
+                                        blurRadius: 8,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                ],
+                              ),
+                              Flexible(
+                                child: Padding(
+                                  padding: EdgeInsets.only(top: cardSpacing),
+                                  child: Image.asset(
+                                    'assets/images/trophyicon.png',
+                                    height: iconSize,
+                                    fit: BoxFit.contain,
+                                    errorBuilder: (context, error, stackTrace) => 
+                                      Icon(Icons.emoji_events, size: iconSize, color: Color(0xFFFFC107)),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  // Shop Card
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () {
+                        // Navigate to the actual e-commerce shop entry point
+                        context.go('/shop/entry_point');
+                      },
+                      child: Container(
+                        height: cardHeight,
+                        decoration: const BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [Color(0xFF773DD6), Color(0xFF482576), Color(0xFF341255)],
+                            stops: [0.0, 0.5, 1.0],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.all(Radius.circular(16)),
+                        ),
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(vertical: cardSpacing * 1.5),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Stack(
+                                children: [
+                                  // Stroke layer (gold outline)
+                                  Text(
+                                    'SHOP',
+                                    style: TextStyle(
+                                      fontSize: fontSize,
+                                      fontWeight: FontWeight.bold,
+                                      letterSpacing: 1.0,
+                                      foreground: Paint()
+                                        ..style = PaintingStyle.stroke
+                                        ..strokeWidth = 1.5
+                                        ..color = const Color(0xFFD6B200),
+                                    ),
+                                  ),
+                                  // Fill layer (white with shadow)
+                                  Text(
+                                    'SHOP',
+                                    style: TextStyle(
+                                      fontSize: fontSize,
+                                      fontWeight: FontWeight.bold,
+                                      letterSpacing: 1.0,
+                                    foreground: Paint()
+                                      ..style = PaintingStyle.fill
+                                      ..color = Colors.white,
+                                    shadows: [
+                                      Shadow(
+                                        color: Color.fromRGBO(218, 189, 0, 0.5),
+                                        offset: Offset(2, 1),
+                                        blurRadius: 8,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                ],
+                              ),
+                              Flexible(
+                                child: Padding(
+                                  padding: EdgeInsets.only(top: cardSpacing),
+                                  child: Image.asset(
+                                    'assets/images/shoppingbags.png',
+                                    height: iconSize,
+                                    fit: BoxFit.contain,
+                                    errorBuilder: (context, error, stackTrace) => 
+                                      Icon(Icons.shopping_bag, size: iconSize, color: Color(0xFFFFC107)),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
+
+            const SizedBox(height: 16),
+
+            // Trend Banner
+            GestureDetector(
+              onTap: () {
+                context.go('/shop/entry_point');
+              },
+              child: Container(
+                height: bannerHeight,
+                decoration: BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.2),
+                      spreadRadius: 1,
+                      blurRadius: 6,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: Image.asset(
+                  'assets/images/trend.png',
+                  fit: BoxFit.fill,
+                  width: double.infinity,
+                  errorBuilder: (context, error, stackTrace) => Container(
+                    color: Colors.grey[300],
+                    child: const Center(
+                      child: Icon(
+                        Icons.shopping_basket,
+                        size: 60,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+
+            // Top Picks Section
+            Padding(
+              padding: EdgeInsets.all(horizontalPadding),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'TOP PICKS',
+                    style: TextStyle(
+                      fontSize: fontSize,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () {},
+                    child: const Text(
+                      'View All',
+                      style: TextStyle(
+                        color: Color(0xFF6B4099),
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // Product Grid
+            _isLoading
+                ? const Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(40.0),
+                      child: CircularProgressIndicator(
+                        color: Color(0xFF6B4099),
+                      ),
+                    ),
+                  )
+                : _products.isEmpty
+                    ? const Center(
+                        child: Padding(
+                          padding: EdgeInsets.all(40.0),
+                          child: Text('No products available'),
+                        ),
+                      )
+                    : Padding(
+                        padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+                        child: GridView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            childAspectRatio: 0.68,
+                            crossAxisSpacing: horizontalPadding * 0.75,
+                            mainAxisSpacing: horizontalPadding * 0.75,
+                          ),
+                          itemCount: _products.length,
+                          itemBuilder: (context, index) {
+                            final product = _products[index];
+
+                            return GestureDetector(
+                              onTap: () {
+                                // Navigate to product details
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey.withOpacity(0.1),
+                                      spreadRadius: 1,
+                                      blurRadius: 4,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Expanded(
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          color: Colors.grey[100],
+                                          borderRadius: const BorderRadius.vertical(
+                                            top: Radius.circular(12),
+                                          ),
+                                        ),
+                                        child: product.image != null && product.image!.isNotEmpty
+                                            ? ClipRRect(
+                                                borderRadius: const BorderRadius.vertical(
+                                                  top: Radius.circular(12),
+                                                ),
+                                                child: Image.network(
+                                                  product.image!,
+                                                  fit: BoxFit.cover,
+                                                  width: double.infinity,
+                                                  errorBuilder: (context, error, stackTrace) => Center(
+                                                    child: Icon(
+                                                      Icons.image_outlined,
+                                                      size: 50,
+                                                      color: Colors.grey[300],
+                                                    ),
+                                                  ),
+                                                ),
+                                              )
+                                            : Center(
+                                                child: Icon(
+                                                  Icons.image_outlined,
+                                                  size: 50,
+                                                  color: Colors.grey[300],
+                                                ),
+                                              ),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(10),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            product.category?.categoryName ?? 'BRAND',
+                                            style: TextStyle(
+                                              fontSize: 11,
+                                              color: Colors.grey[600],
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                          const SizedBox(height: 4),
+                                          Text(
+                                            product.title,
+                                            style: const TextStyle(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w600,
+                                              color: Colors.black87,
+                                              height: 1.3,
+                                            ),
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                          const SizedBox(height: 8),
+                                          Row(
+                                            children: [
+                                              const Text('🪙', style: TextStyle(fontSize: 14)),
+                                              const SizedBox(width: 4),
+                                              Text(
+                                                product.price.toStringAsFixed(0),
+                                                style: const TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.black87,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+
+            const SizedBox(height: 80), // Space for bottom nav
           ],
         ),
       ),
-    );
-  }
-}
-
-class _TrendProductCard extends StatelessWidget {
-  final int index;
-
-  const _TrendProductCard({required this.index});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 160,
-      margin: const EdgeInsets.symmetric(horizontal: 4),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.shadow,
-            blurRadius: 6,
-            offset: const Offset(0, 3),
+      bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        selectedItemColor: const Color(0xFF6B4099),
+        unselectedItemColor: Colors.grey,
+        currentIndex: 0,
+        backgroundColor: Colors.white,
+        elevation: 8,
+        selectedFontSize: 12,
+        unselectedFontSize: 12,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
           ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            height: 120,
-            decoration: BoxDecoration(
-              color: AppColors.surfaceVariant,
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-            ),
-            child: Center(
-              child: Icon(
-                Icons.shopping_bag,
-                size: 48,
-                color: AppColors.textSecondary.withOpacity(0.5),
-              ),
-            ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.shopping_bag_outlined),
+            label: 'Shop',
           ),
-          Padding(
-            padding: const EdgeInsets.all(12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Trending Product ${index + 1}',
-                  style: TextStyles.bodyMedium.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  '₹${(index + 1) * 999}',
-                  style: TextStyles.bodyMedium.copyWith(
-                    color: const Color(0xFF6441A5),
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _TopPickCard extends StatelessWidget {
-  final int index;
-
-  const _TopPickCard({required this.index});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.shadow,
-            blurRadius: 6,
-            offset: const Offset(0, 3),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                color: AppColors.surfaceVariant,
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-              ),
-              child: Center(
-                child: Icon(
-                  Icons.shopping_bag,
-                  size: 56,
-                  color: AppColors.textSecondary.withOpacity(0.5),
-                ),
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Top Pick ${index + 1}',
-                  style: TextStyles.bodyMedium.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  '₹${(index + 1) * 1499}',
-                  style: TextStyles.bodyMedium.copyWith(
-                    color: const Color(0xFF6441A5),
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.account_balance_wallet_outlined),
+            label: 'Wallet',
           ),
         ],
       ),
