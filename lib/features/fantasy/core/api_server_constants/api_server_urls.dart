@@ -106,6 +106,7 @@ class APIServerUrl {
   static const String supportRequest = "help-desk-mail";
   static const String editProfile = "edit-user-profile";
   static const String getAllReferUsers = "get-all-user-refer-codes";
+  static const String getReferralDashboard = "user-refferals";
   static const String getLevelRewards = "fetch-user-level-data";
   static const String updateContestWon = "contest-won-update";
   static const String editTeamName = "edit-user-team-name";
