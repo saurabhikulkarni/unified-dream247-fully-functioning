@@ -283,10 +283,10 @@ class GraphQLQueries {
     }
   ''';
 
-  // ============ Wallet Queries & Mutations ============
+  // ============ Wallet Queries & Mutations (DEPRECATED - Use new wallet queries below) ============
   
-  // Get user wallet balance
-  static const String getUserWallet = '''
+  // Get user wallet balance (OLD - use getUserWallet below instead)
+  static const String getUserWalletOld = '''
     query GetUserWallet(\$userId: ID!) {
       userDetail(where: {id: \$userId}) {
         id
@@ -295,7 +295,7 @@ class GraphQLQueries {
     }
   ''';
 
-  // Update user wallet balance
+  // Update user wallet balance (OLD - avoid using)
   static const String updateWalletBalance = '''
     mutation UpdateWalletBalance(\$userId: ID!, \$walletBalance: Int!) {
       updateUserDetail(
@@ -1033,6 +1033,161 @@ class GraphQLQueries {
           id
           productName
         }
+      }
+    }
+  ''';
+
+  // ============ WALLET QUERIES & MUTATIONS (SHOP TOKENS) ============
+
+  // Get user wallet balance and tokens (enhanced with shop tokens)
+  static const String getUserWallet = '''
+    query GetUserWallet(\$userId: ID!) {
+      userDetail(where: {id: \$userId}) {
+        id
+        walletBalance
+        shopTokens
+        totalSpentTokens
+      }
+    }
+  ''';
+
+  // Get wallet transaction history
+  static const String getWalletTransactions = '''
+    query GetWalletTransactions(\$userId: String!, \$first: Int = 50, \$skip: Int = 0) {
+      walletTransactions(
+        where: {userId: \$userId}
+        first: \$first
+        skip: \$skip
+        orderBy: timestamp_DESC
+      ) {
+        id
+        userId
+        type
+        amount
+        description
+        orderReference
+        paymentMethod
+        timestamp
+        status
+        metadata
+      }
+    }
+  ''';
+
+  // Deduct shop tokens for purchase
+  static const String deductShopTokens = '''
+    mutation DeductShopTokens(
+      \$userId: ID!,
+      \$amount: Float!,
+      \$orderId: String!,
+      \$itemName: String!
+    ) {
+      updateUserDetail(
+        where: {id: \$userId}
+        data: {
+          shopTokens: {decrement: \$amount}
+          totalSpentTokens: {increment: \$amount}
+        }
+      ) {
+        id
+        shopTokens
+        totalSpentTokens
+      }
+      
+      createWalletTransaction(
+        data: {
+          userId: \$userId
+          type: purchase
+          amount: -\$amount
+          description: "Purchased \$itemName"
+          orderReference: \$orderId
+          paymentMethod: "shopTokens"
+          timestamp: now
+          status: completed
+          userDetail: {connect: {id: \$userId}}
+        }
+      ) {
+        id
+        userId
+        type
+        amount
+        description
+      }
+    }
+  ''';
+
+  // Add shop tokens from payment
+  static const String addShopTokens = '''
+    mutation AddShopTokens(
+      \$userId: ID!,
+      \$amount: Float!,
+      \$paymentMethod: String = "razorpay"
+    ) {
+      updateUserDetail(
+        where: {id: \$userId}
+        data: {shopTokens: {increment: \$amount}}
+      ) {
+        id
+        shopTokens
+      }
+      
+      createWalletTransaction(
+        data: {
+          userId: \$userId
+          type: add_money
+          amount: \$amount
+          description: "Added \$amount tokens"
+          paymentMethod: \$paymentMethod
+          timestamp: now
+          status: completed
+          userDetail: {connect: {id: \$userId}}
+        }
+      ) {
+        id
+        userId
+        type
+        amount
+      }
+    }
+  ''';
+
+  // Get merged transaction history (shop + fantasy)
+  static const String getMergedTransactionHistory = '''
+    query GetMergedTransactionHistory(\$userId: String!, \$first: Int = 100) {
+      walletTransactions(
+        where: {userId: \$userId}
+        first: \$first
+        orderBy: timestamp_DESC
+      ) {
+        id
+        type
+        amount
+        description
+        timestamp
+        status
+        paymentMethod
+        orderReference
+      }
+    }
+  ''';
+
+  // Update order with payment method and tokens used
+  static const String updateOrderPaymentMethod = '''
+    mutation UpdateOrderPaymentMethod(
+      \$orderId: ID!,
+      \$paymentMethod: String!,
+      \$tokensUsed: Float
+    ) {
+      updateOrder(
+        where: {id: \$orderId}
+        data: {
+          paymentMethod: \$paymentMethod
+          tokensUsed: \$tokensUsed
+        }
+      ) {
+        id
+        paymentMethod
+        tokensUsed
       }
     }
   ''';
