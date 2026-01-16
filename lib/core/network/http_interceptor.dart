@@ -9,6 +9,7 @@ class AuthenticatedHttpClient {
 
   /// Make authenticated GET request with auto token refresh
   Future<http.Response> get(String url, {Map<String, String>? headers}) async {
+    await _authService.initialize();
     final token = await _authService.getValidToken(ApiConstants.shopBackendUrl);
     
     if (token == null) {
@@ -42,6 +43,7 @@ class AuthenticatedHttpClient {
     Map<String, String>? headers,
     Object? body,
   }) async {
+    await _authService.initialize();
     final token = await _authService.getValidToken(ApiConstants.shopBackendUrl);
     
     if (token == null) {

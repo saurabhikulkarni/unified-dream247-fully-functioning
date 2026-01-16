@@ -202,6 +202,11 @@ class AuthService {
           // Update stored access token
           await _prefs?.setString(StorageConstants.authToken, newToken);
           
+          // Update refresh token if provided
+          if (data['refreshToken'] != null) {
+            await _prefs?.setString('refresh_token', data['refreshToken']);
+          }
+          
           debugPrint('✅ Token refreshed successfully');
           return newToken;
         }
