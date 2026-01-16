@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../config/routes/route_names.dart';
-import '../../../../config/theme/app_colors.dart';
 import '../../../../config/theme/text_styles.dart';
 import '../../../../core/di/injection_container.dart';
 import '../../data/datasources/auth_local_datasource.dart';
@@ -73,20 +72,45 @@ class _SplashPageState extends State<SplashPage> with SingleTickerProviderStateM
 
   Future<void> _checkAuthAndNavigate() async {
     // Wait for typing animation and fade animation to complete
+    print('🔍 SPLASH: Starting auth check');
     await Future.delayed(const Duration(milliseconds: 2500));
+    print('🔍 SPLASH: Delay completed');
 
-    if (!mounted) return;
+    if (!mounted) {
+      print('🔍 SPLASH: Widget not mounted after delay, returning');
+      return;
+    }
 
-    // Check if user is logged in
-    final authLocalDataSource = getIt<AuthLocalDataSource>();
-    final isLoggedIn = await authLocalDataSource.isLoggedIn();
+    try {
+      // Check if user is logged in
+      print('🔍 SPLASH: Getting AuthLocalDataSource');
+      final authLocalDataSource = getIt<AuthLocalDataSource>();
+      print('🔍 SPLASH: Checking isLoggedIn');
+      final isLoggedIn = await authLocalDataSource.isLoggedIn();
+      print('🔍 SPLASH: isLoggedIn = $isLoggedIn');
 
-    if (!mounted) return;
+      if (!mounted) {
+        print('🔍 SPLASH: Widget not mounted after auth check, returning');
+        return;
+      }
 
-    if (isLoggedIn) {
-      context.go(RouteNames.home);
-    } else {
-      context.go(RouteNames.login);
+      if (isLoggedIn) {
+        print('🔍 SPLASH: Navigating to home (${RouteNames.home})');
+        context.go(RouteNames.home);
+        print('🔍 SPLASH: Navigation to home completed');
+      } else {
+        print('🔍 SPLASH: Navigating to login (${RouteNames.login})');
+        context.go(RouteNames.login);
+        print('🔍 SPLASH: Navigation to login completed');
+      }
+    } catch (e, stackTrace) {
+      print('❌ SPLASH ERROR: $e');
+      print('❌ SPLASH STACK: $stackTrace');
+      // Fallback navigation to login if there's any error
+      if (mounted) {
+        print('🔍 SPLASH: Error occurred, navigating to login as fallback');
+        context.go(RouteNames.login);
+      }
     }
   }
 

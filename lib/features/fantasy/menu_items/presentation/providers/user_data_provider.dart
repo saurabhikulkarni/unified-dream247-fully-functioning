@@ -1,11 +1,11 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:unified_dream247/config/routes/route_names.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/app_pages.dart';
-import 'package:unified_dream247/features/fantasy/core/app_constants/app_storage_keys.dart';
 import 'package:unified_dream247/features/fantasy/core/utils/app_storage.dart';
-import 'package:unified_dream247/features/fantasy/features/menu_items/data/models/user_data.dart';
-import 'package:unified_dream247/features/fantasy/features/onboarding/presentation/screens/login_screen.dart';
+import 'package:unified_dream247/features/fantasy/menu_items/data/models/user_data.dart';
 
 class UserDataProvider extends ChangeNotifier {
   UserFullDetailsResponse? _userData;
@@ -49,11 +49,7 @@ class UserDataProvider extends ChangeNotifier {
       if (context.mounted) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (context.mounted) {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => LoginScreen()),
-            );
-            // AppNavigation.gotoLoginScreen(context);
+            context.go(RouteNames.login);
           }
         });
       }
@@ -76,8 +72,8 @@ class UserDataProvider extends ChangeNotifier {
   Future<void> clearUserData() async {
     _userData = null;
     await AppStorage.saveToStorageString("userData", "");
-    await AppStorage.saveToStorageString(AppStorageKeys.authToken, "");
-    await AppStorage.saveToStorageBool(AppStorageKeys.logedIn, false);
+    await AppStorage.saveToStorageString("authToken", "");
+    await AppStorage.saveToStorageBool("loggedIn", false);
     notifyListeners();
   }
 }

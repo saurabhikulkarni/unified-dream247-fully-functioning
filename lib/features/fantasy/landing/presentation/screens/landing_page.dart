@@ -1,19 +1,18 @@
 // ignore_for_file: use_build_context_synchronously
 import 'package:flutter/material.dart';
-import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:unified_dream247/features/fantasy/core/api_server_constants/api_server_impl/api_impl_header.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/app_colors.dart';
 import 'package:unified_dream247/features/fantasy/core/global_widgets/main_appbar.dart';
 import 'package:unified_dream247/features/fantasy/core/utils/app_utils.dart';
-import 'package:unified_dream247/features/fantasy/features/landing/data/home_datasource.dart';
-import 'package:unified_dream247/features/fantasy/features/landing/domain/use_cases/home_usecases.dart';
-import 'package:unified_dream247/features/fantasy/features/landing/presentation/screens/home_page.dart';
-import 'package:unified_dream247/features/fantasy/features/landing/presentation/widgets/image_popup_dialog.dart';
-import 'package:unified_dream247/features/fantasy/features/menu_items/presentation/screens/app_drawer.dart';
-import 'package:unified_dream247/features/fantasy/features/more_options/presentation/screens/more_options_page.dart';
-import 'package:unified_dream247/features/fantasy/features/my_matches/presentation/screens/my_matches_page.dart';
-import 'package:unified_dream247/features/fantasy/features/winners/presentation/screens/winners_page.dart';
+import 'package:unified_dream247/features/fantasy/landing/data/home_datasource.dart';
+import 'package:unified_dream247/features/fantasy/landing/domain/use_cases/home_usecases.dart';
+import 'package:unified_dream247/features/fantasy/landing/presentation/screens/home_page.dart';
+import 'package:unified_dream247/features/fantasy/landing/presentation/widgets/image_popup_dialog.dart';
+import 'package:unified_dream247/features/fantasy/menu_items/presentation/screens/app_drawer.dart';
+import 'package:unified_dream247/features/fantasy/more_options/presentation/screens/more_options_page.dart';
+import 'package:unified_dream247/features/fantasy/my_matches/presentation/screens/my_matches_page.dart';
+import 'package:unified_dream247/features/fantasy/winners/presentation/screens/winners_page.dart';
 
 class LandingPage extends StatefulWidget {
   final int? index;
@@ -86,14 +85,21 @@ class _LandingPageState extends State<LandingPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: AppUtils.scaffoldKey,
-      appBar: MainAppbar(
-        title: _getAppBarTitle(),
+    return WillPopScope(
+      onWillPop: () async {
+        // Navigate back to unified home screen
+        Navigator.of(context).popUntil((route) => route.isFirst);
+        return false;
+      },
+      child: Scaffold(
+        key: AppUtils.scaffoldKey,
+        appBar: MainAppbar(
+          title: _getAppBarTitle(),
+        ),
+        drawer: AppDrawer(),
+        body: screens[_selectedIndex],
+        bottomNavigationBar: _buildPremiumBottomBar(),
       ),
-      drawer: AppDrawer(),
-      body: screens[_selectedIndex],
-      bottomNavigationBar: _buildPremiumBottomBar(),
     );
   }
 

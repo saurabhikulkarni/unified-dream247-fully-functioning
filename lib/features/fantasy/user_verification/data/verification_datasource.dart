@@ -7,10 +7,10 @@ import 'package:unified_dream247/features/fantasy/core/api_server_constants/api_
 import 'package:unified_dream247/features/fantasy/core/api_server_constants/api_server_urls.dart';
 import 'package:unified_dream247/features/fantasy/core/api_server_constants/api_server_utils.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/app_storage_keys.dart';
-import 'package:unified_dream247/features/fantasy/features/accounts/presentation/providers/wallet_details_provider.dart';
-import 'package:unified_dream247/features/fantasy/features/user_verification/data/models/kyc_detail_model.dart';
-import 'package:unified_dream247/features/fantasy/features/user_verification/domain/repositories/verification_repositories.dart';
-import 'package:unified_dream247/features/fantasy/features/user_verification/presentation/providers/kyc_details_provider.dart';
+import 'package:unified_dream247/features/fantasy/accounts/presentation/providers/wallet_details_provider.dart';
+import 'package:unified_dream247/features/fantasy/user_verification/data/models/kyc_detail_model.dart';
+import 'package:unified_dream247/features/fantasy/user_verification/domain/repositories/verification_repositories.dart';
+import 'package:unified_dream247/features/fantasy/user_verification/presentation/providers/kyc_details_provider.dart';
 
 class VerificationDatasource implements VerificationRepositories {
   ApiImplWithAccessToken clientWithToken;

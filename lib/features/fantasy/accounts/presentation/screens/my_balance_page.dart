@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/material.dart';
-import 'package:unified_dream247/features/fantasy/features/landing/data/singleton/app_singleton.dart';
+import 'package:unified_dream247/features/fantasy/landing/data/singleton/app_singleton.dart';
 import 'package:provider/provider.dart';
 import 'package:unified_dream247/features/fantasy/core/api_server_constants/api_server_impl/api_impl.dart';
 import 'package:unified_dream247/features/fantasy/core/api_server_constants/api_server_impl/api_impl_header.dart';
@@ -12,10 +12,11 @@ import 'package:unified_dream247/features/fantasy/core/app_constants/images.dart
 import 'package:unified_dream247/features/fantasy/core/app_constants/strings.dart';
 import 'package:unified_dream247/features/fantasy/core/global_widgets/sub_container.dart';
 import 'package:unified_dream247/features/fantasy/core/utils/app_utils.dart';
-import 'package:unified_dream247/features/fantasy/features/accounts/data/accounts_datasource.dart';
-import 'package:unified_dream247/features/fantasy/features/accounts/domain/use_cases/accounts_usecases.dart';
-import 'package:unified_dream247/features/fantasy/features/accounts/presentation/providers/wallet_details_provider.dart';
-import 'package:unified_dream247/features/fantasy/features/accounts/presentation/screens/add_money_page.dart';
+import 'package:unified_dream247/features/fantasy/accounts/data/accounts_datasource.dart';
+import 'package:unified_dream247/features/fantasy/accounts/domain/use_cases/accounts_usecases.dart';
+import 'package:unified_dream247/features/fantasy/accounts/presentation/providers/wallet_details_provider.dart';
+import 'package:unified_dream247/features/fantasy/accounts/presentation/screens/add_money_page.dart';
+import 'package:unified_dream247/core/services/wallet_service.dart';
 
 class MyBalancePage extends StatefulWidget {
   const MyBalancePage({super.key});
@@ -29,11 +30,49 @@ class _MyBalancePage extends State<MyBalancePage> {
     AccountsDatasource(ApiImpl(), ApiImplWithAccessToken()),
   );
   DateTime? lastRefreshTime;
+  double _shopTokens = 0.0;
+  List<Map<String, dynamic>> _mergedTransactions = [];
+  bool _isLoadingTransactions = false;
 
   @override
   void initState() {
     super.initState();
     loadData();
+    _loadShopTokens();
+    _loadTransactionHistory();
+  }
+
+  /// Load shop tokens from unified wallet service
+  Future<void> _loadShopTokens() async {
+    await walletService.initialize();
+    final shopTokens = await walletService.getShopTokens();
+    setState(() {
+      _shopTokens = shopTokens;
+    });
+    debugPrint('📊 [FANTASY_WALLET] Shop tokens loaded: $shopTokens');
+  }
+
+  /// Load merged transaction history (Shop + Fantasy)
+  Future<void> _loadTransactionHistory() async {
+    setState(() => _isLoadingTransactions = true);
+    try {
+      await walletService.initialize();
+      
+      // Get merged transactions from wallet service
+      final merged = await walletService.getMergedTransactionHistory(
+        fantasyTransactions: [], // Add fantasy transactions if available
+      );
+      
+      setState(() {
+        _mergedTransactions = merged;
+      });
+      
+      debugPrint('✅ [FANTASY_WALLET] Loaded ${merged.length} transactions');
+    } catch (e) {
+      debugPrint('❌ [FANTASY_WALLET] Error loading transactions: $e');
+    } finally {
+      setState(() => _isLoadingTransactions = false);
+    }
   }
 
   Future<void> loadData() async {
@@ -46,7 +85,31 @@ class _MyBalancePage extends State<MyBalancePage> {
 
     lastRefreshTime = now;
     await accountsUsecases.myWalletDetails(context);
+    await _loadShopTokens();
+    await _loadTransactionHistory();
     setState(() {});
+  }
+
+  /// Format date for display
+  String _formatDate(DateTime dateTime) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final yesterday = today.subtract(const Duration(days: 1));
+    final dtDate = DateTime(dateTime.year, dateTime.month, dateTime.day);
+
+    if (dtDate == today) {
+      return 'Today • ${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
+    } else if (dtDate == yesterday) {
+      return 'Yesterday • ${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
+    } else {
+      return '${dateTime.day} ${_getMonthName(dateTime.month)} • ${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
+    }
+  }
+
+  /// Get month name from number
+  String _getMonthName(int month) {
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    return months[month - 1];
   }
 
   @override
@@ -179,7 +242,7 @@ class _MyBalancePage extends State<MyBalancePage> {
                               icon: Images.icDeposit,
                               title: "Shop Token",
                               value:
-                                  "${AppUtils.stringifyNumber(num.parse(walletData?.balance ?? "0"))}",
+                                  "${AppUtils.stringifyNumber(num.parse(_shopTokens.toStringAsFixed(0)))}",
                               color: AppColors.lightGreen.withAlpha(20),
                               isShopToken: true,
                               gradientButton: true,
@@ -273,6 +336,162 @@ class _MyBalancePage extends State<MyBalancePage> {
                     ],
                   ),
                 ),
+
+                // ═══════ UNIFIED TRANSACTION HISTORY SECTION ═══════
+                Container(
+                  margin: const EdgeInsets.only(top: 24, left: 16, right: 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Section Header
+                      Text(
+                        'Transaction History',
+                        style: GoogleFonts.inter(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.black,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+
+                      // Transaction List or Empty State
+                      if (_isLoadingTransactions)
+                        Container(
+                          padding: const EdgeInsets.symmetric(vertical: 24),
+                          alignment: Alignment.center,
+                          child: const CircularProgressIndicator(),
+                        )
+                      else if (_mergedTransactions.isEmpty)
+                        Container(
+                          padding: const EdgeInsets.symmetric(vertical: 24),
+                          alignment: Alignment.center,
+                          child: Text(
+                            'No transactions yet',
+                            style: GoogleFonts.inter(
+                              fontSize: 14,
+                              color: AppColors.black.withValues(alpha: 0.5),
+                            ),
+                          ),
+                        )
+                      else
+                        ListView.builder(
+                          physics: const NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          itemCount: _mergedTransactions.length,
+                          itemBuilder: (context, index) {
+                            final txn = _mergedTransactions[index];
+                            final isPositive = txn['isPositive'] as bool? ?? true;
+                            final amount = (txn['amount'] as num?)?.toDouble() ?? 0.0;
+                            final description = txn['description'] as String? ?? '';
+                            final icon = txn['icon'] as String? ?? '📝';
+                            final module = txn['module'] as String? ?? 'unknown';
+                            final timestamp = txn['timestamp'] is DateTime
+                                ? txn['timestamp'] as DateTime
+                                : DateTime.parse(txn['timestamp'] as String);
+
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 12),
+                              child: Container(
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(12),
+                                  color: AppColors.whiteFade1,
+                                  border: Border.all(
+                                    color: isPositive
+                                        ? AppColors.lightGreen.withValues(alpha: 0.3)
+                                        : AppColors.orangeColor.withValues(alpha: 0.2),
+                                  ),
+                                ),
+                                child: Row(
+                                  children: [
+                                    // Transaction Icon
+                                    Container(
+                                      padding: const EdgeInsets.all(8),
+                                      decoration: BoxDecoration(
+                                        color: isPositive
+                                            ? AppColors.lightGreen.withValues(alpha: 0.2)
+                                            : AppColors.orangeColor.withValues(alpha: 0.1),
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: Text(
+                                        icon,
+                                        style: const TextStyle(fontSize: 18),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 12),
+
+                                    // Transaction Details
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            description,
+                                            style: GoogleFonts.inter(
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.w600,
+                                              color: AppColors.black,
+                                            ),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                          const SizedBox(height: 4),
+                                          Row(
+                                            children: [
+                                              Text(
+                                                _formatDate(timestamp),
+                                                style: GoogleFonts.inter(
+                                                  fontSize: 12,
+                                                  color: AppColors.black.withValues(alpha: 0.6),
+                                                ),
+                                              ),
+                                              const SizedBox(width: 8),
+                                              Container(
+                                                padding: const EdgeInsets.symmetric(
+                                                  horizontal: 6,
+                                                  vertical: 2,
+                                                ),
+                                                decoration: BoxDecoration(
+                                                  color: module == 'shop'
+                                                      ? AppColors.lightGreen.withValues(alpha: 0.2)
+                                                      : AppColors.blueColor.withValues(alpha: 0.2),
+                                                  borderRadius: BorderRadius.circular(4),
+                                                ),
+                                                child: Text(
+                                                  module == 'shop' ? '🪙 Shop' : '💎 Game',
+                                                  style: GoogleFonts.inter(
+                                                    fontSize: 11,
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+
+                                    // Amount
+                                    Text(
+                                      '${isPositive ? '+' : ''}${amount.toStringAsFixed(0)}',
+                                      style: GoogleFonts.montserrat(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w700,
+                                        color: isPositive
+                                            ? AppColors.lightGreen
+                                            : AppColors.orangeColor,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 24),
 
                 // Transaction, TDS, KYC, Refer Section
                 _actionTile(

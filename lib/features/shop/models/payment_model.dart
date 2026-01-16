@@ -19,6 +19,7 @@ enum PaymentMethod {
   upi,
   emi,
   payLater,
+  shopTokens,  // Pay with shop tokens
 }
 
 // Payment Model

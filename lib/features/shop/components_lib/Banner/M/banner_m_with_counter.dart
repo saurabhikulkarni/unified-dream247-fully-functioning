@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../../../constants.dart';
+import 'package:unified_dream247/features/shop/constants.dart';
 import '../../blur_container.dart';
 import 'banner_m.dart';
 

@@ -8,8 +8,8 @@ import 'package:unified_dream247/features/fantasy/core/api_server_constants/api_
 import 'package:unified_dream247/features/fantasy/core/api_server_constants/api_server_utils.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/app_storage_keys.dart';
 import 'package:unified_dream247/features/fantasy/core/utils/app_storage.dart';
-import 'package:unified_dream247/features/fantasy/features/more_options/presentation/data/models/fantasy_points_system_model.dart';
-import 'package:unified_dream247/features/fantasy/features/more_options/presentation/domain/repositories/more_repositories.dart';
+import 'package:unified_dream247/features/fantasy/more_options/presentation/data/models/fantasy_points_system_model.dart';
+import 'package:unified_dream247/features/fantasy/more_options/presentation/domain/repositories/more_repositories.dart';
 
 class MoreDatasource extends MoreRepositories {
   ApiImpl client;

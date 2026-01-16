@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/app_colors.dart';
-import 'package:unified_dream247/features/fantasy/features/landing/data/singleton/app_singleton.dart';
-import 'package:unified_dream247/features/fantasy/features/my_matches/data/models/match_livescore_model.dart';
+import 'package:unified_dream247/features/fantasy/landing/data/singleton/app_singleton.dart';
+import 'package:unified_dream247/features/fantasy/my_matches/data/models/match_livescore_model.dart';
 
 class Scoreboard extends StatelessWidget {
   final List<MatchLiveScoreModel>? list;
@@ -358,38 +358,4 @@ class Scoreboard extends StatelessWidget {
       ],
     );
   }
-}
-
-Widget _iconText(IconData icon, String text) {
-  return Row(
-    children: [
-      Icon(icon, size: 14, color: AppColors.greyColor),
-      const SizedBox(width: 6),
-      Text(
-        text,
-        style: GoogleFonts.exo2(
-          fontSize: 12,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
-    ],
-  );
-}
-
-Widget _pill(String text, Color color) {
-  return Container(
-    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-    decoration: BoxDecoration(
-      color: color.withOpacity(0.15),
-      borderRadius: BorderRadius.circular(12),
-    ),
-    child: Text(
-      text,
-      style: GoogleFonts.exo2(
-        fontSize: 11,
-        fontWeight: FontWeight.w600,
-        color: color,
-      ),
-    ),
-  );
 }

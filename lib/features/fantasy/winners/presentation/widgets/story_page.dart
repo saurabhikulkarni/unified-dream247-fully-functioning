@@ -4,7 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:story_view/story_view.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/app_colors.dart';
-import 'package:unified_dream247/features/fantasy/features/winners/data/models/stories_model.dart';
+import 'package:unified_dream247/features/fantasy/winners/data/models/stories_model.dart';
 
 class StoryPage extends StatelessWidget {
   List<StoriesModel> stories;

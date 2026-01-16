@@ -7,7 +7,7 @@ import 'package:unified_dream247/features/fantasy/core/global_widgets/app_toast.
 import 'package:unified_dream247/features/fantasy/core/global_widgets/common_shimmer_view_widget.dart';
 import 'package:unified_dream247/features/fantasy/core/global_widgets/sub_container.dart';
 import 'package:unified_dream247/features/fantasy/core/utils/app_utils.dart';
-import 'package:unified_dream247/features/fantasy/features/menu_items/data/models/offers_model.dart';
+import 'package:unified_dream247/features/fantasy/menu_items/data/models/offers_model.dart';
 import 'package:flutter/material.dart';
 
 class PromoCode extends StatefulWidget {

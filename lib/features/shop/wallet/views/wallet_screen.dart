@@ -398,8 +398,10 @@ class _WalletScreenState extends State<WalletScreen> {
             padding: const EdgeInsets.symmetric(horizontal: defaultPadding),
             child: _isLoading
                 ? const Center(child: CircularProgressIndicator())
-                : CustomScrollView(
-                    slivers: [
+                : RefreshIndicator(
+                    onRefresh: _loadWalletBalance,
+                    child: CustomScrollView(
+                      slivers: [
                       SliverPadding(
                         padding: const EdgeInsets.symmetric(vertical: defaultPadding),
                         sliver: SliverToBoxAdapter(
@@ -529,6 +531,7 @@ class _WalletScreenState extends State<WalletScreen> {
                       // ),
                     ],
                   ),
+                ),
           ),
         ),
       ),

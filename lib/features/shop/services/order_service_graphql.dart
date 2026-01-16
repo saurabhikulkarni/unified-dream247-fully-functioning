@@ -933,6 +933,254 @@ class OrderServiceGraphQL {
       }
     }
   }
+
+  // ============ WALLET TOKEN MUTATIONS ============
+
+  /// Deduct shop tokens for a purchase
+  /// Returns: Map with success status, newBalance, and transaction ID
+  Future<Map<String, dynamic>> deductShopTokens({
+    required String userId,
+    required double amount,
+    required String orderId,
+    required String itemName,
+  }) async {
+    try {
+      final result = await _client.mutate(
+        MutationOptions(
+          document: gql(GraphQLQueries.deductShopTokens),
+          variables: {
+            'userId': userId,
+            'amount': amount,
+            'orderId': orderId,
+            'itemName': itemName,
+          },
+        ),
+      );
+
+      if (result.hasException) {
+        throw Exception('Failed to deduct tokens: ${result.exception}');
+      }
+
+      final updateData = result.data?['updateUserDetail'];
+      final transactionData = result.data?['createWalletTransaction'];
+
+      if (updateData == null || transactionData == null) {
+        throw Exception('Invalid response from token deduction');
+      }
+
+      return {
+        'success': true,
+        'newBalance': updateData['shopTokens']?.toDouble() ?? 0.0,
+        'transactionId': transactionData['id'],
+        'totalSpent': updateData['totalSpentTokens']?.toDouble() ?? 0.0,
+      };
+    } catch (e) {
+      if (kDebugMode) print('Error deducting tokens: $e');
+      rethrow;
+    }
+  }
+
+  /// Add shop tokens from payment
+  /// Returns: Map with success status, newBalance, and transaction ID
+  Future<Map<String, dynamic>> addShopTokens({
+    required String userId,
+    required double amount,
+    String paymentMethod = 'razorpay',
+  }) async {
+    try {
+      final result = await _client.mutate(
+        MutationOptions(
+          document: gql(GraphQLQueries.addShopTokens),
+          variables: {
+            'userId': userId,
+            'amount': amount,
+            'paymentMethod': paymentMethod,
+          },
+        ),
+      );
+
+      if (result.hasException) {
+        throw Exception('Failed to add tokens: ${result.exception}');
+      }
+
+      final updateData = result.data?['updateUserDetail'];
+      final transactionData = result.data?['createWalletTransaction'];
+
+      if (updateData == null || transactionData == null) {
+        throw Exception('Invalid response from token addition');
+      }
+
+      return {
+        'success': true,
+        'newBalance': updateData['shopTokens']?.toDouble() ?? 0.0,
+        'transactionId': transactionData['id'],
+      };
+    } catch (e) {
+      if (kDebugMode) print('Error adding tokens: $e');
+      rethrow;
+    }
+  }
+
+  /// Get user wallet balance and tokens
+  /// Returns: Map with walletBalance and shopTokens
+  Future<Map<String, dynamic>> getUserWallet(String userId) async {
+    try {
+      final result = await _client.query(
+        QueryOptions(
+          document: gql(GraphQLQueries.getUserWallet),
+          variables: {'userId': userId},
+        ),
+      );
+
+      if (result.hasException) {
+        throw Exception('Failed to fetch wallet: ${result.exception}');
+      }
+
+      final userData = result.data?['userDetail'];
+      if (userData == null) {
+        throw Exception('User wallet not found');
+      }
+
+      return {
+        'walletBalance': userData['walletBalance']?.toDouble() ?? 0.0,
+        'shopTokens': userData['shopTokens']?.toDouble() ?? 0.0,
+        'totalSpentTokens': userData['totalSpentTokens']?.toDouble() ?? 0.0,
+      };
+    } catch (e) {
+      if (kDebugMode) print('Error fetching wallet: $e');
+      rethrow;
+    }
+  }
+
+  /// Get wallet transaction history
+  /// Returns: List of transactions
+  Future<List<Map<String, dynamic>>> getWalletTransactions({
+    required String userId,
+    int first = 50,
+    int skip = 0,
+  }) async {
+    try {
+      final result = await _client.query(
+        QueryOptions(
+          document: gql(GraphQLQueries.getWalletTransactions),
+          variables: {
+            'userId': userId,
+            'first': first,
+            'skip': skip,
+          },
+        ),
+      );
+
+      if (result.hasException) {
+        throw Exception('Failed to fetch transactions: ${result.exception}');
+      }
+
+      final transactions = result.data?['walletTransactions'] as List?;
+      if (transactions == null) {
+        return [];
+      }
+
+      return transactions.map((tx) {
+        return {
+          'id': tx['id'],
+          'type': tx['type'],
+          'amount': tx['amount']?.toDouble() ?? 0.0,
+          'description': tx['description'],
+          'timestamp': tx['timestamp'],
+          'status': tx['status'],
+          'paymentMethod': tx['paymentMethod'],
+          'orderReference': tx['orderReference'],
+        };
+      }).toList();
+    } catch (e) {
+      if (kDebugMode) print('Error fetching transactions: $e');
+      return [];
+    }
+  }
+
+  /// Get merged transaction history
+  /// Returns: List of all wallet transactions
+  Future<List<Map<String, dynamic>>> getMergedTransactionHistory({
+    required String userId,
+    int first = 100,
+  }) async {
+    try {
+      final result = await _client.query(
+        QueryOptions(
+          document: gql(GraphQLQueries.getWalletTransactions),
+          variables: {
+            'userId': userId,
+            'first': first,
+            'skip': 0,
+          },
+        ),
+      );
+
+      if (result.hasException) {
+        throw Exception('Failed to fetch merged transactions: ${result.exception}');
+      }
+
+      final transactions = result.data?['walletTransactions'] as List?;
+      if (transactions == null) {
+        return [];
+      }
+
+      return transactions.map((tx) {
+        return {
+          'id': tx['id'],
+          'type': tx['type'],
+          'amount': tx['amount']?.toDouble() ?? 0.0,
+          'description': tx['description'],
+          'timestamp': tx['timestamp'],
+          'status': tx['status'],
+          'paymentMethod': tx['paymentMethod'],
+          'orderReference': tx['orderReference'],
+        };
+      }).toList();
+    } catch (e) {
+      if (kDebugMode) print('Error fetching merged transactions: $e');
+      return [];
+    }
+  }
+
+  /// Update order payment method and tokens used
+  Future<Map<String, dynamic>> updateOrderPaymentMethod({
+    required String orderId,
+    required String paymentMethod,
+    double? tokensUsed,
+  }) async {
+    try {
+      final result = await _client.mutate(
+        MutationOptions(
+          document: gql(GraphQLQueries.updateOrderPaymentMethod),
+          variables: {
+            'orderId': orderId,
+            'paymentMethod': paymentMethod,
+            'tokensUsed': tokensUsed,
+          },
+        ),
+      );
+
+      if (result.hasException) {
+        throw Exception('Failed to update order payment method: ${result.exception}');
+      }
+
+      final orderData = result.data?['updateOrder'];
+      if (orderData == null) {
+        throw Exception('Invalid response from order update');
+      }
+
+      return {
+        'success': true,
+        'orderId': orderData['id'],
+        'paymentMethod': orderData['paymentMethod'],
+        'tokensUsed': orderData['tokensUsed']?.toDouble(),
+      };
+    } catch (e) {
+      if (kDebugMode) print('Error updating order payment method: $e');
+      rethrow;
+    }
+  }
 }
 
 // Global instance

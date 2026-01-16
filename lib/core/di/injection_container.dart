@@ -38,7 +38,7 @@ Future<void> configureDependencies() async {
   // Core
   getIt.registerLazySingleton(() => NetworkInfo(getIt()));
   getIt.registerLazySingleton(() => RestClient(getIt()));
-  getIt.registerLazySingleton(() => GraphQLClientService(getIt()));
+  getIt.registerLazySingleton(() => GraphQLClientService());
   getIt.registerLazySingleton(
     () => ApiClient(
       graphQLClient: getIt(),
@@ -85,6 +85,7 @@ Future<void> configureDependencies() async {
       registerUseCase: getIt(),
       verifyOtpUseCase: getIt(),
       logoutUseCase: getIt(),
+      localDataSource: getIt(),
     ),
   );
 }

@@ -1,23 +1,22 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/app_pages.dart';
-import 'package:unified_dream247/features/fantasy/core/app_constants/app_storage_keys.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/strings.dart';
 import 'package:unified_dream247/features/fantasy/core/global_widgets/app_toast.dart';
-import 'package:unified_dream247/features/fantasy/core/utils/app_storage.dart';
-import 'package:unified_dream247/features/fantasy/features/menu_items/presentation/providers/user_data_provider.dart';
-import 'package:unified_dream247/features/fantasy/features/onboarding/presentation/screens/login_screen.dart';
-import 'package:unified_dream247/features/fantasy/features/upcoming_matches/presentation/providers/myteams_provider.dart';
-import 'package:unified_dream247/features/fantasy/features/accounts/presentation/providers/wallet_details_provider.dart';
-import 'package:unified_dream247/features/fantasy/features/my_matches/presentation/provider/joined_live_contest_provider.dart';
-import 'package:unified_dream247/features/fantasy/features/my_matches/presentation/provider/live_leaderboard_provider.dart';
-import 'package:unified_dream247/features/fantasy/features/my_matches/presentation/provider/live_score_provider.dart';
-import 'package:unified_dream247/features/fantasy/features/my_matches/presentation/provider/player_stats_provider.dart';
-import 'package:unified_dream247/features/fantasy/features/my_matches/presentation/provider/scorecard_provider.dart';
-import 'package:unified_dream247/features/fantasy/features/upcoming_matches/presentation/providers/team_preview_provider.dart';
-import 'package:unified_dream247/features/fantasy/features/user_verification/presentation/providers/kyc_details_provider.dart';
+import 'package:unified_dream247/features/fantasy/menu_items/presentation/providers/user_data_provider.dart';
+import 'package:unified_dream247/config/routes/route_names.dart';
+import 'package:unified_dream247/features/shop/services/auth_service.dart';
+import 'package:unified_dream247/features/fantasy/upcoming_matches/presentation/providers/myteams_provider.dart';
+import 'package:unified_dream247/features/fantasy/accounts/presentation/providers/wallet_details_provider.dart';
+import 'package:unified_dream247/features/fantasy/my_matches/presentation/provider/joined_live_contest_provider.dart';
+import 'package:unified_dream247/features/fantasy/my_matches/presentation/provider/live_leaderboard_provider.dart';
+import 'package:unified_dream247/features/fantasy/my_matches/presentation/provider/live_score_provider.dart';
+import 'package:unified_dream247/features/fantasy/my_matches/presentation/provider/player_stats_provider.dart';
+import 'package:unified_dream247/features/fantasy/my_matches/presentation/provider/scorecard_provider.dart';
+import 'package:unified_dream247/features/fantasy/upcoming_matches/presentation/providers/team_preview_provider.dart';
+import 'package:unified_dream247/features/fantasy/user_verification/presentation/providers/kyc_details_provider.dart';
 
 class ApiServerUtil {
   static bool validateStatusCode(int statusCode) {
@@ -55,9 +54,9 @@ class ApiServerUtil {
     final statusCode = response.statusCode;
 
     if (statusCode == 401 || statusCode == 440) {
-      await AppStorage.saveToStorageBool(AppStorageKeys.logedIn, false);
-      await AppStorage.saveToStorageString(AppStorageKeys.authToken, "");
-      await AppStorage.clear();
+      // 🔗 UNIFIED AUTH: Use unified logout from Shop auth service
+      final authService = AuthService();
+      await authService.unifiedLogout();
 
       if (context.mounted) {
         Provider.of<UserDataProvider>(context, listen: false).clearUserData();
@@ -85,7 +84,7 @@ class ApiServerUtil {
           context,
           listen: false,
         ).clearliveJoinTeams();
-        Get.to(() => LoginScreen());
+        context.go(RouteNames.login);
       }
     } else if (statusCode == 500) {
       appToast(Strings.internalServerError, context);

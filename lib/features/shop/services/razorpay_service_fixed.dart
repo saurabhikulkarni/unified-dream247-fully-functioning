@@ -324,6 +324,8 @@ class RazorpayService {
         return 'assets/icons/emi.svg';
       case PaymentMethod.payLater:
         return 'assets/icons/paylater.svg';
+      case PaymentMethod.shopTokens:
+        return 'assets/icons/coin.svg';
     }
   }
 
@@ -344,6 +346,8 @@ class RazorpayService {
         return 'EMI';
       case PaymentMethod.payLater:
         return 'Pay Later';
+      case PaymentMethod.shopTokens:
+        return 'Shop Tokens';
     }
   }
 
@@ -364,6 +368,8 @@ class RazorpayService {
         return 'emi';
       case PaymentMethod.payLater:
         return 'emandate';
+      case PaymentMethod.shopTokens:
+        return 'shopTokens';
     }
   }
 

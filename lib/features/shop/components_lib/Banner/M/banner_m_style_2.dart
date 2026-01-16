@@ -3,7 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import '../banner_discount_tag.dart';
 import 'banner_m.dart';
 
-import '../../../constants.dart';
+import 'package:unified_dream247/features/shop/constants.dart';
 
 class BannerMStyle2 extends StatelessWidget {
   const BannerMStyle2({

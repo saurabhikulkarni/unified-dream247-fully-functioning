@@ -1,6 +1,6 @@
 // ignore_for_file: use_build_context_synchronously, unrelated_type_equality_checks
 
-import 'dart:ffi';
+// dart:ffi not needed - removed to support web compilation
 
 import 'package:unified_dream247/features/fantasy/core/app_constants/images.dart';
 import 'package:unified_dream247/features/fantasy/core/utils/app_utils.dart';
@@ -17,14 +17,14 @@ import 'package:unified_dream247/features/fantasy/core/app_constants/strings.dar
 import 'package:unified_dream247/features/fantasy/core/global_widgets/app_toast.dart';
 import 'package:unified_dream247/features/fantasy/core/global_widgets/dashed_border.dart';
 import 'package:unified_dream247/features/fantasy/core/global_widgets/main_container.dart';
-import 'package:unified_dream247/features/fantasy/features/accounts/data/accounts_datasource.dart';
-import 'package:unified_dream247/features/fantasy/features/accounts/domain/use_cases/accounts_usecases.dart';
-import 'package:unified_dream247/features/fantasy/features/accounts/presentation/providers/wallet_details_provider.dart';
-import 'package:unified_dream247/features/fantasy/features/landing/data/singleton/app_singleton.dart';
-import 'package:unified_dream247/features/fantasy/features/menu_items/presentation/providers/user_data_provider.dart';
-import 'package:unified_dream247/features/fantasy/features/upcoming_matches/data/upcoming_match_datsource.dart';
-import 'package:unified_dream247/features/fantasy/features/upcoming_matches/domain/use_cases/upcoming_match_usecase.dart';
-import 'package:unified_dream247/features/fantasy/features/upcoming_matches/presentation/widgets/contest_filled_bottom_sheet.dart';
+import 'package:unified_dream247/features/fantasy/accounts/data/accounts_datasource.dart';
+import 'package:unified_dream247/features/fantasy/accounts/domain/use_cases/accounts_usecases.dart';
+import 'package:unified_dream247/features/fantasy/accounts/presentation/providers/wallet_details_provider.dart';
+import 'package:unified_dream247/features/fantasy/landing/data/singleton/app_singleton.dart';
+import 'package:unified_dream247/features/fantasy/menu_items/presentation/providers/user_data_provider.dart';
+import 'package:unified_dream247/features/fantasy/upcoming_matches/data/upcoming_match_datsource.dart';
+import 'package:unified_dream247/features/fantasy/upcoming_matches/domain/use_cases/upcoming_match_usecase.dart';
+import 'package:unified_dream247/features/fantasy/upcoming_matches/presentation/widgets/contest_filled_bottom_sheet.dart';
 
 class JoinContestBottomsheet extends StatefulWidget {
   final String challengeId, selectedTeam;

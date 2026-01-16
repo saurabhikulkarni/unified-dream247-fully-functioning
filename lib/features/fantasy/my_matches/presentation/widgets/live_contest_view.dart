@@ -7,12 +7,12 @@
 // import 'package:unified_dream247/features/fantasy/core/app_constants/strings.dart';
 // import 'package:unified_dream247/features/fantasy/core/global_widgets/app_toast.dart';
 // import 'package:unified_dream247/features/fantasy/core/utils/app_utils.dart';
-// import 'package:unified_dream247/features/fantasy/features/landing/data/singleton/app_singleton.dart';
-// import 'package:unified_dream247/features/fantasy/features/my_matches/data/models/live_challenges_model.dart';
-// import 'package:unified_dream247/features/fantasy/features/my_matches/data/my_matches_datasource.dart';
-// import 'package:unified_dream247/features/fantasy/features/my_matches/domain/use_cases/my_matches_usecases.dart';
-// import 'package:unified_dream247/features/fantasy/features/my_matches/presentation/widgets/live_leaderboard_shimmer_widget.dart';
-// import 'package:unified_dream247/features/fantasy/features/upcoming_matches/data/models/leaderboard_model.dart';
+// import 'package:unified_dream247/features/fantasy/landing/data/singleton/app_singleton.dart';
+// import 'package:unified_dream247/features/fantasy/my_matches/data/models/live_challenges_model.dart';
+// import 'package:unified_dream247/features/fantasy/my_matches/data/my_matches_datasource.dart';
+// import 'package:unified_dream247/features/fantasy/my_matches/domain/use_cases/my_matches_usecases.dart';
+// import 'package:unified_dream247/features/fantasy/my_matches/presentation/widgets/live_leaderboard_shimmer_widget.dart';
+// import 'package:unified_dream247/features/fantasy/upcoming_matches/data/models/leaderboard_model.dart';
 
 // class LiveContestView extends StatefulWidget {
 //   final String? mode;
@@ -651,12 +651,12 @@ import 'package:unified_dream247/features/fantasy/core/app_constants/images.dart
 import 'package:unified_dream247/features/fantasy/core/app_constants/strings.dart';
 import 'package:unified_dream247/features/fantasy/core/global_widgets/app_toast.dart';
 import 'package:unified_dream247/features/fantasy/core/utils/app_utils.dart';
-import 'package:unified_dream247/features/fantasy/features/landing/data/singleton/app_singleton.dart';
-import 'package:unified_dream247/features/fantasy/features/my_matches/data/models/live_challenges_model.dart';
-import 'package:unified_dream247/features/fantasy/features/my_matches/data/my_matches_datasource.dart';
-import 'package:unified_dream247/features/fantasy/features/my_matches/domain/use_cases/my_matches_usecases.dart';
-import 'package:unified_dream247/features/fantasy/features/my_matches/presentation/widgets/live_leaderboard_shimmer_widget.dart';
-import 'package:unified_dream247/features/fantasy/features/upcoming_matches/data/models/leaderboard_model.dart';
+import 'package:unified_dream247/features/fantasy/landing/data/singleton/app_singleton.dart';
+import 'package:unified_dream247/features/fantasy/my_matches/data/models/live_challenges_model.dart';
+import 'package:unified_dream247/features/fantasy/my_matches/data/my_matches_datasource.dart';
+import 'package:unified_dream247/features/fantasy/my_matches/domain/use_cases/my_matches_usecases.dart';
+import 'package:unified_dream247/features/fantasy/my_matches/presentation/widgets/live_leaderboard_shimmer_widget.dart';
+import 'package:unified_dream247/features/fantasy/upcoming_matches/data/models/leaderboard_model.dart';
 
 class LiveContestView extends StatefulWidget {
   final String? mode;

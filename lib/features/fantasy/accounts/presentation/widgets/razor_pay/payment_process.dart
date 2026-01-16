@@ -5,8 +5,8 @@ import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/app_colors.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/images.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/strings.dart';
-import 'package:unified_dream247/features/fantasy/features/accounts/presentation/widgets/account_global_widget.dart';
-import 'package:unified_dream247/features/fantasy/features/menu_items/presentation/providers/user_data_provider.dart';
+import 'package:unified_dream247/features/fantasy/accounts/presentation/widgets/account_global_widget.dart';
+import 'package:unified_dream247/features/fantasy/menu_items/presentation/providers/user_data_provider.dart';
 
 class PaymentProcess extends StatelessWidget {
   final String? paymentStatus;

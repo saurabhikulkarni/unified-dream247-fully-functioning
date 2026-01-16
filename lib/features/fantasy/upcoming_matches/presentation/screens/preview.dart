@@ -9,16 +9,16 @@ import 'package:unified_dream247/features/fantasy/core/app_constants/app_colors.
 import 'package:unified_dream247/features/fantasy/core/app_constants/images.dart';
 import 'package:unified_dream247/features/fantasy/core/global_widgets/cached_images.dart';
 import 'package:unified_dream247/features/fantasy/core/global_widgets/sub_container.dart';
-import 'package:unified_dream247/features/fantasy/features/landing/data/models/games_get_set.dart';
-import 'package:unified_dream247/features/fantasy/features/landing/data/singleton/app_singleton.dart';
-import 'package:unified_dream247/features/fantasy/features/my_matches/data/my_matches_datasource.dart';
-import 'package:unified_dream247/features/fantasy/features/my_matches/domain/use_cases/my_matches_usecases.dart';
-import 'package:unified_dream247/features/fantasy/features/upcoming_matches/data/upcoming_match_datsource.dart';
-import 'package:unified_dream247/features/fantasy/features/upcoming_matches/domain/use_cases/upcoming_match_usecase.dart';
-import 'package:unified_dream247/features/fantasy/features/upcoming_matches/presentation/providers/team_preview_provider.dart';
-import 'package:unified_dream247/features/fantasy/features/upcoming_matches/data/models/user_teams_model.dart';
+import 'package:unified_dream247/features/fantasy/landing/data/models/games_get_set.dart';
+import 'package:unified_dream247/features/fantasy/landing/data/singleton/app_singleton.dart';
+import 'package:unified_dream247/features/fantasy/my_matches/data/my_matches_datasource.dart';
+import 'package:unified_dream247/features/fantasy/my_matches/domain/use_cases/my_matches_usecases.dart';
+import 'package:unified_dream247/features/fantasy/upcoming_matches/data/upcoming_match_datsource.dart';
+import 'package:unified_dream247/features/fantasy/upcoming_matches/domain/use_cases/upcoming_match_usecase.dart';
+import 'package:unified_dream247/features/fantasy/upcoming_matches/presentation/providers/team_preview_provider.dart';
+import 'package:unified_dream247/features/fantasy/upcoming_matches/data/models/user_teams_model.dart';
 import 'package:flutter/material.dart';
-import 'package:unified_dream247/features/fantasy/features/upcoming_matches/presentation/screens/preview_player_info_screen.dart';
+import 'package:unified_dream247/features/fantasy/upcoming_matches/presentation/screens/preview_player_info_screen.dart';
 
 class Preview extends StatefulWidget {
   final List<UserTeamsModel>? data;

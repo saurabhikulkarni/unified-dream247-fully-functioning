@@ -1,5 +1,8 @@
+import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import 'package:unified_dream247/features/shop/services/graphql_client.dart';
 import 'package:unified_dream247/features/shop/services/graphql_queries.dart';
 import 'package:unified_dream247/features/shop/services/wallet_service.dart';
@@ -7,6 +10,9 @@ import 'package:unified_dream247/features/shop/services/wishlist_service.dart';
 import 'package:unified_dream247/features/shop/services/cart_service.dart';
 import 'package:unified_dream247/features/shop/services/user_service.dart';
 import 'package:unified_dream247/features/shop/constants.dart';
+import 'package:unified_dream247/features/fantasy/core/app_constants/app_storage_keys.dart';
+import 'package:unified_dream247/features/fantasy/core/utils/app_storage.dart';
+import 'package:unified_dream247/core/services/auth_service.dart' as core_auth;
 
 class AuthService {
   static final AuthService _instance = AuthService._internal();
@@ -115,6 +121,11 @@ class AuthService {
       // Set current user ID in UserService
       await UserService.setCurrentUserId(testUserId);
       
+      // Share user ID with fantasy auth service
+      await prefs.setString('user_id_fantasy', testUserId);
+      await prefs.setBool('is_logged_in_fantasy', true);
+      await prefs.setString('user_phone_fantasy', testUserPhone);
+      
       print('✅ Test user logged in successfully');
       print('User ID: $testUserId');
       print('Phone: $testUserPhone');
@@ -144,6 +155,7 @@ class AuthService {
     required String name,
     required bool phoneVerified,
     String? userId,
+    String? fantasyToken,
   }) async {
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -161,9 +173,90 @@ class AuthService {
         wishlistService.setUserId(userId);
         cartService.setUserId(userId);
         await UserService.setCurrentUserId(userId);
+        
+        // Share user ID with fantasy auth service
+        await prefs.setString('user_id_fantasy', userId);
+        await prefs.setBool('is_logged_in_fantasy', true);
+        await prefs.setString('user_phone_fantasy', phone);
+      }
+      
+      // Store fantasy JWT token for API authentication
+      if (fantasyToken != null && fantasyToken.isNotEmpty) {
+        await prefs.setString('token', fantasyToken);
+        print('✅ [AUTH] Fantasy token saved successfully');
+        print('✅ [AUTH] Token length: ${fantasyToken.length}');
+        print('✅ [AUTH] Token preview: ${fantasyToken.substring(0, fantasyToken.length > 20 ? 20 : fantasyToken.length)}...');
+        
+        // Verify token was saved
+        final savedToken = prefs.getString('token');
+        if (savedToken == fantasyToken) {
+          print('✅ [AUTH] Token verified in SharedPreferences');
+        } else {
+          print('❌ [AUTH] Token verification failed!');
+        }
+      } else {
+        print('❌ [AUTH] No fantasy token to save (token is null or empty)');
       }
     } catch (e) {
       print('Error saving login session: $e');
+    }
+  }
+
+  // Fetch fantasy authentication token from backend
+  Future<String?> fetchFantasyToken({
+    required String phone,
+    String? name,
+    bool isNewUser = false,
+  }) async {
+    try {
+      // Fantasy backend user endpoint
+      const baseUrl = 'http://143.244.140.102:4000/user';
+      
+      // Prepare request body
+      final body = {
+        'phone': phone,
+        if (name != null) 'name': name,
+        'isNewUser': isNewUser,
+      };
+      
+      print('🔑 [AUTH] Fetching fantasy token for phone: $phone');
+      print('🔑 [AUTH] Backend URL: $baseUrl/auth/register-or-login');
+      print('🔑 [AUTH] Request body: ${json.encode(body)}');
+      
+      // Make HTTP POST request to fantasy backend
+      final response = await http.post(
+        Uri.parse('$baseUrl/auth/register-or-login'),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: json.encode(body),
+      ).timeout(const Duration(seconds: 10));
+      
+      print('🔑 [AUTH] Response status: ${response.statusCode}');
+      print('🔑 [AUTH] Response body: ${response.body}');
+      
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = json.decode(response.body);
+        print('🔑 [AUTH] Parsed response data: $data');
+        final token = data['token'] as String?;
+        
+        if (token != null && token.isNotEmpty) {
+          print('✅ [AUTH] Fantasy token fetched successfully');
+          print('✅ [AUTH] Token length: ${token.length}');
+          return token;
+        } else {
+          print('⚠️ [AUTH] No token in response');
+          print('⚠️ [AUTH] Response keys: ${data.keys}');
+          return null;
+        }
+      } else {
+        print('❌ [AUTH] Fantasy token fetch failed: ${response.statusCode}');
+        print('❌ [AUTH] Response: ${response.body}');
+        return null;
+      }
+    } catch (e) {
+      print('❌ [AUTH] Error fetching fantasy token: $e');
+      return null;
     }
   }
 
@@ -179,9 +272,11 @@ class AuthService {
   }
 
   // Clear login session (logout)
-  Future<void> logout() async {
+  Future<void> unifiedLogout() async {
     try {
       final prefs = await SharedPreferences.getInstance();
+      
+      // Clear Shop authentication
       await prefs.setBool(_isLoggedInKey, false);
       await prefs.remove(_userPhoneKey);
       await prefs.remove(_userNameKey);
@@ -191,11 +286,33 @@ class AuthService {
       await prefs.remove(_lastLoginKey);
       await prefs.remove(_userIdKey);
       
+      // 🔗 UNIFIED AUTH: Clear Fantasy authentication (same user logout)
+      await prefs.remove('token');
+      await prefs.remove('user_id_fantasy');
+      await prefs.remove('is_logged_in_fantasy');
+      await prefs.remove('user_phone_fantasy');
+      
+      // Clear Fantasy storage keys
+      await AppStorage.saveToStorageBool(AppStorageKeys.isLoggedIn, false);
+      await AppStorage.removeStorageValue(AppStorageKeys.authToken);
+      await AppStorage.removeStorageValue(AppStorageKeys.loginToken);
+      await AppStorage.removeStorageValue(AppStorageKeys.userId);
+      
       // Clear wallet, wishlist, cart, and user services on logout
       walletService.clear();
       wishlistService.clear();
       cartService.clear();
       await UserService.setCurrentUserId(''); // Clear userId in UserService
+      
+      debugPrint('✅ Unified logout complete - Shop & Fantasy logged out');
+    } catch (e) {
+      debugPrint('❌ Error in unified logout: $e');
+    }
+  }
+
+  Future<void> logout() async {
+    try {
+      await unifiedLogout();
     } catch (e) {
       print('Error during logout: $e');
     }
@@ -296,6 +413,113 @@ class AuthService {
       return null;
     } catch (e) {
       print('Exception in fetchUserProfile: $e');
+      return null;
+    }
+  }
+
+  /// Save unified login session (compatible with Shop and Fantasy)
+  Future<void> saveUnifiedLoginSession({
+    required String phone,
+    required String name,
+    required bool phoneVerified,
+    required String userId,
+    String? email,
+    String? authToken,
+  }) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      
+      // Save for Shop module
+      await prefs.setBool(_isLoggedInKey, true);
+      await prefs.setString(_userPhoneKey, phone);
+      await prefs.setString(_userNameKey, name);
+      await prefs.setBool(_phoneVerifiedKey, phoneVerified);
+      await prefs.setString(_userIdKey, userId);
+      await prefs.setString(_lastLoginKey, DateTime.now().toIso8601String());
+      
+      if (email != null && email.isNotEmpty) {
+        await prefs.setString('user_email', email);
+      }
+      if (authToken != null && authToken.isNotEmpty) {
+        await prefs.setString(_authTokenKey, authToken);
+      }
+      
+      // Save for Fantasy module
+      await AppStorage.saveToStorageString(AppStorageKeys.loginToken, authToken ?? userId);
+      await AppStorage.saveToStorageString(AppStorageKeys.userId, userId);
+      await AppStorage.saveToStorageString(AppStorageKeys.userPhone, phone);
+      await AppStorage.saveToStorageString(AppStorageKeys.userName, name);
+      await AppStorage.saveToStorageBool(AppStorageKeys.isLoggedIn, true);
+      await AppStorage.saveToStorageBool('phone_verified', phoneVerified);
+      
+      if (email != null && email.isNotEmpty) {
+        await AppStorage.saveToStorageString('user_email', email);
+      }
+      
+      // Save to core AuthService
+      final coreAuthService = core_auth.authService;
+      await coreAuthService.saveUserSession(
+        userId: userId,
+        authToken: authToken ?? userId,
+        mobileNumber: phone,
+        email: email,
+        name: name,
+      );
+      
+      await UserService.setCurrentUserId(userId);
+      
+      debugPrint('✅✅✅ UNIFIED LOGIN SUCCESSFUL ✅✅✅');
+      debugPrint('📱 Shop & Fantasy now share the SAME authentication');
+      debugPrint('👤 User ID: $userId');
+      debugPrint('☎️ Phone: $phone');
+      debugPrint('🚀 Fantasy will use Shop login - no separate login needed');
+    } catch (e) {
+      debugPrint('❌ Error saving unified login session: $e');
+      rethrow;
+    }
+  }
+
+  /// Check if user is logged in (unified check)
+  Future<bool> isUnifiedLoggedIn() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final shopLoggedIn = prefs.getBool(_isLoggedInKey) ?? false;
+      final fantasyLoggedIn = await AppStorage.getStorageBoolValue(AppStorageKeys.isLoggedIn) ?? false;
+      return shopLoggedIn || fantasyLoggedIn;
+    } catch (e) {
+      debugPrint('❌ Error checking unified login: $e');
+      return false;
+    }
+  }
+
+  /// Get unified user ID
+  Future<String?> getUnifiedUserId() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      String? userId = prefs.getString(_userIdKey);
+      
+      if (userId == null || userId.isEmpty) {
+        userId = await AppStorage.getStorageValueString(AppStorageKeys.userId);
+      }
+      return userId;
+    } catch (e) {
+      debugPrint('❌ Error getting unified user ID: $e');
+      return null;
+    }
+  }
+
+  /// Get unified auth token
+  Future<String?> getUnifiedAuthToken() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString(_authTokenKey);
+      
+      if (token == null || token.isEmpty) {
+        token = await AppStorage.getStorageValueString(AppStorageKeys.loginToken);
+      }
+      return token;
+    } catch (e) {
+      debugPrint('❌ Error getting unified token: $e');
       return null;
     }
   }

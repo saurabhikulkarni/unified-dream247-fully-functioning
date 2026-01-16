@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'package:universal_io/io.dart';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +9,7 @@ import 'package:unified_dream247/features/fantasy/core/app_constants/strings.dar
 import 'package:unified_dream247/features/fantasy/core/global_widgets/app_toast.dart';
 import 'package:unified_dream247/features/fantasy/core/global_widgets/main_button.dart';
 import 'package:unified_dream247/features/fantasy/core/utils/app_utils.dart';
-import 'package:unified_dream247/features/fantasy/features/landing/data/singleton/app_singleton.dart';
+import 'package:unified_dream247/features/fantasy/landing/data/singleton/app_singleton.dart';
 
 class AppUpdateBottomSheet extends StatefulWidget {
   const AppUpdateBottomSheet({super.key});

@@ -1,7 +1,9 @@
-import 'package:flutter/material.dart';
-import 'package:unified_dream247/features/shop/screens/auth/views/login_screen.dart';
-import 'package:unified_dream247/features/shop/services/auth_service.dart';
-import 'package:unified_dream247/features/shop/route/route_constants.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:unified_dream247/config/routes/route_names.dart';
+import 'package:unified_dream247/core/services/auth_service.dart' as core_auth;
+import 'package:unified_dream247/core/services/token_service.dart';
+import 'package:unified_dream247/core/constants/api_constants.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -58,25 +60,48 @@ class _SplashScreenState extends State<SplashScreen>
 
     if (!mounted) return;
 
-    // Check if user is already logged in
-    final isLoggedIn = await authService.isLoggedIn();
+    try {
+      final authService = core_auth.AuthService();
+      await authService.initialize();
+      
+      // Check unified login status
+      final isLoggedIn = await authService.isLoggedIn();
+      final token = authService.getAuthToken();
 
-    if (isLoggedIn) {
-      // Check if phone is verified
-      final isPhoneVerified = await authService.isPhoneVerified();
+      if (!mounted) return;
 
-      if (isPhoneVerified) {
-        // User is logged in and phone is verified - go to home
-        Navigator.of(context).pushReplacementNamed(entryPointScreenRoute);
+      if (isLoggedIn && token != null && token.isNotEmpty) {
+        debugPrint('✅ User already logged in with unified auth');
+        debugPrint('🔑 Token present');
+        
+        // Validate token with backend
+        debugPrint('🔐 Validating token with backend...');
+        final isValid = await authService.validateToken(ApiConstants.shopBackendUrl);
+        
+        if (!mounted) return;
+
+        if (isValid) {
+          debugPrint('✅ Token validated successfully');
+          
+          // Start token refresh timer
+          final tokenService = TokenService();
+          tokenService.startTokenRefreshTimer(token);
+          
+          debugPrint('🚀 Navigating to home');
+          context.go(RouteNames.home);
+        } else {
+          debugPrint('⚠️ Token validation failed - redirecting to login');
+          context.go(RouteNames.login);
+        }
       } else {
-        // Phone not verified - take to verification
-        Navigator.of(context).pushReplacementNamed(signUpVerificationScreenRoute);
+        debugPrint('❌ No active session - redirecting to login');
+        context.go(RouteNames.login);
       }
-    } else {
-      // Not logged in - go to login
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const LoginScreen()),
-      );
+    } catch (e) {
+      debugPrint('⚠️ Navigation error: $e');
+      if (mounted) {
+        context.go(RouteNames.login);
+      }
     }
   }
 

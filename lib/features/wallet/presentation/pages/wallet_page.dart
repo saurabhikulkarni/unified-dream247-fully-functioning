@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../config/theme/app_colors.dart';
-import '../../config/theme/text_styles.dart';
-import '../../shared/components/app_bottom_nav_bar.dart';
-import '../../shared/components/custom_app_bar.dart';
+import '../../../../config/theme/app_colors.dart';
+import '../../../../config/theme/text_styles.dart';
+import '../../../../shared/components/app_bottom_nav_bar.dart';
+import '../../../../shared/components/custom_app_bar.dart';
 
 /// Wallet page
 class WalletPage extends StatelessWidget {

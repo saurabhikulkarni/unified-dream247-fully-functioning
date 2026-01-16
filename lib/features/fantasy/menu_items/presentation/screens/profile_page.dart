@@ -10,12 +10,12 @@ import 'package:unified_dream247/features/fantasy/core/app_constants/strings.dar
 import 'package:unified_dream247/features/fantasy/core/global_widgets/cached_images.dart';
 import 'package:unified_dream247/features/fantasy/core/global_widgets/main_button.dart';
 import 'package:unified_dream247/features/fantasy/core/global_widgets/sub_container.dart';
-import 'package:unified_dream247/features/fantasy/features/accounts/presentation/providers/wallet_details_provider.dart';
-import 'package:unified_dream247/features/fantasy/features/menu_items/data/models/level_reward_model.dart';
-import 'package:unified_dream247/features/fantasy/features/menu_items/data/user_datasource.dart';
-import 'package:unified_dream247/features/fantasy/features/menu_items/domain/use_cases/user_usecases.dart';
-import 'package:unified_dream247/features/fantasy/features/menu_items/presentation/providers/user_data_provider.dart';
-import 'package:unified_dream247/features/fantasy/features/menu_items/presentation/screens/edit_profile_page.dart';
+import 'package:unified_dream247/features/fantasy/accounts/presentation/providers/wallet_details_provider.dart';
+import 'package:unified_dream247/features/fantasy/menu_items/data/models/level_reward_model.dart';
+import 'package:unified_dream247/features/fantasy/menu_items/data/user_datasource.dart';
+import 'package:unified_dream247/features/fantasy/menu_items/domain/use_cases/user_usecases.dart';
+import 'package:unified_dream247/features/fantasy/menu_items/presentation/providers/user_data_provider.dart';
+import 'package:unified_dream247/features/fantasy/menu_items/presentation/screens/edit_profile_page.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});

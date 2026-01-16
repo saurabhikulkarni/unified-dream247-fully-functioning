@@ -260,6 +260,9 @@ class RazorpayService {
   List<PaymentMethod> getSupportedPaymentMethods() {
     final methods = <PaymentMethod>[];
 
+    // Always add shop tokens as an option
+    methods.add(PaymentMethod.shopTokens);
+
     for (var methodStr in RazorpayConfig.enabledPaymentMethods) {
       switch (methodStr) {
         case 'card':
@@ -342,6 +345,8 @@ class RazorpayService {
         return 'assets/icons/emi.svg';
       case PaymentMethod.payLater:
         return 'assets/icons/paylater.svg';
+      case PaymentMethod.shopTokens:
+        return 'assets/icons/coin.svg';  // Use coin icon for tokens
     }
   }
 
@@ -362,6 +367,8 @@ class RazorpayService {
         return 'EMI';
       case PaymentMethod.payLater:
         return 'Pay Later';
+      case PaymentMethod.shopTokens:
+        return 'Shop Tokens';
     }
   }
 
@@ -382,6 +389,8 @@ class RazorpayService {
         return 'emi';
       case PaymentMethod.payLater:
         return 'emandate';
+      case PaymentMethod.shopTokens:
+        return 'shopTokens';
     }
   }
 

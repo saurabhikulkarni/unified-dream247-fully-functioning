@@ -86,3 +86,11 @@ coverage/
 *.g.dart
 *.config.dart
 *.freezed.dart
+
+# Environment files with secrets
+# Keep the .example file for reference but exclude actual env files
+# Uncomment these lines if you want to keep env files out of version control
+# assets/config/.env.dev
+# assets/config/.env.prod
+# !assets/config/.env.example
+

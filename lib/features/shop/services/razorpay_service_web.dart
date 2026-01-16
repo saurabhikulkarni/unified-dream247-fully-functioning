@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'dart:js' as js;
-import 'dart:js_util' as js_util;
 
 /// Web implementation of Razorpay using JavaScript Checkout
 class RazorpayPlatform {
@@ -42,8 +41,8 @@ class RazorpayPlatform {
       // Convert to JS object
       final jsOptions = js.JsObject.jsify(optionsMap);
 
-      // Create handler callback - Razorpay expects: handler: function(response) {...}
-      jsOptions['handler'] = js.allowInterop((response) {
+      // Create handler callback without allowInterop - use JsFunction directly
+      jsOptions['handler'] = js.JsFunction.withThis((self, response) {
         if (kDebugMode) {
           print('[RAZORPAY_WEB] ✅ Payment SUCCESS - handler called');
           print('[RAZORPAY_WEB] Response type: ${response.runtimeType}');
@@ -59,14 +58,15 @@ class RazorpayPlatform {
             orderId = response['razorpay_order_id']?.toString() ?? '';
             signature = response['razorpay_signature']?.toString() ?? '';
           } else {
-            // Try as dynamic object
+            // Try as dynamic object - attempt direct property access
             try {
-              paymentId = js_util.getProperty(response, 'razorpay_payment_id')?.toString() ?? '';
-              orderId = js_util.getProperty(response, 'razorpay_order_id')?.toString() ?? '';
-              signature = js_util.getProperty(response, 'razorpay_signature')?.toString() ?? '';
+              final responseMap = response as Map;
+              paymentId = responseMap['razorpay_payment_id']?.toString() ?? '';
+              orderId = responseMap['razorpay_order_id']?.toString() ?? '';
+              signature = responseMap['razorpay_signature']?.toString() ?? '';
             } catch (e) {
               if (kDebugMode) {
-                print('[RAZORPAY_WEB] js_util failed, trying direct access: $e');
+                print('[RAZORPAY_WEB] Direct access failed, trying conversion: $e');
                 // Last resort - try to convert to string and parse
                 final responseStr = response.toString();
                 print('[RAZORPAY_WEB] Response as string: $responseStr');
@@ -103,7 +103,7 @@ class RazorpayPlatform {
       
       // Create modal options for dismiss/error handling
       final modalOptions = js.JsObject.jsify({});
-      modalOptions['ondismiss'] = js.allowInterop(() {
+      modalOptions['ondismiss'] = js.JsFunction.withThis((self) {
         if (kDebugMode) {
           print('[RAZORPAY_WEB] ⚠️ Payment modal DISMISSED');
         }

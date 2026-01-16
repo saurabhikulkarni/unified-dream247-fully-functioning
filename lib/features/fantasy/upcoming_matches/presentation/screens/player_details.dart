@@ -5,11 +5,11 @@ import 'package:unified_dream247/features/fantasy/core/app_constants/app_colors.
 import 'package:unified_dream247/features/fantasy/core/app_constants/strings.dart';
 import 'package:unified_dream247/features/fantasy/core/global_widgets/main_container.dart';
 import 'package:unified_dream247/features/fantasy/core/global_widgets/sub_container.dart';
-import 'package:unified_dream247/features/fantasy/features/landing/data/singleton/app_singleton.dart';
-import 'package:unified_dream247/features/fantasy/features/my_matches/data/my_matches_datasource.dart';
-import 'package:unified_dream247/features/fantasy/features/my_matches/domain/use_cases/my_matches_usecases.dart';
-import 'package:unified_dream247/features/fantasy/features/upcoming_matches/data/models/player_details_model.dart';
-import 'package:unified_dream247/features/fantasy/features/upcoming_matches/data/models/players_model.dart';
+import 'package:unified_dream247/features/fantasy/landing/data/singleton/app_singleton.dart';
+import 'package:unified_dream247/features/fantasy/my_matches/data/my_matches_datasource.dart';
+import 'package:unified_dream247/features/fantasy/my_matches/domain/use_cases/my_matches_usecases.dart';
+import 'package:unified_dream247/features/fantasy/upcoming_matches/data/models/player_details_model.dart';
+import 'package:unified_dream247/features/fantasy/upcoming_matches/data/models/players_model.dart';
 
 class PlayerDetails extends StatefulWidget {
   final CreateTeamPlayersData data;

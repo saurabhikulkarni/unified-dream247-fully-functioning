@@ -10,10 +10,10 @@ import 'package:unified_dream247/features/fantasy/core/app_constants/images.dart
 import 'package:unified_dream247/features/fantasy/core/app_constants/strings.dart';
 import 'package:unified_dream247/features/fantasy/core/global_widgets/cached_images.dart';
 import 'package:unified_dream247/features/fantasy/core/global_widgets/sub_container.dart';
-import 'package:unified_dream247/features/fantasy/features/my_matches/data/models/team_compare_model.dart';
-import 'package:unified_dream247/features/fantasy/features/my_matches/data/my_matches_datasource.dart';
-import 'package:unified_dream247/features/fantasy/features/my_matches/domain/use_cases/my_matches_usecases.dart';
-import 'package:unified_dream247/features/fantasy/features/my_matches/presentation/widgets/team_compare_shimmer.dart';
+import 'package:unified_dream247/features/fantasy/my_matches/data/models/team_compare_model.dart';
+import 'package:unified_dream247/features/fantasy/my_matches/data/my_matches_datasource.dart';
+import 'package:unified_dream247/features/fantasy/my_matches/domain/use_cases/my_matches_usecases.dart';
+import 'package:unified_dream247/features/fantasy/my_matches/presentation/widgets/team_compare_shimmer.dart';
 
 class TeamCompare extends StatefulWidget {
   final String team1Id;

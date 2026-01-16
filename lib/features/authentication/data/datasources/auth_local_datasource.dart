@@ -58,11 +58,20 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   Future<void> cacheUser(UserModel user) async {
     try {
       await sharedPreferences.setString(StorageConstants.userId, user.id);
-      await sharedPreferences.setString(StorageConstants.userEmail, user.email);
+      if (user.email != null) {
+        await sharedPreferences.setString(StorageConstants.userEmail, user.email!);
+      }
       if (user.phone != null) {
         await sharedPreferences.setString(StorageConstants.userPhone, user.phone!);
       }
       await sharedPreferences.setBool(StorageConstants.isLoggedIn, true);
+      
+      // Share user ID with shop auth service
+      await sharedPreferences.setString('user_id', user.id);
+      await sharedPreferences.setBool('is_logged_in', true);
+      if (user.phone != null) {
+        await sharedPreferences.setString('user_phone', user.phone!);
+      }
     } catch (e) {
       throw CacheException('Failed to cache user');
     }

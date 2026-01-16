@@ -2,7 +2,7 @@
 
 import 'dart:io';
 
-import 'package:apk_installer/apk_installer.dart';
+// import 'package:apk_installer/apk_installer.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -566,7 +566,8 @@ class AppUtils {
   static Future<void> installApk(BuildContext context, String apkPath) async {
     try {
       if (Platform.isAndroid) {
-        await ApkInstaller.installApk(filePath: apkPath);
+        // await ApkInstaller.installApk(filePath: apkPath);
+        appToast("APK installation not implemented", context);
       }
     } catch (e) {
       debugPrint('Error: $e');

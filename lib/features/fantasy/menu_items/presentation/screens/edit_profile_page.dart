@@ -10,9 +10,9 @@ import 'package:unified_dream247/features/fantasy/core/global_widgets/common_wid
 import 'package:unified_dream247/features/fantasy/core/global_widgets/main_button.dart';
 import 'package:unified_dream247/features/fantasy/core/global_widgets/sub_container.dart';
 import 'package:unified_dream247/features/fantasy/core/utils/app_utils.dart';
-import 'package:unified_dream247/features/fantasy/features/menu_items/data/user_datasource.dart';
-import 'package:unified_dream247/features/fantasy/features/menu_items/domain/use_cases/user_usecases.dart';
-import 'package:unified_dream247/features/fantasy/features/menu_items/presentation/providers/user_data_provider.dart';
+import 'package:unified_dream247/features/fantasy/menu_items/data/user_datasource.dart';
+import 'package:unified_dream247/features/fantasy/menu_items/domain/use_cases/user_usecases.dart';
+import 'package:unified_dream247/features/fantasy/menu_items/presentation/providers/user_data_provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 

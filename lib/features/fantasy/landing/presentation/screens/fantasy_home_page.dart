@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 /// Fantasy Home Page - Entry point for fantasy gaming features
 /// Shows upcoming matches, contests, and gaming functionality
 class FantasyHomePage extends StatefulWidget {
-  const FantasyHomePage({super.key});
+  final String? userId;
+  
+  const FantasyHomePage({super.key, this.userId});
 
   @override
   State<FantasyHomePage> createState() => _FantasyHomePageState();
@@ -16,6 +18,13 @@ class _FantasyHomePageState extends State<FantasyHomePage> with SingleTickerProv
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
+    
+    // Verify user ID is available for fantasy gaming
+    if (widget.userId != null) {
+      debugPrint('Fantasy Home: User ID received - ${widget.userId}');
+    } else {
+      debugPrint('Fantasy Home: Warning - No user ID provided');
+    }
   }
 
   @override

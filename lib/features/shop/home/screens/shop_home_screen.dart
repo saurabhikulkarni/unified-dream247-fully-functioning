@@ -3,13 +3,27 @@ import 'package:flutter/material.dart';
 /// Shop Home Screen - Entry point for ecommerce features
 /// Shows products, categories, and shopping functionality
 class ShopHomeScreen extends StatefulWidget {
-  const ShopHomeScreen({super.key});
+  final String? userId;
+  
+  const ShopHomeScreen({super.key, this.userId});
 
   @override
   State<ShopHomeScreen> createState() => _ShopHomeScreenState();
 }
 
 class _ShopHomeScreenState extends State<ShopHomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    
+    // Verify user ID is available for shop
+    if (widget.userId != null) {
+      debugPrint('Shop Home: User ID received - ${widget.userId}');
+    } else {
+      debugPrint('Shop Home: Warning - No user ID provided');
+    }
+  }
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(

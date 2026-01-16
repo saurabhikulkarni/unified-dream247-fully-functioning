@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:unified_dream247/core/constants/storage_constants.dart';
 
 class ApiImpl {
   final Dio _dio;
@@ -14,6 +16,28 @@ class ApiImpl {
           headers: {"Content-Type": "application/json"},
         ),
       );
+
+  /// Get unified user ID from storage
+  Future<String> _getUnifiedUserId() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      return prefs.getString(StorageConstants.userId) ?? '';
+    } catch (e) {
+      debugPrint('Error getting user ID: $e');
+      return '';
+    }
+  }
+
+  /// Get auth token from storage
+  Future<String> _getAuthToken() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      return prefs.getString(StorageConstants.authToken) ?? '';
+    } catch (e) {
+      debugPrint('Error getting auth token: $e');
+      return '';
+    }
+  }
 
   /// Common request executor with retry + logging
   Future<Response> _request(
@@ -28,9 +52,23 @@ class ApiImpl {
 
     while (attempt < retryCount) {
       try {
+        // Get unified user ID and auth token
+        final userId = await _getUnifiedUserId();
+        final token = await _getAuthToken();
+
+        // Build final headers with unified auth
+        final finalHeaders = {
+          ..._dio.options.headers.cast<String, String>(),
+          if (headers != null) ...headers,
+          // Add unified user ID header for Fantasy APIs
+          if (userId.isNotEmpty) 'X-User-ID': userId,
+          // Add Authorization header with unified token
+          if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+        };
+
         final options = Options(
           method: method,
-          headers: {..._dio.options.headers, if (headers != null) ...headers},
+          headers: finalHeaders,
         );
 
         debugPrint('============ ENDPOINT ===============');
