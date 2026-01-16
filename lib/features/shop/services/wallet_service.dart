@@ -5,6 +5,7 @@ import 'graphql_client.dart';
 import 'graphql_queries.dart';
 import 'user_service.dart';
 
+@Deprecated('Use UnifiedWalletService from core/services/wallet_service.dart and Fantasy MyBalancePage instead')
 class WalletService {
   static final WalletService _instance = WalletService._internal();
 

@@ -1,4 +1,5 @@
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:unified_dream247/core/services/wallet_service.dart';
 import '../constants/storage_constants.dart';
 
 /// Service for managing user data and session
@@ -49,21 +50,21 @@ class UserService {
     await _prefs.setBool(StorageConstants.isLoggedIn, false);
   }
 
-  /// Get wallet balance (placeholder - should be fetched from API)
+  /// Get wallet balance from unified wallet service
   Future<double> getWalletBalance() async {
-    // In a real app, this would fetch from an API
-    return 0.0;
+    // Use unified wallet service for shop tokens
+    return await walletService.getShopTokens();
   }
 
-  /// Get coins (placeholder - should be fetched from API)
+  /// Get coins (shop tokens)
   Future<int> getCoins() async {
-    // In a real app, this would fetch from an API
-    return 100;
+    final balance = await walletService.getShopTokens();
+    return balance.toInt();
   }
 
-  /// Get gems (placeholder - should be fetched from API)
+  /// Get gems (game tokens)
   Future<int> getGems() async {
-    // In a real app, this would fetch from an API
-    return 100;
+    final balance = await walletService.getGameTokens();
+    return balance.toInt();
   }
 }

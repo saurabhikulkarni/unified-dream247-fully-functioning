@@ -10,7 +10,7 @@ import 'package:unified_dream247/features/shop/services/cart_service.dart';
 import 'package:unified_dream247/features/shop/services/address_service.dart';
 import 'package:unified_dream247/features/shop/services/order_service_graphql.dart';
 import 'package:unified_dream247/features/shop/route/route_constants.dart';
-import 'package:unified_dream247/features/shop/services/wallet_service.dart';
+import 'package:unified_dream247/core/services/wallet_service.dart';
 import 'package:unified_dream247/features/shop/services/user_service.dart';
 import 'package:unified_dream247/features/shop/services/shiprocket_service.dart';
 
@@ -28,7 +28,7 @@ class _CartScreenState extends State<CartScreen> {
   final CartService cartService = CartService();
   final AddressService addressService = AddressService();
   final OrderServiceGraphQL orderServiceGraphQL = OrderServiceGraphQL();
-  final WalletService walletService = WalletService();
+  final UnifiedWalletService walletService = walletService;
 
   @override
   void initState() {
@@ -46,7 +46,7 @@ class _CartScreenState extends State<CartScreen> {
 
   Future<void> _loadWalletBalance() async {
     try {
-      final balance = await walletService.getBalance();
+      final balance = await walletService.getShopTokens();
       if (mounted) {
         setState(() {
           walletBalance = balance;
@@ -366,8 +366,12 @@ class _CartScreenState extends State<CartScreen> {
         }
       }
 
-      // Deduct wallet balance
-      await walletService.deductBalance(total.toDouble());
+      // Deduct wallet balance (shop tokens)
+      await walletService.deductShopTokens(
+        total.toDouble(),
+        orderId: result['orderId'] as String?,
+        itemName: 'Order',
+      );
       
       // Update wallet balance in UI
       await _loadWalletBalance();

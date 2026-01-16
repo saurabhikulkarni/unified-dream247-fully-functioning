@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:unified_dream247/features/fantasy/landing/data/singleton/app_singleton.dart';
 import 'package:provider/provider.dart';
 import 'package:unified_dream247/features/fantasy/core/api_server_constants/api_server_impl/api_impl.dart';
@@ -240,13 +241,13 @@ class _MyBalancePage extends State<MyBalancePage> {
                           children: [
                             _walletInfoTile(
                               icon: Images.icDeposit,
-                              title: "Shop Token",
+                              title: "Shopping Tokens",
                               value:
                                   "${AppUtils.stringifyNumber(num.parse(_shopTokens.toStringAsFixed(0)))}",
                               color: AppColors.lightGreen.withAlpha(20),
                               isShopToken: true,
                               gradientButton: true,
-                              buttonText: "Add Cash",
+                              buttonText: "Add Money",
                               onButtonTap: () {
                                 Get.to(() => AddMoneyPage());
                               },
@@ -285,10 +286,10 @@ class _MyBalancePage extends State<MyBalancePage> {
                             const SizedBox(height: 12),
                             _walletInfoTile(
                                 icon: Images.icCashback,
-                                title: "Game Token",
+                                title: "Game Tokens",
                                 value: "${walletData?.bonus ?? "0"}",
                                 color: AppColors.blueColor.withAlpha(40),
-                                tooltip: "Use these Tokens to play Games.",
+                                tooltip: "Use these tokens to enter contests",
                                 isTokenIcon: true),
                             // const SizedBox(height: 10),
                             // Container(
@@ -612,12 +613,10 @@ class _MyBalancePage extends State<MyBalancePage> {
                 Row(
                   children: [
                     isShopToken
-                        ? Image.asset(
-                            Images.tokenImage,
-                            // Images.imageWallet,
-                            height: 18,
+                        ? SvgPicture.asset(
+                            'assets/icons/coin.svg',
                             width: 18,
-                            // color: AppColors.white,
+                            height: 18,
                           )
                         : SizedBox(),
                     isTokenIcon
