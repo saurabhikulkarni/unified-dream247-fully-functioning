@@ -15,6 +15,12 @@ class StorageConstants {
   static const String fantasyEnabled = 'fantasy_enabled';
   static const String modules = 'modules';
   
+  // Unified Wallet - Shop Token System
+  static const String shopTokens = 'shop_tokens';
+  static const String shopTransactionHistory = 'shop_transaction_history';
+  static const String gameTokens = 'game_tokens';
+  static const String totalWalletAmount = 'total_wallet_amount';
+  
   // User preferences
   static const String themeMode = 'theme_mode';
   static const String language = 'language';

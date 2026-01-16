@@ -16,6 +16,7 @@ import 'package:unified_dream247/features/fantasy/accounts/data/accounts_datasou
 import 'package:unified_dream247/features/fantasy/accounts/domain/use_cases/accounts_usecases.dart';
 import 'package:unified_dream247/features/fantasy/accounts/presentation/providers/wallet_details_provider.dart';
 import 'package:unified_dream247/features/fantasy/accounts/presentation/screens/add_money_page.dart';
+import 'package:unified_dream247/core/services/wallet_service.dart';
 
 class MyBalancePage extends StatefulWidget {
   const MyBalancePage({super.key});
@@ -29,11 +30,23 @@ class _MyBalancePage extends State<MyBalancePage> {
     AccountsDatasource(ApiImpl(), ApiImplWithAccessToken()),
   );
   DateTime? lastRefreshTime;
+  double _shopTokens = 0.0;
 
   @override
   void initState() {
     super.initState();
     loadData();
+    _loadShopTokens();
+  }
+
+  /// Load shop tokens from unified wallet service
+  Future<void> _loadShopTokens() async {
+    await walletService.initialize();
+    final shopTokens = await walletService.getShopTokens();
+    setState(() {
+      _shopTokens = shopTokens;
+    });
+    debugPrint('📊 [FANTASY_WALLET] Shop tokens loaded: $shopTokens');
   }
 
   Future<void> loadData() async {
@@ -46,6 +59,7 @@ class _MyBalancePage extends State<MyBalancePage> {
 
     lastRefreshTime = now;
     await accountsUsecases.myWalletDetails(context);
+    await _loadShopTokens();
     setState(() {});
   }
 
@@ -179,7 +193,7 @@ class _MyBalancePage extends State<MyBalancePage> {
                               icon: Images.icDeposit,
                               title: "Shop Token",
                               value:
-                                  "${AppUtils.stringifyNumber(num.parse(walletData?.balance ?? "0"))}",
+                                  "${AppUtils.stringifyNumber(num.parse(_shopTokens.toStringAsFixed(0)))}",
                               color: AppColors.lightGreen.withAlpha(20),
                               isShopToken: true,
                               gradientButton: true,

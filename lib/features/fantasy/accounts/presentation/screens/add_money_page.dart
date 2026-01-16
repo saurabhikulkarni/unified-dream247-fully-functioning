@@ -27,6 +27,7 @@ import 'package:unified_dream247/features/fantasy/accounts/domain/use_cases/acco
 import 'package:unified_dream247/features/fantasy/landing/data/singleton/app_singleton.dart';
 import 'package:unified_dream247/features/fantasy/menu_items/data/models/offers_model.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
+import 'package:unified_dream247/core/services/wallet_service.dart';
 
 class AddMoneyPage extends StatefulWidget {
   const AddMoneyPage({super.key});
@@ -172,6 +173,22 @@ class _AddMoneyPage extends State<AddMoneyPage> {
     if (!mounted) return;
 
     if (res != null && res["success"] == true) {
+      // Payment successful - add tokens to both shop and game
+      final amount = double.parse(_amountController.text);
+      
+      // Initialize wallet service
+      await walletService.initialize();
+      
+      // Add shop tokens (1 RS = 1 shop token)
+      await walletService.addShopTokens(amount);
+      debugPrint('✅ [ADD_MONEY] Added $amount shop tokens');
+      
+      // Add game tokens (1 RS = 1 game token)
+      await walletService.setGameTokens(
+        (await walletService.getGameTokens()) + amount
+      );
+      debugPrint('✅ [ADD_MONEY] Added $amount game tokens');
+      
       appToast(res["message"] ?? "Payment Successful", context);
       setState(() => _showMysteryBox = true);
     } else {
