@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:unified_dream247/features/fantasy/landing/data/singleton/app_singleton.dart';
 import 'package:provider/provider.dart';
 import 'package:unified_dream247/features/fantasy/core/api_server_constants/api_server_impl/api_impl.dart';
@@ -560,12 +561,40 @@ class _MyBalancePage extends State<MyBalancePage> {
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(10),
+            width: 45,
+            height: 45,
             decoration: BoxDecoration(
               color: color ?? AppColors.lightCard,
-              borderRadius: BorderRadius.circular(50),
+              borderRadius: BorderRadius.circular(12),
             ),
-            child: Image.asset(icon, width: 28, height: 28),
+            child: Center(
+              child: isShopToken
+                  ? SvgPicture.asset(
+                      'assets/icons/coin.svg',
+                      width: 24,
+                      height: 24,
+                      // ignore: deprecated_member_use
+                      color: AppColors.mainColor,
+                    )
+                  : isDiamondIcon
+                      ? const Icon(
+                          Icons.diamond_outlined,
+                          size: 24,
+                          color: AppColors.orangeColor,
+                        )
+                      : isTokenIcon
+                          ? Image.asset(
+                              Images.matchToken,
+                              width: 24,
+                              height: 24,
+                            )
+                          : Image.asset(
+                              icon,
+                              width: 24,
+                              height: 24,
+                              color: AppColors.mainColor,
+                            ),
+            ),
           ),
           const SizedBox(width: 14),
           Expanded(
@@ -609,38 +638,13 @@ class _MyBalancePage extends State<MyBalancePage> {
                   ],
                 ),
                 const SizedBox(height: 6),
-                Row(
-                  children: [
-                    isShopToken
-                        ? Image.asset(
-                            Images.tokenImage,
-                            // Images.imageWallet,
-                            height: 18,
-                            width: 18,
-                            // color: AppColors.white,
-                          )
-                        : SizedBox(),
-                    isTokenIcon
-                        ? Image.asset(
-                            Images.matchToken,
-                            height: 15,
-                          )
-                        : SizedBox(),
-                    isDiamondIcon
-                        ? Icon(
-                            Icons.diamond_outlined,
-                            color: AppColors.blueColor,
-                          )
-                        : SizedBox(),
-                    Text(
-                      value,
-                      style: GoogleFonts.montserrat(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.black,
-                      ),
-                    ),
-                  ],
+                Text(
+                  value,
+                  style: GoogleFonts.montserrat(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.black,
+                  ),
                 ),
               ],
             ),

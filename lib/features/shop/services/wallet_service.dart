@@ -5,6 +5,9 @@ import 'graphql_client.dart';
 import 'graphql_queries.dart';
 import 'user_service.dart';
 
+/// DEPRECATED: Use UnifiedWalletService from lib/core/services/wallet_service.dart instead
+/// This service is kept for backward compatibility but should not be used in new code
+@Deprecated('Use UnifiedWalletService from lib/core/services/wallet_service.dart')
 class WalletService {
   static final WalletService _instance = WalletService._internal();
 
@@ -12,7 +15,11 @@ class WalletService {
     return _instance;
   }
 
-  WalletService._internal();
+  WalletService._internal() {
+    if (kDebugMode) {
+      debugPrint('⚠️ [DEPRECATED] WalletService is deprecated. Use UnifiedWalletService instead.');
+    }
+  }
 
   // Keys for SharedPreferences
   static const String _walletBalanceKey = 'wallet_balance';
