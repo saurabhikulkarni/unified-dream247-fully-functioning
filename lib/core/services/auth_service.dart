@@ -1,6 +1,27 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import '../constants/storage_constants.dart';
 
+/// 🔗 UNIFIED AUTHENTICATION SERVICE
+/// 
+/// This service manages authentication for BOTH Shop and Fantasy modules.
+/// There is ONLY ONE login system: MSG91 OTP-based authentication from the Shop module.
+/// 
+/// KEY PRINCIPLES:
+/// ✅ Single login point: Shop's MSG91 OTP authentication
+/// ✅ One user ID: Same user ID used across Shop and Fantasy
+/// ✅ Automatic Fantasy access: User logged into Shop automatically has access to Fantasy
+/// ✅ Unified logout: Logging out from either module logs out from both
+/// 
+/// FLOW:
+/// 1. User enters phone number on Shop login screen
+/// 2. MSG91 sends OTP to the phone
+/// 3. User verifies OTP
+/// 4. Shop backend creates/retrieves user with unique user ID
+/// 5. User ID is SAVED to both Shop storage and Fantasy storage
+/// 6. Fantasy reads this user ID from storage (no separate Fantasy login needed)
+/// 7. Both modules use the same user ID for API calls
+/// 8. Logout from either module clears auth from both
+///
 /// Shared authentication service for unified session management
 /// This service is used by both ecommerce and fantasy modules
 class AuthService {

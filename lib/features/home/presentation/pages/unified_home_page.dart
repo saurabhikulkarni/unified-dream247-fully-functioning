@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:unified_dream247/config/routes/route_names.dart';
 import 'package:unified_dream247/features/shop/services/product_service.dart';
 import 'package:unified_dream247/features/shop/models/product_model.dart';
 import 'dart:math';
@@ -50,7 +49,6 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
-    final isSmallScreen = screenWidth < 360;
     
     // Responsive sizes
     final bannerHeight = screenHeight * 0.11;
@@ -457,13 +455,13 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
                                             top: Radius.circular(12),
                                           ),
                                         ),
-                                        child: product.image != null && product.image!.isNotEmpty
+                                        child: product.image.isNotEmpty
                                             ? ClipRRect(
                                                 borderRadius: const BorderRadius.vertical(
                                                   top: Radius.circular(12),
                                                 ),
                                                 child: Image.network(
-                                                  product.image!,
+                                                  product.image,
                                                   fit: BoxFit.cover,
                                                   width: double.infinity,
                                                   errorBuilder: (context, error, stackTrace) => Center(

@@ -4,7 +4,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/app_colors.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/app_pages.dart';
-import 'package:unified_dream247/features/fantasy/core/app_constants/images.dart';
 import 'package:unified_dream247/features/fantasy/landing/data/singleton/app_singleton.dart';
 import 'package:unified_dream247/features/fantasy/upcoming_matches/data/models/players_model.dart';
 import 'package:unified_dream247/features/fantasy/upcoming_matches/data/models/teams_model.dart';

@@ -1,4 +1,3 @@
-import 'package:unified_dream247/features/fantasy/landing/data/singleton/app_singleton.dart';
 import 'package:unified_dream247/features/fantasy/menu_items/presentation/providers/user_data_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -56,7 +55,7 @@ class MyLiveMatchTeam extends StatelessWidget {
                 /// Points + Role counts row
                 Row(
                   children: [
-                    _pointsItem((data.totalpoints as num?)?.toInt()),
+                    _pointsItem(data.totalpoints?.toInt()),
                     _roleItem('WK', data.wicketKeeperCount),
                     _roleItem('BAT', data.batsmancount),
                     _roleItem('AR', data.allroundercount),

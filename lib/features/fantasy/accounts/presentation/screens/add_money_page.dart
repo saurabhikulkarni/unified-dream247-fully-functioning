@@ -5,7 +5,6 @@ import 'package:unified_dream247/features/fantasy/core/global_widgets/dashed_und
 import 'package:unified_dream247/features/fantasy/accounts/presentation/widgets/token_tier_bottomsheet.dart';
 import 'package:unified_dream247/features/fantasy/menu_items/data/models/user_data.dart';
 import 'package:unified_dream247/features/fantasy/menu_items/presentation/providers/user_data_provider.dart';
-import 'package:unified_dream247/features/fantasy/more_options/presentation/widgets/web_view.dart';
 import 'package:confetti/confetti.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
@@ -19,14 +18,12 @@ import 'package:unified_dream247/features/fantasy/core/app_constants/app_colors.
 import 'package:unified_dream247/features/fantasy/core/app_constants/images.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/strings.dart';
 import 'package:unified_dream247/features/fantasy/core/global_widgets/app_toast.dart';
-import 'package:unified_dream247/features/fantasy/core/global_widgets/common_shimmer_view_widget.dart';
 import 'package:unified_dream247/features/fantasy/core/global_widgets/dashed_border.dart';
 import 'package:unified_dream247/features/fantasy/core/global_widgets/main_button.dart';
 import 'package:unified_dream247/features/fantasy/core/global_widgets/sub_container.dart';
 import 'package:unified_dream247/features/fantasy/core/utils/app_utils.dart';
 import 'package:unified_dream247/features/fantasy/accounts/data/accounts_datasource.dart';
 import 'package:unified_dream247/features/fantasy/accounts/domain/use_cases/accounts_usecases.dart';
-import 'package:unified_dream247/features/fantasy/accounts/presentation/providers/wallet_details_provider.dart';
 import 'package:unified_dream247/features/fantasy/landing/data/singleton/app_singleton.dart';
 import 'package:unified_dream247/features/fantasy/menu_items/data/models/offers_model.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
@@ -55,7 +52,6 @@ class _AddMoneyPage extends State<AddMoneyPage> {
   String? _lastTxnId;
   UserFullDetailsResponse? userData;
   late ConfettiController _confettiController;
-  int? _wonTokens;
   bool _isPaymentFlowLocked = false;
 
   AccountsUsecases accountsUsecases = AccountsUsecases(
@@ -282,8 +278,6 @@ class _AddMoneyPage extends State<AddMoneyPage> {
   @override
   Widget build(BuildContext context) {
     _isKeyboardOpen.value = MediaQuery.of(context).viewInsets.bottom > 0;
-    var walletData =
-        Provider.of<WalletDetailsProvider>(context, listen: false).walletData;
 
     return WillPopScope(
       onWillPop: () async {
@@ -855,25 +849,6 @@ class _AddMoneyPage extends State<AddMoneyPage> {
     // );
   }
 
-  Widget _shimmerOfferLoader(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      height: 200,
-      child: ListView.builder(
-        itemCount: 3,
-        shrinkWrap: true,
-        scrollDirection: Axis.horizontal,
-        itemBuilder: (context, index) {
-          return ShimmerWidget(
-            height: 150,
-            margin: const EdgeInsets.all(10),
-            width: MediaQuery.of(context).size.width * 0.8,
-          );
-        },
-      ),
-    );
-  }
-
   Widget _bottomButtonSection(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 10),
@@ -1241,10 +1216,6 @@ class _AddMoneyPage extends State<AddMoneyPage> {
 
     if (res != null && res["success"] == true) {
       final winAmount = res["data"]?["winAmount"] ?? 0;
-
-      setState(() {
-        _wonTokens = winAmount;
-      });
 
       _confettiController.play();
       _showWinDialog(winAmount);

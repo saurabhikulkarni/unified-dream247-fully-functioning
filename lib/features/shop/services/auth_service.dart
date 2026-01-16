@@ -272,9 +272,11 @@ class AuthService {
   }
 
   // Clear login session (logout)
-  Future<void> logout() async {
+  Future<void> unifiedLogout() async {
     try {
       final prefs = await SharedPreferences.getInstance();
+      
+      // Clear Shop authentication
       await prefs.setBool(_isLoggedInKey, false);
       await prefs.remove(_userPhoneKey);
       await prefs.remove(_userNameKey);
@@ -284,19 +286,33 @@ class AuthService {
       await prefs.remove(_lastLoginKey);
       await prefs.remove(_userIdKey);
       
-      // Clear fantasy authentication token
+      // 🔗 UNIFIED AUTH: Clear Fantasy authentication (same user logout)
       await prefs.remove('token');
-      
-      // Clear fantasy user data
       await prefs.remove('user_id_fantasy');
       await prefs.remove('is_logged_in_fantasy');
       await prefs.remove('user_phone_fantasy');
+      
+      // Clear Fantasy storage keys
+      await AppStorage.saveToStorageBool(AppStorageKeys.isLoggedIn, false);
+      await AppStorage.removeStorageValue(AppStorageKeys.authToken);
+      await AppStorage.removeStorageValue(AppStorageKeys.loginToken);
+      await AppStorage.removeStorageValue(AppStorageKeys.userId);
       
       // Clear wallet, wishlist, cart, and user services on logout
       walletService.clear();
       wishlistService.clear();
       cartService.clear();
       await UserService.setCurrentUserId(''); // Clear userId in UserService
+      
+      debugPrint('✅ Unified logout complete - Shop & Fantasy logged out');
+    } catch (e) {
+      debugPrint('❌ Error in unified logout: $e');
+    }
+  }
+
+  Future<void> logout() async {
+    try {
+      await unifiedLogout();
     } catch (e) {
       print('Error during logout: $e');
     }
@@ -452,7 +468,11 @@ class AuthService {
       
       await UserService.setCurrentUserId(userId);
       
-      debugPrint('✅ Unified login session saved - Shop & Fantasy ready');
+      debugPrint('✅✅✅ UNIFIED LOGIN SUCCESSFUL ✅✅✅');
+      debugPrint('📱 Shop & Fantasy now share the SAME authentication');
+      debugPrint('👤 User ID: $userId');
+      debugPrint('☎️ Phone: $phone');
+      debugPrint('🚀 Fantasy will use Shop login - no separate login needed');
     } catch (e) {
       debugPrint('❌ Error saving unified login session: $e');
       rethrow;
@@ -501,60 +521,6 @@ class AuthService {
     } catch (e) {
       debugPrint('❌ Error getting unified token: $e');
       return null;
-    }
-  }
-
-  /// Unified logout (clears both Shop and Fantasy)
-  Future<void> unifiedLogout() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      
-      // Clear ALL Shop data keys
-      await prefs.setBool(_isLoggedInKey, false);
-      await prefs.remove(_userPhoneKey);
-      await prefs.remove(_userNameKey);
-      await prefs.remove(_phoneVerifiedKey);
-      await prefs.remove(_walletBalanceKey);
-      await prefs.remove(_authTokenKey);
-      await prefs.remove(_lastLoginKey);
-      await prefs.remove(_userIdKey);
-      await prefs.remove('user_email');
-      await prefs.remove('wallet_transactions');
-      await prefs.remove('cart_items');
-      await prefs.remove('wishlist_items');
-      
-      // Clear Fantasy token (critical!)
-      await prefs.remove('token'); // Fantasy JWT token
-      await prefs.remove(AppStorageKeys.authToken);
-      
-      // Clear Fantasy data through AppStorage
-      await AppStorage.removeStorageValue(AppStorageKeys.loginToken);
-      await AppStorage.removeStorageValue(AppStorageKeys.userId);
-      await AppStorage.removeStorageValue(AppStorageKeys.userPhone);
-      await AppStorage.removeStorageValue(AppStorageKeys.userName);
-      await AppStorage.saveToStorageBool(AppStorageKeys.isLoggedIn, false);
-      await AppStorage.removeStorageValue('phone_verified');
-      await AppStorage.removeStorageValue('user_email');
-      
-      // Clear Fantasy popup/cache keys
-      await prefs.remove('hasShownPopup');
-      await prefs.remove('last_match_fetch');
-      await prefs.remove('cached_match_data');
-      
-      // Clear core auth
-      final coreAuthService = core_auth.authService;
-      await coreAuthService.logout();
-      
-      // Clear services
-      walletService.clear();
-      wishlistService.clear();
-      cartService.clear();
-      await UserService.setCurrentUserId('');
-      
-      debugPrint('✅ Unified logout completed - ALL session data cleared');
-    } catch (e) {
-      debugPrint('❌ Error during logout: $e');
-      rethrow;
     }
   }
 }

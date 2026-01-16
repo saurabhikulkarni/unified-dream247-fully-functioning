@@ -60,16 +60,23 @@ class _SplashScreenState extends State<SplashScreen>
 
     try {
       final authService = AuthService();
+      // 🔗 UNIFIED AUTH: Check unified login for Shop & Fantasy
       final isLoggedIn = await authService.isUnifiedLoggedIn();
+      final userId = await authService.getUnifiedUserId();
 
       if (!mounted) return;
 
-      if (isLoggedIn) {
+      if (isLoggedIn && userId != null && userId.isNotEmpty) {
+        debugPrint('✅ User already logged in with unified auth');
+        debugPrint('👤 User ID: $userId');
+        debugPrint('🚀 Navigating to unified home');
         context.go(RouteNames.home);
       } else {
+        debugPrint('❌ No active session - redirecting to login');
         context.go(RouteNames.login);
       }
     } catch (e) {
+      debugPrint('⚠️ Navigation error: $e');
       if (mounted) {
         context.go(RouteNames.login);
       }

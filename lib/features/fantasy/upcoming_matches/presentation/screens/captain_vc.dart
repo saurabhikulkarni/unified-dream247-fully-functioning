@@ -11,7 +11,6 @@ import 'package:unified_dream247/features/fantasy/core/app_constants/app_colors.
 import 'package:unified_dream247/features/fantasy/core/app_constants/app_pages.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/images.dart';
 import 'package:unified_dream247/features/fantasy/core/global_widgets/app_toast.dart';
-import 'package:unified_dream247/features/fantasy/core/utils/app_utils.dart';
 import 'package:unified_dream247/features/fantasy/accounts/data/accounts_datasource.dart';
 import 'package:unified_dream247/features/fantasy/accounts/domain/use_cases/accounts_usecases.dart';
 import 'package:unified_dream247/features/fantasy/landing/data/singleton/app_singleton.dart';

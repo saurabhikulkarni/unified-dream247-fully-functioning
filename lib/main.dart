@@ -9,7 +9,6 @@ import 'firebase_options.dart';
 import 'app.dart';
 import 'core/di/injection_container.dart';
 import 'core/services/auth_service.dart' as core_auth;
-import 'core/services/user_service.dart';
 
 // Ecommerce shop services
 import 'core/services/shop/cart_service.dart';

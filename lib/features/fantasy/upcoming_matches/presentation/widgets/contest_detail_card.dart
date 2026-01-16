@@ -24,7 +24,6 @@ import 'package:unified_dream247/features/fantasy/upcoming_matches/data/upcoming
 import 'package:unified_dream247/features/fantasy/upcoming_matches/domain/use_cases/upcoming_match_usecase.dart';
 import 'package:unified_dream247/features/fantasy/upcoming_matches/presentation/providers/myteams_provider.dart';
 import 'package:unified_dream247/features/fantasy/upcoming_matches/presentation/widgets/join_contest_bottomsheet.dart';
-import 'package:unified_dream247/features/fantasy/upcoming_matches/presentation/widgets/my_contest_list_view.dart';
 
 class ContestDetailCard extends StatefulWidget {
   final AllContestResponseModel? data;

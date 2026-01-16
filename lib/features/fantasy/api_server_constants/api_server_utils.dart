@@ -54,7 +54,7 @@ class ApiServerUtil {
     final statusCode = response.statusCode;
 
     if (statusCode == 401 || statusCode == 440) {
-      // Use unified logout
+      // 🔗 UNIFIED AUTH: Use unified logout from Shop auth service
       final authService = AuthService();
       await authService.unifiedLogout();
 

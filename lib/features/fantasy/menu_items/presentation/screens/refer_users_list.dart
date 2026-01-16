@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/app_colors.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/strings.dart';
 import 'package:unified_dream247/features/fantasy/core/global_widgets/sub_container.dart';
-import 'package:unified_dream247/features/fantasy/core/global_widgets/cached_images.dart';
 import 'package:unified_dream247/features/fantasy/menu_items/data/models/referral_dashboard_model.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
 
 class ReferUsersList extends StatefulWidget {
@@ -55,7 +55,7 @@ class _ReferUsersList extends State<ReferUsersList> with SingleTickerProviderSta
           
           // Tab Bar
           Container(
-            color: AppColors.scaffoldBackgroundColor,
+            color: AppColors.bgColor,
             child: TabBar(
               controller: _tabController,
               labelColor: AppColors.mainLightColor,
@@ -255,11 +255,13 @@ class _ReferUsersList extends State<ReferUsersList> with SingleTickerProviderSta
             backgroundColor: AppColors.mainLightColor.withOpacity(0.1),
             child: user.image != null && user.image!.isNotEmpty
                 ? ClipOval(
-                    child: CachedImageWidget(
+                    child: CachedNetworkImage(
                       imageUrl: user.image!,
                       width: 56,
                       height: 56,
                       fit: BoxFit.cover,
+                      placeholder: (context, url) => const CircularProgressIndicator(),
+                      errorWidget: (context, url, error) => const Icon(Icons.person),
                     ),
                   )
                 : Icon(Icons.person, size: 32, color: AppColors.mainLightColor),

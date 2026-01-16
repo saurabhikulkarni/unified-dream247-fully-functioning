@@ -50,9 +50,6 @@ class _MyMatchCardState extends State<MyMatchCard> {
       mode = widget.mode;
     }
 
-    final bool isLineupOut =
-        widget.data.playing11Status == 1 && widget.mode == 'Upcoming';
-
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 15),
       child: InkWell(
