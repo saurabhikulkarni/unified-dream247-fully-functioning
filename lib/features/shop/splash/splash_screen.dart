@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:unified_dream247/config/routes/route_names.dart';
 import 'package:unified_dream247/core/services/auth_service.dart' as core_auth;
 import 'package:unified_dream247/core/services/token_service.dart';
+import 'package:unified_dream247/core/constants/api_constants.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -75,7 +76,7 @@ class _SplashScreenState extends State<SplashScreen>
         
         // Validate token with backend
         debugPrint('🔐 Validating token with backend...');
-        final isValid = await authService.validateTokenWithBackend();
+        final isValid = await authService.validateToken(ApiConstants.shopBackendUrl);
         
         if (!mounted) return;
 
