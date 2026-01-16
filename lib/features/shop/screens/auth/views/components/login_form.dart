@@ -198,6 +198,7 @@ class _LogInFormState extends State<LogInForm> {
       if (data['success'] == true) {
         final user = data['user'];
         final token = data['token'];
+        final refreshToken = data['refreshToken'];
         
         // Store all unified auth data using core auth service
         final coreAuthService = core_auth.AuthService();
@@ -211,6 +212,7 @@ class _LogInFormState extends State<LogInForm> {
           shopEnabled: user['shop_enabled'] ?? true,
           fantasyEnabled: user['fantasy_enabled'] ?? true,
           modules: List<String>.from(user['modules'] ?? ['shop', 'fantasy']),
+          refreshToken: refreshToken,
         );
         
         return {'success': true, 'message': 'Login successful'};
