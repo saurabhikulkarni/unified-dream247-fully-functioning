@@ -376,8 +376,8 @@ class _CartScreenState extends State<CartScreen> {
       // Deduct wallet balance using UnifiedWalletService
       final success = await walletService.deductShopTokens(
         total.toDouble(),
-        itemName: 'Order #${order.orderNumber}',
-        orderId: order.id,
+        itemName: 'Order #${order.orderNumber ?? "PENDING"}',
+        orderId: order.id ?? 'local-${DateTime.now().millisecondsSinceEpoch}',
       );
       
       if (!success) {
