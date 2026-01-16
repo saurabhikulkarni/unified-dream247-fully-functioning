@@ -1,7 +1,7 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:unified_dream247/config/routes/route_names.dart';
-import 'package:unified_dream247/features/shop/services/auth_service.dart';
+import 'package:unified_dream247/core/services/auth_service.dart' as core_auth;
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -59,17 +59,19 @@ class _SplashScreenState extends State<SplashScreen>
     if (!mounted) return;
 
     try {
-      final authService = AuthService();
-      // 🔗 UNIFIED AUTH: Check unified login for Shop & Fantasy
-      final isLoggedIn = await authService.isUnifiedLoggedIn();
-      final userId = await authService.getUnifiedUserId();
+      final authService = core_auth.AuthService();
+      await authService.initialize();
+      
+      // Check unified login status
+      final isLoggedIn = await authService.isLoggedIn();
+      final token = authService.getAuthToken();
 
       if (!mounted) return;
 
-      if (isLoggedIn && userId != null && userId.isNotEmpty) {
+      if (isLoggedIn && token != null && token.isNotEmpty) {
         debugPrint('✅ User already logged in with unified auth');
-        debugPrint('👤 User ID: $userId');
-        debugPrint('🚀 Navigating to unified home');
+        debugPrint('🔑 Token present');
+        debugPrint('🚀 Navigating to home');
         context.go(RouteNames.home);
       } else {
         debugPrint('❌ No active session - redirecting to login');

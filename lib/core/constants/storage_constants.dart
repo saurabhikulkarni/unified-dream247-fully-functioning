@@ -9,6 +9,12 @@ class StorageConstants {
   static const String userPhone = 'user_phone';
   static const String isLoggedIn = 'is_logged_in';
   
+  // Module access control
+  static const String fantasyUserId = 'fantasy_user_id';
+  static const String shopEnabled = 'shop_enabled';
+  static const String fantasyEnabled = 'fantasy_enabled';
+  static const String modules = 'modules';
+  
   // User preferences
   static const String themeMode = 'theme_mode';
   static const String language = 'language';

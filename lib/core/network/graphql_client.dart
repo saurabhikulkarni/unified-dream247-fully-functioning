@@ -2,6 +2,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import '../constants/api_constants.dart';
 import '../constants/storage_constants.dart';
+import '../services/auth_service.dart' as core_auth;
 
 /// GraphQL client for e-commerce API (Hygraph)
 class GraphQLClientService {
@@ -23,7 +24,10 @@ class GraphQLClientService {
 
     final authLink = AuthLink(
       getToken: () async {
-        final token = await _secureStorage.read(key: StorageConstants.accessToken);
+        // Use unified auth service
+        final authService = core_auth.AuthService();
+        await authService.initialize();
+        final token = authService.getAuthToken();
         return token != null ? 'Bearer $token' : null;
       },
     );
