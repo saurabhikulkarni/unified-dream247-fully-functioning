@@ -23,10 +23,10 @@ class GraphQLClientService {
 
     final authLink = AuthLink(
       getToken: () async {
-        // Use unified auth service
+        // Use unified auth service with auto-refresh
         final authService = core_auth.AuthService();
         await authService.initialize();
-        final token = authService.getAuthToken();
+        final token = await authService.getValidToken(ApiConstants.shopBackendUrl);
         return token != null ? 'Bearer $token' : null;
       },
     );

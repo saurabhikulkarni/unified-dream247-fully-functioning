@@ -57,6 +57,7 @@ class AuthService {
     bool shopEnabled = true,
     bool fantasyEnabled = true,
     List<String> modules = const ['shop', 'fantasy'],
+    String? refreshToken,
   }) async {
     await _prefs?.setString(StorageConstants.userId, userId);
     await _prefs?.setString(StorageConstants.authToken, authToken);
@@ -71,6 +72,9 @@ class AuthService {
     }
     if (fantasyUserId != null) {
       await _prefs?.setString(AuthService.fantasyUserId, fantasyUserId);
+    }
+    if (refreshToken != null) {
+      await _prefs?.setString('refresh_token', refreshToken);
     }
     
     await _prefs?.setBool(AuthService.shopEnabled, shopEnabled);
@@ -128,21 +132,113 @@ class AuthService {
     return _prefs?.getStringList(AuthService.modules) ?? ['shop', 'fantasy'];
   }
 
-  /// Validate token with backend
-  Future<bool> validateTokenWithBackend() async {
-    try {
-      final token = getAuthToken();
-      if (token == null || token.isEmpty) return false;
+  /// Get refresh token
+  String? getRefreshToken() {
+    return _prefs?.getString('refresh_token');
+  }
 
+  /// Check if access token is valid (local JWT validation)
+  Future<bool> isTokenValid() async {
+    final token = getAuthToken();
+    if (token == null) return false;
+
+    try {
+      // Decode JWT to check expiry locally
+      final parts = token.split('.');
+      if (parts.length != 3) return false;
+
+      final payload = json.decode(
+        utf8.decode(base64Url.decode(base64Url.normalize(parts[1])))
+      );
+
+      final exp = payload['exp'];
+      if (exp == null) return true; // No expiry means token is valid
+
+      final expiryDate = DateTime.fromMillisecondsSinceEpoch(exp * 1000);
+      return DateTime.now().isBefore(expiryDate);
+    } catch (e) {
+      debugPrint('Error checking token validity: $e');
+      return false;
+    }
+  }
+
+  /// Get a valid access token (auto-refresh if expired)
+  Future<String?> getValidToken(String backendUrl) async {
+    final token = getAuthToken();
+    
+    if (token == null) return null;
+
+    // Check if token is still valid
+    if (await isTokenValid()) {
+      return token;
+    }
+
+    // Token expired, try to refresh
+    return await refreshAccessToken(backendUrl);
+  }
+
+  /// Refresh access token using refresh token
+  Future<String?> refreshAccessToken(String backendUrl) async {
+    final refreshToken = getRefreshToken();
+    
+    if (refreshToken == null) {
+      debugPrint('No refresh token available');
+      return null;
+    }
+
+    try {
       final response = await http.post(
-        Uri.parse('${ApiConstants.shopBackendUrl}/api/auth/validate-token'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
+        Uri.parse('$backendUrl/api/auth/refresh-token'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'refreshToken': refreshToken}),
       ).timeout(const Duration(seconds: 10));
 
-      return response.statusCode == 200;
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        
+        if (data['success'] == true) {
+          final newToken = data['token'];
+          
+          // Update stored access token
+          await _prefs?.setString(StorageConstants.authToken, newToken);
+          
+          // Update refresh token if provided
+          if (data['refreshToken'] != null) {
+            await _prefs?.setString('refresh_token', data['refreshToken']);
+          }
+          
+          debugPrint('✅ Token refreshed successfully');
+          return newToken;
+        }
+      }
+      
+      debugPrint('❌ Token refresh failed: ${response.statusCode}');
+      return null;
+    } catch (e) {
+      debugPrint('❌ Error refreshing token: $e');
+      return null;
+    }
+  }
+
+  /// Validate token with backend
+  Future<bool> validateToken(String backendUrl) async {
+    final token = getAuthToken();
+    
+    if (token == null) return false;
+
+    try {
+      final response = await http.post(
+        Uri.parse('$backendUrl/api/auth/validate-token'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'token': token}),
+      ).timeout(const Duration(seconds: 10));
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return data['valid'] == true;
+      }
+      
+      return false;
     } catch (e) {
       debugPrint('Error validating token: $e');
       return false;
@@ -174,36 +270,6 @@ class AuthService {
     }
   }
 
-  /// Refresh auth token
-  Future<bool> refreshToken() async {
-    try {
-      final response = await http.post(
-        Uri.parse('${ApiConstants.shopBackendUrl}/api/auth/refresh-token'),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: json.encode({
-          'refreshToken': _prefs?.getString('refresh_token'),
-        }),
-      ).timeout(const Duration(seconds: 10));
-
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        if (data['authToken'] != null) {
-          await _prefs?.setString(StorageConstants.authToken, data['authToken']);
-          if (data['refreshToken'] != null) {
-            await _prefs?.setString('refresh_token', data['refreshToken']);
-          }
-          return true;
-        }
-      }
-      return false;
-    } catch (e) {
-      debugPrint('Error refreshing token: $e');
-      return false;
-    }
-  }
-
   /// Logout and clear session
   Future<void> logout() async {
     try {
@@ -220,11 +286,11 @@ class AuthService {
             },
           ).timeout(const Duration(seconds: 10));
         } catch (e) {
-          print('Error calling logout API: $e');
+          debugPrint('Error calling logout API: $e');
         }
       }
     } catch (e) {
-      print('Error during logout API call: $e');
+      debugPrint('Error during logout API call: $e');
     } finally {
       // Clear local storage regardless of API call success
       await _prefs?.remove(StorageConstants.userId);
@@ -236,6 +302,7 @@ class AuthService {
       await _prefs?.remove(AuthService.shopEnabled);
       await _prefs?.remove(AuthService.fantasyEnabled);
       await _prefs?.remove(AuthService.modules);
+      await _prefs?.remove('refresh_token');
       await _prefs?.setBool(StorageConstants.isLoggedIn, false);
     }
   }

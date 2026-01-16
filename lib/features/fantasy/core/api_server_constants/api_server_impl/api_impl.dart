@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:unified_dream247/core/services/auth_service.dart' as core_auth;
+import 'package:unified_dream247/core/constants/api_constants.dart';
 
 class ApiImpl {
   final Dio _dio;
@@ -16,11 +17,11 @@ class ApiImpl {
         ),
       );
 
-  /// Get headers with unified auth token
+  /// Get headers with unified auth token (auto-refresh if expired)
   Future<Map<String, String>> getHeaders() async {
     final authService = core_auth.AuthService();
     await authService.initialize();
-    final token = authService.getAuthToken();
+    final token = await authService.getValidToken(ApiConstants.fantasyBackendUrl);
     
     return {
       'Content-Type': 'application/json',
@@ -29,7 +30,7 @@ class ApiImpl {
     };
   }
 
-  /// Common request executor with retry + logging
+  /// Common request executor with retry + logging + auto token refresh
   Future<Response> _request(
     String method,
     String url, {
@@ -83,6 +84,20 @@ class ApiImpl {
 
         return response;
       } on DioException catch (e) {
+        // If 401, token might have expired during request, try refresh
+        if (e.response?.statusCode == 401 && attempt == 0) {
+          debugPrint('Token expired, attempting refresh...');
+          final authService = core_auth.AuthService();
+          await authService.initialize();
+          final newToken = await authService.refreshAccessToken(ApiConstants.fantasyBackendUrl);
+          
+          if (newToken != null) {
+            // Retry the request with new token
+            attempt++;
+            continue;
+          }
+        }
+        
         debugPrint("Dio error: ${e.message}");
         if (attempt == retryCount - 1) rethrow;
       } on TimeoutException {
