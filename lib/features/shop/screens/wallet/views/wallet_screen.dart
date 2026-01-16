@@ -4,6 +4,7 @@ import 'package:unified_dream247/features/shop/services/razorpay_service.dart';
 import 'package:unified_dream247/features/shop/services/user_service.dart';
 import 'package:unified_dream247/features/shop/services/auth_service.dart';
 import 'package:unified_dream247/features/shop/utils/responsive_extension.dart';
+import 'package:unified_dream247/core/services/wallet_service.dart';
 
 import 'components/wallet_balance_card.dart';
 
@@ -95,6 +96,10 @@ class _WalletScreenState extends State<WalletScreen> {
     final userId = UserService.getCurrentUserId();
     print('[WALLET_SCREEN] _addMoney called: userId=$userId, amount=$amount');
     print('[WALLET_SCREEN] Current balance BEFORE: $walletBalance (tokens: $shoppingTokens)');
+    
+    // Initialize and sync with unified wallet service
+    await walletService.initialize();
+    await walletService.addShopTokens(amount);
     
     if (userId != null) {
       // Update balance in GraphQL

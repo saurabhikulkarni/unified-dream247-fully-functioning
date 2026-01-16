@@ -57,34 +57,13 @@ class TokenService {
   /// Refresh token with backend
   Future<void> _refreshToken() async {
     try {
-      debugPrint('🔄 Attempting to refresh token...');
-
+      debugPrint('🔄 Token expired or expiring soon - logging out');
+      
       final authService = AuthService();
       await authService.initialize();
-
-      final success = await authService.refreshToken();
-
-      if (success) {
-        debugPrint('✅ Token refreshed successfully');
-
-        // Restart timer for new token
-        final newToken = authService.getAuthToken();
-        if (newToken != null) {
-          startTokenRefreshTimer(newToken);
-        }
-      } else {
-        debugPrint('❌ Token refresh failed - logging out');
-        await authService.logout();
-      }
+      await authService.logout();
     } catch (e) {
-      debugPrint('❌ Error refreshing token: $e');
-      try {
-        final authService = AuthService();
-        await authService.initialize();
-        await authService.logout();
-      } catch (e) {
-        debugPrint('❌ Error during logout after refresh failure: $e');
-      }
+      debugPrint('❌ Error during token expiry logout: $e');
     }
   }
 
