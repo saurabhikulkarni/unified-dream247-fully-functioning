@@ -2,6 +2,7 @@
 import 'package:go_router/go_router.dart';
 import 'package:unified_dream247/config/routes/route_names.dart';
 import 'package:unified_dream247/core/services/auth_service.dart' as core_auth;
+import 'package:unified_dream247/core/services/token_service.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -71,8 +72,26 @@ class _SplashScreenState extends State<SplashScreen>
       if (isLoggedIn && token != null && token.isNotEmpty) {
         debugPrint('✅ User already logged in with unified auth');
         debugPrint('🔑 Token present');
-        debugPrint('🚀 Navigating to home');
-        context.go(RouteNames.home);
+        
+        // Validate token with backend
+        debugPrint('🔐 Validating token with backend...');
+        final isValid = await authService.validateTokenWithBackend();
+        
+        if (!mounted) return;
+
+        if (isValid) {
+          debugPrint('✅ Token validated successfully');
+          
+          // Start token refresh timer
+          final tokenService = TokenService();
+          tokenService.startTokenRefreshTimer(token);
+          
+          debugPrint('🚀 Navigating to home');
+          context.go(RouteNames.home);
+        } else {
+          debugPrint('⚠️ Token validation failed - redirecting to login');
+          context.go(RouteNames.login);
+        }
       } else {
         debugPrint('❌ No active session - redirecting to login');
         context.go(RouteNames.login);

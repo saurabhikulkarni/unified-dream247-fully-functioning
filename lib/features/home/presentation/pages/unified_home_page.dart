@@ -51,12 +51,6 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
     context.go('/fantasy/home');
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _loadProducts();
-  }
-
   Future<void> _loadProducts() async {
     try {
       final allProducts = await _productService.getAllProducts();

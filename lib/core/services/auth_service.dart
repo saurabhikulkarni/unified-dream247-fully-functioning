@@ -1,5 +1,7 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter/foundation.dart';
+import 'dart:convert';
 import '../constants/storage_constants.dart';
 import '../constants/api_constants.dart';
 
@@ -124,6 +126,82 @@ class AuthService {
   /// Get list of enabled modules
   List<String> getModules() {
     return _prefs?.getStringList(AuthService.modules) ?? ['shop', 'fantasy'];
+  }
+
+  /// Validate token with backend
+  Future<bool> validateTokenWithBackend() async {
+    try {
+      final token = getAuthToken();
+      if (token == null || token.isEmpty) return false;
+
+      final response = await http.post(
+        Uri.parse('${ApiConstants.shopBackendUrl}/api/auth/validate-token'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      ).timeout(const Duration(seconds: 10));
+
+      return response.statusCode == 200;
+    } catch (e) {
+      debugPrint('Error validating token: $e');
+      return false;
+    }
+  }
+
+  /// Get current user profile from backend
+  Future<Map<String, dynamic>?> getUserProfile() async {
+    try {
+      final token = getAuthToken();
+      if (token == null || token.isEmpty) return null;
+
+      final response = await http.get(
+        Uri.parse('${ApiConstants.shopBackendUrl}/api/auth/user/profile'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      ).timeout(const Duration(seconds: 10));
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        return data['user'] ?? data['data'];
+      }
+      return null;
+    } catch (e) {
+      debugPrint('Error fetching user profile: $e');
+      return null;
+    }
+  }
+
+  /// Refresh auth token
+  Future<bool> refreshToken() async {
+    try {
+      final response = await http.post(
+        Uri.parse('${ApiConstants.shopBackendUrl}/api/auth/refresh-token'),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: json.encode({
+          'refreshToken': _prefs?.getString('refresh_token'),
+        }),
+      ).timeout(const Duration(seconds: 10));
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['authToken'] != null) {
+          await _prefs?.setString(StorageConstants.authToken, data['authToken']);
+          if (data['refreshToken'] != null) {
+            await _prefs?.setString('refresh_token', data['refreshToken']);
+          }
+          return true;
+        }
+      }
+      return false;
+    } catch (e) {
+      debugPrint('Error refreshing token: $e');
+      return false;
+    }
   }
 
   /// Logout and clear session
