@@ -1038,6 +1038,7 @@ class GraphQLQueries {
   ''';
 
   // ============ WALLET QUERIES & MUTATIONS (SHOP TOKENS) ============
+  // Shop-only: add_money (from Razorpay) and purchase (token deduction)
 
   // Get user wallet balance and tokens (enhanced with shop tokens)
   static const String getUserWallet = '''
@@ -1051,7 +1052,7 @@ class GraphQLQueries {
     }
   ''';
 
-  // Get wallet transaction history
+  // Get wallet transaction history for shop
   static const String getWalletTransactions = '''
     query GetWalletTransactions(\$userId: String!, \$first: Int = 50, \$skip: Int = 0) {
       walletTransactions(
@@ -1068,13 +1069,12 @@ class GraphQLQueries {
         orderReference
         paymentMethod
         timestamp
-        status
-        metadata
+        ShopTransactionStatus
       }
     }
   ''';
 
-  // Deduct shop tokens for purchase
+  // Deduct shop tokens for purchase (only for shop transactions)
   static const String deductShopTokens = '''
     mutation DeductShopTokens(
       \$userId: ID!,
@@ -1103,7 +1103,7 @@ class GraphQLQueries {
           orderReference: \$orderId
           paymentMethod: "shopTokens"
           timestamp: now
-          status: completed
+          ShopTransactionStatus: completed
           userDetail: {connect: {id: \$userId}}
         }
       ) {
@@ -1116,7 +1116,7 @@ class GraphQLQueries {
     }
   ''';
 
-  // Add shop tokens from payment
+  // Add shop tokens from Razorpay payment
   static const String addShopTokens = '''
     mutation AddShopTokens(
       \$userId: ID!,
@@ -1136,10 +1136,10 @@ class GraphQLQueries {
           userId: \$userId
           type: add_money
           amount: \$amount
-          description: "Added \$amount tokens"
+          description: "Added \$amount shop tokens via \$paymentMethod"
           paymentMethod: \$paymentMethod
           timestamp: now
-          status: completed
+          ShopTransactionStatus: completed
           userDetail: {connect: {id: \$userId}}
         }
       ) {
@@ -1147,13 +1147,14 @@ class GraphQLQueries {
         userId
         type
         amount
+        description
       }
     }
   ''';
 
-  // Get merged transaction history (shop + fantasy)
-  static const String getMergedTransactionHistory = '''
-    query GetMergedTransactionHistory(\$userId: String!, \$first: Int = 100) {
+  // Get shop transaction history
+  static const String getShopTransactionHistory = '''
+    query GetShopTransactionHistory(\$userId: String!, \$first: Int = 100) {
       walletTransactions(
         where: {userId: \$userId}
         first: \$first
@@ -1164,7 +1165,7 @@ class GraphQLQueries {
         amount
         description
         timestamp
-        status
+        ShopTransactionStatus
         paymentMethod
         orderReference
       }
