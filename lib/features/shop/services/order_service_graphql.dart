@@ -1107,10 +1107,11 @@ class OrderServiceGraphQL {
     try {
       final result = await _client.query(
         QueryOptions(
-          document: gql(GraphQLQueries.getMergedTransactionHistory),
+          document: gql(GraphQLQueries.getWalletTransactions),
           variables: {
             'userId': userId,
             'first': first,
+            'skip': 0,
           },
         ),
       );
