@@ -3,6 +3,7 @@ import 'package:unified_dream247/features/shop/constants.dart';
 import 'package:unified_dream247/features/shop/models/payment_model.dart';
 import 'package:unified_dream247/features/shop/services/razorpay_service.dart';
 import 'package:unified_dream247/features/shop/services/auth_service.dart';
+import 'package:unified_dream247/core/services/wallet_service.dart';
 import '../components/payment_method_card.dart';
 
 class PaymentMethodSelectionScreen extends StatefulWidget {
@@ -25,11 +26,28 @@ class _PaymentMethodSelectionScreenState
   late RazorpayService _razorpayService;
   PaymentMethod? _selectedPaymentMethod;
   bool _isProcessing = false;
+  final UnifiedWalletService _walletService = UnifiedWalletService();
+  double _availableShopTokens = 0.0;
 
   @override
   void initState() {
     super.initState();
     _razorpayService = RazorpayService();
+    _loadShopTokenBalance();
+  }
+
+  Future<void> _loadShopTokenBalance() async {
+    try {
+      await _walletService.initialize();
+      final balance = await _walletService.getShopTokens();
+      if (mounted) {
+        setState(() {
+          _availableShopTokens = balance;
+        });
+      }
+    } catch (e) {
+      debugPrint('Error loading shop token balance: $e');
+    }
   }
 
   @override
@@ -49,7 +67,79 @@ class _PaymentMethodSelectionScreenState
       return;
     }
 
-    _initiatePayment();
+    // Check if user has enough tokens for token payment
+    if (_selectedPaymentMethod == PaymentMethod.shopTokens) {
+      if (_availableShopTokens < widget.totalAmount) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Insufficient tokens. You need ${widget.totalAmount.toInt()} tokens but have ${_availableShopTokens.toInt()} available.'),
+            duration: const Duration(seconds: 3),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+      // Process token payment directly
+      _processTokenPayment();
+    } else {
+      _initiatePayment();
+    }
+  }
+
+  Future<void> _processTokenPayment() async {
+    setState(() => _isProcessing = true);
+
+    try {
+      // Deduct tokens from wallet
+      final success = await _walletService.deductShopTokens(
+        widget.totalAmount,
+        itemName: 'Order ${widget.orderId}',
+      );
+
+      if (!mounted) return;
+
+      if (success) {
+        // Show success dialog
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => PaymentSuccessDialog(
+            orderId: widget.orderId,
+            amount: widget.totalAmount,
+            paymentId: 'token_${DateTime.now().millisecondsSinceEpoch}',
+            onContinue: () {
+              Navigator.pop(context); // Close success dialog
+              Navigator.pop(context, {
+                'status': 'success',
+                'paymentId': 'token_${DateTime.now().millisecondsSinceEpoch}',
+                'orderId': widget.orderId,
+                'paymentMethod': 'shopTokens',
+              });
+            },
+          ),
+        );
+      } else {
+        // Show error
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Failed to process token payment'),
+            backgroundColor: Colors.red,
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
+    } catch (e) {
+      debugPrint('Error processing token payment: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error: $e'),
+          backgroundColor: Colors.red,
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    } finally {
+      setState(() => _isProcessing = false);
+    }
   }
 
   void _initiatePayment() async {

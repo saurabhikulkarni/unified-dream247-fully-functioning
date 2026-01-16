@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:unified_dream247/features/shop/constants.dart';
 import 'package:unified_dream247/features/shop/route/screen_export.dart';
 import 'package:unified_dream247/features/shop/services/auth_service.dart';
@@ -152,7 +153,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             text: "Wallet",
             svgSrc: "assets/icons/Wallet.svg",
             press: () {
-              Navigator.pushNamed(context, walletScreenRoute);
+              // Redirect to Fantasy wallet instead of Shop wallet
+              context.goNamed('fantasy_wallet');
             },
           ),
           const SizedBox(height: defaultPadding),
