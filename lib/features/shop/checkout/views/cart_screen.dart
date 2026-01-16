@@ -10,7 +10,7 @@ import 'package:unified_dream247/features/shop/services/cart_service.dart';
 import 'package:unified_dream247/features/shop/services/address_service.dart';
 import 'package:unified_dream247/features/shop/services/order_service_graphql.dart';
 import 'package:unified_dream247/features/shop/route/route_constants.dart';
-import 'package:unified_dream247/features/shop/services/wallet_service.dart';
+import 'package:unified_dream247/core/services/wallet_service.dart';
 import 'package:unified_dream247/features/shop/services/user_service.dart';
 import 'package:unified_dream247/features/shop/services/shiprocket_service.dart';
 
@@ -28,7 +28,7 @@ class _CartScreenState extends State<CartScreen> {
   final CartService cartService = CartService();
   final AddressService addressService = AddressService();
   final OrderServiceGraphQL orderServiceGraphQL = OrderServiceGraphQL();
-  final WalletService walletService = WalletService();
+  final UnifiedWalletService walletService = walletService;
 
   @override
   void initState() {
@@ -46,14 +46,21 @@ class _CartScreenState extends State<CartScreen> {
 
   Future<void> _loadWalletBalance() async {
     try {
-      final balance = await walletService.getBalance();
+      await walletService.initialize();
+      final balance = await walletService.getShopTokens();
       if (mounted) {
         setState(() {
           walletBalance = balance;
         });
       }
     } catch (e) {
-      // Silently handle error
+      debugPrint('[CART] Error loading wallet balance: $e');
+      // Fallback to 0 if error
+      if (mounted) {
+        setState(() {
+          walletBalance = 0.0;
+        });
+      }
     }
   }
 
@@ -366,8 +373,25 @@ class _CartScreenState extends State<CartScreen> {
         }
       }
 
-      // Deduct wallet balance
-      await walletService.deductBalance(total.toDouble());
+      // Deduct wallet balance using UnifiedWalletService
+      final success = await walletService.deductShopTokens(
+        total.toDouble(),
+        itemName: 'Order #${order.orderNumber ?? "PENDING"}',
+        orderId: order.id ?? 'local-${DateTime.now().millisecondsSinceEpoch}',
+      );
+      
+      if (!success) {
+        if (!mounted) return;
+        Navigator.pop(context); // Close loading dialog
+        
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Failed to deduct shop tokens. Please try again.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
       
       // Update wallet balance in UI
       await _loadWalletBalance();

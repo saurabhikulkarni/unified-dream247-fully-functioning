@@ -5,7 +5,7 @@ import 'package:unified_dream247/features/shop/constants.dart';
 import 'package:unified_dream247/features/shop/route/screen_export.dart';
 import 'package:unified_dream247/features/shop/services/cart_service.dart';
 import 'package:unified_dream247/features/shop/services/wishlist_service.dart';
-import 'package:unified_dream247/features/shop/services/user_service.dart';
+import 'package:unified_dream247/core/services/wallet_service.dart';
 
 class EntryPoint extends StatefulWidget {
   const EntryPoint({super.key});
@@ -18,7 +18,7 @@ class _EntryPointState extends State<EntryPoint> with WidgetsBindingObserver {
   double walletBalance = 0.0;
   int shoppingTokens = 0;
   int _currentIndex = 0;
-  final UserService _userService = userService;
+  final UnifiedWalletService _walletService = walletService;
 
   List<Widget> get _pages => [
     const HomeScreen(),
@@ -57,20 +57,24 @@ class _EntryPointState extends State<EntryPoint> with WidgetsBindingObserver {
   }
 
   Future<void> _loadWalletBalance() async {
-    final userId = UserService.getCurrentUserId();
-    if (userId != null) {
-      try {
-        final balance = await _userService.getWalletBalance();
-        if (mounted) {
-          setState(() {
-            walletBalance = balance;
-            shoppingTokens = balance.toInt();
-          });
-          print('💰 [ENTRY_POINT] Wallet updated: Balance=$walletBalance, Tokens=$shoppingTokens');
-        }
-      } catch (e) {
-        print('⚠️ [ENTRY_POINT] Failed to load wallet: $e');
-        // Silently fail, keep current values
+    try {
+      await _walletService.initialize();
+      final balance = await _walletService.getShopTokens();
+      if (mounted) {
+        setState(() {
+          walletBalance = balance;
+          shoppingTokens = balance.toInt();
+        });
+        debugPrint('💰 [ENTRY_POINT] Wallet updated: Balance=$walletBalance, Tokens=$shoppingTokens');
+      }
+    } catch (e) {
+      debugPrint('⚠️ [ENTRY_POINT] Error loading wallet balance: $e');
+      // Fallback to 0 if error
+      if (mounted) {
+        setState(() {
+          walletBalance = 0.0;
+          shoppingTokens = 0;
+        });
       }
     }
   }
