@@ -1,5 +1,7 @@
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 import '../constants/storage_constants.dart';
+import '../constants/api_constants.dart';
 
 /// 🔗 UNIFIED AUTHENTICATION SERVICE
 /// 
@@ -36,6 +38,12 @@ class AuthService {
     _prefs = await SharedPreferences.getInstance();
   }
 
+  // Module access storage keys
+  static const String fantasyUserId = 'fantasy_user_id';
+  static const String shopEnabled = 'shop_enabled';
+  static const String fantasyEnabled = 'fantasy_enabled';
+  static const String modules = 'modules';
+
   /// Save user session after successful login
   Future<void> saveUserSession({
     required String userId,
@@ -43,6 +51,10 @@ class AuthService {
     required String mobileNumber,
     String? email,
     String? name,
+    String? fantasyUserId,
+    bool shopEnabled = true,
+    bool fantasyEnabled = true,
+    List<String> modules = const ['shop', 'fantasy'],
   }) async {
     await _prefs?.setString(StorageConstants.userId, userId);
     await _prefs?.setString(StorageConstants.authToken, authToken);
@@ -55,6 +67,13 @@ class AuthService {
     if (name != null) {
       await _prefs?.setString('user_name', name);
     }
+    if (fantasyUserId != null) {
+      await _prefs?.setString(AuthService.fantasyUserId, fantasyUserId);
+    }
+    
+    await _prefs?.setBool(AuthService.shopEnabled, shopEnabled);
+    await _prefs?.setBool(AuthService.fantasyEnabled, fantasyEnabled);
+    await _prefs?.setStringList(AuthService.modules, modules);
   }
 
   /// Check if user is logged in
@@ -87,15 +106,60 @@ class AuthService {
     return _prefs?.getString('user_name');
   }
 
+  /// Get fantasy user ID (MongoDB ID)
+  String? getFantasyUserId() {
+    return _prefs?.getString(AuthService.fantasyUserId);
+  }
+
+  /// Check if shop module is enabled
+  bool isShopEnabled() {
+    return _prefs?.getBool(AuthService.shopEnabled) ?? true;
+  }
+
+  /// Check if fantasy module is enabled
+  bool isFantasyEnabled() {
+    return _prefs?.getBool(AuthService.fantasyEnabled) ?? true;
+  }
+
+  /// Get list of enabled modules
+  List<String> getModules() {
+    return _prefs?.getStringList(AuthService.modules) ?? ['shop', 'fantasy'];
+  }
+
   /// Logout and clear session
   Future<void> logout() async {
-    // Clear only auth-related keys
-    await _prefs?.remove(StorageConstants.userId);
-    await _prefs?.remove(StorageConstants.authToken);
-    await _prefs?.remove('mobile_number');
-    await _prefs?.remove(StorageConstants.userEmail);
-    await _prefs?.remove('user_name');
-    await _prefs?.setBool(StorageConstants.isLoggedIn, false);
+    try {
+      final token = getAuthToken();
+      
+      if (token != null) {
+        // Call backend unified logout endpoint
+        try {
+          await http.post(
+            Uri.parse('${ApiConstants.shopBackendUrl}/api/auth/logout'),
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $token',
+            },
+          ).timeout(const Duration(seconds: 10));
+        } catch (e) {
+          print('Error calling logout API: $e');
+        }
+      }
+    } catch (e) {
+      print('Error during logout API call: $e');
+    } finally {
+      // Clear local storage regardless of API call success
+      await _prefs?.remove(StorageConstants.userId);
+      await _prefs?.remove(StorageConstants.authToken);
+      await _prefs?.remove('mobile_number');
+      await _prefs?.remove(StorageConstants.userEmail);
+      await _prefs?.remove('user_name');
+      await _prefs?.remove(AuthService.fantasyUserId);
+      await _prefs?.remove(AuthService.shopEnabled);
+      await _prefs?.remove(AuthService.fantasyEnabled);
+      await _prefs?.remove(AuthService.modules);
+      await _prefs?.setBool(StorageConstants.isLoggedIn, false);
+    }
   }
 
   /// Update user profile

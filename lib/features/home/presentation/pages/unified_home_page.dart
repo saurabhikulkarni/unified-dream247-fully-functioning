@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:unified_dream247/core/services/auth_service.dart' as core_auth;
 import 'package:unified_dream247/features/shop/services/product_service.dart';
 import 'package:unified_dream247/features/shop/models/product_model.dart';
 import 'dart:math';
@@ -15,6 +16,40 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
   final ProductService _productService = ProductService();
   List<ProductModel> _products = [];
   bool _isLoading = true;
+  final core_auth.AuthService _authService = core_auth.AuthService();
+
+  @override
+  void initState() {
+    super.initState();
+    _initAuth();
+    _loadProducts();
+  }
+
+  Future<void> _initAuth() async {
+    await _authService.initialize();
+  }
+
+  void _navigateToShop() {
+    if (!_authService.isShopEnabled()) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Shop module is not enabled for your account')),
+      );
+      return;
+    }
+    
+    context.go('/shop/entry_point');
+  }
+
+  void _navigateToFantasy() {
+    if (!_authService.isFantasyEnabled()) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Fantasy module is not enabled for your account')),
+      );
+      return;
+    }
+    
+    context.go('/fantasy/home');
+  }
 
   @override
   void initState() {
@@ -131,9 +166,7 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
           children: [
             // Game Tokens Banner
             GestureDetector(
-              onTap: () {
-                context.go('/fantasy/home');
-              },
+              onTap: _navigateToFantasy,
               child: Container(
                 height: bannerHeight,
                 decoration: BoxDecoration(
@@ -174,9 +207,7 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
                   // Game Zone Card
                   Expanded(
                     child: GestureDetector(
-                      onTap: () {
-                        context.go('/fantasy/home');
-                      },
+                      onTap: _navigateToFantasy,
                       child: Container(
                         height: cardHeight,
                         decoration: const BoxDecoration(
@@ -251,10 +282,7 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
                   // Shop Card
                   Expanded(
                     child: GestureDetector(
-                      onTap: () {
-                        // Navigate to the actual e-commerce shop entry point
-                        context.go('/shop/entry_point');
-                      },
+                      onTap: _navigateToShop,
                       child: Container(
                         height: cardHeight,
                         decoration: const BoxDecoration(
@@ -333,9 +361,7 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
 
             // Trend Banner
             GestureDetector(
-              onTap: () {
-                context.go('/shop/entry_point');
-              },
+              onTap: _navigateToShop,
               child: Container(
                 height: bannerHeight,
                 decoration: BoxDecoration(

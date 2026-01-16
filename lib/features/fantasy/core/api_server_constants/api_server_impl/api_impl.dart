@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:unified_dream247/core/services/auth_service.dart' as core_auth;
 
 class ApiImpl {
   final Dio _dio;
@@ -14,6 +15,19 @@ class ApiImpl {
           headers: {"Content-Type": "application/json"},
         ),
       );
+
+  /// Get headers with unified auth token
+  Future<Map<String, String>> getHeaders() async {
+    final authService = core_auth.AuthService();
+    await authService.initialize();
+    final token = authService.getAuthToken();
+    
+    return {
+      'Content-Type': 'application/json',
+      'Authorization': token != null ? 'Bearer $token' : '',
+      'Accept': 'application/json',
+    };
+  }
 
   /// Common request executor with retry + logging
   Future<Response> _request(
@@ -28,9 +42,16 @@ class ApiImpl {
 
     while (attempt < retryCount) {
       try {
+        // Get unified auth headers
+        final authHeaders = await getHeaders();
+        
         final options = Options(
           method: method,
-          headers: {..._dio.options.headers, if (headers != null) ...headers},
+          headers: {
+            ..._dio.options.headers,
+            ...authHeaders,
+            if (headers != null) ...headers
+          },
         );
 
         debugPrint('============ ENDPOINT ===============');

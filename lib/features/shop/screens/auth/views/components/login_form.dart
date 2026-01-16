@@ -1,8 +1,12 @@
 ﻿import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:http/http.dart' as http;
 import 'package:unified_dream247/config/routes/route_names.dart';
+import 'package:unified_dream247/core/constants/api_constants.dart';
+import 'package:unified_dream247/core/services/auth_service.dart' as core_auth;
 import 'package:unified_dream247/features/shop/components/gradient_button.dart';
 import 'package:unified_dream247/features/shop/services/auth_service.dart';
 import 'package:unified_dream247/features/shop/services/msg91_service.dart';
@@ -170,6 +174,52 @@ class _LogInFormState extends State<LogInForm> {
 
   String getUserName() {
     return _nameController.text.trim();
+  }
+
+  /// Verify OTP using unified backend endpoint
+  Future<Map<String, dynamic>> verifyOtpUnified() async {
+    try {
+      final phone = _phoneController.text.trim();
+      final otp = _otpController.text.trim();
+      final name = _nameController.text.trim();
+      
+      // Call unified verify-otp endpoint
+      final response = await http.post(
+        Uri.parse('${ApiConstants.shopBackendUrl}${ApiConstants.verifyOtpEndpoint}'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'mobileNumber': phone,
+          'otp': otp,
+        }),
+      ).timeout(const Duration(seconds: 15));
+      
+      final data = jsonDecode(response.body);
+      
+      if (data['success'] == true) {
+        final user = data['user'];
+        final token = data['token'];
+        
+        // Store all unified auth data using core auth service
+        final coreAuthService = core_auth.AuthService();
+        await coreAuthService.initialize();
+        await coreAuthService.saveUserSession(
+          userId: user['id'],                                        // Hygraph ID
+          authToken: token,
+          mobileNumber: phone,
+          name: name,
+          fantasyUserId: user['fantasy_user_id'],                   // MongoDB ID
+          shopEnabled: user['shop_enabled'] ?? true,
+          fantasyEnabled: user['fantasy_enabled'] ?? true,
+          modules: List<String>.from(user['modules'] ?? ['shop', 'fantasy']),
+        );
+        
+        return {'success': true, 'message': 'Login successful'};
+      }
+      
+      return {'success': false, 'message': data['message'] ?? 'OTP verification failed'};
+    } catch (e) {
+      return {'success': false, 'message': 'Error: $e'};
+    }
   }
 
   Future<bool> verifyOtp() async {
