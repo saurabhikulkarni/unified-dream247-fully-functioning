@@ -25,6 +25,8 @@ import 'package:unified_dream247/features/fantasy/menu_items/presentation/provid
 import 'package:unified_dream247/features/fantasy/upcoming_matches/data/upcoming_match_datsource.dart';
 import 'package:unified_dream247/features/fantasy/upcoming_matches/domain/use_cases/upcoming_match_usecase.dart';
 import 'package:unified_dream247/features/fantasy/upcoming_matches/presentation/widgets/contest_filled_bottom_sheet.dart';
+import 'package:get_it/get_it.dart';
+import 'package:unified_dream247/features/fantasy/accounts/data/services/contest_join_service.dart';
 
 class JoinContestBottomsheet extends StatefulWidget {
   final String challengeId, selectedTeam;
@@ -77,6 +79,7 @@ class _JoinContestBottomsheetState extends State<JoinContestBottomsheet> {
   UpcomingMatchUsecase upcomingMatchUsecase = UpcomingMatchUsecase(
     UpcomingMatchDatsource(ApiImpl(), ApiImplWithAccessToken()),
   );
+  late final ContestJoinService _contestJoinService = GetIt.instance<ContestJoinService>();
   @override
   void initState() {
     super.initState();
@@ -93,7 +96,7 @@ class _JoinContestBottomsheetState extends State<JoinContestBottomsheet> {
       );
       if (!mounted) return;
 
-      final data = response?["data"];
+      final data = response?['data'];
 
       setState(() {
         usableBalance =
@@ -138,7 +141,7 @@ class _JoinContestBottomsheetState extends State<JoinContestBottomsheet> {
       //   });
       // }
     } catch (e) {
-      printX("Error fetching balance: $e");
+      printX('Error fetching balance: $e');
     }
   }
 
@@ -162,7 +165,7 @@ class _JoinContestBottomsheetState extends State<JoinContestBottomsheet> {
         await accountsUsecases.myWalletDetails(context);
       } else {
         appToast(
-          "Please complete your verification to join the contest",
+          'Please complete your verification to join the contest',
           context,
         );
         AppNavigation.gotoVerifyDetailsScreen(context).then((_) {
@@ -178,6 +181,27 @@ class _JoinContestBottomsheetState extends State<JoinContestBottomsheet> {
       return;
     }
 
+    // Check game tokens balance
+    final entryFeeAsDouble = (entryfee ?? 0).toDouble();
+    try {
+      final hasEnoughGameTokens = 
+          await _contestJoinService.hasEnoughTokens(entryFeeAsDouble);
+      
+      if (!hasEnoughGameTokens) {
+        final currentBalance = _contestJoinService.getCurrentBalance();
+        appToast(
+          'Insufficient game tokens! Need: ₹${entryFeeAsDouble.toStringAsFixed(2)}, Have: ₹${currentBalance.toStringAsFixed(2)}',
+          context,
+        );
+        AppNavigation.gotoAddCashScreen(context);
+        setState(() => isJoining = false);
+        return;
+      }
+    } catch (e) {
+      printX('Error checking game tokens: $e');
+      // Continue with contest join even if game tokens check fails
+    }
+
     await handleContestJoin(ctx);
 
     if (mounted) setState(() => isJoining = false);
@@ -186,13 +210,13 @@ class _JoinContestBottomsheetState extends State<JoinContestBottomsheet> {
   Future<void> handleContestJoin(BuildContext context) async {
     try {
       final Map<String, dynamic>? data;
-      if (widget.fantasyType == "Cricket") {
+      if (widget.fantasyType == 'Cricket') {
         if (widget.isClosedContestNew == true) {
           data = await upcomingMatchUsecase.closedContestJoin(
             context,
             (entryfee ?? 0).toInt(),
-            int.parse(widget.winAmount ?? "0"),
-            int.parse(widget.maximumUser ?? "1"),
+            int.parse(widget.winAmount ?? '0'),
+            int.parse(widget.maximumUser ?? '1'),
             widget.discount.toString(),
             widget.selectedTeam,
           );
@@ -208,15 +232,38 @@ class _JoinContestBottomsheetState extends State<JoinContestBottomsheet> {
         return;
       }
 
-      if (data != null) {
-        if (data["data"]?["is_private"] == 1) {
-          sharePrivateContest(data["data"]["referCode"]);
-        } else if (data["success"] == false && data["is_closed"] == true) {
+      if (data != null && data['success'] == true) {
+        // Debit game tokens after successful contest join
+        try {
+          final entryFeeAsDouble = (entryfee ?? 0).toDouble();
+          final response = await _contestJoinService.joinContest(
+            contestId: widget.challengeId,
+            entryFee: entryFeeAsDouble,
+          );
+          
+          // Log successful debit
+          printX('Game tokens debited successfully. New balance: ${response.newBalance}, Transaction: ${response.transactionId}');
+        } on ContestJoinException catch (e) {
+          // Tokens debit failed but contest join succeeded - show warning
+          if (e.isInsufficientBalance) {
+            appToast('⚠️ Contest joined, but game tokens insufficient', context);
+          } else {
+            printX('Game tokens debit warning: ${e.message}');
+            // Non-fatal error - continue with contest join success flow
+          }
+        } catch (e) {
+          printX('Unexpected error debiting game tokens: $e');
+          // Non-fatal error - continue with contest join success flow
+        }
+
+        if (data['data']?['is_private'] == 1) {
+          sharePrivateContest(data['data']['referCode']);
+        } else if (data['success'] == false && data['is_closed'] == true) {
           showContestFilledSheet(context, data);
         } else {
           widget.removePage();
           Navigator.of(context).pop();
-          if (widget.fantasyType == "H2H") Navigator.of(context).pop();
+          if (widget.fantasyType == 'H2H') Navigator.of(context).pop();
         }
       } else {
         widget.removePage();
@@ -224,21 +271,21 @@ class _JoinContestBottomsheetState extends State<JoinContestBottomsheet> {
         Navigator.of(context).pop();
       }
     } catch (e) {
-      printX("Error joining contest: $e");
+      printX('Error joining contest: $e');
     }
   }
 
   void sharePrivateContest(String referCode) {
     final team =
         Provider.of<UserDataProvider>(context, listen: false).userData?.team ??
-            "";
+            '';
     final text = AppSingleton.singleton.appData.contestsharemessage!
-        .replaceFirst("%TeamName%", team)
-        .replaceFirst("%Team1%", AppSingleton.singleton.matchData.team1Name!)
-        .replaceFirst("%Team2%", AppSingleton.singleton.matchData.team2Name!)
-        .replaceFirst("%AppName%", APIServerUrl.appName)
-        .replaceFirst("%url_share%", '')
-        .replaceFirst("%inviteCode%", referCode);
+        .replaceFirst('%TeamName%', team)
+        .replaceFirst('%Team1%', AppSingleton.singleton.matchData.team1Name!)
+        .replaceFirst('%Team2%', AppSingleton.singleton.matchData.team2Name!)
+        .replaceFirst('%AppName%', APIServerUrl.appName)
+        .replaceFirst('%url_share%', '')
+        .replaceFirst('%inviteCode%', referCode);
 
     SharePlus.instance.share(ShareParams(text: text));
   }
@@ -255,13 +302,13 @@ class _JoinContestBottomsheetState extends State<JoinContestBottomsheet> {
         context: context,
         builder: (context) {
           return ContestFilledBottomSheet(
-            totalWinners: widget.totalWinners ?? "",
-            entryFee: data["data"]["entryfee"].toString(),
-            winAmount: data["data"]["win_amount"].toString(),
-            spots: data["data"]["maximum_user"].toString(),
-            totalBonus: data["data"]["totalBonus"].toString(),
-            discountFee: int.parse(data["data"]["discount_fee"]),
-            joinTeamId: data["data"]["jointeamid"],
+            totalWinners: widget.totalWinners ?? '',
+            entryFee: data['data']['entryfee'].toString(),
+            winAmount: data['data']['win_amount'].toString(),
+            spots: data['data']['maximum_user'].toString(),
+            totalBonus: data['data']['totalBonus'].toString(),
+            discountFee: int.parse(data['data']['discount_fee']),
+            joinTeamId: data['data']['jointeamid'],
             previousJoined: widget.previousJoined,
             challengeId: widget.challengeId,
             isContestDetail: widget.isContestDetail,
@@ -432,7 +479,7 @@ class _JoinContestBottomsheetState extends State<JoinContestBottomsheet> {
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Text(
-                                    "${Strings.indianRupee}$usedBonus",
+                                    '${Strings.indianRupee}$usedBonus',
                                     style: GoogleFonts.tomorrow(
                                       color: AppColors.letterColor,
                                       fontSize: 14,
@@ -460,7 +507,7 @@ class _JoinContestBottomsheetState extends State<JoinContestBottomsheet> {
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Text(
-                                    "${Strings.indianRupee}$usedDeposit",
+                                    '${Strings.indianRupee}$usedDeposit',
                                     style: GoogleFonts.tomorrow(
                                       color: AppColors.letterColor,
                                       fontSize: 14,
@@ -488,7 +535,7 @@ class _JoinContestBottomsheetState extends State<JoinContestBottomsheet> {
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Text(
-                                    "${Strings.indianRupee}$usedWinning",
+                                    '${Strings.indianRupee}$usedWinning',
                                     style: GoogleFonts.tomorrow(
                                       color: AppColors.letterColor,
                                       fontSize: 14,
@@ -504,7 +551,7 @@ class _JoinContestBottomsheetState extends State<JoinContestBottomsheet> {
                               const Padding(
                                 padding: EdgeInsets.all(8.0),
                                 child: Text(
-                                  "Game Token",
+                                  'Game Token',
                                   style: TextStyle(
                                     color: AppColors.letterColor,
                                     fontSize: 14,
@@ -521,7 +568,7 @@ class _JoinContestBottomsheetState extends State<JoinContestBottomsheet> {
                                       height: 12,
                                     ),
                                     Text(
-                                      "${totalBonus ?? 0}",
+                                      '${totalBonus ?? 0}',
                                       style: GoogleFonts.tomorrow(
                                         color: AppColors.letterColor,
                                         fontSize: 14,
@@ -560,7 +607,7 @@ class _JoinContestBottomsheetState extends State<JoinContestBottomsheet> {
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Text(
-                                  "${Strings.indianRupee}$payableAmount",
+                                  '${Strings.indianRupee}$payableAmount',
                                   style: GoogleFonts.tomorrow(
                                     color: AppColors.green,
                                     fontSize: 13,
