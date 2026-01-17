@@ -4,6 +4,8 @@ import 'package:unified_dream247/core/constants/storage_constants.dart';
 import 'package:unified_dream247/features/shop/models/shop_transaction_model.dart';
 import 'package:unified_dream247/features/shop/services/order_service_graphql.dart';
 import 'package:unified_dream247/features/shop/services/user_service.dart';
+import 'package:unified_dream247/features/fantasy/accounts/data/models/game_tokens_model.dart';
+import 'package:unified_dream247/features/fantasy/accounts/data/managers/game_tokens_cache.dart';
 
 /// Unified Wallet Service
 /// Manages wallet data across both Shop and Fantasy modules
@@ -16,6 +18,7 @@ class UnifiedWalletService {
 
   SharedPreferences? _prefs;
   final OrderServiceGraphQL _graphQLService = OrderServiceGraphQL();
+  final GameTokensCache _gameTokensCache = GameTokensCache();
   
   // Cache for backend data (5 minutes)
   DateTime? _lastBackendSync;
@@ -25,6 +28,7 @@ class UnifiedWalletService {
   /// Initialize service
   Future<void> initialize() async {
     _prefs = await SharedPreferences.getInstance();
+    await _gameTokensCache.initialize();
     debugPrint('✅ [UNIFIED_WALLET] Service initialized with GraphQL backend');
   }
 
@@ -240,6 +244,7 @@ class UnifiedWalletService {
       if (balance >= 0) {
         // Update local cache
         await _prefs?.setDouble(StorageConstants.gameTokens, balance);
+        await _gameTokensCache.updateBalance(balance);
         debugPrint('✅ [UNIFIED_WALLET] Game tokens synced with Fantasy: $balance');
         return true;
       }
@@ -249,6 +254,59 @@ class UnifiedWalletService {
       debugPrint('❌ [UNIFIED_WALLET] Error syncing game tokens: $e');
       return false;
     }
+  }
+
+  /// Add game tokens transaction to cache
+  /// Called when user tops up or participates in contests
+  Future<void> addGameTokensTransaction({
+    required double amount,
+    required String type, // 'topup', 'debit', 'bonus'
+    required String description,
+    required String transactionId,
+  }) async {
+    await _ensureInitialized();
+    
+    try {
+      final transaction = Transaction(
+        amount: amount,
+        type: type,
+        description: description,
+        transactionId: transactionId,
+        createdAt: DateTime.now(),
+        status: 'completed',
+      );
+
+      await _gameTokensCache.addTransaction(transaction);
+      debugPrint('✅ [UNIFIED_WALLET] Transaction added: $type - $amount');
+    } catch (e) {
+      debugPrint('❌ [UNIFIED_WALLET] Error adding transaction: $e');
+    }
+  }
+
+  /// Get game tokens model with all transactions
+  Future<GameTokens?> getGameTokensModel() async {
+    await _ensureInitialized();
+    
+    try {
+      // Try to get from cache first
+      final cached = await _gameTokensCache.getTokens();
+      if (cached != null && await _gameTokensCache.isCacheValid()) {
+        return cached;
+      }
+
+      // If cache is invalid, fetch from backend
+      // This will be called from Fantasy module
+      return null;
+    } catch (e) {
+      debugPrint('⚠️ [UNIFIED_WALLET] Error getting game tokens model: $e');
+      return null;
+    }
+  }
+
+  /// Get cache statistics for debugging
+  Future<Map<String, dynamic>> getGameTokensCacheStats() async {
+    await _ensureInitialized();
+    return await _gameTokensCache.getCacheStats();
   }
 
   // ==================== TRANSACTIONS ====================
