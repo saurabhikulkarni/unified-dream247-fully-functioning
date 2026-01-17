@@ -174,11 +174,17 @@ class AuthService {
         cartService.setUserId(userId);
         await UserService.setCurrentUserId(userId);
         
+        // Store shop_user_id for fantasy app
+        await prefs.setString('shop_user_id', userId);
+        
         // Share user ID with fantasy auth service
         await prefs.setString('user_id_fantasy', userId);
         await prefs.setBool('is_logged_in_fantasy', true);
         await prefs.setString('user_phone_fantasy', phone);
       }
+      
+      // Store user phone (shared identifier across both systems)
+      await prefs.setString('user_phone', phone);
       
       // Store fantasy JWT token for API authentication
       if (fantasyToken != null && fantasyToken.isNotEmpty) {
@@ -206,6 +212,8 @@ class AuthService {
   Future<String?> fetchFantasyToken({
     required String phone,
     String? name,
+    String? username,
+    String? shopUserId,
     bool isNewUser = false,
   }) async {
     try {
@@ -216,6 +224,8 @@ class AuthService {
       final body = {
         'phone': phone,
         if (name != null) 'name': name,
+        if (username != null) 'username': username,
+        if (shopUserId != null) 'shop_user_id': shopUserId,
         'isNewUser': isNewUser,
       };
       
