@@ -88,7 +88,6 @@ class ContestJoinService {
         tokenError.message,
         _mapTokenErrorToContestError(tokenError.type),
       );
-      );
     }
   }
 

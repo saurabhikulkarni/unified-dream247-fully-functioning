@@ -188,7 +188,7 @@ class _JoinContestBottomsheetState extends State<JoinContestBottomsheet> {
           await _contestJoinService.hasEnoughTokens(entryFeeAsDouble);
       
       if (!hasEnoughGameTokens) {
-        final currentBalance = _contestJoinService.getCurrentBalance();
+        final currentBalance = await _contestJoinService.getCurrentBalance();
         appToast(
           'Insufficient game tokens! Need: ₹${entryFeeAsDouble.toStringAsFixed(2)}, Have: ₹${currentBalance.toStringAsFixed(2)}',
           context,

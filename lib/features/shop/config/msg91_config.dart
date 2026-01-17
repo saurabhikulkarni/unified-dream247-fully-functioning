@@ -14,7 +14,7 @@ class Msg91Config {
   static const String baseUrl = 'https://brighthex-dream-24-7-backend-psi.vercel.app/api';
   
   // Alternative: Use localhost for development (uncomment if testing locally)
-  // static const String baseUrl = 'http://localhost:3000';
+  // static const String baseUrl = 'http://localhost:3000/api';
   
   // API endpoints (backend exposes routes under /api/auth)
   static const String sendOtpEndpoint = '$baseUrl/auth/send-otp';

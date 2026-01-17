@@ -28,6 +28,8 @@ import 'package:unified_dream247/features/fantasy/landing/data/singleton/app_sin
 import 'package:unified_dream247/features/fantasy/menu_items/data/models/offers_model.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:unified_dream247/core/services/wallet_service.dart';
+import 'package:unified_dream247/features/fantasy/accounts/data/services/game_tokens_service.dart';
+import 'package:get_it/get_it.dart';
 
 class AddMoneyPage extends StatefulWidget {
   const AddMoneyPage({super.key});
@@ -185,23 +187,9 @@ class _AddMoneyPage extends State<AddMoneyPage> {
       
       // 2️⃣ Fetch and sync game tokens from Fantasy backend
       try {
-        final gameTokensResult = await accountsUsecases
-            .fetchGameTokensAfterPayment(context);
-        
-        if (gameTokensResult != null && gameTokensResult['success'] == true) {
-          final balanceData = gameTokensResult['data'];
-          final gameTokens = (balanceData['balance'] as num?)?.toDouble() ?? 0.0;
-          
-          // Store game tokens in local cache
-          await walletService.setGameTokens(gameTokens);
-          debugPrint('✅ [ADD_MONEY] Game tokens synced from Fantasy: $gameTokens');
-        } else {
-          debugPrint('⚠️ [ADD_MONEY] Failed to fetch game tokens: ${gameTokensResult?['message']}');
-          // Fallback: Add to local cache manually
-          await walletService.setGameTokens(
-            (await walletService.getGameTokens()) + amount
-          );
-        }
+        final gameTokensService = GetIt.instance<GameTokensService>();
+        await gameTokensService.refreshGameTokens();
+        debugPrint('✅ [ADD_MONEY] Game tokens synced from Fantasy after topup');
       } catch (e) {
         debugPrint('❌ [ADD_MONEY] Error syncing game tokens: $e');
         // Fallback: Add to local cache

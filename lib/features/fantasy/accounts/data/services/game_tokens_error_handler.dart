@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 
 /// Enum for categorizing game tokens errors
 enum TokenErrorType {
@@ -183,9 +184,4 @@ extension on dynamic {
     }
     return GameTokensErrorHandler.categorizeError(this);
   }
-}
-
-void debugPrint(String message) {
-  // Using built-in print for logging
-  print('[DEBUG] $message');
 }
