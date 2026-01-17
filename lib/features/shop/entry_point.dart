@@ -1,6 +1,7 @@
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:unified_dream247/features/shop/constants.dart';
 import 'package:unified_dream247/features/shop/route/screen_export.dart';
 import 'package:unified_dream247/features/shop/services/cart_service.dart';
@@ -130,7 +131,7 @@ class _EntryPointState extends State<EntryPoint> with WidgetsBindingObserver {
               ),
               centerTitle: false,
               title: SvgPicture.asset(
-              "assets/logo/dream247_logo.svg",
+              'assets/logo/dream247_logo.svg',
               height: (MediaQuery.of(context).size.height * 0.035)
                   .clamp(22.0, 34.0)
                   .toDouble(),
@@ -148,7 +149,7 @@ class _EntryPointState extends State<EntryPoint> with WidgetsBindingObserver {
               Navigator.pushNamed(context, searchScreenRoute);
             },
             icon: SvgPicture.asset(
-              "assets/icons/Search.svg",
+              'assets/icons/Search.svg',
               height: iconSize,
               colorFilter: const ColorFilter.mode(
                   Colors.white,
@@ -204,22 +205,12 @@ class _EntryPointState extends State<EntryPoint> with WidgetsBindingObserver {
           IconButton(
             padding: EdgeInsets.symmetric(horizontal: iconPadding),
             constraints: const BoxConstraints(),
-            onPressed: () async {
-              final result = await Navigator.pushNamed(context, walletScreenRoute, arguments: {
-                'walletBalance': walletBalance,
-                'shoppingTokens': shoppingTokens,
-              });
-              if (result is Map) {
-                setState(() {
-                  walletBalance = result['walletBalance'] ?? walletBalance;
-                  shoppingTokens = result['shoppingTokens'] ?? shoppingTokens;
-                });
-                // Don't reload immediately - use the returned value which is already fresh
-                // Backend sync happens in wallet screen, returned value is authoritative
-              }
+            onPressed: () {
+              // Redirect to Fantasy wallet (unified wallet)
+              context.push('/fantasy/accounts/my-balance');
             },
             icon: SvgPicture.asset(
-              "assets/icons/Wallet.svg",
+              'assets/icons/Wallet.svg',
               height: iconSize,
               colorFilter: const ColorFilter.mode(
                   Colors.white,
@@ -231,7 +222,7 @@ class _EntryPointState extends State<EntryPoint> with WidgetsBindingObserver {
             child: Row(
               children: [
                 SvgPicture.asset(
-                  "assets/icons/coin.svg",
+                  'assets/icons/coin.svg',
                   height: tokenIconSize,
                   width: tokenIconSize,
                 ),
@@ -317,20 +308,20 @@ class _EntryPointState extends State<EntryPoint> with WidgetsBindingObserver {
               unselectedItemColor: Colors.black87,
               items: [
                 BottomNavigationBarItem(
-                  icon: svgIcon("assets/icons/Shop.svg"),
-                  activeIcon: svgIcon("assets/icons/Shop.svg", color: Colors.white),
-                  label: "Shop",
+                  icon: svgIcon('assets/icons/Shop.svg'),
+                  activeIcon: svgIcon('assets/icons/Shop.svg', color: Colors.white),
+                  label: 'Shop',
                 ),
                 BottomNavigationBarItem(
-                  icon: svgIcon("assets/icons/Category.svg"),
+                  icon: svgIcon('assets/icons/Category.svg'),
                   activeIcon:
-                      svgIcon("assets/icons/Category.svg", color: Colors.white),
-                  label: "Discover",
+                      svgIcon('assets/icons/Category.svg', color: Colors.white),
+                  label: 'Discover',
                 ),
                 BottomNavigationBarItem(
                   icon: Stack(
                     children: [
-                      svgIcon("assets/icons/Wishlist.svg"),
+                      svgIcon('assets/icons/Wishlist.svg'),
                       if (_wishlistItemCount > 0)
                         Positioned(
                           right: 0,
@@ -360,7 +351,7 @@ class _EntryPointState extends State<EntryPoint> with WidgetsBindingObserver {
                   ),
                   activeIcon: Stack(
                     children: [
-                      svgIcon("assets/icons/Wishlist.svg", color: Colors.white),
+                      svgIcon('assets/icons/Wishlist.svg', color: Colors.white),
                       if (_wishlistItemCount > 0)
                         Positioned(
                           right: 0,
@@ -388,13 +379,13 @@ class _EntryPointState extends State<EntryPoint> with WidgetsBindingObserver {
                         ),
                     ],
                   ),
-                  label: "Wishlist",
+                  label: 'Wishlist',
                 ),
                 BottomNavigationBarItem(
-                  icon: svgIcon("assets/icons/Profile.svg"),
+                  icon: svgIcon('assets/icons/Profile.svg'),
                   activeIcon:
-                      svgIcon("assets/icons/Profile.svg", color: Colors.white),
-                  label: "Profile",
+                      svgIcon('assets/icons/Profile.svg', color: Colors.white),
+                  label: 'Profile',
                 ),
               ],
             ),
