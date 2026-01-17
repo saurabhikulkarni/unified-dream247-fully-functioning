@@ -20,8 +20,6 @@ import 'package:unified_dream247/features/fantasy/landing/domain/use_cases/home_
 import 'package:unified_dream247/features/fantasy/landing/presentation/widgets/match_card.dart';
 import 'package:unified_dream247/features/fantasy/landing/presentation/widgets/match_list_shimmer_widget.dart';
 import 'package:unified_dream247/features/fantasy/landing/presentation/widgets/recent_match_card.dart';
-import 'package:unified_dream247/features/fantasy/onboarding/data/onboarding_datasource.dart';
-import 'package:unified_dream247/features/fantasy/onboarding/domain/use_cases/onboarding_usecases.dart';
 import 'package:unified_dream247/features/shop/services/auth_service.dart';
 
 class HomePage extends StatefulWidget {
@@ -41,9 +39,8 @@ class _HomePageState extends State<HomePage> {
   HomeUsecases homeUsecases = HomeUsecases(
     HomeDatasource(ApiImplWithAccessToken()),
   );
-  OnboardingUsecases onboardingUsecases = OnboardingUsecases(
-    OnboardingDatasource(ApiImpl()),
-  );
+  // ⚠️ DEPRECATED: Fantasy no longer uses onboarding - authentication is now unified via Shop
+  // OnboardingUsecases has been removed from here
   bool _isLoading = true;
   DateTime? lastRefreshTime;
   List<String> series = [];
@@ -51,9 +48,9 @@ class _HomePageState extends State<HomePage> {
   int? selectedFilterIndex;
   List<MatchListModel> _allMatches = [];
   final List<String> filterOptions = [
-    "Recommended",
-    "Starting Soon",
-    "Popular",
+    'Recommended',
+    'Starting Soon',
+    'Popular',
   ];
 
   @override
@@ -119,7 +116,7 @@ class _HomePageState extends State<HomePage> {
       });
       await loadData(silent: true);
     } else {
-      debugPrint("Refresh blocked: Try again after 1 minute.");
+      debugPrint('Refresh blocked: Try again after 1 minute.');
     }
   }
 
@@ -129,15 +126,12 @@ class _HomePageState extends State<HomePage> {
 
     final joinedData = await homeUsecases.getJoinedMatches(
       context,
-      widget.gameType ?? "Cricket",
+      widget.gameType ?? 'Cricket',
     );
-    final matchData = await homeUsecases.getMatchList(context, "");
-    final banners = await onboardingUsecases.getMainBanner(context);
-
-    // Filter only banners where type == "app"
-    final filteredBanners = banners
-        ?.where((banner) => banner.type?.toLowerCase() == "app")
-        .toList();
+    final matchData = await homeUsecases.getMatchList(context, '');
+    
+    // ⚠️ DEPRECATED: Banner fetching via onboarding removed - now using homeUsecases
+    List<BannersGetSet>? filteredBanners = [];
 
     if (!mounted) return;
     setState(() {
@@ -146,7 +140,7 @@ class _HomePageState extends State<HomePage> {
       _allMatches = List.from(matchList!);
       bannerList = filteredBanners;
       series = matchList
-              ?.map((match) => match.seriesname ?? "")
+              ?.map((match) => match.seriesname ?? '')
               .where((name) => name.isNotEmpty)
               .toSet()
               .toList() ??
@@ -198,10 +192,10 @@ class _HomePageState extends State<HomePage> {
                             items: bannerList?.map((item) {
                               // Fallback handling for null, empty or invalid image
                               final String imageUrl = (item.image != null &&
-                                      (item.image ?? "").trim().isNotEmpty)
+                                      (item.image ?? '').trim().isNotEmpty)
                                   ? item.image ??
-                                      "http://143.244.140.102:5001/uploads/sideBanner-1756816917767-JDAANUQZ.jpeg"
-                                  : "http://143.244.140.102:5001/uploads/sideBanner-1756816917767-JDAANUQZ.jpeg";
+                                      'http://143.244.140.102:5001/uploads/sideBanner-1756816917767-JDAANUQZ.jpeg'
+                                  : 'http://143.244.140.102:5001/uploads/sideBanner-1756816917767-JDAANUQZ.jpeg';
 
                               return Stack(
                                 children: [
@@ -225,7 +219,7 @@ class _HomePageState extends State<HomePage> {
                                         errorBuilder:
                                             (context, error, stackTrace) =>
                                                 Image.network(
-                                          "http://143.244.140.102:5001/uploads/sideBanner-1756816917767-JDAANUQZ.jpeg",
+                                          'http://143.244.140.102:5001/uploads/sideBanner-1756816917767-JDAANUQZ.jpeg',
                                           fit: BoxFit.cover,
                                           width: double.infinity,
                                         ),
@@ -245,7 +239,7 @@ class _HomePageState extends State<HomePage> {
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16.0),
                           child: Text(
-                            "Recent Matches",
+                            'Recent Matches',
                             style: GoogleFonts.poppins(
                               color: AppColors.blackColor,
                               fontSize: 14.sp,
@@ -368,7 +362,7 @@ class _HomePageState extends State<HomePage> {
                             }
 
                             final filterKey = index == 1
-                                ? "startingsoon"
+                                ? 'startingsoon'
                                 : filterOptions[index].toLowerCase();
 
                             final filtered = await homeUsecases.getMatchList(
@@ -476,7 +470,7 @@ class _HomePageState extends State<HomePage> {
         padding: const EdgeInsets.symmetric(horizontal: 20.0),
         child: MatchCard(
           data: filteredMatches[index],
-          gameType: widget.gameType ?? "Cricket",
+          gameType: widget.gameType ?? 'Cricket',
           index: index,
         ),
       ),

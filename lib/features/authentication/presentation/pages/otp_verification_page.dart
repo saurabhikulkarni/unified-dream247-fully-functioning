@@ -126,10 +126,22 @@ class _OtpVerificationViewState extends State<_OtpVerificationView> {
           if (state is Authenticated) {
             context.go(RouteNames.home);
           } else if (state is AuthError) {
+            String errorMsg = state.message;
+            
+            // Provide helpful messages for common errors
+            if (errorMsg.contains('500') || errorMsg.contains('Internal server')) {
+              errorMsg = 'Server is temporarily unavailable. Please try again in a moment. If the problem persists, please contact support.';
+            } else if (errorMsg.contains('network') || errorMsg.contains('connection')) {
+              errorMsg = 'Network error. Please check your internet connection and try again.';
+            } else if (errorMsg.contains('Invalid OTP')) {
+              errorMsg = 'Invalid OTP. Please check and try again. You have 10 minutes to verify.';
+            }
+            
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(state.message),
+                content: Text(errorMsg),
                 backgroundColor: AppColors.error,
+                duration: const Duration(seconds: 4),
               ),
             );
           } else if (state is OtpSent) {
@@ -264,6 +276,21 @@ class _OtpVerificationViewState extends State<_OtpVerificationView> {
                       isLoading: isLoading,
                       width: double.infinity,
                     ),
+                    
+                    const SizedBox(height: 12),
+                    
+                    // Troubleshooting hint
+                    if (isLoading)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Text(
+                          'Verifying OTP... If this takes too long, check your internet connection.',
+                          textAlign: TextAlign.center,
+                          style: TextStyles.bodySmall.copyWith(
+                            color: AppColors.textSecondary,
+                          ),
+                        ),
+                      ),
                     
                     const SizedBox(height: 24),
                     

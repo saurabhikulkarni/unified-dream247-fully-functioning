@@ -19,8 +19,7 @@ import 'package:unified_dream247/features/fantasy/landing/data/singleton/app_sin
 import 'package:unified_dream247/features/fantasy/landing/domain/repositories/home_repositories.dart';
 import 'package:unified_dream247/features/fantasy/menu_items/data/user_datasource.dart';
 import 'package:unified_dream247/features/fantasy/menu_items/domain/use_cases/user_usecases.dart';
-import 'package:unified_dream247/features/fantasy/onboarding/data/onboarding_datasource.dart';
-import 'package:unified_dream247/features/fantasy/onboarding/domain/use_cases/onboarding_usecases.dart';
+// ⚠️ DEPRECATED: Onboarding imports removed - Fantasy now uses Shop authentication
 
 class HomeDatasource implements HomeRepositories {
   ApiImplWithAccessToken clientwithToken;
@@ -30,9 +29,7 @@ class HomeDatasource implements HomeRepositories {
   Future<bool?> getAppDataWithHeader(BuildContext context) async {
     final url = APIServerUrl.userServerUrl + APIServerUrl.getAppData;
     final response = await clientwithToken.get(url);
-    OnboardingUsecases onboardingUsecases = OnboardingUsecases(
-      OnboardingDatasource(ApiImpl()),
-    );
+    // ⚠️ DEPRECATED: OnboardingUsecases removed - not needed anymore
     UserUsecases userUsecases = UserUsecases(
       UserDatasource(ApiImplWithAccessToken()),
     );
@@ -67,7 +64,6 @@ class HomeDatasource implements HomeRepositories {
         ApiServerUtil.manageException(response, context);
       }
     }
-    await onboardingUsecases.getAppData(context);
     return false;
   }
 
@@ -81,7 +77,7 @@ class HomeDatasource implements HomeRepositories {
 
       if (res[ApiResponseString.success] == true) {
         final image = res[ApiResponseString.data][ApiResponseString.popupImage];
-        return (image != null && image is String) ? image : "";
+        return (image != null && image is String) ? image : '';
       } else {
         ApiServerUtil.showAppToastforApi(
           res[ApiResponseString.message],
@@ -94,7 +90,7 @@ class HomeDatasource implements HomeRepositories {
       }
     }
 
-    return "";
+    return '';
   }
 
   @override

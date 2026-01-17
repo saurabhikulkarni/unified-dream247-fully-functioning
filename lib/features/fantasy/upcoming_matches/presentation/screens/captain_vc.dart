@@ -59,15 +59,15 @@ class _CaptainViceCaptain extends State<CaptainViceCaptain> {
   static const double captainWidth = 44;
   static const double viceCaptainWidth = 44;
 
-  String captainName = "", viceCaptainName = "";
-  String captainImage = "", viceCaptainImage = "";
+  String captainName = '', viceCaptainName = '';
+  String captainImage = '', viceCaptainImage = '';
   final int pointsThreshold = 50;
   bool isPointsEnable = false;
   bool isTypeEnable = false;
   bool isCaptainEnable = false;
   bool isViceCaptainEnable = false;
-  String sortBy = "";
-  final List<String> roles = ["keeper", "batsman", "all-rounder", "bowler"];
+  String sortBy = '';
+  final List<String> roles = ['keeper', 'batsman', 'all-rounder', 'bowler'];
   AccountsUsecases accountsUsecases = AccountsUsecases(
     AccountsDatasource(ApiImpl(), ApiImplWithAccessToken()),
   );
@@ -79,40 +79,40 @@ class _CaptainViceCaptain extends State<CaptainViceCaptain> {
   void initState() {
     super.initState();
     setState(() {
-      captainImage = "";
-      captainName = "";
-      viceCaptainImage = "";
-      viceCaptainName = "";
+      captainImage = '';
+      captainName = '';
+      viceCaptainImage = '';
+      viceCaptainName = '';
 
       for (var zz in widget.list ?? []) {
         if (zz.captainSelected == 1) {
-          captainName = zz.name ?? "";
-          captainImage = zz.image ?? "";
+          captainName = zz.name ?? '';
+          captainImage = zz.image ?? '';
         } else if (zz.vicecaptainSelected == 1) {
-          viceCaptainName = zz.name ?? "";
-          viceCaptainImage = zz.image ?? "";
+          viceCaptainName = zz.name ?? '';
+          viceCaptainImage = zz.image ?? '';
         }
       }
       widget.list
-          ?.sort((a, b) => b.totalpoints?.compareTo(a.totalpoints ?? "0") ?? 0);
+          ?.sort((a, b) => b.totalpoints?.compareTo(a.totalpoints ?? '0') ?? 0);
     });
   }
 
   @override
   Widget build(BuildContext context) {
     final sortedPlayersList = widget.list
-      ?..sort((a, b) => a.role?.compareTo(b.role ?? "") ?? 0);
+      ?..sort((a, b) => a.role?.compareTo(b.role ?? '') ?? 0);
     if (sortBy == 'points') {
       widget.list?.sort(
         (a, b) => isPointsEnable
-            ? a.totalpoints?.compareTo(b.totalpoints ?? "0") ?? 0
-            : b.totalpoints?.compareTo(a.totalpoints ?? "0") ?? 0,
+            ? a.totalpoints?.compareTo(b.totalpoints ?? '0') ?? 0
+            : b.totalpoints?.compareTo(a.totalpoints ?? '0') ?? 0,
       );
     } else if (sortBy == 'type') {
       widget.list?.sort(
         (a, b) => isTypeEnable
-            ? a.role?.compareTo(b.role ?? "") ?? 0
-            : b.role?.compareTo(a.role ?? "") ?? 0,
+            ? a.role?.compareTo(b.role ?? '') ?? 0
+            : b.role?.compareTo(a.role ?? '') ?? 0,
       );
     } else if (sortBy == '%c') {
       widget.list?.sort(
@@ -174,7 +174,7 @@ class _CaptainViceCaptain extends State<CaptainViceCaptain> {
             child: Column(
               children: [
                 Text(
-                  "Choose your Captain & Vice Captain",
+                  'Choose your Captain & Vice Captain',
                   style: GoogleFonts.poppins(
                     color: AppColors.white,
                     fontWeight: FontWeight.w600,
@@ -187,10 +187,10 @@ class _CaptainViceCaptain extends State<CaptainViceCaptain> {
                   children: [
                     // Captain card
                     _buildCaptainCard(
-                      "Captain gets",
+                      'Captain gets',
                       captainName,
                       captainImage,
-                      "2x (double) Points",
+                      '2x (double) Points',
                     ),
                     // const Icon(
                     //   Icons.compare_arrows,
@@ -198,10 +198,10 @@ class _CaptainViceCaptain extends State<CaptainViceCaptain> {
                     //   size: 40,
                     // ),
                     _buildCaptainCard(
-                      "Vice Captain gets",
+                      'Vice Captain gets',
                       viceCaptainName,
                       viceCaptainImage,
-                      "1.5x Points",
+                      '1.5x Points',
                     ),
                   ],
                 ),
@@ -227,16 +227,16 @@ class _CaptainViceCaptain extends State<CaptainViceCaptain> {
                 // ),
                 SizedBox(
                   width: selByWidth,
-                  child: _buildSortButton("Sel by", "%c", isCaptainEnable),
+                  child: _buildSortButton('Sel by', '%c', isCaptainEnable),
                 ),
                 SizedBox(
                   width: pointsWidth,
-                  child: _buildSortButton("Points", "points", isPointsEnable),
+                  child: _buildSortButton('Points', 'points', isPointsEnable),
                 ),
                 SizedBox(
                   width: creditsWidth,
                   child:
-                      _buildSortButton("Credits", "%vc", isViceCaptainEnable),
+                      _buildSortButton('Credits', '%vc', isViceCaptainEnable),
                 ),
                 const SizedBox(width: captainWidth),
                 const SizedBox(width: viceCaptainWidth),
@@ -262,7 +262,7 @@ class _CaptainViceCaptain extends State<CaptainViceCaptain> {
                       Padding(
                         padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
                         child: Text(
-                          currentPlayer?.role?.toUpperCase() ?? "",
+                          currentPlayer?.role?.toUpperCase() ?? '',
                           style: GoogleFonts.poppins(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
@@ -331,14 +331,14 @@ class _CaptainViceCaptain extends State<CaptainViceCaptain> {
                           }
                           await AppNavigation.gotoPreviewScreen(
                             context,
-                            "",
+                            '',
                             false,
                             finalPlayers,
                             'Team Preview',
                             'Upcoming',
                             0,
                             false,
-                            "",
+                            '',
                           );
                         },
                         filled: false,
@@ -346,9 +346,9 @@ class _CaptainViceCaptain extends State<CaptainViceCaptain> {
                       _glassButton(
                         label: 'NEXT',
                         onTap: () async {
-                          String captainID = "",
-                              viceCaptainID = "",
-                              allPlayers = "";
+                          String captainID = '',
+                              viceCaptainID = '',
+                              allPlayers = '';
                           for (var zz in widget.list ?? []) {
                             if (zz.captainSelected == 1) {
                               captainID = zz.playerid!;
@@ -367,7 +367,15 @@ class _CaptainViceCaptain extends State<CaptainViceCaptain> {
                             return;
                           }
 
-                          await _createTeam(
+                          if (allPlayers.isEmpty || allPlayers.length <= 1) {
+                            appToast(
+                              'Please select at least one player',
+                              context,
+                            );
+                            return;
+                          }
+
+                          _createTeam(
                             context,
                             allPlayers.substring(1),
                             captainID,
@@ -404,7 +412,7 @@ class _CaptainViceCaptain extends State<CaptainViceCaptain> {
         CircleAvatar(
           radius: 26.r,
           backgroundColor: Colors.white24,
-          backgroundImage: (image.isNotEmpty)
+          backgroundImage: (image.isEmpty)
               ? const AssetImage(Images.imageDefalutPlayer) as ImageProvider
               : NetworkImage(image),
         ),
@@ -445,10 +453,10 @@ class _CaptainViceCaptain extends State<CaptainViceCaptain> {
       onTap: () {
         setState(() {
           sortBy = key;
-          if (key == "points") isPointsEnable = !isPointsEnable;
-          if (key == "type") isTypeEnable = !isTypeEnable;
-          if (key == "%c") isCaptainEnable = !isCaptainEnable;
-          if (key == "%vc") isViceCaptainEnable = !isViceCaptainEnable;
+          if (key == 'points') isPointsEnable = !isPointsEnable;
+          if (key == 'type') isTypeEnable = !isTypeEnable;
+          if (key == '%c') isCaptainEnable = !isCaptainEnable;
+          if (key == '%vc') isViceCaptainEnable = !isViceCaptainEnable;
         });
       },
       child: Row(
@@ -493,17 +501,23 @@ class _CaptainViceCaptain extends State<CaptainViceCaptain> {
                 children: [
                   ClipRRect(
                     borderRadius: BorderRadius.circular(30),
-                    child: Image.network(
-                      data.image ?? '',
-                      width: 48,
-                      height: 48,
-                      fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => Image.asset(
-                        Images.imageDefalutPlayer,
-                        width: 48,
-                        height: 48,
-                      ),
-                    ),
+                    child: (data.image?.isEmpty ?? true)
+                        ? Image.asset(
+                            Images.imageDefalutPlayer,
+                            width: 48,
+                            height: 48,
+                          )
+                        : Image.network(
+                            data.image ?? '',
+                            width: 48,
+                            height: 48,
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, __, ___) => Image.asset(
+                              Images.imageDefalutPlayer,
+                              width: 48,
+                              height: 48,
+                            ),
+                          ),
                   ),
 
                   // ✅ TEAM NAME BADGE (DERIVED FROM data.team)
@@ -513,7 +527,7 @@ class _CaptainViceCaptain extends State<CaptainViceCaptain> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 6, vertical: 2),
                       decoration: BoxDecoration(
-                        color: data.team == "team1"
+                        color: data.team == 'team1'
                             ? AppColors.green
                             : AppColors.green,
                         borderRadius: BorderRadius.circular(4),
@@ -523,17 +537,17 @@ class _CaptainViceCaptain extends State<CaptainViceCaptain> {
                         ),
                       ),
                       child: Text(
-                        data.team == "team1"
+                        data.team == 'team1'
                             ? (AppSingleton.singleton.matchData.team1Name ??
                                 AppSingleton.singleton.matchData.team1Name ??
-                                "")
+                                '')
                             : (AppSingleton.singleton.matchData.team2Name ??
                                 AppSingleton.singleton.matchData.team2Name ??
-                                ""),
+                                ''),
                         style: GoogleFonts.poppins(
                           fontSize: 9,
                           fontWeight: FontWeight.w600,
-                          color: data.team == "team1"
+                          color: data.team == 'team1'
                               ? AppColors.white
                               : AppColors.white,
                         ),
@@ -552,7 +566,7 @@ class _CaptainViceCaptain extends State<CaptainViceCaptain> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  data.name ?? "",
+                  data.name ?? '',
                   style: GoogleFonts.poppins(
                     fontWeight: FontWeight.w600,
                     fontSize: 12,
@@ -562,7 +576,7 @@ class _CaptainViceCaptain extends State<CaptainViceCaptain> {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  "${data.playerSelectionPercentage}%",
+                  '${data.playerSelectionPercentage}%',
                   style: GoogleFonts.poppins(
                     fontSize: 12,
                     color: AppColors.greyColor,
@@ -590,7 +604,7 @@ class _CaptainViceCaptain extends State<CaptainViceCaptain> {
           SizedBox(
             width: pointsWidth,
             child: Text(
-              "${data.totalpoints}",
+              '${data.totalpoints}',
               textAlign: TextAlign.center,
               style: GoogleFonts.poppins(
                 fontSize: 13,
@@ -604,7 +618,7 @@ class _CaptainViceCaptain extends State<CaptainViceCaptain> {
           SizedBox(
             width: creditsWidth,
             child: Text(
-              "${data.credit}",
+              '${data.credit}',
               textAlign: TextAlign.center,
               style: GoogleFonts.poppins(
                 fontSize: 13,
@@ -620,7 +634,7 @@ class _CaptainViceCaptain extends State<CaptainViceCaptain> {
             width: captainWidth,
             child: _buildRoleButton(
               data,
-              "C",
+              'C',
               data.captainSelected == 1,
               () {
                 setState(() {
@@ -640,7 +654,7 @@ class _CaptainViceCaptain extends State<CaptainViceCaptain> {
             width: viceCaptainWidth,
             child: _buildRoleButton(
               data,
-              "VC",
+              'VC',
               data.vicecaptainSelected == 1,
               () {
                 setState(() {
@@ -878,10 +892,10 @@ class _CaptainViceCaptain extends State<CaptainViceCaptain> {
   }
 
   void _updateSelectedCaptains() {
-    captainImage = "";
-    captainName = "";
-    viceCaptainImage = "";
-    viceCaptainName = "";
+    captainImage = '';
+    captainName = '';
+    viceCaptainImage = '';
+    viceCaptainName = '';
 
     for (var zz in widget.list ?? []) {
       if (zz.captainSelected == 1) {
@@ -894,7 +908,7 @@ class _CaptainViceCaptain extends State<CaptainViceCaptain> {
     }
   }
 
-  _createTeam(
+  void _createTeam(
     BuildContext context,
     String allPlayers,
     String captainID,
@@ -928,7 +942,7 @@ class _CaptainViceCaptain extends State<CaptainViceCaptain> {
             ),
             builder: (BuildContext context) {
               return JoinContestBottomsheet(
-                fantasyType: "Cricket",
+                fantasyType: 'Cricket',
                 isClosedContestNew: false,
                 previousJoined: false,
                 challengeId: widget.challengeId,

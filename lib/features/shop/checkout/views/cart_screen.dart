@@ -28,7 +28,7 @@ class _CartScreenState extends State<CartScreen> {
   final CartService cartService = CartService();
   final AddressService addressService = AddressService();
   final OrderServiceGraphQL orderServiceGraphQL = OrderServiceGraphQL();
-  final UnifiedWalletService walletService = walletService;
+  final UnifiedWalletService walletService = UnifiedWalletService();
 
   @override
   void initState() {
@@ -434,7 +434,7 @@ class _CartScreenState extends State<CartScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Shopping Cart (${cartService.getCartItemCount()})"),
+        title: Text('Shopping Cart (${cartService.getCartItemCount()})'),
       ),
       body: cartItems.isEmpty
           ? Center(
@@ -448,13 +448,13 @@ class _CartScreenState extends State<CartScreen> {
                   ),
                   const SizedBox(height: defaultPadding),
                   Text(
-                    "Your cart is empty",
+                    'Your cart is empty',
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                   const SizedBox(height: defaultPadding),
                   ElevatedButton(
                     onPressed: () => Navigator.pop(context),
-                    child: const Text("Continue Shopping"),
+                    child: const Text('Continue Shopping'),
                   ),
                 ],
               ),
@@ -556,7 +556,7 @@ class _CartScreenState extends State<CartScreen> {
                                             ),
                                             const SizedBox(width: 2),
                                             Text(
-                                              "${product?.price.toInt() ?? 0}",
+                                              '${product?.price.toInt() ?? 0}',
                                               style: const TextStyle(
                                                 fontWeight: FontWeight.bold,
                                               ),
@@ -630,7 +630,7 @@ class _CartScreenState extends State<CartScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text("Subtotal"),
+                          const Text('Subtotal'),
                           Row(
                             children: [
                               SvgPicture.asset(
@@ -639,7 +639,7 @@ class _CartScreenState extends State<CartScreen> {
                                 height: 14,
                               ),
                               const SizedBox(width: 2),
-                              Text("${subtotal.toInt()}"),
+                              Text('${subtotal.toInt()}'),
                             ],
                           ),
                         ],
@@ -649,7 +649,7 @@ class _CartScreenState extends State<CartScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            "Total",
+                            'Total',
                             style: Theme.of(context).textTheme.titleMedium,
                           ),
                           Row(
@@ -661,7 +661,7 @@ class _CartScreenState extends State<CartScreen> {
                               ),
                               const SizedBox(width: 3),
                               Text(
-                                "${total.toInt()}",
+                                '${total.toInt()}',
                                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -684,10 +684,10 @@ class _CartScreenState extends State<CartScreen> {
                               height: 20,
                             ),
                             const SizedBox(width: 8),
-                            const Text("Redeem"),
+                            const Text('Redeem'),
                             const SizedBox(width: 8),
                             Text(
-                              "${total.toInt()}",
+                              '${total.toInt()}',
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                               ),

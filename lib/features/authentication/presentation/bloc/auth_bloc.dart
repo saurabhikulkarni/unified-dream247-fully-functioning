@@ -119,14 +119,21 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) async {
     emit(const AuthLoading());
 
+    print('🔐 [AUTH_BLOC] Verifying OTP for phone: ${event.phone}');
+
     final result = await verifyOtpUseCase(
       phone: event.phone,
       otp: event.otp,
     );
 
     result.fold(
-      (failure) => emit(AuthError(ErrorHandler.getErrorMessage(failure))),
+      (failure) {
+        final errorMessage = ErrorHandler.getErrorMessage(failure);
+        print('🔐 [AUTH_BLOC] OTP verification failed: $errorMessage');
+        emit(AuthError(errorMessage));
+      },
       (user) async {
+        print('🔐 [AUTH_BLOC] OTP verified successfully for user: ${user.name}');
         // Save unified session for shop and fantasy after successful OTP verification
         try {
           final authToken = await localDataSource.getAccessToken();
@@ -139,8 +146,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             phoneVerified: true,
             authToken: authToken,
           );
+          print('🔐 [AUTH_BLOC] Session saved successfully');
           emit(Authenticated(user));
         } catch (e) {
+          print('🔐 [AUTH_BLOC] Failed to save session: $e');
           emit(AuthError('OTP verification successful but failed to save session: ${e.toString()}'));
         }
       },

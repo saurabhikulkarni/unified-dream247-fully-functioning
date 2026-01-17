@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'dart:io';
 import '../../../../core/constants/api_constants.dart';
 import '../../../../core/error/exceptions.dart';
 import '../../../../core/network/rest_client.dart';
@@ -45,6 +47,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     required String phone,
   }) async {
     try {
+      print('🔐 [AUTH] Sending OTP to phone: $phone');
+      print('🔐 [AUTH] Endpoint: ${Msg91Config.sendOtpEndpoint}');
+      
       final response = await restClient.post(
         Msg91Config.sendOtpEndpoint,
         data: {
@@ -52,13 +57,25 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         },
       );
 
+      print('🔐 [AUTH] Send OTP Response status: ${response.statusCode}');
+      print('🔐 [AUTH] Send OTP Response data: ${response.data}');
+
       if (response.statusCode != 200 && response.statusCode != 201) {
+        final errorMessage = response.data is Map 
+            ? response.data['message'] ?? 'Failed to send OTP'
+            : 'Failed to send OTP';
+        
+        print('🔐 [AUTH] Send OTP Error: $errorMessage (Status: ${response.statusCode})');
+        
         throw ServerException(
-          'Failed to send OTP',
+          errorMessage,
           statusCode: response.statusCode,
         );
       }
+      
+      print('🔐 [AUTH] OTP sent successfully');
     } catch (e) {
+      print('🔐 [AUTH] Send OTP Exception: $e');
       if (e is ServerException) rethrow;
       throw ServerException('Failed to send OTP: ${e.toString()}');
     }
@@ -130,6 +147,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     required String otp,
   }) async {
     try {
+      print('🔐 [AUTH] Verifying OTP for phone: $phone');
+      print('🔐 [AUTH] Endpoint: ${Msg91Config.verifyOtpEndpoint}');
+      
       final response = await restClient.post(
         Msg91Config.verifyOtpEndpoint,
         data: {
@@ -138,15 +158,38 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         },
       );
 
+      print('🔐 [AUTH] Response status: ${response.statusCode}');
+      print('🔐 [AUTH] Response data: ${response.data}');
+
       if (response.statusCode == 200) {
         return AuthResponseModel.fromJson(response.data as Map<String, dynamic>);
-      } else {
+      } else if (response.statusCode == 500 || response.statusCode == 502 || response.statusCode == 503) {
+        final errorMessage = 'Server error (${response.statusCode}). The server is temporarily unavailable. Please try again later.';
+        print('🔐 [AUTH] Server Error: $errorMessage');
         throw ServerException(
-          'OTP verification failed',
+          errorMessage,
+          statusCode: response.statusCode,
+        );
+      } else {
+        final errorMessage = response.data is Map 
+            ? response.data['message'] ?? 'OTP verification failed'
+            : 'OTP verification failed';
+        
+        print('🔐 [AUTH] Error: $errorMessage (Status: ${response.statusCode})');
+        
+        throw ServerException(
+          errorMessage,
           statusCode: response.statusCode,
         );
       }
+    } on SocketException catch (e) {
+      print('🔐 [AUTH] Network Exception: $e');
+      throw ServerException('Network connection failed. Please check your internet and try again.');
+    } on TimeoutException catch (e) {
+      print('🔐 [AUTH] Timeout Exception: $e');
+      throw ServerException('Request timed out. The server took too long to respond. Please try again.');
     } catch (e) {
+      print('🔐 [AUTH] Exception: $e');
       if (e is ServerException) rethrow;
       throw ServerException('OTP verification failed: ${e.toString()}');
     }

@@ -28,7 +28,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     // Preload the welcome image to avoid loading delay
     WidgetsBinding.instance.addPostFrameCallback((_) {
       precacheImage(
-        const AssetImage("assets/images/welcome-min.jpg"),
+        const AssetImage('assets/images/welcome-min.jpg'),
         context,
       );
     });
@@ -45,7 +45,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               height: MediaQuery.of(context).size.height * 0.45,
               width: double.infinity,
               child: Image.asset(
-                "assets/images/welcome-min.jpg",
+                'assets/images/welcome-min.jpg',
                 fit: BoxFit.cover,
                 alignment: Alignment.center,
               ),
@@ -56,12 +56,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "LetΓÇÖs get started!",
+                    'Let\'s get started!',
                     style: Theme.of(context).textTheme.headlineSmall,
                   ),
                   const SizedBox(height: defaultPadding / 2),
                   const Text(
-                    "Please enter your valid data in order to create an account.",
+                    'Please enter your valid data in order to create an account.',
                   ),
                   const SizedBox(height: defaultPadding),
                   SignUpForm(
@@ -84,7 +84,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       Expanded(
                         child: Text.rich(
                           TextSpan(
-                            text: "I agree with the",
+                            text: 'I agree with the',
                             children: [
                               TextSpan(
                                 recognizer: TapGestureRecognizer()
@@ -94,14 +94,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                       const SnackBar(content: Text('Terms of service page coming soon')),
                                     );
                                   },
-                                text: " Terms of service ",
+                                text: ' Terms of service ',
                                 style: const TextStyle(
                                   color: primaryColor,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
                               const TextSpan(
-                                text: "& privacy policy.",
+                                text: '& privacy policy.',
                               ),
                             ],
                           ),
@@ -290,17 +290,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         }
                       }
                     },
-                    child: const Text("Continue"),
+                    child: const Text('Continue'),
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Text("Do you have an account?"),
+                      const Text('Do you have an account?'),
                       TextButton(
                         onPressed: () {
                           context.go(RouteNames.login);
                         },
-                        child: const Text("Log in"),
+                        child: const Text('Log in'),
                       )
                     ],
                   ),
