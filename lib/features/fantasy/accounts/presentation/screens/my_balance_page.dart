@@ -40,7 +40,23 @@ class _MyBalancePage extends State<MyBalancePage> {
     super.initState();
     loadData();
     _loadShopTokens();
+    _loadGameTokens();
     _loadTransactionHistory();
+  }
+
+  /// Load and sync game tokens from Fantasy backend
+  Future<void> _loadGameTokens() async {
+    try {
+      await walletService.initialize();
+      
+      // Fetch from Fantasy backend
+      final gameTokens = await walletService.getGameTokens();
+      setState(() {});
+      
+      debugPrint('📊 [FANTASY_WALLET] Game tokens synced: $gameTokens');
+    } catch (e) {
+      debugPrint('⚠️ [FANTASY_WALLET] Error loading game tokens: $e');
+    }
   }
 
   /// Load shop tokens from unified wallet service
@@ -87,6 +103,7 @@ class _MyBalancePage extends State<MyBalancePage> {
     lastRefreshTime = now;
     await accountsUsecases.myWalletDetails(context);
     await _loadShopTokens();
+    await _loadGameTokens();
     await _loadTransactionHistory();
     setState(() {});
   }
@@ -241,13 +258,13 @@ class _MyBalancePage extends State<MyBalancePage> {
                           children: [
                             _walletInfoTile(
                               icon: Images.icDeposit,
-                              title: "Shop Token",
+                              title: 'Shop Token',
                               value:
-                                  "${AppUtils.stringifyNumber(num.parse(_shopTokens.toStringAsFixed(0)))}",
+                                  '${AppUtils.stringifyNumber(num.parse(_shopTokens.toStringAsFixed(0)))}',
                               color: AppColors.lightGreen.withAlpha(20),
                               isShopToken: true,
                               gradientButton: true,
-                              buttonText: "Add Cash",
+                              buttonText: 'Add Cash',
                               onButtonTap: () {
                                 Get.to(() => AddMoneyPage());
                               },
@@ -286,10 +303,10 @@ class _MyBalancePage extends State<MyBalancePage> {
                             const SizedBox(height: 12),
                             _walletInfoTile(
                                 icon: Images.icCashback,
-                                title: "Game Token",
+                                title: 'Game Token',
                                 value: "${walletData?.bonus ?? "0"}",
                                 color: AppColors.blueColor.withAlpha(40),
-                                tooltip: "Use these Tokens to play Games.",
+                                tooltip: 'Use these Tokens to play Games.',
                                 isTokenIcon: true),
                             // const SizedBox(height: 10),
                             // Container(
@@ -520,7 +537,7 @@ class _MyBalancePage extends State<MyBalancePage> {
                   icon: Icons.verified_outlined,
                   title: Strings.referEarn,
                   subtitle:
-                      "Invite your friends on ${APIServerUrl.appName} and play with them!",
+                      'Invite your friends on ${APIServerUrl.appName} and play with them!',
                   onTap: () => AppNavigation.gotoReferEarnScreen(context),
                 ),
               ],

@@ -40,7 +40,7 @@ class _AddMoneyPage extends State<AddMoneyPage> {
   final ValueNotifier<bool> _isGstVisible = ValueNotifier<bool>(false);
   final ValueNotifier<bool> _isKeyboardOpen = ValueNotifier<bool>(false);
   final TextEditingController _amountController = TextEditingController();
-  String promoId = "";
+  String promoId = '';
   Future<List<OffersModel>?>? offerList;
   int offersCount = 0;
   bool isApplied = false;
@@ -106,33 +106,33 @@ class _AddMoneyPage extends State<AddMoneyPage> {
   Future<void> _createRazorpayOrder() async {
     final res = await accountsUsecases.requestAddCash(
       context,
-      "RazorPay",
+      'RazorPay',
       _amountController.text,
       promoId,
     );
 
     if (res == null ||
-        res["data"] == null ||
-        res["data"]["order_id"] == null ||
-        res["data"]["order_id"].toString().isEmpty) {
-      appToast("Unable to create Razorpay order", context);
+        res['data'] == null ||
+        res['data']['order_id'] == null ||
+        res['data']['order_id'].toString().isEmpty) {
+      appToast('Unable to create Razorpay order', context);
       return;
     }
-    _lastTxnId = res["data"]["txnid"];
-    _razorpayOrderId = res["data"]["order_id"];
+    _lastTxnId = res['data']['txnid'];
+    _razorpayOrderId = res['data']['order_id'];
     _openCheckout();
   }
 
   void _openCheckout() {
     if (_razorpayOrderId == null) {
-      appToast("Order not generated. Please retry.", context);
+      appToast('Order not generated. Please retry.', context);
       return;
     }
 
     _initRazorpay();
 
     var options = {
-      'key': "rzp_test_S0bjTVUZm4brLR",
+      'key': 'rzp_test_S0bjTVUZm4brLR',
       'amount': (double.parse(_amountController.text) * 100).toInt(),
       'order_id': _razorpayOrderId,
       'name': 'Dream247',
@@ -144,8 +144,8 @@ class _AddMoneyPage extends State<AddMoneyPage> {
         'wallet': true,
       },
       'prefill': {
-        'contact': userData?.mobile ?? "",
-        'email': userData?.email ?? "",
+        'contact': userData?.mobile ?? '',
+        'email': userData?.email ?? '',
       },
       'theme': {'color': '#0f9d58'},
     };
@@ -155,7 +155,7 @@ class _AddMoneyPage extends State<AddMoneyPage> {
 
   Future<bool> _handleBackAttempt() async {
     if (_isPaymentFlowLocked || _showMysteryBox) {
-      appToast("Please complete the reward process first", context);
+      appToast('Please complete the reward process first', context);
       return false;
     }
     return true;
@@ -172,32 +172,53 @@ class _AddMoneyPage extends State<AddMoneyPage> {
 
     if (!mounted) return;
 
-    if (res != null && res["success"] == true) {
-      // Payment successful - add tokens to both shop and game
+    if (res != null && res['success'] == true) {
+      // Payment successful - sync tokens from backend
       final amount = double.parse(_amountController.text);
       
       // Initialize wallet service
       await walletService.initialize();
       
-      // Add shop tokens (1 RS = 1 shop token)
+      // 1️⃣ Add shop tokens to Hygraph (1 RS = 1 shop token)
       await walletService.addShopTokens(amount);
-      debugPrint('✅ [ADD_MONEY] Added $amount shop tokens');
+      debugPrint('✅ [ADD_MONEY] Added $amount shop tokens to Hygraph');
       
-      // Add game tokens (1 RS = 1 game token)
-      await walletService.setGameTokens(
-        (await walletService.getGameTokens()) + amount
-      );
-      debugPrint('✅ [ADD_MONEY] Added $amount game tokens');
+      // 2️⃣ Fetch and sync game tokens from Fantasy backend
+      try {
+        final gameTokensResult = await accountsUsecases
+            .fetchGameTokensAfterPayment(context);
+        
+        if (gameTokensResult != null && gameTokensResult['success'] == true) {
+          final balanceData = gameTokensResult['data'];
+          final gameTokens = (balanceData['balance'] as num?)?.toDouble() ?? 0.0;
+          
+          // Store game tokens in local cache
+          await walletService.setGameTokens(gameTokens);
+          debugPrint('✅ [ADD_MONEY] Game tokens synced from Fantasy: $gameTokens');
+        } else {
+          debugPrint('⚠️ [ADD_MONEY] Failed to fetch game tokens: ${gameTokensResult?['message']}');
+          // Fallback: Add to local cache manually
+          await walletService.setGameTokens(
+            (await walletService.getGameTokens()) + amount
+          );
+        }
+      } catch (e) {
+        debugPrint('❌ [ADD_MONEY] Error syncing game tokens: $e');
+        // Fallback: Add to local cache
+        await walletService.setGameTokens(
+          (await walletService.getGameTokens()) + amount
+        );
+      }
       
-      appToast(res["message"] ?? "Payment Successful", context);
+      appToast(res['message'] ?? 'Payment Successful', context);
       setState(() => _showMysteryBox = true);
     } else {
-      appToast(res?["message"] ?? "Payment Verification Failed", context);
+      appToast(res?['message'] ?? 'Payment Verification Failed', context);
     }
   }
 
   void _handlePaymentError(PaymentFailureResponse response) {
-    appToast("Payment Failed", context);
+    appToast('Payment Failed', context);
   }
 
   void _handleExternalWallet(ExternalWalletResponse response) {}
@@ -232,27 +253,27 @@ class _AddMoneyPage extends State<AddMoneyPage> {
     final minAdd = double.tryParse(
           AppSingleton
                   .singleton.appData.androidpaymentgateway?.isRazorPay?.min ??
-              "0",
+              '0',
         ) ??
         0;
 
     final maxAdd = double.tryParse(
           AppSingleton
                   .singleton.appData.androidpaymentgateway?.isRazorPay?.max ??
-              "0",
+              '0',
         ) ??
         0;
 
     if (amount < minAdd) {
       setState(() {
-        _errorText = "Minimum amount is ₹$minAdd";
+        _errorText = 'Minimum amount is ₹$minAdd';
       });
       return;
     }
 
     if (maxAdd != 0 && amount > maxAdd) {
       setState(() {
-        _errorText = "Maximum amount is ₹$maxAdd";
+        _errorText = 'Maximum amount is ₹$maxAdd';
       });
       return;
     }
@@ -284,7 +305,7 @@ class _AddMoneyPage extends State<AddMoneyPage> {
   //   }
   // }
 
-  getAllOffers() async {
+  Future<void> getAllOffers() async {
     offerList = accountsUsecases.getOffers(context);
     var offers = await offerList;
     setState(() {
@@ -299,7 +320,7 @@ class _AddMoneyPage extends State<AddMoneyPage> {
     return WillPopScope(
       onWillPop: () async {
         if (_isPaymentFlowLocked || _showMysteryBox) {
-          appToast("Please complete the reward process first", context);
+          appToast('Please complete the reward process first', context);
           return false;
         }
         return true;
@@ -461,7 +482,7 @@ class _AddMoneyPage extends State<AddMoneyPage> {
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       children: [
-                                        Text("Get "),
+                                        Text('Get '),
                                         Image.asset(
                                           Images.tokenImage,
                                           height: 20,
@@ -500,9 +521,9 @@ class _AddMoneyPage extends State<AddMoneyPage> {
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
-                                      _quickAmountButton("₹500", "500"),
-                                      _quickAmountButton("₹1000", "1000"),
-                                      _quickAmountButton("₹2000", "2000"),
+                                      _quickAmountButton('₹500', '500'),
+                                      _quickAmountButton('₹1000', '1000'),
+                                      _quickAmountButton('₹2000', '2000'),
                                     ],
                                   ),
                                 ],
@@ -699,7 +720,7 @@ class _AddMoneyPage extends State<AddMoneyPage> {
                     topRight: Radius.circular(20))),
             child: Text(
               textAlign: TextAlign.center,
-              "Free Rewards",
+              'Free Rewards',
               style: GoogleFonts.poppins(color: AppColors.white, fontSize: 20),
             ),
           ),
@@ -732,7 +753,7 @@ class _AddMoneyPage extends State<AddMoneyPage> {
                       ),
                       5.verticalSpace,
                       DashedUnderlineText(
-                        text: "Game Tokens",
+                        text: 'Game Tokens',
                         style: GoogleFonts.poppins(
                           color: AppColors.letterColor,
                           fontSize: 15,
@@ -745,7 +766,7 @@ class _AddMoneyPage extends State<AddMoneyPage> {
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: Text(
                     textAlign: TextAlign.center,
-                    "+",
+                    '+',
                     style: GoogleFonts.poppins(
                         color: AppColors.blackColor, fontSize: 20),
                   ),
@@ -755,7 +776,7 @@ class _AddMoneyPage extends State<AddMoneyPage> {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        appToast("Coming Soon", context);
+                        appToast('Coming Soon', context);
                       },
                       child: Image.asset(
                         Images.mysteryBox,
@@ -764,7 +785,7 @@ class _AddMoneyPage extends State<AddMoneyPage> {
                     ),
                     5.verticalSpace,
                     Text(
-                      "Mystery Box",
+                      'Mystery Box',
                       style: GoogleFonts.poppins(
                           color: AppColors.letterColor, fontSize: 15),
                     )
@@ -887,7 +908,7 @@ class _AddMoneyPage extends State<AddMoneyPage> {
               const SizedBox(width: 6),
               const Expanded(
                 child: Text(
-                  "Proceed to verify your details and join the contest",
+                  'Proceed to verify your details and join the contest',
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
@@ -900,29 +921,29 @@ class _AddMoneyPage extends State<AddMoneyPage> {
           const SizedBox(height: 10),
           MainButton(
             text: Strings.addCash,
-            color: (_errorText == null && _amountController.text != "")
+            color: (_errorText == null && _amountController.text != '')
                 ? AppColors.mainColor
                 : AppColors.whiteFade1,
-            textColor: (_errorText == null && _amountController.text != "")
+            textColor: (_errorText == null && _amountController.text != '')
                 ? AppColors.white
                 : const Color(0xffbcc5d3),
-            onTap: (_errorText == null && _amountController.text != "")
+            onTap: (_errorText == null && _amountController.text != '')
                 ? () async {
                     if (!_isUserVerified) {
-                      appToast("Please verify your account first", context);
+                      appToast('Please verify your account first', context);
                       return;
                     }
                     if (num.parse(_amountController.text) >=
                             num.parse(
                               AppSingleton.singleton.appData
                                       .androidpaymentgateway?.isRazorPay?.min ??
-                                  "0",
+                                  '0',
                             ) &&
                         num.parse(_amountController.text) <=
                             num.parse(
                               AppSingleton.singleton.appData
                                       .androidpaymentgateway?.isRazorPay?.max ??
-                                  "0",
+                                  '0',
                             )) {
                       await _createRazorpayOrder();
                       // await accountsUsecases
@@ -1000,7 +1021,7 @@ class _AddMoneyPage extends State<AddMoneyPage> {
                       vertical: 4,
                     ),
                     child: Text(
-                      "${data?.title}",
+                      '${data?.title}',
                       style: GoogleFonts.poppins(
                         fontWeight: FontWeight.w600,
                         fontSize: 14,
@@ -1014,7 +1035,7 @@ class _AddMoneyPage extends State<AddMoneyPage> {
                       vertical: 4,
                     ),
                     child: Text(
-                      "${data?.description}",
+                      '${data?.description}',
                       overflow: TextOverflow.ellipsis,
                       maxLines: 3,
                       style: GoogleFonts.poppins(
@@ -1042,7 +1063,7 @@ class _AddMoneyPage extends State<AddMoneyPage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                "${Strings.validTill}${AppUtils.formatCustomDate(data?.enddate.toString() ?? DateTime.now().toString())}",
+                                '${Strings.validTill}${AppUtils.formatCustomDate(data?.enddate.toString() ?? DateTime.now().toString())}',
                                 style: const TextStyle(
                                   fontWeight: FontWeight.w400,
                                   fontSize: 10,
@@ -1050,7 +1071,7 @@ class _AddMoneyPage extends State<AddMoneyPage> {
                                 ),
                               ),
                               Text(
-                                "Min Amt: ₹${data?.minAmount}, Max Amt: ₹${data?.maxAmount}",
+                                'Min Amt: ₹${data?.minAmount}, Max Amt: ₹${data?.maxAmount}',
                                 style: const TextStyle(
                                   fontWeight: FontWeight.w400,
                                   fontSize: 10,
@@ -1071,16 +1092,16 @@ class _AddMoneyPage extends State<AddMoneyPage> {
                                   if ((data?.usedCount ?? 0) >=
                                       (data?.userTime ?? 1)) {
                                     appToast(
-                                      "You have already exhausted limit to use this offer code.",
+                                      'You have already exhausted limit to use this offer code.',
                                       context,
                                     );
                                     setState(() {
-                                      promoId = "";
+                                      promoId = '';
                                       isApplied = false;
                                     });
                                   } else {
                                     setState(() {
-                                      promoId = data?.id ?? "";
+                                      promoId = data?.id ?? '';
                                       isApplied = true;
                                       appToast(
                                         Strings.promoCodeApplied,
@@ -1090,7 +1111,7 @@ class _AddMoneyPage extends State<AddMoneyPage> {
                                   }
                                 } else {
                                   setState(() {
-                                    promoId = "";
+                                    promoId = '';
                                     isApplied = false;
                                     appToast(
                                       Strings.promoCodeNotApplied,
@@ -1114,7 +1135,7 @@ class _AddMoneyPage extends State<AddMoneyPage> {
                                   vertical: 4,
                                 ),
                                 child: Text(
-                                  (!isApplied) ? Strings.apply : "Applied",
+                                  (!isApplied) ? Strings.apply : 'Applied',
                                   style: const TextStyle(
                                     fontWeight: FontWeight.w500,
                                     fontSize: 12,
@@ -1204,7 +1225,7 @@ class _AddMoneyPage extends State<AddMoneyPage> {
                 ),
                 const SizedBox(height: 20),
                 const Text(
-                  "Tap to open your Mystery Box!",
+                  'Tap to open your Mystery Box!',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 16,
@@ -1231,14 +1252,14 @@ class _AddMoneyPage extends State<AddMoneyPage> {
 
     if (!mounted) return;
 
-    if (res != null && res["success"] == true) {
-      final winAmount = res["data"]?["winAmount"] ?? 0;
+    if (res != null && res['success'] == true) {
+      final winAmount = res['data']?['winAmount'] ?? 0;
 
       _confettiController.play();
       _showWinDialog(winAmount);
       setState(() => _isPaymentFlowLocked = true);
     } else {
-      appToast(res?["message"] ?? "Failed to open Mystery Box", context);
+      appToast(res?['message'] ?? 'Failed to open Mystery Box', context);
     }
   }
 
@@ -1261,7 +1282,7 @@ class _AddMoneyPage extends State<AddMoneyPage> {
                     Image.asset(Images.matchToken, height: 60),
                     const SizedBox(height: 12),
                     Text(
-                      "Congratulations! 🎉",
+                      'Congratulations! 🎉',
                       style: GoogleFonts.poppins(
                         fontSize: 20,
                         fontWeight: FontWeight.w700,
@@ -1269,12 +1290,12 @@ class _AddMoneyPage extends State<AddMoneyPage> {
                     ),
                     const SizedBox(height: 10),
                     Text(
-                      "You won",
+                      'You won',
                       style: GoogleFonts.poppins(fontSize: 14),
                     ),
                     const SizedBox(height: 6),
                     Text(
-                      "$amount Game Tokens",
+                      '$amount Game Tokens',
                       style: GoogleFonts.poppins(
                         fontSize: 26,
                         fontWeight: FontWeight.w800,
@@ -1284,7 +1305,7 @@ class _AddMoneyPage extends State<AddMoneyPage> {
                     const SizedBox(height: 18),
                     MainButton(
                       color: AppColors.mainColor,
-                      text: "Awesome!",
+                      text: 'Awesome!',
                       onTap: () {
                         Navigator.pop(context);
                         Navigator.pop(context);

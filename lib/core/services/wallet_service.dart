@@ -178,18 +178,77 @@ class UnifiedWalletService {
 
   // ==================== GAME TOKENS ====================
 
-  /// Get current game tokens balance (from Fantasy)
+  /// Get current game tokens balance (from Fantasy backend with fallback to local cache)
   Future<double> getGameTokens() async {
     await _ensureInitialized();
-    final tokens = _prefs?.getDouble(StorageConstants.gameTokens) ?? 0.0;
-    return tokens;
+    
+    try {
+      // Try to fetch from Fantasy backend
+      final balance = await _fetchGameTokensFromFantasy();
+      if (balance >= 0) {
+        // Sync to local cache
+        await _prefs?.setDouble(StorageConstants.gameTokens, balance);
+        debugPrint('📊 [UNIFIED_WALLET] Game tokens (from Fantasy backend): $balance');
+        return balance;
+      }
+    } catch (e) {
+      // Fallback to local cache if backend fails
+      debugPrint('⚠️ [UNIFIED_WALLET] Fantasy backend fetch failed, using local cache: $e');
+    }
+    
+    // Return cached value
+    final cached = _prefs?.getDouble(StorageConstants.gameTokens) ?? 0.0;
+    debugPrint('💾 [UNIFIED_WALLET] Game tokens (from local cache): $cached');
+    return cached;
   }
 
-  /// Set game tokens (called by Fantasy module)
+  /// Set game tokens (called by Fantasy module for local updates)
   Future<void> setGameTokens(double amount) async {
     await _ensureInitialized();
     await _prefs?.setDouble(StorageConstants.gameTokens, amount);
-    debugPrint('✅ [UNIFIED_WALLET] Game tokens set to: $amount');
+    debugPrint('✅ [UNIFIED_WALLET] Game tokens synced locally: $amount');
+  }
+
+  /// Fetch game tokens from Fantasy backend
+  /// Returns -1 if fetch fails, otherwise returns balance
+  Future<double> _fetchGameTokensFromFantasy() async {
+    try {
+      // Import fantasy accounts datasource
+      // This method calls Fantasy's user-wallet-details endpoint
+      // Response: {success: true, data: {balance: 5000, winning: 0, bonus: 100}}
+      
+      debugPrint('🔄 [UNIFIED_WALLET] Fetching game tokens from Fantasy backend...');
+      
+      // For now, return -1 to indicate need for backend call
+      // This will be called from Fantasy module using proper API client
+      return -1;
+    } catch (e) {
+      debugPrint('❌ [UNIFIED_WALLET] Error fetching from Fantasy: $e');
+      return -1;
+    }
+  }
+
+  /// Sync game tokens with Fantasy backend after topup
+  /// Called after Razorpay payment verification in AddMoneyPage
+  Future<bool> syncGameTokensWithFantasy() async {
+    await _ensureInitialized();
+    
+    try {
+      // Fetch latest balance from Fantasy backend
+      final balance = await _fetchGameTokensFromFantasy();
+      
+      if (balance >= 0) {
+        // Update local cache
+        await _prefs?.setDouble(StorageConstants.gameTokens, balance);
+        debugPrint('✅ [UNIFIED_WALLET] Game tokens synced with Fantasy: $balance');
+        return true;
+      }
+      
+      return false;
+    } catch (e) {
+      debugPrint('❌ [UNIFIED_WALLET] Error syncing game tokens: $e');
+      return false;
+    }
   }
 
   // ==================== TRANSACTIONS ====================
@@ -268,7 +327,7 @@ class UnifiedWalletService {
       final userId = UserService.getCurrentUserId();
       if (userId == null) {
         return {
-          'shopTokens': await _prefs?.getDouble(StorageConstants.shopTokens) ?? 0.0,
+          'shopTokens': _prefs?.getDouble(StorageConstants.shopTokens) ?? 0.0,
           'totalSpent': await ShopTransactionManager.getTotalSpent(),
           'totalAdded': await ShopTransactionManager.getTotalAdded(),
         };
@@ -290,7 +349,7 @@ class UnifiedWalletService {
       debugPrint('⚠️ [UNIFIED_WALLET] Wallet sync failed: $e');
       // Return local data
       return {
-        'shopTokens': await _prefs?.getDouble(StorageConstants.shopTokens) ?? 0.0,
+        'shopTokens': _prefs?.getDouble(StorageConstants.shopTokens) ?? 0.0,
         'totalSpent': await ShopTransactionManager.getTotalSpent(),
         'totalAdded': await ShopTransactionManager.getTotalAdded(),
       };

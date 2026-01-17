@@ -80,7 +80,7 @@ class AccountsDatasource implements AccountsRepositories {
 
     final body = {
       ApiServerKeys.userId:
-          "${await AppStorage.getStorageValueString(AppStorageKeys.userId)}",
+          '${await AppStorage.getStorageValueString(AppStorageKeys.userId)}',
       ApiServerKeys.amount: amount,
       ApiServerKeys.orderId: orderId,
       ApiServerKeys.status: status,
@@ -143,7 +143,7 @@ class AccountsDatasource implements AccountsRepositories {
 
     final body = {
       ApiServerKeys.amount: amount,
-      ApiServerKeys.withdrawFrom: "WatchPay",
+      ApiServerKeys.withdrawFrom: 'WatchPay',
     };
 
     final response = await clientWithToken.post(url, body: body);
@@ -221,7 +221,7 @@ class AccountsDatasource implements AccountsRepositories {
     String status,
   ) async {
     final url =
-        "${APIServerUrl.userServerUrl}${APIServerUrl.mytransactions}$type&skip=$skip&limit=$limit&status=$status";
+        '${APIServerUrl.userServerUrl}${APIServerUrl.mytransactions}$type&skip=$skip&limit=$limit&status=$status';
 
     final response = await clientWithToken.get(url);
 
@@ -251,7 +251,7 @@ class AccountsDatasource implements AccountsRepositories {
     String status,
   ) async {
     final url =
-        "${APIServerUrl.userServerUrl}${APIServerUrl.mytransactionsredis}$type&skip=$skip&limit=$limit&status=$status";
+        '${APIServerUrl.userServerUrl}${APIServerUrl.mytransactionsredis}$type&skip=$skip&limit=$limit&status=$status';
 
     final response = await clientWithToken.get(url);
 
@@ -279,7 +279,7 @@ class AccountsDatasource implements AccountsRepositories {
     String type,
   ) async {
     final url =
-        "${APIServerUrl.userServerUrl}${APIServerUrl.usersTransactionDetails}$transactionId&type=$type";
+        '${APIServerUrl.userServerUrl}${APIServerUrl.usersTransactionDetails}$transactionId&type=$type';
 
     final response = await clientWithToken.get(url);
 
@@ -307,7 +307,7 @@ class AccountsDatasource implements AccountsRepositories {
     int limit,
   ) async {
     final url =
-        "${APIServerUrl.userServerUrl}${APIServerUrl.mytransactions}&skip=$skip&limit=$limit";
+        '${APIServerUrl.userServerUrl}${APIServerUrl.mytransactions}&skip=$skip&limit=$limit';
 
     final response = await clientWithToken.get(url);
 
@@ -330,7 +330,7 @@ class AccountsDatasource implements AccountsRepositories {
 
   @override
   Future<BalanceModel?>? myWalletDetails(BuildContext context) async {
-    final url = "${APIServerUrl.userServerUrl}${APIServerUrl.myWalletDetails}";
+    final url = '${APIServerUrl.userServerUrl}${APIServerUrl.myWalletDetails}';
 
     final response = await clientWithToken.get(url);
 
@@ -355,7 +355,7 @@ class AccountsDatasource implements AccountsRepositories {
 
   @override
   Future<TdsDashboardModel?> tdsDashboard(BuildContext context) async {
-    final url = "${APIServerUrl.withdrawServerUrl}${APIServerUrl.tdsDashboard}";
+    final url = '${APIServerUrl.withdrawServerUrl}${APIServerUrl.tdsDashboard}';
 
     final response = await clientWithToken.get(url);
 
@@ -486,7 +486,7 @@ class AccountsDatasource implements AccountsRepositories {
 
     final body = {
       ApiServerKeys.amount: num.parse(amount),
-      "_id": receiverId,
+      '_id': receiverId,
       ApiServerKeys.otp: num.parse(otp),
     };
 
@@ -575,9 +575,9 @@ class AccountsDatasource implements AccountsRepositories {
         APIServerUrl.depositServerUrl + APIServerUrl.verifyRazorpayPayment;
 
     final body = {
-      "razorpay_payment_id": paymentId,
-      "razorpay_order_id": orderId,
-      "razorpay_signature": signature,
+      'razorpay_payment_id': paymentId,
+      'razorpay_order_id': orderId,
+      'razorpay_signature': signature,
     };
 
     final response = await clientWithToken.post(url, body: body);
@@ -590,7 +590,7 @@ class AccountsDatasource implements AccountsRepositories {
         return res;
       } else {
         ApiServerUtil.showAppToastforApi(
-          res[ApiResponseString.message] ?? "Payment verification failed",
+          res[ApiResponseString.message] ?? 'Payment verification failed',
           context,
         );
       }
@@ -609,7 +609,7 @@ class AccountsDatasource implements AccountsRepositories {
   ) async {
     final url = APIServerUrl.depositServerUrl + APIServerUrl.openMysteryBox;
 
-    final body = {"deposit_id": txnId};
+    final body = {'deposit_id': txnId};
 
     final response = await clientWithToken.post(url, body: body);
 
@@ -635,5 +635,50 @@ class AccountsDatasource implements AccountsRepositories {
       }
     }
     return null;
+  }
+
+  /// Fetch game tokens balance from Fantasy backend after Razorpay payment
+  /// Used to sync game tokens with backend after successful topup
+  /// Response includes: balance, winning, bonus, totalamount
+  Future<Map<String, dynamic>?> fetchGameTokensAfterPayment(
+      BuildContext context) async {
+    try {
+      final url =
+          '${APIServerUrl.userServerUrl}${APIServerUrl.myWalletDetails}';
+
+      final response = await clientWithToken.get(url);
+      final res = response.data;
+
+      if (ApiServerUtil.validateStatusCode(response.statusCode ?? 200)) {
+        if (res[ApiResponseString.success] == true) {
+          final data = res[ApiResponseString.data];
+          debugPrint('✅ [FANTASY_API] Game tokens fetched: ${data['balance']}');
+          return {
+            'success': true,
+            'data': data,
+          };
+        } else {
+          debugPrint('❌ [FANTASY_API] Error: ${res['message']}');
+          return {
+            'success': false,
+            'message': res['message'] ?? 'Failed to fetch game tokens',
+          };
+        }
+      } else {
+        if (context.mounted) {
+          ApiServerUtil.manageException(response, context);
+        }
+        return {
+          'success': false,
+          'message': 'API Error: ${response.statusCode}',
+        };
+      }
+    } catch (e) {
+      debugPrint('❌ [FANTASY_API] Exception fetching game tokens: $e');
+      return {
+        'success': false,
+        'message': 'Exception: $e',
+      };
+    }
   }
 }
