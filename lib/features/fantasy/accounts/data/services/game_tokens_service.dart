@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:unified_dream247/features/fantasy/accounts/data/models/game_tokens_model.dart';
 import 'package:unified_dream247/features/fantasy/accounts/data/managers/game_tokens_cache.dart';
+import 'package:unified_dream247/features/fantasy/accounts/data/services/game_tokens_error_handler.dart';
 import 'package:unified_dream247/features/fantasy/core/api_server_constants/api_server_impl/api_impl_header.dart';
 import 'package:unified_dream247/features/fantasy/core/api_server_constants/api_server_urls.dart';
 import 'package:unified_dream247/features/fantasy/core/api_server_constants/api_server_keys.dart';
@@ -151,7 +152,11 @@ class GameTokensService {
       debugPrint('✅ [GAME_TOKENS_SERVICE] Backend fetch successful: $balance');
       return tokens;
     } catch (e) {
-      debugPrint('❌ [GAME_TOKENS_SERVICE] Backend call failed: $e');
+      // Categorize and log error
+      final tokenError = GameTokensErrorHandler.categorizeError(e);
+      GameTokensErrorHandler.logError(tokenError, 'GameTokensService._fetchFromBackend');
+      
+      debugPrint('❌ [GAME_TOKENS_SERVICE] Backend call failed: ${tokenError.message}');
       return null;
     }
   }

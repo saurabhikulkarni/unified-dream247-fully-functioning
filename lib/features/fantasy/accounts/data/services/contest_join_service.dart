@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:unified_dream247/features/fantasy/accounts/data/models/game_tokens_model.dart';
 import 'package:unified_dream247/features/fantasy/accounts/data/managers/game_tokens_cache.dart';
+import 'package:unified_dream247/features/fantasy/accounts/data/services/game_tokens_error_handler.dart';
 import 'package:unified_dream247/features/fantasy/core/api_server_constants/api_server_impl/api_impl_header.dart';
 import 'package:unified_dream247/features/fantasy/core/api_server_constants/api_server_urls.dart';
 
@@ -78,10 +79,15 @@ class ContestJoinService {
     } on ContestJoinException {
       rethrow;
     } catch (e) {
-      debugPrint('❌ [CONTEST_JOIN] Unexpected error: $e');
+      // Categorize error and log
+      final tokenError = GameTokensErrorHandler.categorizeError(e);
+      GameTokensErrorHandler.logError(tokenError, 'ContestJoinService.joinContest');
+      
+      debugPrint('❌ [CONTEST_JOIN] Error: ${tokenError.message}');
       throw ContestJoinException(
-        'Failed to join contest: $e',
-        ContestJoinErrorCode.unexpectedError,
+        tokenError.message,
+        _mapTokenErrorToContestError(tokenError.type),
+      );
       );
     }
   }
@@ -199,6 +205,22 @@ class ContestJoinService {
     } catch (e) {
       debugPrint('⚠️ [CONTEST_JOIN] Error getting balance: $e');
       return 0.0;
+    }
+  }
+
+  /// Map TokenErrorType to ContestJoinErrorCode
+  ContestJoinErrorCode _mapTokenErrorToContestError(TokenErrorType type) {
+    switch (type) {
+      case TokenErrorType.insufficientBalance:
+        return ContestJoinErrorCode.insufficientBalance;
+      case TokenErrorType.networkError:
+        return ContestJoinErrorCode.networkError;
+      case TokenErrorType.backendError:
+        return ContestJoinErrorCode.backendError;
+      case TokenErrorType.unauthorized:
+        return ContestJoinErrorCode.unexpectedError;
+      case TokenErrorType.unknown:
+        return ContestJoinErrorCode.unexpectedError;
     }
   }
 }
