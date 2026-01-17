@@ -9,6 +9,7 @@ import 'firebase_options.dart';
 import 'app.dart';
 import 'core/di/injection_container.dart';
 import 'core/services/auth_service.dart' as core_auth;
+import 'features/fantasy/accounts/data/services/game_tokens_service.dart';
 
 // Ecommerce shop services
 import 'core/services/shop/cart_service.dart';
@@ -72,6 +73,22 @@ void main() async {
     await wishlistService.initialize();
     await cartService.initialize();
     await searchService.initialize();
+
+    // Initialize and fetch game tokens on app startup
+    try {
+      final gameTokensService = getIt<GameTokensService>();
+      final tokens = await gameTokensService.fetchGameTokensOnStartup();
+      
+      if (tokens != null) {
+        debugPrint(
+          '✅ Game tokens loaded on startup: ${tokens.balance} tokens',
+        );
+      } else {
+        debugPrint('⚠️ Game tokens not available on startup');
+      }
+    } catch (e) {
+      debugPrint('❌ Game tokens initialization error: $e');
+    }
 
     if (await shopAuthService.isUnifiedLoggedIn()) {
       debugPrint('✅ User logged in - syncing...');
