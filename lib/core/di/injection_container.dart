@@ -16,6 +16,7 @@ import '../../features/authentication/domain/usecases/verify_otp_usecase.dart';
 import '../../features/authentication/presentation/bloc/auth_bloc.dart';
 import '../../features/fantasy/accounts/data/managers/game_tokens_cache.dart';
 import '../../features/fantasy/accounts/data/services/game_tokens_service.dart';
+import '../../features/fantasy/accounts/data/services/contest_join_service.dart';
 import '../../features/fantasy/core/api_server_constants/api_server_impl/api_impl_header.dart';
 import '../network/api_client.dart';
 import '../network/graphql_client.dart';
@@ -56,6 +57,14 @@ Future<void> configureDependencies() async {
   getIt.registerLazySingleton(() => GameTokensCache());
   getIt.registerLazySingleton(
     () => GameTokensService(
+      getIt<ApiImplWithAccessToken>(),
+      getIt<GameTokensCache>(),
+    ),
+  );
+  
+  // Fantasy - Contest Operations
+  getIt.registerLazySingleton(
+    () => ContestJoinService(
       getIt<ApiImplWithAccessToken>(),
       getIt<GameTokensCache>(),
     ),
