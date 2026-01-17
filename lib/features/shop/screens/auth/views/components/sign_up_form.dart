@@ -75,8 +75,8 @@ class _SignUpFormState extends State<SignUpForm> {
 
   String? _sessionId; // Store session ID from OTP send response
 
-  Future<void> _sendOtp() async {
-    if (!widget.formKey.currentState!.validate()) return;
+  Future<void> _sendOtp({bool isResend = false}) async {
+    if (!isResend && !widget.formKey.currentState!.validate()) return;
 
     final phone = _phoneController.text.replaceAll(RegExp(r'[^\d]'), '');
 
@@ -297,7 +297,7 @@ class _SignUpFormState extends State<SignUpForm> {
               alignment: Alignment.centerRight,
               child: TextButton(
                 onPressed: _secondsLeft == 0 ? () async {
-                  await _sendOtp();
+                  await _sendOtp(isResend: true);
                 } : null,
                 child: Text(
                   _secondsLeft == 0
