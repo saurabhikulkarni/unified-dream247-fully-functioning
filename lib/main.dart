@@ -75,20 +75,7 @@ void main() async {
     await searchService.initialize();
 
     // Initialize and fetch game tokens on app startup
-    try {
-      final gameTokensService = getIt<GameTokensService>();
-      final tokens = await gameTokensService.fetchGameTokensOnStartup();
-      
-      if (tokens != null) {
-        debugPrint(
-          '✅ Game tokens loaded on startup: ${tokens.balance} tokens',
-        );
-      } else {
-        debugPrint('⚠️ Game tokens not available on startup');
-      }
-    } catch (e) {
-      debugPrint('❌ Game tokens initialization error: $e');
-    }
+    await _initializeGameTokens();
 
     if (await shopAuthService.isUnifiedLoggedIn()) {
       debugPrint('✅ User logged in - syncing...');
@@ -107,4 +94,27 @@ void main() async {
 
   // Run the app
   runApp(const MyApp());
+}
+
+/// Initialize game tokens on app startup
+/// Fetches from backend and caches locally
+Future<void> _initializeGameTokens() async {
+  try {
+    debugPrint('🔄 [APP_INIT] Initializing game tokens...');
+    
+    final gameTokensService = getIt<GameTokensService>();
+    final tokens = await gameTokensService.fetchGameTokensOnStartup();
+    
+    if (tokens != null) {
+      debugPrint(
+        '✅ [APP_INIT] Game tokens loaded: ${tokens.balance} tokens',
+      );
+    } else {
+      debugPrint('⚠️ [APP_INIT] Game tokens not available, using empty balance');
+    }
+  } catch (e) {
+    debugPrint('❌ [APP_INIT] Game tokens initialization error: $e');
+    // App will continue with default/empty tokens
+    // Users can manually refresh balance from wallet screen
+  }
 }
