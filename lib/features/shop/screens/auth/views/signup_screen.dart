@@ -20,7 +20,6 @@ class SignUpScreen extends StatefulWidget {
 class _SignUpScreenState extends State<SignUpScreen> {
   final _formKey = GlobalKey<FormState>();
   dynamic _signUpFormState;
-  bool _privacyAccepted = false;
 
   @override
   void initState() {
@@ -71,54 +70,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     },
                   ),
                   const SizedBox(height: defaultPadding),
-                  Row(
-                    children: [
-                      Checkbox(
-                        onChanged: (value) {
-                          setState(() {
-                            _privacyAccepted = value ?? false;
-                          });
-                        },
-                        value: _privacyAccepted,
-                      ),
-                      Expanded(
-                        child: Text.rich(
-                          TextSpan(
-                            text: 'I agree with the',
-                            children: [
-                              TextSpan(
-                                recognizer: TapGestureRecognizer()
-                                  ..onTap = () {
-                                    // TODO: Navigate to terms page when route is added
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(content: Text('Terms of service page coming soon')),
-                                    );
-                                  },
-                                text: ' Terms of service ',
-                                style: const TextStyle(
-                                  color: primaryColor,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                              const TextSpan(
-                                text: '& privacy policy.',
-                              ),
-                            ],
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                  const SizedBox(height: defaultPadding * 2),
                   ElevatedButton(
                     onPressed: () async {
                       if (!_formKey.currentState!.validate()) return;
 
-                      if (!_privacyAccepted) {
+                      if (!_signUpFormState.isTermsAgreed()) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                             content: Text(
-                                'Please accept the terms and privacy policy'),
+                                'Please agree to the terms and privacy policy'),
                           ),
                         );
                         return;

@@ -1,6 +1,8 @@
 ﻿import 'dart:async';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:unified_dream247/features/shop/services/auth_service.dart';
 import 'package:unified_dream247/features/shop/services/msg91_service.dart';
 
@@ -33,6 +35,7 @@ class _SignUpFormState extends State<SignUpForm> {
   Timer? _resendTimer;
   int _secondsLeft = 0;
   static const int _resendDuration = 30;
+  bool _agreeToTerms = false;
 
   @override
   void dispose() {
@@ -55,15 +58,17 @@ class _SignUpFormState extends State<SignUpForm> {
       _secondsLeft = _resendDuration;
     });
     _resendTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (_secondsLeft <= 1) {
-        timer.cancel();
-        setState(() {
-          _secondsLeft = 0;
-        });
-      } else {
-        setState(() {
-          _secondsLeft -= 1;
-        });
+      if (mounted) {
+        if (_secondsLeft <= 1) {
+          timer.cancel();
+          setState(() {
+            _secondsLeft = 0;
+          });
+        } else {
+          setState(() {
+            _secondsLeft -= 1;
+          });
+        }
       }
     });
   }
@@ -82,34 +87,50 @@ class _SignUpFormState extends State<SignUpForm> {
       builder: (context) => const Center(child: CircularProgressIndicator()),
     );
 
-    // Send OTP via MSG91 service (backend API)
-    final result = await msg91Service.sendOtp(phone);
-    
-    // Hide loading indicator
-    if (mounted) {
-      Navigator.of(context).pop();
-    }
+    try {
+      // Send OTP via MSG91 service (backend API)
+      final result = await msg91Service.sendOtp(phone);
+      
+      // Hide loading indicator
+      if (mounted) {
+        Navigator.of(context).pop();
+      }
 
-    if (result['success'] == true) {
-      setState(() {
-        _otpSent = true;
-        _sessionId = result['sessionId'];
-        _otpController.clear(); // Clear previous OTP if any
-      });
-      _startResendTimer();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(result['message'] ?? 'OTP sent to your mobile number.'),
-          backgroundColor: Colors.green,
-        ),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(result['message'] ?? 'Failed to send OTP. Please try again.'),
-          backgroundColor: Colors.red,
-        ),
-      );
+      if (result['success'] == true) {
+        if (mounted) {
+          setState(() {
+            _otpSent = true;
+            _sessionId = result['sessionId'];
+            _otpController.clear(); // Clear previous OTP if any
+          });
+          _startResendTimer();
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(result['message'] ?? 'OTP sent to your mobile number.'),
+              backgroundColor: Colors.green,
+            ),
+          );
+        }
+      } else {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(result['message'] ?? 'Failed to send OTP. Please try again.'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        Navigator.of(context).pop(); // Close loading dialog
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error sending OTP: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 
@@ -182,6 +203,10 @@ class _SignUpFormState extends State<SignUpForm> {
     final firstName = _firstNameController.text.trim();
     final lastName = _lastNameController.text.trim();
     return '$firstName $lastName'.trim();
+  }
+
+  bool isTermsAgreed() {
+    return _agreeToTerms;
   }
 
   @override
@@ -282,6 +307,53 @@ class _SignUpFormState extends State<SignUpForm> {
               ),
             ),
           ],
+          const SizedBox(height: defaultPadding),
+          // Terms and Privacy Policy Agreement
+          Row(
+            children: [
+              Checkbox(
+                value: _agreeToTerms,
+                onChanged: (value) {
+                  setState(() {
+                    _agreeToTerms = value ?? false;
+                  });
+                },
+              ),
+              Expanded(
+                child: RichText(
+                  text: TextSpan(
+                    style: const TextStyle(color: Colors.black87, fontSize: 13),
+                    children: [
+                      const TextSpan(text: 'I agree with '),
+                      TextSpan(
+                        text: 'Terms of Service',
+                        style: const TextStyle(
+                          color: Colors.blue,
+                          decoration: TextDecoration.underline,
+                        ),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () {
+                            context.push('/shop/terms-and-conditions');
+                          },
+                      ),
+                      const TextSpan(text: ' and '),
+                      TextSpan(
+                        text: 'Privacy Policy',
+                        style: const TextStyle(
+                          color: Colors.blue,
+                          decoration: TextDecoration.underline,
+                        ),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () {
+                            context.push('/shop/privacy-policy');
+                          },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ],
       ),
     );
