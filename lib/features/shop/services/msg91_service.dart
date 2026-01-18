@@ -83,9 +83,21 @@ class Msg91Service {
       if (kDebugMode) {
         print('❌ [MSG91] Error sending OTP: $e');
       }
+      
+      // Better error messages for common issues
+      String errorMessage = 'Failed to send OTP. Please try again.';
+      
+      if (e.toString().contains('CORS') || e.toString().contains('Failed to fetch')) {
+        errorMessage = 'Network error: Please check your internet connection or try again later.';
+      } else if (e.toString().contains('Connection refused')) {
+        errorMessage = 'Backend service unavailable. Please try again later.';
+      } else if (e.toString().contains('TimeoutException')) {
+        errorMessage = 'Request timed out. Please try again.';
+      }
+      
       return {
         'success': false,
-        'message': 'Network error. Please check your internet connection and try again.',
+        'message': errorMessage,
       };
     }
   }

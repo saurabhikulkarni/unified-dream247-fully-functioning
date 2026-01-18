@@ -53,6 +53,9 @@ Future<void> configureDependencies() async {
   // Services
   getIt.registerLazySingleton(() => UserService(getIt()));
   
+  // Fantasy - API Clients
+  getIt.registerLazySingleton(() => ApiImplWithAccessToken());
+  
   // Fantasy - Game Tokens
   getIt.registerLazySingleton(() => GameTokensCache());
   getIt.registerLazySingleton(
