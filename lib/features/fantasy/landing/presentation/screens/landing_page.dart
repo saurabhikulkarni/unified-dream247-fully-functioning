@@ -5,6 +5,7 @@ import 'package:unified_dream247/features/fantasy/core/api_server_constants/api_
 import 'package:unified_dream247/features/fantasy/core/app_constants/app_colors.dart';
 import 'package:unified_dream247/features/fantasy/core/global_widgets/main_appbar.dart';
 import 'package:unified_dream247/features/fantasy/core/utils/app_utils.dart';
+import 'package:unified_dream247/features/fantasy/core/utils/user_id_helper.dart';
 import 'package:unified_dream247/features/fantasy/landing/data/home_datasource.dart';
 import 'package:unified_dream247/features/fantasy/landing/domain/use_cases/home_usecases.dart';
 import 'package:unified_dream247/features/fantasy/landing/presentation/screens/home_page.dart';
@@ -32,6 +33,7 @@ class _LandingPageState extends State<LandingPage> {
   @override
   void initState() {
     super.initState();
+    _verifyUserIdAndInit();
     checkIfFirstLaunch();
     screens = [
       HomePage(updateIndex: updateIndex),
@@ -45,6 +47,30 @@ class _LandingPageState extends State<LandingPage> {
       const WinnersPage(),
       const MoreOptionsPage(),
     ];
+  }
+
+  /// Verify that userId is available in SharedPreferences
+  /// This ensures the user is properly logged in with Hygraph credentials
+  Future<void> _verifyUserIdAndInit() async {
+    try {
+      final userId = await UserIdHelper.getUnifiedUserId();
+      
+      if (userId.isEmpty) {
+        debugPrint('⚠️ [LANDING_PAGE] Warning: No userId found! User may not be logged in.');
+        // Optionally redirect to login - uncomment if needed
+        // if (mounted) {
+        //   context.go('/login');
+        // }
+      } else {
+        debugPrint('✅ [LANDING_PAGE] UserId verified: ${userId.substring(0, userId.length > 20 ? 20 : userId.length)}...');
+        debugPrint('✅ [LANDING_PAGE] User is properly authenticated for Fantasy features');
+      }
+      
+      // Show all stored keys for debugging
+      await UserIdHelper.debugPrintStoredKeys();
+    } catch (e) {
+      debugPrint('❌ [LANDING_PAGE] Error verifying userId: $e');
+    }
   }
 
   void updateIndex(int index) {

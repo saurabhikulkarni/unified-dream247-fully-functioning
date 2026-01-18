@@ -44,7 +44,7 @@ class ShiprocketConfig {
   // 
   // For local development: 'http://localhost:3000/api/shiprocket'
   // For production: 'https://your-backend.com/api/shiprocket'
-  static const String proxyUrl = 'https://brighthex-dream-24-7-backend-psi.vercel.app/api/shiprocket';
+  static const String proxyUrl = 'http://localhost:3000/api/shiprocket';
   // Example for local: static const String? proxyUrl = 'http://localhost:3000/api/shiprocket';
   
   // Note: When proxyUrl is configured, all Shiprocket API calls go through the backend.

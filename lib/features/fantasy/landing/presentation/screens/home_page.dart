@@ -80,6 +80,7 @@ class _HomePageState extends State<HomePage> {
       // Fetch fantasy token automatically
       final phone = prefs.getString('user_phone') ?? '';
       final name = prefs.getString('user_name') ?? '';
+      final userId = prefs.getString('user_id'); // Get Hygraph auto-generated ID
       
       if (phone.isNotEmpty) {
         try {
@@ -87,6 +88,7 @@ class _HomePageState extends State<HomePage> {
           final fantasyToken = await authService.fetchFantasyToken(
             phone: phone,
             name: name,
+            userId: userId, // Pass Hygraph auto-generated ID
             isNewUser: false,
           );
           

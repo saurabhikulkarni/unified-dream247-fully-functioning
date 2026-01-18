@@ -4,6 +4,7 @@ import 'package:unified_dream247/features/fantasy/accounts/data/managers/game_to
 import 'package:unified_dream247/features/fantasy/accounts/data/services/game_tokens_error_handler.dart';
 import 'package:unified_dream247/features/fantasy/core/api_server_constants/api_server_impl/api_impl_header.dart';
 import 'package:unified_dream247/features/fantasy/core/api_server_constants/api_server_urls.dart';
+import 'package:unified_dream247/features/fantasy/core/utils/user_id_helper.dart';
 
 /// Game Tokens Service
 /// Handles fetching and caching of game tokens from Fantasy backend
@@ -17,6 +18,14 @@ class GameTokensService {
   /// Priority: Backend > Cache > Default
   Future<GameTokens?> fetchGameTokensOnStartup() async {
     debugPrint('🔄 [GAME_TOKENS_SERVICE] Fetching game tokens on startup...');
+
+    // Verify userId is available
+    final userId = await UserIdHelper.getUnifiedUserId();
+    if (userId.isEmpty) {
+      debugPrint('⚠️ [GAME_TOKENS_SERVICE] Warning: No userId available! User may not be logged in.');
+    } else {
+      debugPrint('✅ [GAME_TOKENS_SERVICE] UserId verified: ${userId.substring(0, userId.length > 20 ? 20 : userId.length)}...');
+    }
 
     try {
       // Fetch from Fantasy backend

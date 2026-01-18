@@ -167,20 +167,25 @@ class AuthService {
       
       // Store userId and set it in wallet/wishlist/cart services
       if (userId != null && userId.isNotEmpty) {
-        await prefs.setString(_userIdKey, userId);
+        print('📝 [AUTH] Saving userId from Hygraph: ${userId.substring(0, userId.length > 20 ? 20 : userId.length)}...');
+        
+        // Save to all possible keys for Shop and Fantasy compatibility
+        await prefs.setString(_userIdKey, userId);              // user_id (primary)
+        await prefs.setString('shop_user_id', userId);          // shop_user_id (explicit)
+        await prefs.setString('user_id_fantasy', userId);       // user_id_fantasy (fantasy legacy)
+        await prefs.setString('userId', userId);                // userId (fantasy modern)
+        
         // Set userId in wallet, wishlist, cart, and user services for GraphQL backend sync
         walletService.setUserId(userId);
         wishlistService.setUserId(userId);
         cartService.setUserId(userId);
         await UserService.setCurrentUserId(userId);
         
-        // Store shop_user_id for fantasy app
-        await prefs.setString('shop_user_id', userId);
-        
-        // Share user ID with fantasy auth service
-        await prefs.setString('user_id_fantasy', userId);
+        // Fantasy session flags
         await prefs.setBool('is_logged_in_fantasy', true);
         await prefs.setString('user_phone_fantasy', phone);
+        
+        print('✅ [AUTH] UserId saved to all storage keys');
       }
       
       // Store user phone (shared identifier across both systems)
@@ -188,17 +193,24 @@ class AuthService {
       
       // Store fantasy JWT token for API authentication
       if (fantasyToken != null && fantasyToken.isNotEmpty) {
+        // Save to both keys for compatibility:
+        // - 'token' for Fantasy module (AppStorageKeys.authToken)
+        // - 'auth_token' for core AuthService (StorageConstants.authToken)
         await prefs.setString('token', fantasyToken);
+        await prefs.setString('auth_token', fantasyToken);
         print('✅ [AUTH] Fantasy token saved successfully');
         print('✅ [AUTH] Token length: ${fantasyToken.length}');
         print('✅ [AUTH] Token preview: ${fantasyToken.substring(0, fantasyToken.length > 20 ? 20 : fantasyToken.length)}...');
         
-        // Verify token was saved
-        final savedToken = prefs.getString('token');
-        if (savedToken == fantasyToken) {
-          print('✅ [AUTH] Token verified in SharedPreferences');
+        // Verify token was saved to both keys
+        final tokenKey1 = prefs.getString('token');
+        final tokenKey2 = prefs.getString('auth_token');
+        if (tokenKey1 == fantasyToken && tokenKey2 == fantasyToken) {
+          print('✅ [AUTH] Token verified in SharedPreferences (both keys)');
         } else {
           print('❌ [AUTH] Token verification failed!');
+          if (tokenKey1 != fantasyToken) print('  - Key "token" mismatch');
+          if (tokenKey2 != fantasyToken) print('  - Key "auth_token" mismatch');
         }
       } else {
         print('❌ [AUTH] No fantasy token to save (token is null or empty)');
@@ -214,28 +226,29 @@ class AuthService {
     String? name,
     String? username,
     String? shopUserId,
+    String? userId,
     bool isNewUser = false,
   }) async {
     try {
-      // Fantasy backend user endpoint
-      const baseUrl = 'http://143.244.140.102:4000/user';
+      // Fantasy backend user endpoint (correct path - NO /user prefix)
+      const baseUrl = 'http://143.244.140.102:4000';
       
-      // Prepare request body
+      // Prepare request body - send only required fields to Fantasy backend
       final body = {
         'phone': phone,
         if (name != null) 'name': name,
-        if (username != null) 'username': username,
-        if (shopUserId != null) 'shop_user_id': shopUserId,
-        'isNewUser': isNewUser,
+        if (userId != null) 'userId': userId,  // Hygraph auto-generated ID
       };
       
-      print('🔑 [AUTH] Fetching fantasy token for phone: $phone');
-      print('🔑 [AUTH] Backend URL: $baseUrl/auth/register-or-login');
+      print('🔑 [AUTH] ========== FETCHING FANTASY TOKEN ==========');
+      print('🔑 [AUTH] Phone: $phone');
+      print('🔑 [AUTH] Name: $name');
+      print('🔑 [AUTH] Backend URL: $baseUrl/api/user/login');
       print('🔑 [AUTH] Request body: ${json.encode(body)}');
       
       // Make HTTP POST request to fantasy backend
       final response = await http.post(
-        Uri.parse('$baseUrl/auth/register-or-login'),
+        Uri.parse('$baseUrl/api/user/login'),
         headers: {
           'Content-Type': 'application/json',
         },
@@ -248,15 +261,23 @@ class AuthService {
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = json.decode(response.body);
         print('🔑 [AUTH] Parsed response data: $data');
-        final token = data['token'] as String?;
+        print('🔑 [AUTH] Response keys available: ${data.keys.toList()}');
+        
+        // Try different possible token keys
+        final token = data['token'] as String? ?? 
+                      data['accessToken'] as String? ??
+                      data['access_token'] as String?;
         
         if (token != null && token.isNotEmpty) {
           print('✅ [AUTH] Fantasy token fetched successfully');
           print('✅ [AUTH] Token length: ${token.length}');
+          print('✅ [AUTH] Token preview: ${token.substring(0, token.length > 50 ? 50 : token.length)}...');
+          print('🔑 [AUTH] ========== FANTASY TOKEN READY ==========');
           return token;
         } else {
           print('⚠️ [AUTH] No token in response');
           print('⚠️ [AUTH] Response keys: ${data.keys}');
+          print('⚠️ [AUTH] Full response: $data');
           return null;
         }
       } else {
@@ -266,6 +287,7 @@ class AuthService {
       }
     } catch (e) {
       print('❌ [AUTH] Error fetching fantasy token: $e');
+      print('❌ [AUTH] Stack trace: ${StackTrace.current}');
       return null;
     }
   }

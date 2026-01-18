@@ -2,7 +2,7 @@
 class Msg91Config {
   /// Base URL for MSG91 backend API
   static const String baseUrl = 
-      'https://brighthex-dream-24-7-backend-psi.vercel.app/api';
+      'http://localhost:3000/api';
 
   /// Send OTP endpoint
   static const String sendOtpEndpoint = '$baseUrl/auth/send-otp';

@@ -203,9 +203,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             fantasyToken = await authService.fetchFantasyToken(
                               phone: phone,
                               name: name,
-                              username: phone, // Username is phone
-                              shopUserId: userId,
-                              isNewUser: true, // Signup creates new user
+                              userId: userId, // Hygraph auto-generated ID
                             );
                             
                             if (fantasyToken == null) {

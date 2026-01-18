@@ -104,10 +104,13 @@ flutter:
   uses-material-design: true
   
   assets:
+    # Root assets folder
+    - assets/
     # Common assets
     - assets/images/
     - assets/icons/
     - assets/animations/
+    - assets/fonts/
     # Ecommerce assets
     - assets/Illustration/
     - assets/flags/

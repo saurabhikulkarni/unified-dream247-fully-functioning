@@ -11,7 +11,7 @@ Successfully replaced the compromised shop login system with a complete MSG91 OT
 - Added `requestTimeoutSeconds` constant (30 seconds)
 - Added `otpExpiryMinutes` constant (10 minutes)
 - Added `resendCooldownSeconds` constant (30 seconds)
-- Base URL: `https://brighthex-dream-24-7-backend-psi.vercel.app/api`
+- Base URL: `http://localhost:3000/api`
 
 #### `lib/config/routes/app_router.dart`
 - Changed splash screen from `SplashScreen` (shop) to `SplashPage` (authentication)
@@ -142,7 +142,7 @@ Automatically dispatches SendOtpEvent(phone: phoneNumber)
   ↓
 AuthBloc → SendOtpUseCase → AuthRepository → AuthRemoteDataSource
   ↓
-POST https://brighthex-dream-24-7-backend-psi.vercel.app/api/auth/send-otp
+POST http://localhost:3000/api/auth/send-otp
 Body: { "mobileNumber": "919876543210" }
   ↓
 Backend sends OTP via MSG91
@@ -164,7 +164,7 @@ AuthBloc receives VerifyOtpEvent(phone: phone, otp: otp)
   ↓
 AuthBloc → VerifyOtpUseCase → AuthRepository → AuthRemoteDataSource
   ↓
-POST https://brighthex-dream-24-7-backend-psi.vercel.app/api/auth/verify-otp
+POST http://localhost:3000/api/auth/verify-otp
 Body: { "mobileNumber": "919876543210", "otp": "123456" }
   ↓
 Backend verifies OTP with MSG91
@@ -301,7 +301,7 @@ Navigate to login (context.go('/login'))
 
 #### Send OTP
 ```
-POST https://brighthex-dream-24-7-backend-psi.vercel.app/api/auth/send-otp
+POST http://localhost:3000/api/auth/send-otp
 Content-Type: application/json
 
 Request:
@@ -325,7 +325,7 @@ Error Response (400/500):
 
 #### Verify OTP
 ```
-POST https://brighthex-dream-24-7-backend-psi.vercel.app/api/auth/verify-otp
+POST http://localhost:3000/api/auth/verify-otp
 Content-Type: application/json
 
 Request:

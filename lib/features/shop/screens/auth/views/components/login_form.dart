@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:unified_dream247/config/routes/route_names.dart';
 import 'package:unified_dream247/core/constants/api_constants.dart';
 import 'package:unified_dream247/core/services/auth_service.dart' as core_auth;
@@ -288,10 +289,15 @@ class _LogInFormState extends State<LogInForm> {
       // Fetch fantasy authentication token from backend
       String? fantasyToken;
       try {
+        // Get stored userId (Hygraph auto-generated ID) from SharedPreferences
+        final prefs = await SharedPreferences.getInstance();
+        final storedUserId = prefs.getString('user_id');
+        
+        final authService = AuthService();
         fantasyToken = await authService.fetchFantasyToken(
           phone: phone,
           name: name,
-          isNewUser: false, // Login assumes existing user
+          userId: storedUserId, // Pass Hygraph auto-generated ID
         );
         
         if (fantasyToken == null) {

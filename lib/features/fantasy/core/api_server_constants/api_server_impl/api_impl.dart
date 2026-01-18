@@ -2,8 +2,10 @@ import 'dart:async';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:unified_dream247/core/services/auth_service.dart' as core_auth;
 import 'package:unified_dream247/core/constants/api_constants.dart';
+import 'package:unified_dream247/features/fantasy/core/utils/user_id_helper.dart';
 
 class ApiImpl {
   final Dio _dio;
@@ -17,17 +19,32 @@ class ApiImpl {
         ),
       );
 
-  /// Get headers with unified auth token (auto-refresh if expired)
+  /// Get headers with unified auth token and userId
   Future<Map<String, String>> getHeaders() async {
     final authService = core_auth.AuthService();
     await authService.initialize();
     final token = await authService.getValidToken(ApiConstants.fantasyBackendUrl);
     
-    return {
+    // Get userId from unified storage
+    final userId = await UserIdHelper.getUnifiedUserId();
+    
+    final headers = {
       'Content-Type': 'application/json',
       'Authorization': token != null ? 'Bearer $token' : '',
       'Accept': 'application/json',
     };
+    
+    // Add userId header if available (Hygraph user ID)
+    if (userId.isNotEmpty) {
+      headers['X-User-ID'] = userId;
+      if (kDebugMode) {
+        debugPrint('📝 [API] Added userId header: ${userId.substring(0, userId.length > 20 ? 20 : userId.length)}...');
+      }
+    } else {
+      debugPrint('⚠️ [API] No userId available for X-User-ID header');
+    }
+    
+    return headers;
   }
 
   /// Common request executor with retry + logging + auto token refresh

@@ -5,7 +5,7 @@ class RazorpayConfig {
 
   /// Backend base URL for payment processing
   static const String backendBaseUrl = 
-      'https://brighthex-dream-24-7-backend-psi.vercel.app/api';
+      'http://localhost:3000/api';
 
   /// Create order endpoint
   static const String createOrderEndpoint = '$backendBaseUrl/payment/create-order';

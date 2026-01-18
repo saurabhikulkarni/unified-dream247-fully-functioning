@@ -14,7 +14,7 @@ class RazorpayConfig {
   static const String keySecret = 'STORED_ON_BACKEND_SERVER';
 
   // Backend API base URL for Razorpay operations
-  static const String backendBaseUrl = 'https://brighthex-dream-24-7-backend-psi.vercel.app/api';
+  static const String backendBaseUrl = 'http://localhost:3000/api';
   
   // Backend API endpoints
   static const String createOrderEndpoint = '$backendBaseUrl/payments/create-order';

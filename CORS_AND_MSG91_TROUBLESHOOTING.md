@@ -4,7 +4,7 @@
 
 ### Issue #1: CORS Policy Error
 ```
-❌ Access to fetch at 'https://brighthex-dream-24-7-backend-psi.vercel.app/api/auth/send-otp' 
+❌ Access to fetch at 'http://localhost:3000/api/auth/send-otp' 
    from origin 'http://localhost:59030' has been blocked by CORS policy: 
    Response to preflight request doesn't pass access control check: 
    No 'Access-Control-Allow-Origin' header is present on the requested resource.
@@ -80,7 +80,7 @@ Instead of calling the backend API directly from Flutter frontend, use a proxy:
 // Change from direct backend call to local proxy
 // OLD:
 static const String baseUrl = 
-    'https://brighthex-dream-24-7-backend-psi.vercel.app/api';
+    'http://localhost:3000/api';
 
 // NEW: Use your local/proxy backend
 static const String baseUrl = 
@@ -153,7 +153,7 @@ if (e.toString().contains('CORS') || e.toString().contains('Failed to fetch')) {
 
 1. **Check if backend is running:**
    ```bash
-   curl -X OPTIONS https://brighthex-dream-24-7-backend-psi.vercel.app/api/auth/send-otp \
+   curl -X OPTIONS http://localhost:3000/api/auth/send-otp \
      -H "Origin: http://localhost:59030" \
      -H "Access-Control-Request-Method: POST" \
      -H "Access-Control-Request-Headers: Content-Type"
