@@ -1,6 +1,9 @@
 // ignore_for_file: use_build_context_synchronously
 import 'dart:async';
+import 'dart:convert';
 import 'dart:math';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:unified_dream247/features/fantasy/core/global_widgets/dashed_underline_text.dart';
 import 'package:unified_dream247/features/fantasy/accounts/presentation/widgets/token_tier_bottomsheet.dart';
 import 'package:unified_dream247/features/fantasy/menu_items/data/models/user_data.dart';
@@ -163,6 +166,60 @@ class _AddMoneyPage extends State<AddMoneyPage> {
     return true;
   }
 
+  /// Sync shop tokens to Shop backend after payment success
+  Future<void> _syncShopTokensToShopBackend({
+    required double amount,
+    required String paymentId,
+    required String orderId,
+  }) async {
+    try {
+      final authToken = await _getAuthToken();
+      if (authToken == null) {
+        debugPrint('⚠️ [SHOP_SYNC] No auth token available, skipping sync');
+        return;
+      }
+
+      final response = await http.post(
+        Uri.parse('http://143.244.140.102:4000/api/user/wallet/sync-shop-tokens-to-shop'),
+        headers: {
+          'Authorization': 'Bearer $authToken',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'amount': amount,
+          'paymentId': paymentId,
+          'orderId': orderId,
+        }),
+      ).timeout(const Duration(seconds: 10));
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = jsonDecode(response.body);
+        debugPrint('✅ [SHOP_SYNC] Shop tokens synced successfully');
+        debugPrint('📊 [SHOP_SYNC] New shop balance: ${data['newBalance']}');
+      } else {
+        debugPrint('❌ [SHOP_SYNC] Failed to sync: ${response.statusCode}');
+        debugPrint('❌ [SHOP_SYNC] Response: ${response.body}');
+      }
+    } catch (e) {
+      debugPrint('❌ [SHOP_SYNC] Error syncing shop tokens: $e');
+      // Don't throw - this is a non-critical operation
+    }
+  }
+
+  /// Get auth token from SharedPreferences
+  Future<String?> _getAuthToken() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      // Try multiple possible token keys
+      return prefs.getString('token') ?? 
+             prefs.getString('auth_token') ?? 
+             prefs.getString('fantasy_token');
+    } catch (e) {
+      debugPrint('⚠️ [SHOP_SYNC] Error getting auth token: $e');
+      return null;
+    }
+  }
+
   void _handlePaymentSuccess(PaymentSuccessResponse response) async {
     setState(() => _isPaymentFlowLocked = true);
     final res = await accountsUsecases.verifyRazorpayPayment(
@@ -197,6 +254,14 @@ class _AddMoneyPage extends State<AddMoneyPage> {
           (await walletService.getGameTokens()) + amount
         );
       }
+      
+      // 3️⃣ NEW: Sync shop tokens to Shop backend
+      await _syncShopTokensToShopBackend(
+        amount: amount,
+        paymentId: response.paymentId ?? '',
+        orderId: response.orderId ?? '',
+      );
+      debugPrint('✅ [ADD_MONEY] Shop backend synced with new tokens');
       
       appToast(res['message'] ?? 'Payment Successful', context);
       setState(() => _showMysteryBox = true);

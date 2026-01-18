@@ -1,7 +1,10 @@
 import 'package:animations/animations.dart';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:unified_dream247/features/shop/constants.dart';
 import 'package:unified_dream247/features/shop/route/screen_export.dart';
 import 'package:unified_dream247/features/shop/services/cart_service.dart';
@@ -59,24 +62,69 @@ class _EntryPointState extends State<EntryPoint> with WidgetsBindingObserver {
 
   Future<void> _loadWalletBalance() async {
     try {
-      await _walletService.initialize();
-      final balance = await _walletService.getShopTokens();
+      // Load header balance using optimized game-tokens-only endpoint
+      final headerBalance = await _loadHeaderGameTokens();
       if (mounted) {
         setState(() {
-          walletBalance = balance;
-          shoppingTokens = balance.toInt();
+          shoppingTokens = headerBalance;
+          walletBalance = headerBalance.toDouble();
         });
-        debugPrint('💰 [ENTRY_POINT] Wallet updated: Balance=$walletBalance, Tokens=$shoppingTokens');
+        debugPrint('💰 [ENTRY_POINT] Header balance updated: $shoppingTokens');
       }
     } catch (e) {
-      debugPrint('⚠️ [ENTRY_POINT] Error loading wallet balance: $e');
+      debugPrint('⚠️ [ENTRY_POINT] Error loading header balance: $e');
       // Fallback to 0 if error
       if (mounted) {
         setState(() {
-          walletBalance = 0.0;
           shoppingTokens = 0;
+          walletBalance = 0.0;
         });
       }
+    }
+  }
+
+  /// Load game tokens from optimized header endpoint
+  Future<int> _loadHeaderGameTokens() async {
+    try {
+      final authToken = await _getHeaderAuthToken();
+      if (authToken == null) {
+        debugPrint('⚠️ [HEADER_BALANCE] No auth token, using fallback');
+        return 0;
+      }
+
+      final response = await http.get(
+        Uri.parse('http://143.244.140.102:4000/api/user/wallet/game-tokens-only'),
+        headers: {
+          'Authorization': 'Bearer $authToken',
+          'Content-Type': 'application/json',
+        },
+      ).timeout(const Duration(seconds: 5));
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        final gameTokens = (data['gameTokens'] as num?)?.toInt() ?? 0;
+        debugPrint('✅ [HEADER_BALANCE] Game tokens fetched: $gameTokens');
+        return gameTokens;
+      } else {
+        debugPrint('❌ [HEADER_BALANCE] Failed: ${response.statusCode}');
+        return 0;
+      }
+    } catch (e) {
+      debugPrint('❌ [HEADER_BALANCE] Error: $e');
+      return 0;
+    }
+  }
+
+  /// Get auth token from SharedPreferences
+  Future<String?> _getHeaderAuthToken() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      return prefs.getString('token') ?? 
+             prefs.getString('auth_token') ?? 
+             prefs.getString('fantasy_token');
+    } catch (e) {
+      debugPrint('⚠️ [HEADER_BALANCE] Error getting auth token: $e');
+      return null;
     }
   }
 
