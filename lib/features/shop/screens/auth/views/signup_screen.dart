@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:unified_dream247/config/routes/route_names.dart';
 import 'package:unified_dream247/features/shop/screens/auth/views/components/sign_up_form.dart';
 import 'package:unified_dream247/features/shop/services/auth_service.dart';
@@ -216,6 +217,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           
                           // Save login session with userId from Hygraph and fantasy token
                           final authService = AuthService();
+                          
+                          // Store shopTokens balance (new users typically start with 0)
+                          final prefs = await SharedPreferences.getInstance();
+                          final initialShopTokens = 0; // New users start with 0 tokens
+                          await prefs.setInt('shop_tokens', initialShopTokens);
+                          debugPrint('💰 [SIGNUP] Stored initial shopTokens: $initialShopTokens');
+                          
                           await authService.saveLoginSession(
                             phone: phone,
                             name: name,
@@ -223,6 +231,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             userId: userId,
                             fantasyToken: fantasyToken,
                           );
+                          
+                          debugPrint('✅ [SIGNUP] User session saved with shopTokens');
                           
                           if (!mounted) return;
                           Navigator.of(context).pop(); // Hide loading

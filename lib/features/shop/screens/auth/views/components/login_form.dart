@@ -201,6 +201,12 @@ class _LogInFormState extends State<LogInForm> {
         final token = data['token'];
         final refreshToken = data['refreshToken'];
         
+        // Store shopTokens balance BEFORE saving session
+        final prefs = await SharedPreferences.getInstance();
+        final shopTokens = user['shopTokens'] ?? 0;
+        await prefs.setInt('shop_tokens', shopTokens);
+        debugPrint('💰 [OTP_VERIFY] Stored shopTokens: $shopTokens');
+        
         // Store all unified auth data using core auth service
         final coreAuthService = core_auth.AuthService();
         await coreAuthService.initialize();
@@ -216,11 +222,13 @@ class _LogInFormState extends State<LogInForm> {
           refreshToken: refreshToken,
         );
         
+        debugPrint('✅ [OTP_VERIFY] User session saved with shopTokens');
         return {'success': true, 'message': 'Login successful'};
       }
       
       return {'success': false, 'message': data['message'] ?? 'OTP verification failed'};
     } catch (e) {
+      debugPrint('❌ [OTP_VERIFY] Error: $e');
       return {'success': false, 'message': 'Error: $e'};
     }
   }
@@ -285,12 +293,41 @@ class _LogInFormState extends State<LogInForm> {
     // For web platform, skip GraphQL/Hive operations and use simple session storage
     try {
       final authService = AuthService();
+      final prefs = await SharedPreferences.getInstance();
+      
+      // NEW: Fetch shopTokens balance from backend after MSG91 OTP verification
+      try {
+        // Get auth token if available
+        final authToken = prefs.getString('token') ?? prefs.getString('auth_token');
+        
+        // If we have auth token, fetch shopTokens from backend
+        if (authToken != null && authToken.isNotEmpty) {
+          final response = await http.get(
+            Uri.parse('http://143.244.140.102:4000/api/user/wallet/balance-full'),
+            headers: {
+              'Authorization': 'Bearer $authToken',
+              'Content-Type': 'application/json',
+            },
+          ).timeout(const Duration(seconds: 8));
+          
+          if (response.statusCode == 200) {
+            final data = jsonDecode(response.body);
+            final walletData = data['data'] ?? data;
+            final shopTokens = (walletData['shopTokens'] as num?)?.toInt() ?? 0;
+            await prefs.setInt('shop_tokens', shopTokens);
+            debugPrint('💰 [LOGIN] Stored shopTokens after MSG91 verification: $shopTokens');
+          }
+        }
+      } catch (e) {
+        debugPrint('⚠️ [LOGIN] Could not fetch shopTokens from backend: $e');
+        // Fallback: initialize with 0
+        await prefs.setInt('shop_tokens', 0);
+      }
       
       // Fetch fantasy authentication token from backend
       String? fantasyToken;
       try {
         // Get stored userId (Hygraph auto-generated ID) from SharedPreferences
-        final prefs = await SharedPreferences.getInstance();
         final storedUserId = prefs.getString('user_id');
         
         final authService = AuthService();

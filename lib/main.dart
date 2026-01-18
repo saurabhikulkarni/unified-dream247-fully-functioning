@@ -9,6 +9,7 @@ import 'firebase_options.dart';
 import 'app.dart';
 import 'core/di/injection_container.dart';
 import 'core/services/auth_service.dart' as core_auth;
+import 'core/providers/app_provider.dart';
 import 'features/fantasy/accounts/data/services/game_tokens_service.dart';
 
 // Ecommerce shop services
@@ -67,6 +68,9 @@ void main() async {
     // Initialize shared authentication service
     await core_auth.authService.initialize();
     
+    // Initialize app provider for periodic balance refresh
+    appProvider = AppProvider(refreshInterval: 30);
+    
     final shopAuthService = shop_auth.AuthService();
     
     // Initialize ecommerce services
@@ -84,6 +88,9 @@ void main() async {
       
       await wishlistService.syncWithBackend();
       await cartService.syncWithBackend();
+      
+      // Trigger initial refresh for logged-in users
+      await appProvider.forceRefresh();
     }
 
     debugPrint('✅ All services initialized');

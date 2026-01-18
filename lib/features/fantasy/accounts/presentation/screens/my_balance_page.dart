@@ -1,7 +1,10 @@
 import 'package:get/get.dart';
+import 'dart:convert';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:unified_dream247/features/fantasy/landing/data/singleton/app_singleton.dart';
 import 'package:provider/provider.dart';
 import 'package:unified_dream247/features/fantasy/core/api_server_constants/api_server_impl/api_impl.dart';
@@ -32,6 +35,8 @@ class _MyBalancePage extends State<MyBalancePage> {
   );
   DateTime? lastRefreshTime;
   double _shopTokens = 0.0;
+  double _totalSpent = 0.0;
+  double _totalAdded = 0.0;
   List<Map<String, dynamic>> _mergedTransactions = [];
   bool _isLoadingTransactions = false;
 
@@ -69,26 +74,120 @@ class _MyBalancePage extends State<MyBalancePage> {
     debugPrint('📊 [FANTASY_WALLET] Shop tokens loaded: $shopTokens');
   }
 
-  /// Load merged transaction history (Shop + Fantasy)
-  Future<void> _loadTransactionHistory() async {
+  /// Load merged transaction history from unified endpoint
+  Future<void> _loadTransactionHistory({int page = 1, int limit = 10}) async {
     setState(() => _isLoadingTransactions = true);
     try {
-      await walletService.initialize();
-      
-      // Get merged transactions from wallet service
-      final merged = await walletService.getMergedTransactionHistory(
-        fantasyTransactions: [], // Add fantasy transactions if available
-      );
-      
-      setState(() {
-        _mergedTransactions = merged;
-      });
-      
-      debugPrint('✅ [FANTASY_WALLET] Loaded ${merged.length} transactions');
+      final authToken = await _getWalletAuthToken();
+      if (authToken == null) {
+        debugPrint('⚠️ [TRANSACTION_HISTORY] No auth token, skipping');
+        setState(() => _isLoadingTransactions = false);
+        return;
+      }
+
+      final response = await http.get(
+        Uri.parse(
+          'http://143.244.140.102:4000/api/user/wallet/unified-history?page=$page&limit=$limit',
+        ),
+        headers: {
+          'Authorization': 'Bearer $authToken',
+          'Content-Type': 'application/json',
+        },
+      ).timeout(const Duration(seconds: 8));
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        final responseData = data['data'] ?? data;
+        final transactionList = responseData['transactions'] as List?;
+        
+        setState(() {
+          _mergedTransactions = transactionList?.map((t) {
+            return {
+              'id': t['id'],
+              'type': t['type'], // 'add_money', 'purchase', 'contest_entry', 'contest_won'
+              'amount': (t['amount'] as num?)?.toDouble() ?? 0.0,
+              'description': t['description'],
+              'timestamp': DateTime.tryParse(t['timestamp'] ?? '') ?? DateTime.now(),
+              'module': t['module'], // 'shop' or 'fantasy'
+              'icon': t['icon'], // emoji icon
+            };
+          }).toList() ?? [];
+        });
+        
+        debugPrint('✅ [TRANSACTION_HISTORY] Loaded ${_mergedTransactions.length} transactions');
+        debugPrint('📊 [TRANSACTION_HISTORY] Page: $page, Limit: $limit');
+      } else {
+        debugPrint('❌ [TRANSACTION_HISTORY] Failed: ${response.statusCode}');
+      }
     } catch (e) {
-      debugPrint('❌ [FANTASY_WALLET] Error loading transactions: $e');
+      debugPrint('❌ [TRANSACTION_HISTORY] Error loading: $e');
+      // Fallback to wallet service
+      try {
+        await walletService.initialize();
+        final merged = await walletService.getMergedTransactionHistory(
+          fantasyTransactions: [],
+        );
+        setState(() {
+          _mergedTransactions = merged;
+        });
+        debugPrint('✅ [TRANSACTION_HISTORY] Loaded from fallback service');
+      } catch (fallbackE) {
+        debugPrint('❌ [TRANSACTION_HISTORY] Fallback also failed: $fallbackE');
+      }
     } finally {
       setState(() => _isLoadingTransactions = false);
+    }
+  }
+
+  /// Load full wallet balance from optimized endpoint
+  Future<void> _loadFullWalletBalance() async {
+    try {
+      final authToken = await _getWalletAuthToken();
+      if (authToken == null) {
+        debugPrint('⚠️ [WALLET_SCREEN] No auth token, using fallback');
+        return;
+      }
+
+      final response = await http.get(
+        Uri.parse('http://143.244.140.102:4000/api/user/wallet/balance-full'),
+        headers: {
+          'Authorization': 'Bearer $authToken',
+          'Content-Type': 'application/json',
+        },
+      ).timeout(const Duration(seconds: 8));
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        final walletData = data['data'] ?? data;
+        
+        setState(() {
+          _shopTokens = (walletData['shopTokens'] as num?)?.toDouble() ?? 0.0;
+          _totalSpent = (walletData['totalSpent'] as num?)?.toDouble() ?? 0.0;
+          _totalAdded = (walletData['totalAdded'] as num?)?.toDouble() ?? 0.0;
+        });
+        
+        debugPrint('✅ [WALLET_SCREEN] Full wallet loaded');
+        debugPrint('   Shop Tokens: $_shopTokens');
+        debugPrint('   Total Spent: $_totalSpent');
+        debugPrint('   Total Added: $_totalAdded');
+      } else {
+        debugPrint('❌ [WALLET_SCREEN] Failed: ${response.statusCode}');
+      }
+    } catch (e) {
+      debugPrint('❌ [WALLET_SCREEN] Error loading full wallet: $e');
+    }
+  }
+
+  /// Get auth token from SharedPreferences
+  Future<String?> _getWalletAuthToken() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      return prefs.getString('token') ?? 
+             prefs.getString('auth_token') ?? 
+             prefs.getString('fantasy_token');
+    } catch (e) {
+      debugPrint('⚠️ [WALLET_SCREEN] Error getting auth token: $e');
+      return null;
     }
   }
 
@@ -102,6 +201,11 @@ class _MyBalancePage extends State<MyBalancePage> {
 
     lastRefreshTime = now;
     await accountsUsecases.myWalletDetails(context);
+    
+    // Load full wallet data from optimized endpoint
+    await _loadFullWalletBalance();
+    
+    // Also load individual components for redundancy
     await _loadShopTokens();
     await _loadGameTokens();
     await _loadTransactionHistory();

@@ -555,6 +555,52 @@ class AuthService {
       return null;
     }
   }
+
+  /// Refresh access token and update shopTokens
+  Future<String?> refreshAccessToken() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final refreshToken = prefs.getString('refresh_token');
+      
+      if (refreshToken == null || refreshToken.isEmpty) {
+        debugPrint('⚠️ [TOKEN_REFRESH] No refresh token available');
+        return null;
+      }
+
+      final response = await http.post(
+        Uri.parse('http://143.244.140.102:4000/api/auth/refresh-token'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'refreshToken': refreshToken}),
+      ).timeout(const Duration(seconds: 8));
+      
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        
+        // Update auth token
+        final newToken = data['token'] ?? data['accessToken'];
+        if (newToken != null) {
+          await prefs.setString(_authTokenKey, newToken);
+          await prefs.setString('token', newToken);
+        }
+        
+        // NEW: Update shopTokens balance from backend response
+        if (data['user'] != null && data['user']['shopTokens'] != null) {
+          final shopTokens = (data['user']['shopTokens'] as num).toInt();
+          await prefs.setInt('shop_tokens', shopTokens);
+          debugPrint('💰 [TOKEN_REFRESH] Updated shopTokens: $shopTokens');
+        }
+        
+        debugPrint('✅ [TOKEN_REFRESH] Token refreshed successfully');
+        return newToken;
+      } else {
+        debugPrint('❌ [TOKEN_REFRESH] Failed: ${response.statusCode}');
+        return null;
+      }
+    } catch (e) {
+      debugPrint('❌ [TOKEN_REFRESH] Error: $e');
+      return null;
+    }
+  }
 }
 
 // Global instance

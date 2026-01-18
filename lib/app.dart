@@ -5,6 +5,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'config/routes/app_router.dart';
 import 'config/theme/app_theme.dart';
 
+// Shop providers
+import 'core/providers/shop_tokens_provider.dart';
+
 // Fantasy providers (all 11 providers as specified)
 import 'features/fantasy/accounts/presentation/providers/wallet_details_provider.dart';
 import 'features/fantasy/menu_items/presentation/providers/user_data_provider.dart';
@@ -34,6 +37,9 @@ class MyApp extends StatelessWidget {
       builder: (context, child) {
         return MultiProvider(
           providers: [
+            // Shop providers
+            ChangeNotifierProvider(create: (_) => ShopTokensProvider(refreshInterval: 30)),
+            
             // Fantasy gaming providers (11 providers)
             ChangeNotifierProvider(create: (_) => UserDataProvider()),
             ChangeNotifierProvider(create: (_) => MyTeamsProvider()),

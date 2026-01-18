@@ -4,12 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:unified_dream247/features/shop/constants.dart';
 import 'package:unified_dream247/features/shop/route/screen_export.dart';
 import 'package:unified_dream247/features/shop/services/cart_service.dart';
 import 'package:unified_dream247/features/shop/services/wishlist_service.dart';
 import 'package:unified_dream247/core/services/wallet_service.dart';
+import 'package:unified_dream247/core/providers/shop_tokens_provider.dart';
 
 class EntryPoint extends StatefulWidget {
   const EntryPoint({super.key});
@@ -20,7 +22,6 @@ class EntryPoint extends StatefulWidget {
 
 class _EntryPointState extends State<EntryPoint> with WidgetsBindingObserver {
   double walletBalance = 0.0;
-  int shoppingTokens = 0;
   int _currentIndex = 0;
   final UnifiedWalletService _walletService = walletService;
 
@@ -42,7 +43,6 @@ class _EntryPointState extends State<EntryPoint> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _loadWalletBalance();
   }
 
   @override
@@ -55,76 +55,9 @@ class _EntryPointState extends State<EntryPoint> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
       // Auto-refresh wallet when app resumes from background
-      print('🔄 [ENTRY_POINT] App resumed, refreshing wallet balance');
-      _loadWalletBalance();
-    }
-  }
-
-  Future<void> _loadWalletBalance() async {
-    try {
-      // Load header balance using optimized game-tokens-only endpoint
-      final headerBalance = await _loadHeaderGameTokens();
-      if (mounted) {
-        setState(() {
-          shoppingTokens = headerBalance;
-          walletBalance = headerBalance.toDouble();
-        });
-        debugPrint('💰 [ENTRY_POINT] Header balance updated: $shoppingTokens');
-      }
-    } catch (e) {
-      debugPrint('⚠️ [ENTRY_POINT] Error loading header balance: $e');
-      // Fallback to 0 if error
-      if (mounted) {
-        setState(() {
-          shoppingTokens = 0;
-          walletBalance = 0.0;
-        });
-      }
-    }
-  }
-
-  /// Load game tokens from optimized header endpoint
-  Future<int> _loadHeaderGameTokens() async {
-    try {
-      final authToken = await _getHeaderAuthToken();
-      if (authToken == null) {
-        debugPrint('⚠️ [HEADER_BALANCE] No auth token, using fallback');
-        return 0;
-      }
-
-      final response = await http.get(
-        Uri.parse('http://143.244.140.102:4000/api/user/wallet/game-tokens-only'),
-        headers: {
-          'Authorization': 'Bearer $authToken',
-          'Content-Type': 'application/json',
-        },
-      ).timeout(const Duration(seconds: 5));
-
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        final gameTokens = (data['gameTokens'] as num?)?.toInt() ?? 0;
-        debugPrint('✅ [HEADER_BALANCE] Game tokens fetched: $gameTokens');
-        return gameTokens;
-      } else {
-        debugPrint('❌ [HEADER_BALANCE] Failed: ${response.statusCode}');
-        return 0;
-      }
-    } catch (e) {
-      debugPrint('❌ [HEADER_BALANCE] Error: $e');
-      return 0;
-    }
-  }
-
-  /// Get auth token from SharedPreferences
-  Future<String?> _getHeaderAuthToken() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      return prefs.getString('token') ?? 
-             prefs.getString('auth_token') ?? 
-             prefs.getString('fantasy_token');
-    } catch (e) {
-      debugPrint('⚠️ [HEADER_BALANCE] Error getting auth token: $e');
-      return null;
+      print('🔄 [ENTRY_POINT] App resumed, refreshing shopTokens');
+      final shopTokensProvider = context.read<ShopTokensProvider>();
+      shopTokensProvider.forceRefresh();
     }
   }
 
@@ -267,23 +200,27 @@ class _EntryPointState extends State<EntryPoint> with WidgetsBindingObserver {
           ),
           Padding(
             padding: EdgeInsets.only(right: rightPadding),
-            child: Row(
-              children: [
-                SvgPicture.asset(
-                  'assets/icons/coin.svg',
-                  height: tokenIconSize,
-                  width: tokenIconSize,
-                ),
-                SizedBox(width: tokenSpacing),
-                Text(
-                  shoppingTokens.toString(),
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: tokenFontSize,
-                    color: const Color(0xFFFFC107),
-                  ),
-                ),
-              ],
+            child: Consumer<ShopTokensProvider>(
+              builder: (context, shopTokensProvider, child) {
+                return Row(
+                  children: [
+                    SvgPicture.asset(
+                      'assets/icons/coin.svg',
+                      height: tokenIconSize,
+                      width: tokenIconSize,
+                    ),
+                    SizedBox(width: tokenSpacing),
+                    Text(
+                      shopTokensProvider.shopTokens.toString(),
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: tokenFontSize,
+                        color: const Color(0xFFFFC107),
+                      ),
+                    ),
+                  ],
+                );
+              },
             ),
           ),
         ],
@@ -343,9 +280,10 @@ class _EntryPointState extends State<EntryPoint> with WidgetsBindingObserver {
                   setState(() {
                     _currentIndex = index;
                   });
-                  // Refresh wallet after navigation completes
+                  // Trigger token refresh after navigation completes
                   WidgetsBinding.instance.addPostFrameCallback((_) {
-                    _loadWalletBalance();
+                    final shopTokensProvider = context.read<ShopTokensProvider>();
+                    shopTokensProvider.forceRefresh();
                   });
                 }
               },
