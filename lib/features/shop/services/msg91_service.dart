@@ -50,7 +50,7 @@ class Msg91Service {
           'Content-Type': 'application/json',
         },
         body: jsonEncode({
-          'mobileNumber': '91$cleanMobile',  // Add country code 91
+          'mobileNumber': cleanMobile,  // Backend expects 10 digits without country code
         }),
       ).timeout(const Duration(seconds: Msg91Config.requestTimeoutSeconds));
 
@@ -142,7 +142,7 @@ class Msg91Service {
       }
 
       final requestBody = <String, dynamic>{
-        'mobileNumber': '91$cleanMobile',  // Add country code 91
+        'mobileNumber': cleanMobile,  // Backend expects 10 digits without country code
         'otp': otp,
       };
       
