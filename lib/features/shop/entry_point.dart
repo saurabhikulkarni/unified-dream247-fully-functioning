@@ -285,6 +285,11 @@ class _EntryPointState extends State<EntryPoint> with WidgetsBindingObserver {
                     final shopTokensProvider = context.read<ShopTokensProvider>();
                     shopTokensProvider.forceRefresh();
                   });
+                } else if (index == 0) {
+                  // If user clicks shop button again (already on shop), refresh the page
+                  debugPrint('🏠 [ENTRY_POINT] Shop button tapped - staying on home');
+                  final shopTokensProvider = context.read<ShopTokensProvider>();
+                  shopTokensProvider.forceRefresh();
                 }
               },
               backgroundColor: Colors.transparent,
