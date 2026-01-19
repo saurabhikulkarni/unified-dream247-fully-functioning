@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:unified_dream247/features/fantasy/core/api_server_constants/api_server_impl/api_impl.dart';
 import 'package:unified_dream247/features/fantasy/core/api_server_constants/api_server_impl/api_impl_header.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/app_colors.dart';
 import 'package:unified_dream247/features/fantasy/core/global_widgets/main_appbar.dart';
@@ -17,6 +18,8 @@ import 'package:unified_dream247/features/fantasy/my_matches/presentation/screen
 import 'package:unified_dream247/features/fantasy/winners/presentation/screens/winners_page.dart';
 import 'package:unified_dream247/features/fantasy/menu_items/data/user_datasource.dart';
 import 'package:unified_dream247/features/fantasy/menu_items/domain/use_cases/user_usecases.dart';
+import 'package:unified_dream247/features/fantasy/accounts/data/accounts_datasource.dart';
+import 'package:unified_dream247/features/fantasy/accounts/domain/use_cases/accounts_usecases.dart';
 import 'package:unified_dream247/features/shop/services/auth_service.dart';
 
 class LandingPage extends StatefulWidget {
@@ -63,6 +66,22 @@ class _LandingPageState extends State<LandingPage> {
 
     try {
       await _verifyUserIdAndInit();
+      
+      // ✅ CRITICAL: Load app data (payment gateway config, limits, etc.)
+      debugPrint('📥 [LANDING_PAGE] Loading app data with payment gateway config...');
+      await homeUsecases.getAppDataWithHeader(context);
+      debugPrint('✅ [LANDING_PAGE] App data loaded successfully');
+      
+      // ✅ Load wallet details to populate WalletDetailsProvider
+      if (mounted) {
+        debugPrint('📥 [LANDING_PAGE] Loading wallet details...');
+        final accountsUsecases = AccountsUsecases(
+          AccountsDatasource(ApiImpl(), ApiImplWithAccessToken()),
+        );
+        await accountsUsecases.myWalletDetails(context);
+        debugPrint('✅ [LANDING_PAGE] Wallet details loaded');
+      }
+      
       checkIfFirstLaunch();
       
       if (mounted) {

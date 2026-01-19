@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
 import 'package:unified_dream247/core/services/auth_service.dart' as core_auth;
+import 'package:unified_dream247/core/providers/shop_tokens_provider.dart';
+import 'package:unified_dream247/core/services/wallet_service.dart';
 import 'package:unified_dream247/features/shop/services/product_service.dart';
 import 'package:unified_dream247/features/shop/models/product_model.dart';
 import 'dart:math';
@@ -83,7 +86,10 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
 
   Future<void> _loadProducts() async {
     try {
+      debugPrint('📦 [UNIFIED_HOME] Loading products from Hygraph...');
       final allProducts = await _productService.getAllProducts();
+      debugPrint('📦 [UNIFIED_HOME] Loaded ${allProducts.length} products');
+      
       if (allProducts.isNotEmpty) {
         // Shuffle and take random 4 products
         allProducts.shuffle(Random());
@@ -91,16 +97,18 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
           _products = allProducts.take(4).toList();
           _isLoading = false;
         });
+        debugPrint('📦 [UNIFIED_HOME] Displaying ${_products.length} products');
       } else {
+        debugPrint('⚠️ [UNIFIED_HOME] No products found in Hygraph');
         setState(() {
           _isLoading = false;
         });
       }
     } catch (e) {
+      debugPrint('❌ [UNIFIED_HOME] Error loading products: $e');
       setState(() {
         _isLoading = false;
       });
-      debugPrint('Error loading products: $e');
     }
   }
 
@@ -136,29 +144,35 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
           ),
         ),
         actions: [
-          Container(
-            margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: Colors.orange[50],
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text('🪙', style: TextStyle(fontSize: 16)),
-                const SizedBox(width: 4),
-                const Text(
-                  '100',
-                  style: TextStyle(
-                    color: Colors.black87,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                  ),
+          // Shop Tokens Display
+          Consumer<ShopTokensProvider>(
+            builder: (context, shopTokensProvider, child) {
+              return Container(
+                margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: Colors.orange[50],
+                  borderRadius: BorderRadius.circular(20),
                 ),
-              ],
-            ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text('🪙', style: TextStyle(fontSize: 16)),
+                    const SizedBox(width: 4),
+                    Text(
+                      shopTokensProvider.shopTokens.toString(),
+                      style: const TextStyle(
+                        color: Colors.black87,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
           ),
+          // Game Tokens Display (static for now - would need Fantasy provider)
           Container(
             margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -171,13 +185,18 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
               children: [
                 const Text('💎', style: TextStyle(fontSize: 16)),
                 const SizedBox(width: 4),
-                const Text(
-                  '100',
-                  style: TextStyle(
-                    color: Colors.black87,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                  ),
+                FutureBuilder<double>(
+                  future: walletService.getGameTokens(),
+                  builder: (context, snapshot) {
+                    return Text(
+                      snapshot.hasData ? snapshot.data!.toStringAsFixed(0) : '0',
+                      style: const TextStyle(
+                        color: Colors.black87,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                      ),
+                    );
+                  },
                 ),
               ],
             ),

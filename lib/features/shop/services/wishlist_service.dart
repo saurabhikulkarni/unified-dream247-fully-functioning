@@ -55,21 +55,52 @@ class WishlistService {
         if (kDebugMode) {
           print('⚠️ Wishlist initialized but no user ID found');
         }
+        // Clear any corrupted wishlist data if no user is logged in
+        await prefs.remove(_wishlistKey);
+        _wishlist.clear();
+        _isInitialized = true;
+        if (kDebugMode) {
+          print('✓ Cleared wishlist (no user logged in)');
+        }
+        return;
       }
       
       _wishlist.clear();
+      int validItems = 0;
+      int invalidItems = 0;
+      
       for (String json in wishlistJson) {
         try {
           final wishlistMap = jsonDecode(json) as Map<String, dynamic>;
-          _wishlist.add(wishlistMap);
+          // Validate that the item has required product data
+          if (wishlistMap['product'] != null && 
+              wishlistMap['product']['id'] != null) {
+            _wishlist.add(wishlistMap);
+            validItems++;
+          } else {
+            invalidItems++;
+            if (kDebugMode) {
+              print('⚠️ Skipping invalid wishlist item (missing product/id)');
+            }
+          }
         } catch (e) {
+          invalidItems++;
           if (kDebugMode) {
             print('Error parsing wishlist item: $e');
           }
         }
       }
+      
+      // If we had invalid items, save the cleaned list
+      if (invalidItems > 0) {
+        await _saveToPreferences();
+        if (kDebugMode) {
+          print('✓ Cleaned up $invalidItems invalid wishlist items');
+        }
+      }
+      
       if (kDebugMode) {
-        print('✓ Loaded ${_wishlist.length} wishlist items from local storage');
+        print('✓ Loaded $validItems valid wishlist items from local storage');
       }
       _isInitialized = true;
     } catch (e) {
@@ -77,6 +108,23 @@ class WishlistService {
         print('Error initializing wishlist: $e');
       }
       _isInitialized = true;
+    }
+  }
+
+  /// Force clear all local wishlist data (for debugging/reset)
+  Future<void> forceResetWishlist() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove(_wishlistKey);
+      _wishlist.clear();
+      _isInitialized = false;
+      if (kDebugMode) {
+        print('✅ Wishlist data force reset');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('❌ Error resetting wishlist: $e');
+      }
     }
   }
 

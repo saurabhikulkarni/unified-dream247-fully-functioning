@@ -21,6 +21,10 @@ import 'package:unified_dream247/features/fantasy/accounts/data/accounts_datasou
 import 'package:unified_dream247/features/fantasy/accounts/domain/use_cases/accounts_usecases.dart';
 import 'package:unified_dream247/features/fantasy/accounts/presentation/providers/wallet_details_provider.dart';
 import 'package:unified_dream247/features/fantasy/accounts/presentation/screens/add_money_page.dart';
+import 'package:unified_dream247/features/fantasy/landing/data/home_datasource.dart';
+import 'package:unified_dream247/features/fantasy/landing/domain/use_cases/home_usecases.dart';
+import 'package:unified_dream247/features/fantasy/menu_items/data/user_datasource.dart';
+import 'package:unified_dream247/features/fantasy/menu_items/domain/use_cases/user_usecases.dart';
 import 'package:unified_dream247/core/services/wallet_service.dart';
 
 class MyBalancePage extends StatefulWidget {
@@ -44,10 +48,37 @@ class _MyBalancePage extends State<MyBalancePage> {
   @override
   void initState() {
     super.initState();
+    _initializeFantasyDataIfNeeded();
     loadData();
     _loadShopTokens();
     _loadGameTokens();
     _loadTransactionHistory();
+  }
+
+  /// Initialize Fantasy module data if not already loaded
+  /// This ensures app data and user data are available when navigating directly to wallet
+  Future<void> _initializeFantasyDataIfNeeded() async {
+    try {
+      // Check if app data is already loaded (has payment gateway config)
+      final hasAppData = AppSingleton.singleton.appData.androidpaymentgateway != null;
+      
+      if (!hasAppData) {
+        debugPrint('📥 [WALLET] Loading app data (navigated directly to wallet)...');
+        final homeUsecases = HomeUsecases(
+          HomeDatasource(ApiImplWithAccessToken()),
+        );
+        await homeUsecases.getAppDataWithHeader(context);
+        debugPrint('✅ [WALLET] App data loaded');
+      }
+      
+      // Load user details if not already loaded
+      final userUsecases = UserUsecases(UserDatasource(ApiImplWithAccessToken()));
+      await userUsecases.getUserDetails(context);
+      debugPrint('✅ [WALLET] User details loaded');
+      
+    } catch (e) {
+      debugPrint('⚠️ [WALLET] Error initializing Fantasy data: $e');
+    }
   }
 
   /// Load and sync game tokens from Fantasy backend

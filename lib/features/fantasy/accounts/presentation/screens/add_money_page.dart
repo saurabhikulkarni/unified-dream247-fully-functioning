@@ -9,6 +9,8 @@ import 'package:unified_dream247/features/fantasy/core/global_widgets/dashed_und
 import 'package:unified_dream247/features/fantasy/accounts/presentation/widgets/token_tier_bottomsheet.dart';
 import 'package:unified_dream247/features/fantasy/menu_items/data/models/user_data.dart';
 import 'package:unified_dream247/features/fantasy/menu_items/presentation/providers/user_data_provider.dart';
+import 'package:unified_dream247/features/fantasy/menu_items/data/user_datasource.dart';
+import 'package:unified_dream247/features/fantasy/menu_items/domain/use_cases/user_usecases.dart';
 import 'package:confetti/confetti.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
@@ -29,6 +31,8 @@ import 'package:unified_dream247/features/fantasy/core/utils/app_utils.dart';
 import 'package:unified_dream247/features/fantasy/accounts/data/accounts_datasource.dart';
 import 'package:unified_dream247/features/fantasy/accounts/domain/use_cases/accounts_usecases.dart';
 import 'package:unified_dream247/features/fantasy/landing/data/singleton/app_singleton.dart';
+import 'package:unified_dream247/features/fantasy/landing/data/home_datasource.dart';
+import 'package:unified_dream247/features/fantasy/landing/domain/use_cases/home_usecases.dart';
 import 'package:unified_dream247/features/fantasy/menu_items/data/models/offers_model.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:unified_dream247/core/services/wallet_service.dart';
@@ -69,6 +73,7 @@ class _AddMoneyPage extends State<AddMoneyPage> {
   @override
   void initState() {
     super.initState();
+    _ensureDataLoaded();
     getAllOffers();
     _amountController.addListener(() {
       setState(() {
@@ -90,6 +95,40 @@ class _AddMoneyPage extends State<AddMoneyPage> {
         ConfettiController(duration: const Duration(seconds: 3));
   }
 
+  /// Ensure app data and user data are loaded before payment
+  Future<void> _ensureDataLoaded() async {
+    try {
+      // Check if app data is already loaded (has payment gateway config)
+      final hasAppData = AppSingleton.singleton.appData.androidpaymentgateway != null;
+      
+      if (!hasAppData) {
+        debugPrint('📥 [ADD_MONEY] Loading app data...');
+        final homeUsecases = HomeUsecases(
+          HomeDatasource(ApiImplWithAccessToken()),
+        );
+        await homeUsecases.getAppDataWithHeader(context);
+        debugPrint('✅ [ADD_MONEY] App data loaded');
+      }
+      
+      // Check if user data is loaded
+      if (userData == null) {
+        debugPrint('📥 [ADD_MONEY] Loading user data...');
+        final userUsecases = UserUsecases(UserDatasource(ApiImplWithAccessToken()));
+        await userUsecases.getUserDetails(context);
+        
+        // Update local reference
+        if (mounted) {
+          setState(() {
+            userData = Provider.of<UserDataProvider>(context, listen: false).userData;
+          });
+        }
+        debugPrint('✅ [ADD_MONEY] User data loaded: ${userData?.name ?? "Unknown"}');
+      }
+    } catch (e) {
+      debugPrint('⚠️ [ADD_MONEY] Error loading data: $e');
+    }
+  }
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -97,6 +136,12 @@ class _AddMoneyPage extends State<AddMoneyPage> {
   }
 
   bool get _isUserVerified {
+    // If user data is not loaded yet, allow proceeding (backend will verify)
+    // This prevents blocking users when data is still loading
+    if (userData == null) {
+      debugPrint('⚠️ [ADD_MONEY] User data not loaded, allowing payment (backend will verify)');
+      return true;
+    }
     return userData?.verified == 1;
   }
 
@@ -304,30 +349,33 @@ class _AddMoneyPage extends State<AddMoneyPage> {
 
     final amount = double.tryParse(text) ?? 0;
 
+    // Get min/max from app data, with sensible defaults if not loaded
     final minAdd = double.tryParse(
           AppSingleton
                   .singleton.appData.androidpaymentgateway?.isRazorPay?.min ??
-              '0',
+              '10', // Default minimum ₹10
         ) ??
-        0;
+        10;
 
     final maxAdd = double.tryParse(
           AppSingleton
                   .singleton.appData.androidpaymentgateway?.isRazorPay?.max ??
-              '0',
+              '100000', // Default maximum ₹1,00,000
         ) ??
-        0;
+        100000;
+
+    debugPrint('💰 [ADD_MONEY] Validating: amount=$amount, min=$minAdd, max=$maxAdd');
 
     if (amount < minAdd) {
       setState(() {
-        _errorText = 'Minimum amount is ₹$minAdd';
+        _errorText = 'Minimum amount is ₹${minAdd.toInt()}';
       });
       return;
     }
 
     if (maxAdd != 0 && amount > maxAdd) {
       setState(() {
-        _errorText = 'Maximum amount is ₹$maxAdd';
+        _errorText = 'Maximum amount is ₹${maxAdd.toInt()}';
       });
       return;
     }
@@ -987,18 +1035,23 @@ class _AddMoneyPage extends State<AddMoneyPage> {
                       appToast('Please verify your account first', context);
                       return;
                     }
-                    if (num.parse(_amountController.text) >=
-                            num.parse(
-                              AppSingleton.singleton.appData
-                                      .androidpaymentgateway?.isRazorPay?.min ??
-                                  '0',
-                            ) &&
-                        num.parse(_amountController.text) <=
-                            num.parse(
-                              AppSingleton.singleton.appData
-                                      .androidpaymentgateway?.isRazorPay?.max ??
-                                  '0',
-                            )) {
+                    
+                    // Use sensible defaults if app data not loaded
+                    final minLimit = num.parse(
+                      AppSingleton.singleton.appData
+                              .androidpaymentgateway?.isRazorPay?.min ??
+                          '10', // Default ₹10
+                    );
+                    final maxLimit = num.parse(
+                      AppSingleton.singleton.appData
+                              .androidpaymentgateway?.isRazorPay?.max ??
+                          '100000', // Default ₹1,00,000
+                    );
+                    final amount = num.parse(_amountController.text);
+                    
+                    debugPrint('💳 [ADD_CASH] Initiating payment: amount=$amount, min=$minLimit, max=$maxLimit');
+                    
+                    if (amount >= minLimit && amount <= maxLimit) {
                       await _createRazorpayOrder();
                       // await accountsUsecases
                       //     .requestAddCash(

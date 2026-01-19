@@ -196,7 +196,7 @@ class _EntryPointState extends State<EntryPoint> with WidgetsBindingObserver {
             constraints: const BoxConstraints(),
             onPressed: () {
               // Redirect to Fantasy wallet (unified wallet)
-              context.push('/fantasy/accounts/my-balance');
+              context.push('/fantasy/wallet');
             },
             icon: SvgPicture.asset(
               'assets/icons/Wallet.svg',
