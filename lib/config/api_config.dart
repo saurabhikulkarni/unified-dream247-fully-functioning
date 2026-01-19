@@ -69,10 +69,15 @@ class ApiConfig {
   /// Get Shop Backend API URL (with /api suffix)
   static String get shopApiUrl => '$shopBaseUrl/api';
   
-  // Shop API Endpoints
+  // Shop API Endpoints - Authentication
   static String get shopSendOtpEndpoint => '$shopApiUrl/auth/send-otp';
   static String get shopVerifyOtpEndpoint => '$shopApiUrl/auth/verify-otp';
   static String get shopRefreshTokenEndpoint => '$shopApiUrl/auth/refresh-token';
+  static String get shopValidateTokenEndpoint => '$shopApiUrl/auth/validate-token';
+  static String get shopLogoutEndpoint => '$shopApiUrl/auth/logout';
+  
+  // Shop API Endpoints - Wallet
+  static String get shopWalletBalanceEndpoint => '$shopApiUrl/wallet/shop-tokens-only';
 
   // ─────────────────────────────────────────────────────────────────────────
   // FANTASY BACKEND (Digital Ocean)

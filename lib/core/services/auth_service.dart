@@ -3,7 +3,8 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
 import 'dart:convert';
 import '../constants/storage_constants.dart';
-import '../constants/api_constants.dart';
+import 'package:unified_dream247/config/api_config.dart';
+import '../models/unified_user_model.dart';
 
 /// 🔗 UNIFIED AUTHENTICATION SERVICE
 /// 
@@ -45,6 +46,176 @@ class AuthService {
   static const String shopEnabled = 'shop_enabled';
   static const String fantasyEnabled = 'fantasy_enabled';
   static const String modules = 'modules';
+  static const String _userKey = 'unified_user_data';
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // OTP AUTHENTICATION METHODS
+  // ─────────────────────────────────────────────────────────────────────────
+
+  /// Send OTP to mobile number
+  Future<Map<String, dynamic>> sendOtp(String mobileNumber) async {
+    try {
+      // Clean mobile number
+      final cleanMobile = mobileNumber.replaceAll(RegExp(r'[^\d]'), '');
+      
+      if (kDebugMode) {
+        debugPrint('📱 [AUTH] Sending OTP to: $cleanMobile');
+        debugPrint('📱 [AUTH] URL: ${ApiConfig.shopSendOtpEndpoint}');
+      }
+
+      final response = await http.post(
+        Uri.parse(ApiConfig.shopSendOtpEndpoint),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'mobileNumber': cleanMobile}),
+      ).timeout(Duration(seconds: ApiConfig.requestTimeoutSeconds));
+
+      final data = jsonDecode(response.body);
+      
+      if (kDebugMode) {
+        debugPrint('📱 [AUTH] Send OTP Response: ${response.statusCode}');
+      }
+
+      return {
+        'success': data['success'] ?? false,
+        'sessionId': data['sessionId'],
+        'message': data['message'] ?? 'OTP sent successfully',
+      };
+    } catch (e) {
+      debugPrint('❌ [AUTH] Send OTP Error: $e');
+      return {'success': false, 'message': 'Network error: $e'};
+    }
+  }
+
+  /// Verify OTP and Login/Register user
+  /// Returns user data and tokens on success
+  Future<Map<String, dynamic>> verifyOtp({
+    required String mobileNumber,
+    required String otp,
+    String? sessionId,
+    String? firstName,
+    String? lastName,
+  }) async {
+    try {
+      final cleanMobile = mobileNumber.replaceAll(RegExp(r'[^\d]'), '');
+      
+      if (kDebugMode) {
+        debugPrint('📱 [AUTH] Verifying OTP for: $cleanMobile');
+        debugPrint('📱 [AUTH] URL: ${ApiConfig.shopVerifyOtpEndpoint}');
+      }
+
+      final response = await http.post(
+        Uri.parse(ApiConfig.shopVerifyOtpEndpoint),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'mobileNumber': cleanMobile,
+          'otp': otp,
+          'sessionId': sessionId,
+          'firstName': firstName,
+          'lastName': lastName,
+        }),
+      ).timeout(Duration(seconds: ApiConfig.requestTimeoutSeconds));
+
+      final data = jsonDecode(response.body);
+      
+      if (kDebugMode) {
+        debugPrint('📱 [AUTH] Verify OTP Response: ${response.statusCode}');
+        debugPrint('📱 [AUTH] Success: ${data['success']}');
+      }
+
+      if (data['success'] == true) {
+        // Save tokens
+        final accessToken = data['authToken'] ?? data['token'];
+        final refreshToken = data['refreshToken'];
+        
+        if (accessToken != null) {
+          await _prefs?.setString(StorageConstants.authToken, accessToken);
+          await _prefs?.setString('token', accessToken); // For Fantasy compatibility
+        }
+        if (refreshToken != null) {
+          await _prefs?.setString('refresh_token', refreshToken);
+        }
+
+        // Parse and save user
+        if (data['user'] != null) {
+          final user = UnifiedUserModel.fromJson(data['user']);
+          await _saveUnifiedUser(user);
+          
+          // Also save to legacy keys for backward compatibility
+          await saveUserSession(
+            userId: user.userId,
+            authToken: accessToken ?? '',
+            mobileNumber: user.mobileNumber,
+            name: user.fullName,
+            fantasyUserId: user.fantasyUserId,
+            shopEnabled: user.shopEnabled,
+            fantasyEnabled: user.fantasyEnabled,
+            modules: user.modules,
+            refreshToken: refreshToken,
+          );
+          
+          return {
+            'success': true,
+            'user': user,
+            'isNewUser': user.isNewUser,
+            'message': data['message'] ?? 'Login successful',
+          };
+        }
+        
+        return {
+          'success': true,
+          'isNewUser': data['isNewUser'] ?? false,
+          'message': data['message'] ?? 'Login successful',
+        };
+      }
+
+      return {
+        'success': false,
+        'message': data['message'] ?? 'Verification failed',
+      };
+    } catch (e) {
+      debugPrint('❌ [AUTH] Verify OTP Error: $e');
+      return {'success': false, 'message': 'Network error: $e'};
+    }
+  }
+
+  /// Save unified user to storage
+  Future<void> _saveUnifiedUser(UnifiedUserModel user) async {
+    await _prefs?.setString(_userKey, jsonEncode(user.toJson()));
+    
+    // Also save individual fields for backward compatibility
+    await _prefs?.setString(StorageConstants.userId, user.userId);
+    await _prefs?.setString('user_id', user.userId);
+    await _prefs?.setString('userId', user.userId);
+    await _prefs?.setInt('shop_tokens', user.shopTokens);
+    
+    if (user.fantasyUserId != null) {
+      await _prefs?.setString(AuthService.fantasyUserId, user.fantasyUserId!);
+      await _prefs?.setString('user_id_fantasy', user.fantasyUserId!);
+    }
+  }
+
+  /// Get stored unified user
+  Future<UnifiedUserModel?> getUnifiedUser() async {
+    final userData = _prefs?.getString(_userKey);
+    if (userData == null) return null;
+    
+    try {
+      return UnifiedUserModel.fromJson(jsonDecode(userData));
+    } catch (e) {
+      debugPrint('Error parsing unified user: $e');
+      return null;
+    }
+  }
+
+  /// Update shop tokens in stored user
+  Future<void> updateShopTokens(int newBalance) async {
+    final user = await getUnifiedUser();
+    if (user != null) {
+      final updatedUser = user.copyWith(shopTokens: newBalance);
+      await _saveUnifiedUser(updatedUser);
+    }
+    await _prefs?.setInt('shop_tokens', newBalance);
+  }
 
   /// Save user session after successful login
   Future<void> saveUserSession({
@@ -163,7 +334,8 @@ class AuthService {
   }
 
   /// Get a valid access token (auto-refresh if expired)
-  Future<String?> getValidToken(String backendUrl) async {
+  /// Uses ApiConfig for backend URL automatically
+  Future<String?> getValidToken([String? backendUrl]) async {
     final token = getAuthToken();
     
     if (token == null) return null;
@@ -178,7 +350,8 @@ class AuthService {
   }
 
   /// Refresh access token using refresh token
-  Future<String?> refreshAccessToken(String backendUrl) async {
+  /// Uses ApiConfig.shopRefreshTokenEndpoint by default
+  Future<String?> refreshAccessToken([String? backendUrl]) async {
     final refreshToken = getRefreshToken();
     
     if (refreshToken == null) {
@@ -187,11 +360,15 @@ class AuthService {
     }
 
     try {
+      final url = backendUrl != null 
+          ? '$backendUrl/api/auth/refresh-token'
+          : ApiConfig.shopRefreshTokenEndpoint;
+          
       final response = await http.post(
-        Uri.parse('$backendUrl/api/auth/refresh-token'),
+        Uri.parse(url),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'refreshToken': refreshToken}),
-      ).timeout(const Duration(seconds: 10));
+      ).timeout(Duration(seconds: ApiConfig.requestTimeoutSeconds));
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -201,10 +378,16 @@ class AuthService {
           
           // Update stored access token
           await _prefs?.setString(StorageConstants.authToken, newToken);
+          await _prefs?.setString('token', newToken); // Fantasy compatibility
           
           // Update refresh token if provided
           if (data['refreshToken'] != null) {
             await _prefs?.setString('refresh_token', data['refreshToken']);
+          }
+          
+          // Update shopTokens if provided
+          if (data['user']?['shopTokens'] != null) {
+            await updateShopTokens((data['user']['shopTokens'] as num).toInt());
           }
           
           debugPrint('✅ Token refreshed successfully');
@@ -221,27 +404,49 @@ class AuthService {
   }
 
   /// Validate token with backend
-  Future<bool> validateToken(String backendUrl) async {
+  /// Uses ApiConfig.shopValidateTokenEndpoint by default
+  Future<Map<String, dynamic>> validateToken([String? backendUrl]) async {
     final token = getAuthToken();
     
-    if (token == null) return false;
+    if (token == null) return {'valid': false, 'message': 'No token'};
 
     try {
+      final url = backendUrl != null 
+          ? '$backendUrl/api/auth/validate-token'
+          : ApiConfig.shopValidateTokenEndpoint;
+          
       final response = await http.post(
-        Uri.parse('$backendUrl/api/auth/validate-token'),
+        Uri.parse(url),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'token': token}),
-      ).timeout(const Duration(seconds: 10));
+      ).timeout(Duration(seconds: ApiConfig.requestTimeoutSeconds));
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        return data['valid'] == true;
+        
+        if (data['valid'] == true && data['user'] != null) {
+          // Update local user data with latest from server
+          final user = await getUnifiedUser();
+          if (user != null) {
+            final updatedUser = user.copyWith(
+              fantasyUserId: data['user']['fantasy_user_id'] ?? user.fantasyUserId,
+              shopTokens: (data['user']['shopTokens'] as num?)?.toInt() ?? user.shopTokens,
+            );
+            await _saveUnifiedUser(updatedUser);
+          }
+        }
+        
+        return {
+          'valid': data['valid'] ?? false,
+          'user': data['user'],
+          'message': data['message'],
+        };
       }
       
-      return false;
+      return {'valid': false, 'message': 'Validation failed'};
     } catch (e) {
       debugPrint('Error validating token: $e');
-      return false;
+      return {'valid': false, 'message': 'Network error: $e'};
     }
   }
 
@@ -252,12 +457,12 @@ class AuthService {
       if (token == null || token.isEmpty) return null;
 
       final response = await http.get(
-        Uri.parse('${ApiConstants.shopBackendUrl}/api/auth/user/profile'),
+        Uri.parse('${ApiConfig.shopApiUrl}/auth/user/profile'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
         },
-      ).timeout(const Duration(seconds: 10));
+      ).timeout(Duration(seconds: ApiConfig.requestTimeoutSeconds));
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -279,12 +484,12 @@ class AuthService {
         // Call backend unified logout endpoint
         try {
           await http.post(
-            Uri.parse('${ApiConstants.shopBackendUrl}/api/auth/logout'),
+            Uri.parse(ApiConfig.shopLogoutEndpoint),
             headers: {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer $token',
             },
-          ).timeout(const Duration(seconds: 10));
+          ).timeout(Duration(seconds: ApiConfig.requestTimeoutSeconds));
         } catch (e) {
           debugPrint('Error calling logout API: $e');
         }
@@ -303,6 +508,12 @@ class AuthService {
       await _prefs?.remove(AuthService.fantasyEnabled);
       await _prefs?.remove(AuthService.modules);
       await _prefs?.remove('refresh_token');
+      await _prefs?.remove('token');
+      await _prefs?.remove('user_id');
+      await _prefs?.remove('userId');
+      await _prefs?.remove('user_id_fantasy');
+      await _prefs?.remove('shop_tokens');
+      await _prefs?.remove(_userKey);
       await _prefs?.setBool(StorageConstants.isLoggedIn, false);
     }
   }
