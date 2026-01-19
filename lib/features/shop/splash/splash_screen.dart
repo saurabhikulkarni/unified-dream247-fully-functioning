@@ -64,45 +64,73 @@ class _SplashScreenState extends State<SplashScreen>
       final authService = core_auth.AuthService();
       await authService.initialize();
       
-      // Check unified login status
+      // Check unified login status from local storage
       final isLoggedIn = await authService.isLoggedIn();
       final token = authService.getAuthToken();
+      final userId = await authService.getUserId();
 
       if (!mounted) return;
 
-      if (isLoggedIn && token != null && token.isNotEmpty) {
-        debugPrint('✅ User already logged in with unified auth');
-        debugPrint('🔑 Token present');
+      // ✅ PERSISTENT SESSION: User stays logged in unless they explicitly logout
+      if (isLoggedIn && userId != null && userId.isNotEmpty) {
+        debugPrint('✅ User session found - maintaining login');
+        debugPrint('👤 User ID: ${userId.substring(0, userId.length > 10 ? 10 : userId.length)}...');
         
-        // Validate token with backend
-        debugPrint('🔐 Validating token with backend...');
-        final validationResult = await authService.validateToken(ApiConstants.shopBackendUrl);
-        final isValid = validationResult['valid'] == true;
-        
-        if (!mounted) return;
-
-        if (isValid) {
-          debugPrint('✅ Token validated successfully');
-          
-          // Start token refresh timer
+        // Start token refresh timer if token exists
+        if (token != null && token.isNotEmpty) {
+          debugPrint('🔑 Token present - starting refresh timer');
           final tokenService = TokenService();
           tokenService.startTokenRefreshTimer(token);
           
-          debugPrint('🚀 Navigating to home');
-          context.go(RouteNames.home);
+          // Try to validate/refresh token in background (non-blocking)
+          _refreshTokenInBackground(authService, token);
         } else {
-          debugPrint('⚠️ Token validation failed - redirecting to login');
-          context.go(RouteNames.login);
+          debugPrint('⚠️ No token but user session exists - will refresh on next API call');
         }
+        
+        debugPrint('🚀 Navigating to home (persistent session)');
+        context.go(RouteNames.home);
       } else {
         debugPrint('❌ No active session - redirecting to login');
         context.go(RouteNames.login);
       }
     } catch (e) {
       debugPrint('⚠️ Navigation error: $e');
-      if (mounted) {
-        context.go(RouteNames.login);
+      // Even on error, check if we have local session data
+      try {
+        final authService = core_auth.AuthService();
+        await authService.initialize();
+        final isLoggedIn = await authService.isLoggedIn();
+        
+        if (mounted) {
+          if (isLoggedIn) {
+            debugPrint('🔄 Error occurred but session exists - going to home');
+            context.go(RouteNames.home);
+          } else {
+            context.go(RouteNames.login);
+          }
+        }
+      } catch (_) {
+        if (mounted) {
+          context.go(RouteNames.login);
+        }
       }
+    }
+  }
+
+  /// Refresh token in background without blocking navigation
+  Future<void> _refreshTokenInBackground(core_auth.AuthService authService, String token) async {
+    try {
+      debugPrint('🔄 [BACKGROUND] Attempting token refresh...');
+      final newToken = await authService.refreshAccessToken();
+      if (newToken != null) {
+        debugPrint('✅ [BACKGROUND] Token refreshed successfully');
+      } else {
+        debugPrint('⚠️ [BACKGROUND] Token refresh returned null - will retry on next API call');
+      }
+    } catch (e) {
+      debugPrint('⚠️ [BACKGROUND] Token refresh failed: $e - will retry on next API call');
+      // Don't logout - let the API interceptor handle token refresh on demand
     }
   }
 
