@@ -217,6 +217,124 @@ class AuthService {
     await _prefs?.setInt('shop_tokens', newBalance);
   }
 
+  // ─────────────────────────────────────────────────────────────────────────
+  // LOGIN FROM SHOP (After OTP Verification)
+  // ─────────────────────────────────────────────────────────────────────────
+
+  /// Login to Fantasy backend after Shop OTP verification
+  /// This creates/syncs user in Fantasy MongoDB with Hygraph user ID
+  Future<Map<String, dynamic>> loginFromShop({
+    required String hygraphUserId,
+    required String mobileNumber,
+    String? firstName,
+    String? lastName,
+    String? username,
+    String? name,
+    int shopTokens = 0,
+    int totalSpentTokens = 0,
+    double walletBalance = 0,
+  }) async {
+    try {
+      final cleanMobile = mobileNumber.replaceAll(RegExp(r'[^\d]'), '');
+      
+      if (kDebugMode) {
+        debugPrint('🔗 [AUTH] Login from Shop to Fantasy backend');
+        debugPrint('🔗 [AUTH] Hygraph User ID: $hygraphUserId');
+        debugPrint('🔗 [AUTH] URL: ${ApiConfig.fantasyUserLoginEndpoint}');
+      }
+
+      final response = await http.post(
+        Uri.parse(ApiConfig.fantasyUserLoginEndpoint),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'hygraph_user_id': hygraphUserId,
+          'mobile_number': cleanMobile,
+          'first_name': firstName,
+          'last_name': lastName,
+          'username': username,
+          'name': name ?? '$firstName $lastName'.trim(),
+          'shopTokens': shopTokens,
+          'totalSpentTokens': totalSpentTokens,
+          'wallet_balance': walletBalance,
+        }),
+      ).timeout(Duration(seconds: ApiConfig.requestTimeoutSeconds));
+
+      final data = jsonDecode(response.body);
+      
+      if (kDebugMode) {
+        debugPrint('🔗 [AUTH] Fantasy Login Response: ${response.statusCode}');
+        debugPrint('🔗 [AUTH] Success: ${data['status'] ?? data['success']}');
+      }
+
+      if (data['status'] == true || data['success'] == true) {
+        // Extract tokens from response
+        final accessToken = data['data']?['auth_key'] ?? data['token'] ?? data['authToken'];
+        final refreshToken = data['data']?['refresh_token'] ?? data['refreshToken'];
+        final fantasyUserId = data['data']?['userid'] ?? data['userId'];
+
+        // Save tokens
+        if (accessToken != null) {
+          await _prefs?.setString(StorageConstants.authToken, accessToken);
+          await _prefs?.setString('token', accessToken);
+        }
+        if (refreshToken != null) {
+          await _prefs?.setString('refresh_token', refreshToken);
+        }
+
+        // Save user session
+        await saveUserSession(
+          userId: hygraphUserId,
+          authToken: accessToken ?? '',
+          mobileNumber: cleanMobile,
+          name: name ?? '$firstName $lastName'.trim(),
+          fantasyUserId: fantasyUserId,
+          shopEnabled: true,
+          fantasyEnabled: true,
+          modules: ['shop', 'fantasy'],
+          refreshToken: refreshToken,
+        );
+
+        // Create unified user model
+        final user = UnifiedUserModel(
+          userId: hygraphUserId,
+          fantasyUserId: fantasyUserId,
+          mobileNumber: cleanMobile,
+          firstName: firstName ?? '',
+          lastName: lastName ?? '',
+          username: username,
+          modules: ['shop', 'fantasy'],
+          shopEnabled: true,
+          fantasyEnabled: true,
+          shopTokens: shopTokens,
+          isNewUser: data['data']?['isNewUser'] ?? data['isNewUser'] ?? false,
+        );
+        await _saveUnifiedUser(user);
+
+        debugPrint('✅ [AUTH] Fantasy login successful');
+        debugPrint('✅ [AUTH] Fantasy User ID: $fantasyUserId');
+
+        return {
+          'success': true,
+          'message': data['message'] ?? 'Login successful',
+          'accessToken': accessToken,
+          'refreshToken': refreshToken,
+          'userId': hygraphUserId,
+          'fantasyUserId': fantasyUserId,
+          'user': user,
+          'isNewUser': data['data']?['isNewUser'] ?? data['isNewUser'] ?? false,
+        };
+      }
+
+      return {
+        'success': false,
+        'message': data['message'] ?? 'Fantasy login failed',
+      };
+    } catch (e) {
+      debugPrint('❌ [AUTH] Fantasy Login Error: $e');
+      return {'success': false, 'message': 'Network error: $e'};
+    }
+  }
+
   /// Save user session after successful login
   Future<void> saveUserSession({
     required String userId,
