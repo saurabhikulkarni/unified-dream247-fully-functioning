@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:unified_dream247/config/api_config.dart';
 import 'package:unified_dream247/features/shop/services/graphql_client.dart';
 import 'package:unified_dream247/features/shop/services/graphql_queries.dart';
 import 'package:unified_dream247/features/shop/services/wallet_service.dart';
@@ -230,8 +231,8 @@ class AuthService {
     bool isNewUser = false,
   }) async {
     try {
-      // Fantasy backend user endpoint (correct path - NO /user prefix)
-      const baseUrl = 'http://143.244.140.102:4000';
+      // Fantasy backend user endpoint (now using centralized ApiConfig)
+      final baseUrl = ApiConfig.fantasyBaseUrl;
       
       // Prepare request body - send only required fields to Fantasy backend
       final body = {
@@ -568,7 +569,7 @@ class AuthService {
       }
 
       final response = await http.post(
-        Uri.parse('http://143.244.140.102:4000/api/auth/refresh-token'),
+        Uri.parse(ApiConfig.fantasyRefreshTokenEndpoint),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'refreshToken': refreshToken}),
       ).timeout(const Duration(seconds: 8));

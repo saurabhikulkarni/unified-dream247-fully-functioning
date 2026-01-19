@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:unified_dream247/config/api_config.dart';
 import 'package:unified_dream247/config/routes/route_names.dart';
 import 'package:unified_dream247/core/constants/api_constants.dart';
 import 'package:unified_dream247/core/services/auth_service.dart' as core_auth;
@@ -303,7 +304,7 @@ class _LogInFormState extends State<LogInForm> {
         // If we have auth token, fetch shopTokens from backend
         if (authToken != null && authToken.isNotEmpty) {
           final response = await http.get(
-            Uri.parse('http://143.244.140.102:4000/api/user/wallet/balance-full'),
+            Uri.parse(ApiConfig.fantasyWalletBalanceEndpoint),
             headers: {
               'Authorization': 'Bearer $authToken',
               'Content-Type': 'application/json',

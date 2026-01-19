@@ -1,4 +1,5 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:unified_dream247/config/api_config.dart';
 
 class APIServerUrl {
   static const String appName = "Dream247";
@@ -118,34 +119,33 @@ class APIServerUrl {
       "players-fantasy-score-cards?matchkey=";
   static const String getExpertAdvice = "expert-advice-list";
 
-  // server urls with fallbacks
-  static String kycServerUrl =
-      dotenv.env['KycServerUrl'] ?? 'http://143.244.140.102:4000/kyc/';
-  static String leaderboardServerUrl = dotenv.env['LeaderboardServerUrl'] ??
-      'http://143.244.140.102:4000/leaderboard/';
-  static String userServerUrl =
-      dotenv.env['UserServerUrl'] ?? 'http://143.244.140.102:4000/user/';
-  static String teamsServerUrl =
-      dotenv.env['TeamsServerUrl'] ?? 'http://143.244.140.102:4000/team/';
-  static String matchServerUrl =
-      dotenv.env['MatchServerUrl'] ?? 'http://143.244.140.102:4000/match/';
-  static String contestServerUrl =
-      dotenv.env['ContestServerUrl'] ?? 'http://143.244.140.102:4000/contest/';
-  static String depositServerUrl =
-      dotenv.env['DepositServerUrl'] ?? 'http://143.244.140.102:4000/deposit/';
-  static String withdrawServerUrl = dotenv.env['WithdrawServerUrl'] ??
-      'http://143.244.140.102:4000/withdraw/';
-  static String joinContestServerUrl = dotenv.env['JoinContestServerUrl'] ??
-      'http://143.244.140.102:4000/joincontest/';
-  static String liveMatchServerUrl = dotenv.env['LiveMatchServerUrl'] ??
-      'http://143.244.140.102:4000/live-match/';
-  static String myJoinContestServerUrl = dotenv.env['MyJoinContestServerUrl'] ??
-      'http://143.244.140.102:4000/myjoined-contest/';
-  static String getMyTeamsServerUrl =
-      dotenv.env['MyTeamsServerUrl'] ?? 'http://143.244.140.102:4000/getmyteams/';
-  static String completedMatchServerUrl =
-      dotenv.env['CompletedMatchServerUrl'] ??
-          'http://143.244.140.102:4000/completed-match/';
-  static String otherApiServerUrl = dotenv.env['OtherApiServerUrl'] ??
-      'http://143.244.140.102:4000/other/';
+  // server urls with fallbacks (now using centralized ApiConfig)
+  static String get kycServerUrl =>
+      dotenv.env['KycServerUrl'] ?? ApiConfig.fantasyKycUrl;
+  static String get leaderboardServerUrl =>
+      dotenv.env['LeaderboardServerUrl'] ?? ApiConfig.fantasyLeaderboardUrl;
+  static String get userServerUrl =>
+      dotenv.env['UserServerUrl'] ?? ApiConfig.fantasyUserUrl;
+  static String get teamsServerUrl =>
+      dotenv.env['TeamsServerUrl'] ?? ApiConfig.fantasyTeamsUrl;
+  static String get matchServerUrl =>
+      dotenv.env['MatchServerUrl'] ?? ApiConfig.fantasyMatchUrl;
+  static String get contestServerUrl =>
+      dotenv.env['ContestServerUrl'] ?? ApiConfig.fantasyContestUrl;
+  static String get depositServerUrl =>
+      dotenv.env['DepositServerUrl'] ?? ApiConfig.fantasyDepositUrl;
+  static String get withdrawServerUrl =>
+      dotenv.env['WithdrawServerUrl'] ?? ApiConfig.fantasyWithdrawUrl;
+  static String get joinContestServerUrl =>
+      dotenv.env['JoinContestServerUrl'] ?? ApiConfig.fantasyJoinContestUrl;
+  static String get liveMatchServerUrl =>
+      dotenv.env['LiveMatchServerUrl'] ?? ApiConfig.fantasyLiveMatchUrl;
+  static String get myJoinContestServerUrl =>
+      dotenv.env['MyJoinContestServerUrl'] ?? ApiConfig.fantasyMyJoinContestUrl;
+  static String get getMyTeamsServerUrl =>
+      dotenv.env['MyTeamsServerUrl'] ?? ApiConfig.fantasyMyTeamsUrl;
+  static String get completedMatchServerUrl =>
+      dotenv.env['CompletedMatchServerUrl'] ?? ApiConfig.fantasyCompletedMatchUrl;
+  static String get otherApiServerUrl =>
+      dotenv.env['OtherApiServerUrl'] ?? ApiConfig.fantasyOtherUrl;
 }

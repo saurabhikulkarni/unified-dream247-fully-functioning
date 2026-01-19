@@ -6,7 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:unified_dream247/features/fantasy/core/api_server_constants/api_server_impl/api_impl.dart';
+import 'package:unified_dream247/config/api_config.dart';
 import 'package:unified_dream247/features/fantasy/core/api_server_constants/api_server_impl/api_impl_header.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/app_colors.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/app_storage_keys.dart';
@@ -193,11 +193,11 @@ class _HomePageState extends State<HomePage> {
                             ),
                             items: bannerList?.map((item) {
                               // Fallback handling for null, empty or invalid image
+                              final String fallbackImage = ApiConfig.getMediaUrl('sideBanner-1756816917767-JDAANUQZ.jpeg');
                               final String imageUrl = (item.image != null &&
                                       (item.image ?? '').trim().isNotEmpty)
-                                  ? item.image ??
-                                      'http://143.244.140.102:5001/uploads/sideBanner-1756816917767-JDAANUQZ.jpeg'
-                                  : 'http://143.244.140.102:5001/uploads/sideBanner-1756816917767-JDAANUQZ.jpeg';
+                                  ? item.image ?? fallbackImage
+                                  : fallbackImage;
 
                               return Stack(
                                 children: [
@@ -221,7 +221,7 @@ class _HomePageState extends State<HomePage> {
                                         errorBuilder:
                                             (context, error, stackTrace) =>
                                                 Image.network(
-                                          'http://143.244.140.102:5001/uploads/sideBanner-1756816917767-JDAANUQZ.jpeg',
+                                          fallbackImage,
                                           fit: BoxFit.cover,
                                           width: double.infinity,
                                         ),

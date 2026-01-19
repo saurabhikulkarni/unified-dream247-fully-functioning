@@ -1,3 +1,5 @@
+import 'package:unified_dream247/config/api_config.dart';
+
 class ShiprocketConfig {
   // Shiprocket API Configuration
   // Official Documentation: https://shiprocket.freshdesk.com/support/solutions/articles/43000337456-api-document-helpsheet
@@ -42,10 +44,8 @@ class ShiprocketConfig {
   // - Keeps credentials secure on the backend
   // - Works on all platforms (web, mobile, desktop)
   // 
-  // For local development: 'http://localhost:3000/api/shiprocket'
-  // For production: 'https://your-backend.com/api/shiprocket'
-  static const String proxyUrl = 'http://localhost:3000/api/shiprocket';
-  // Example for local: static const String? proxyUrl = 'http://localhost:3000/api/shiprocket';
+  // Now uses centralized ApiConfig for environment-based URL switching
+  static String get proxyUrl => '${ApiConfig.shopApiUrl}/shiprocket';
   
   // Note: When proxyUrl is configured, all Shiprocket API calls go through the backend.
   // Credentials (email/password or API token) should be stored in backend environment variables.

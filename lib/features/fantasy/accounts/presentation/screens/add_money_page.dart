@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'dart:math';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:unified_dream247/config/api_config.dart';
 import 'package:unified_dream247/features/fantasy/core/global_widgets/dashed_underline_text.dart';
 import 'package:unified_dream247/features/fantasy/accounts/presentation/widgets/token_tier_bottomsheet.dart';
 import 'package:unified_dream247/features/fantasy/menu_items/data/models/user_data.dart';
@@ -180,7 +181,7 @@ class _AddMoneyPage extends State<AddMoneyPage> {
       }
 
       final response = await http.post(
-        Uri.parse('http://143.244.140.102:4000/api/user/wallet/sync-shop-tokens-to-shop'),
+        Uri.parse(ApiConfig.fantasySyncShopTokensEndpoint),
         headers: {
           'Authorization': 'Bearer $authToken',
           'Content-Type': 'application/json',

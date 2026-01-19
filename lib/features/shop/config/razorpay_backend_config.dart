@@ -10,16 +10,16 @@
 /// See BACKEND_SERVER_SETUP.md for backend implementation details.
 library;
 
+import 'package:unified_dream247/config/api_config.dart';
+
 class RazorpayBackendConfig {
-  // TODO: Update this URL to your deployed backend server
-  // For local development: 'http://localhost:3000/api'
-  // For production: 'https://your-backend-domain.com/api'
-  static const String baseUrl = 'http://localhost:3000/api';
+  // Now uses centralized ApiConfig for environment-based URL switching
+  static String get baseUrl => ApiConfig.shopApiUrl;
   
   // API endpoints
-  static const String createOrderEndpoint = '$baseUrl/payments/create-order';
-  static const String verifySignatureEndpoint = '$baseUrl/payments/verify-signature';
+  static String get createOrderEndpoint => '$baseUrl/payments/create-order';
+  static String get verifySignatureEndpoint => '$baseUrl/payments/verify-signature';
   
   // Request timeout duration (in seconds)
-  static const int requestTimeoutSeconds = 30;
+  static int get requestTimeoutSeconds => ApiConfig.requestTimeoutSeconds;
 }

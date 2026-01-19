@@ -1,25 +1,30 @@
 // Razorpay Payment Configuration
 // Get your credentials from https://dashboard.razorpay.com/
 
+import 'package:unified_dream247/config/api_config.dart';
+
 class RazorpayConfig {
   // ⚠️ TEST MODE - Replace with production credentials before launch
   // Your Razorpay API Key (Public Key)
   // Available at: https://dashboard.razorpay.com/#/app/keys
   // PRODUCTION: Change from rzp_test_* to rzp_live_* after approval
-  static const String keyId = 'rzp_test_RqEBl9COpBTyyz';
+  static const String _testKeyId = 'rzp_test_RqEBl9COpBTyyz';
+  static const String _prodKeyId = String.fromEnvironment('RAZORPAY_KEY_ID', defaultValue: 'rzp_test_RqEBl9COpBTyyz');
+  
+  static String get keyId => ApiConfig.isProduction ? _prodKeyId : _testKeyId;
 
   // Your Razorpay API Secret (Keep this ONLY on backend)
   // Never expose this in frontend code!
   // This is stored on backend server for signature verification
   static const String keySecret = 'STORED_ON_BACKEND_SERVER';
 
-  // Backend API base URL for Razorpay operations
-  static const String backendBaseUrl = 'http://localhost:3000/api';
+  // Backend API base URL for Razorpay operations (now uses ApiConfig)
+  static String get backendBaseUrl => ApiConfig.shopApiUrl;
   
   // Backend API endpoints
-  static const String createOrderEndpoint = '$backendBaseUrl/payments/create-order';
-  static const String verifySignatureEndpoint = '$backendBaseUrl/payments/verify-signature';
-  static const String getPaymentEndpoint = '$backendBaseUrl/payments';
+  static String get createOrderEndpoint => '$backendBaseUrl/payments/create-order';
+  static String get verifySignatureEndpoint => '$backendBaseUrl/payments/verify-signature';
+  static String get getPaymentEndpoint => '$backendBaseUrl/payments';
 
   // Merchant Name/App Name
   static const String merchantName = 'Dream247';

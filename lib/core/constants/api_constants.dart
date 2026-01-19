@@ -1,34 +1,30 @@
+import 'package:unified_dream247/config/api_config.dart';
+
 /// API endpoint constants for the application
+/// 
+/// NOTE: This class now delegates to ApiConfig for environment-based URLs.
+/// Prefer using ApiConfig directly for new code.
 class ApiConstants {
-  // Shop Backend URL
-  static const String shopBackendUrl = String.fromEnvironment(
-    'SHOP_BACKEND_URL',
-    defaultValue: 'http://localhost:3000',
-  );
+  // Shop Backend URL (delegated to ApiConfig)
+  static String get shopBackendUrl => ApiConfig.shopBaseUrl;
   
-  // Fantasy Backend URL  
-  static const String fantasyBackendUrl = String.fromEnvironment(
-    'FANTASY_API_URL',
-    defaultValue: 'http://localhost:3001',
-  );
+  // Fantasy Backend URL (delegated to ApiConfig)
+  static String get fantasyBackendUrl => ApiConfig.fantasyBaseUrl;
   
-  // Hygraph Endpoint
-  static const String hygraphEndpoint = String.fromEnvironment(
-    'HYGRAPH_ENDPOINT',
-    defaultValue: 'https://ap-south-1.cdn.hygraph.com/content/cmj85rtgv038n07uo8egj5fkb/master',
-  );
+  // Hygraph Endpoint (delegated to ApiConfig)
+  static String get hygraphEndpoint => ApiConfig.hygraphEndpoint;
   
-  // Base URLs (legacy)
+  // Base URLs (legacy - kept for backward compatibility)
   static const String ecommerceBaseUrl = 'https://api-ap-south-1.hygraph.com/v2/';
-  static const String gamingBaseUrl = 'https://api.dream247.com/';
+  static String get gamingBaseUrl => ApiConfig.fantasyBaseUrl;
   
   // Hygraph E-commerce endpoints (legacy)
   static const String hygraphApiKey = 'YOUR_HYGRAPH_API_KEY';
   
   // Gaming API endpoints
-  static const String matchesEndpoint = '${gamingBaseUrl}api/matches';
-  static const String contestsEndpoint = '${gamingBaseUrl}api/contests';
-  static const String teamEndpoint = '${gamingBaseUrl}api/teams';
+  static String get matchesEndpoint => '${gamingBaseUrl}api/matches';
+  static String get contestsEndpoint => '${gamingBaseUrl}api/contests';
+  static String get teamEndpoint => '${gamingBaseUrl}api/teams';
   
   // Authentication endpoints
   static const String loginEndpoint = '/auth/login';
@@ -45,7 +41,7 @@ class ApiConstants {
   static const String productsEndpoint = '/products';
   static const String productDetailEndpoint = '/products/{id}';
   
-  // Request timeout
-  static const int connectionTimeout = 30000;
-  static const int receiveTimeout = 30000;
+  // Request timeout (delegated to ApiConfig)
+  static int get connectionTimeout => ApiConfig.connectionTimeout;
+  static int get receiveTimeout => ApiConfig.receiveTimeout;
 }

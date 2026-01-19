@@ -10,18 +10,21 @@
 /// See MSG91_BACKEND_SETUP.md for backend implementation details.
 library;
 
+import 'package:unified_dream247/config/api_config.dart';
+
+/// NOTE: This is a duplicate/legacy config file in features/shop/config/
+/// The primary Msg91Config is now at lib/config/msg91_config.dart
+/// This file is kept for backward compatibility but delegates to ApiConfig.
 class Msg91Config {
-  static const String baseUrl = 'http://localhost:3000/api';
-  
-  // Alternative: Use localhost for development (uncomment if testing locally)
-  // static const String baseUrl = 'http://localhost:3000/api';
+  // Now uses centralized ApiConfig for environment-based URL switching
+  static String get baseUrl => ApiConfig.shopApiUrl;
   
   // API endpoints (backend exposes routes under /api/auth)
-  static const String sendOtpEndpoint = '$baseUrl/auth/send-otp';
-  static const String verifyOtpEndpoint = '$baseUrl/auth/verify-otp';
+  static String get sendOtpEndpoint => ApiConfig.shopSendOtpEndpoint;
+  static String get verifyOtpEndpoint => ApiConfig.shopVerifyOtpEndpoint;
   
   // Request timeout duration (in seconds)
-  static const int requestTimeoutSeconds = 30;
+  static int get requestTimeoutSeconds => ApiConfig.requestTimeoutSeconds;
   
   // OTP expiry time (in minutes) - should match backend configuration
   static const int otpExpiryMinutes = 10;

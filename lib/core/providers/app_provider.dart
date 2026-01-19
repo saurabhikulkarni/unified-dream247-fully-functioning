@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:unified_dream247/config/api_config.dart';
 
 /// App-level provider for managing global app state
 /// Handles periodic shopTokens refresh and wallet balance synchronization
@@ -65,7 +66,7 @@ class AppProvider extends ChangeNotifier {
       }
 
       final response = await http.get(
-        Uri.parse('http://143.244.140.102:4000/api/user/wallet/shop-tokens-only'),
+        Uri.parse(ApiConfig.fantasyShopTokensEndpoint),
         headers: {
           'Authorization': 'Bearer $authToken',
           'Content-Type': 'application/json',
