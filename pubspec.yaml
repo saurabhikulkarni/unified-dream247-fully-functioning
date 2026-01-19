@@ -154,9 +154,9 @@ flutter:
         - asset: assets/fonts/racing_hard/RACING HARD.ttf
 
 # Flutter Launcher Icons Configuration
+# Run: dart run flutter_launcher_icons
 flutter_launcher_icons:
-  android: true
-  ios: true
-  image_path: "assets/images/appicon.png"
-  adaptive_icon_background: "#FFFFFF"
-  adaptive_icon_foreground: "assets/images/appicon.png"
+  android: "launcher_icon"
+  ios: false  # iOS project not configured yet
+  image_path: "assets/images/shop_app_icon.png"
+  min_sdk_android: 21

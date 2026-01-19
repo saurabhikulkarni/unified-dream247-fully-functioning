@@ -17,18 +17,28 @@ class ProductService {
       );
 
       if (result.hasException) {
+        print('[PRODUCT_SERVICE] GraphQL Exception: ${result.exception}');
         throw Exception(result.exception.toString());
       }
 
       if (result.data == null || result.data!['products'] == null) {
+        print('[PRODUCT_SERVICE] No products data returned');
         return [];
       }
 
       final List<dynamic> productsJson = result.data!['products'] as List<dynamic>;
+      print('[PRODUCT_SERVICE] Fetched ${productsJson.length} products');
+      
+      // Debug: Print first product structure
+      if (productsJson.isNotEmpty) {
+        print('[PRODUCT_SERVICE] First product JSON: ${productsJson.first}');
+      }
+      
       return productsJson
           .map((json) => ProductModel.fromJson(json as Map<String, dynamic>))
           .toList();
     } catch (e) {
+      print('[PRODUCT_SERVICE] Error fetching products: $e');
       throw Exception('Error fetching products: $e');
     }
   }

@@ -13,8 +13,8 @@ class RestClient {
     _dio = Dio(
       BaseOptions(
         baseUrl: ApiConstants.gamingBaseUrl,
-        connectTimeout: const Duration(milliseconds: ApiConstants.connectionTimeout),
-        receiveTimeout: const Duration(milliseconds: ApiConstants.receiveTimeout),
+        connectTimeout: Duration(milliseconds: ApiConstants.connectionTimeout),
+        receiveTimeout: Duration(milliseconds: ApiConstants.receiveTimeout),
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',

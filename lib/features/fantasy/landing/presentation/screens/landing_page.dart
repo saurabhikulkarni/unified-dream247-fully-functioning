@@ -1,5 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:unified_dream247/features/fantasy/core/api_server_constants/api_server_impl/api_impl_header.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/app_colors.dart';
@@ -60,7 +61,7 @@ class _LandingPageState extends State<LandingPage> {
         // Redirect to Shop login screen - user must authenticate first
         if (mounted) {
           debugPrint('🔄 [LANDING_PAGE] Redirecting to Shop login for authentication');
-          context.go('/login');
+          Navigator.pushReplacementNamed(context, '/login');
         }
         return;
       } else {
@@ -74,7 +75,7 @@ class _LandingPageState extends State<LandingPage> {
       debugPrint('❌ [LANDING_PAGE] Error verifying userId: $e');
       // On error, redirect to login for safety
       if (mounted) {
-        context.go('/login');
+        Navigator.pushReplacementNamed(context, '/login');
       }
     }
   }

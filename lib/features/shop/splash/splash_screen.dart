@@ -76,7 +76,8 @@ class _SplashScreenState extends State<SplashScreen>
         
         // Validate token with backend
         debugPrint('🔐 Validating token with backend...');
-        final isValid = await authService.validateToken(ApiConstants.shopBackendUrl);
+        final validationResult = await authService.validateToken(ApiConstants.shopBackendUrl);
+        final isValid = validationResult['valid'] == true;
         
         if (!mounted) return;
 

@@ -37,6 +37,8 @@ class ProductModel {
       imageUrl = json['imageUrl'] as String;
     }
     
+    print('[PRODUCT_MODEL] Product: ${json['productName']}, Image URL: $imageUrl');
+    
     return ProductModel(
       id: json['id']?.toString(),
       productName: json['productName'] ?? json['product_name'] ?? json['title'] ?? '',
