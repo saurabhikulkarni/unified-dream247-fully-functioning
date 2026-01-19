@@ -71,6 +71,7 @@ class _LogInFormState extends State<LogInForm> {
   }
 
   String? _sessionId; // Store session ID from OTP send response
+  String? _hygraphUserId; // Store Hygraph user ID from existing user check
 
   Future<void> _sendOtp() async {
     // Validate Indian mobile number before sending OTP
@@ -127,6 +128,10 @@ class _LogInFormState extends State<LogInForm> {
         }
         return;
       }
+      
+      // ✅ Store Hygraph userId for later use when saving session
+      _hygraphUserId = existingUser.id;
+      debugPrint('📝 [LOGIN] Found existing user with Hygraph ID: $_hygraphUserId');
     } catch (e) {
       // If user check fails, continue with OTP anyway (fallback)
       print('⚠️ [LOGIN] Error checking user existence: $e');
@@ -327,15 +332,17 @@ class _LogInFormState extends State<LogInForm> {
       
       // Fetch fantasy authentication token from backend
       String? fantasyToken;
+      String? storedUserId;
       try {
-        // Get stored userId (Hygraph auto-generated ID) from SharedPreferences
-        final storedUserId = prefs.getString('user_id');
+        // ✅ Use Hygraph userId from existing user check, fallback to stored
+        storedUserId = _hygraphUserId ?? prefs.getString('user_id');
+        debugPrint('📝 [LOGIN] Using userId for Fantasy token: $storedUserId');
         
         final authService = AuthService();
         fantasyToken = await authService.fetchFantasyToken(
           phone: phone,
           name: name,
-          userId: storedUserId, // Pass Hygraph auto-generated ID
+          userId: storedUserId, // ✅ Pass Hygraph userId for user sync
         );
         
         if (fantasyToken == null) {
@@ -347,11 +354,15 @@ class _LogInFormState extends State<LogInForm> {
       }
       
       // Save basic session info with fantasy token
+      // ✅ Use Hygraph userId (not phone) for unified user identity
+      final userIdToSave = _hygraphUserId ?? storedUserId ?? phone;
+      debugPrint('📝 [LOGIN] Saving session with userId: $userIdToSave');
+      
       await authService.saveLoginSession(
         phone: phone,
         name: name,
         phoneVerified: true,
-        userId: phone, // Use phone as userId for now on web
+        userId: userIdToSave, // ✅ Use Hygraph userId for unified identity
         fantasyToken: fantasyToken,
       );
 
