@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:unified_dream247/features/shop/constants.dart';
 import 'package:unified_dream247/features/shop/route/route_constants.dart';
 import 'package:unified_dream247/features/shop/models/order_models.dart';
@@ -328,11 +329,7 @@ class OrderConfirmationScreen extends StatelessWidget {
                   child: ElevatedButton(
                     onPressed: () {
                       // Navigate to orders screen
-                      Navigator.pushNamedAndRemoveUntil(
-                        context,
-                        ordersScreenRoute,
-                        (route) => false,
-                      );
+                      context.go('/shop/orders');
                     },
                     child: const Text('Track Order'),
                   ),
@@ -343,11 +340,7 @@ class OrderConfirmationScreen extends StatelessWidget {
                   child: OutlinedButton(
                     onPressed: () {
                       // Navigate back to home
-                      Navigator.pushNamedAndRemoveUntil(
-                        context,
-                        entryPointScreenRoute,
-                        (route) => false,
-                      );
+                      context.go('/shop/entry_point');
                     },
                     child: const Text('Continue Shopping'),
                   ),

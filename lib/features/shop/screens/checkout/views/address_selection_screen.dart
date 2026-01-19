@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:unified_dream247/features/shop/constants.dart';
 import 'package:unified_dream247/features/shop/models/address_model.dart';
 import 'package:unified_dream247/features/shop/services/address_service.dart';
@@ -145,9 +146,8 @@ class _AddressSelectionScreenState extends State<AddressSelectionScreen> {
                           const SizedBox(height: defaultPadding * 2),
                           ElevatedButton.icon(
                             onPressed: () async {
-                              final result = await Navigator.pushNamed(
-                                context,
-                                addAddressScreenRoute,
+                              final result = await context.push<Map>(
+                                '/shop/add-address',
                               );
                               if (result != null && result is Map && result['success'] == true) {
                                 _loadAddresses();
@@ -282,9 +282,8 @@ class _AddressSelectionScreenState extends State<AddressSelectionScreen> {
                           ),
                           child: OutlinedButton.icon(
                             onPressed: () async {
-                              final result = await Navigator.pushNamed(
-                                context,
-                                addAddressScreenRoute,
+                              final result = await context.push<Map>(
+                                '/shop/add-address',
                               );
                               if (result != null && result is Map && result['success'] == true) {
                                 _loadAddresses();
