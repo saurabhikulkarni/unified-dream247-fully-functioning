@@ -37,7 +37,8 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
       return;
     }
     
-    context.go('/shop/entry_point');
+    debugPrint('🛒 [HOME] Navigating to Shop');
+    context.push('/shop/entry_point');
   }
 
   Future<void> _navigateToFantasy() async {
@@ -51,7 +52,7 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
         ),
       );
       if (mounted) {
-        context.go('/login');
+        context.push('/login');
       }
       return;
     }
@@ -66,7 +67,7 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
     
     debugPrint('🎮 [HOME] User authenticated, navigating to Fantasy');
     if (mounted) {
-      context.go('/fantasy/home');
+      context.push('/fantasy/home');
     }
   }
 
