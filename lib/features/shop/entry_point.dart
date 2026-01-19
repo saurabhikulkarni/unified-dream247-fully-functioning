@@ -107,7 +107,11 @@ class _EntryPointState extends State<EntryPoint> with WidgetsBindingObserver {
               leading: IconButton(
                 icon: const Icon(Icons.arrow_back, color: Colors.white),
                 onPressed: () {
-                  Navigator.of(context).popUntil((route) => route.isFirst);
+                  if (context.canPop()) {
+                    context.pop();
+                  } else {
+                    context.go('/home');
+                  }
                 },
               ),
               centerTitle: false,
@@ -127,7 +131,7 @@ class _EntryPointState extends State<EntryPoint> with WidgetsBindingObserver {
             padding: EdgeInsets.symmetric(horizontal: iconPadding),
             constraints: const BoxConstraints(),
             onPressed: () {
-              Navigator.pushNamed(context, searchScreenRoute);
+              context.push('/shop/search');
             },
             icon: SvgPicture.asset(
               'assets/icons/Search.svg',
@@ -143,16 +147,20 @@ class _EntryPointState extends State<EntryPoint> with WidgetsBindingObserver {
                 padding: EdgeInsets.symmetric(horizontal: iconPadding),
                 constraints: const BoxConstraints(),
                 onPressed: () async {
-                  final result = await Navigator.pushNamed(context, checkoutScreenRoute);
+                  final result = await context.push('/shop/checkout');
                   // Refresh cart count and wallet balance after returning from cart
                   if (mounted) {
                     setState(() {
                       // Update wallet if cart screen returns updated balance
                       if (result is Map) {
                         walletBalance = result['walletBalance'] ?? walletBalance;
-                        shoppingTokens = result['shoppingTokens'] ?? shoppingTokens;
                       }
                     });
+                  }
+                  // Trigger token refresh after cart
+                  if (mounted) {
+                    final shopTokensProvider = context.read<ShopTokensProvider>();
+                    shopTokensProvider.forceRefresh();
                   }
                 },
                 icon: Icon(
