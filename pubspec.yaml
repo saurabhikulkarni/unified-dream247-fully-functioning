@@ -158,5 +158,5 @@ flutter:
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: false  # iOS project not configured yet
-  image_path: "assets/images/shop_app_icon.png"
+  image_path: "assets/images/appicon.png"
   min_sdk_android: 21
