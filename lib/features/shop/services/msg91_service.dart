@@ -52,7 +52,7 @@ class Msg91Service {
         body: jsonEncode({
           'mobileNumber': cleanMobile,  // Backend expects 10 digits without country code
         }),
-      ).timeout(const Duration(seconds: Msg91Config.requestTimeoutSeconds));
+      ).timeout(Duration(seconds: Msg91Config.requestTimeoutSeconds));
 
       if (kDebugMode) {
         print('📱 [MSG91] Response status: ${response.statusCode}');
@@ -156,7 +156,7 @@ class Msg91Service {
           'Content-Type': 'application/json',
         },
         body: jsonEncode(requestBody),
-      ).timeout(const Duration(seconds: Msg91Config.requestTimeoutSeconds));
+      ).timeout(Duration(seconds: Msg91Config.requestTimeoutSeconds));
 
       final responseData = jsonDecode(response.body) as Map<String, dynamic>;
 

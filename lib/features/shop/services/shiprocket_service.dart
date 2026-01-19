@@ -144,7 +144,7 @@ class DeliveryPartner {
 
 class ShiprocketService {
   static const String _baseUrl = ShiprocketConfig.baseUrl;
-  static const String _proxyUrl = ShiprocketConfig.proxyUrl;
+  static String get _proxyUrl => ShiprocketConfig.proxyUrl;
   static String? _authToken;
   static DateTime? _tokenExpiry;
   static bool _authFailed = false; // Track if authentication has failed
