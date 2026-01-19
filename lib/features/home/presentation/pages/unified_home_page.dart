@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:unified_dream247/core/services/auth_service.dart' as core_auth;
 import 'package:unified_dream247/features/shop/services/product_service.dart';
 import 'package:unified_dream247/features/shop/models/product_model.dart';
@@ -30,13 +31,7 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
   }
 
   void _navigateToShop() {
-    if (!_authService.isShopEnabled()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Shop module is not enabled for your account')),
-      );
-      return;
-    }
-    
+    // Always allow navigation to shop - module check is optional
     debugPrint('🛒 [HOME] Navigating to Shop');
     context.push('/shop/entry_point');
   }
@@ -63,26 +58,20 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
   }
 
   Future<void> _navigateToFantasy() async {
-    // First check if user is logged in
-    final isLoggedIn = await _authService.isLoggedIn();
+    // Check login status using SharedPreferences directly for reliability
+    final prefs = await SharedPreferences.getInstance();
+    final isLoggedIn = prefs.getBool('is_logged_in') ?? false;
+    
     if (!isLoggedIn) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please login first to access Fantasy'),
-          backgroundColor: Colors.orange,
-        ),
-      );
       if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Please login first to access Game Zone'),
+            backgroundColor: Colors.orange,
+          ),
+        );
         context.push('/login');
       }
-      return;
-    }
-    
-    // Then check if fantasy is enabled
-    if (!_authService.isFantasyEnabled()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Fantasy module is not enabled for your account')),
-      );
       return;
     }
     
