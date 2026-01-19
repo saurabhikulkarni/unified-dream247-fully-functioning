@@ -2,10 +2,10 @@ import 'package:unified_dream247/config/api_config.dart';
 
 /// Configuration for Razorpay payment gateway
 class RazorpayConfig {
-  /// Razorpay API Key ID for test environment
-  /// TODO: Use environment variable for production key
+  /// Razorpay API Key ID
+  /// Test key for development, Live key for production
   static const String _testKeyId = 'rzp_test_RqEBl9COpBTyyz';
-  static const String _prodKeyId = String.fromEnvironment('RAZORPAY_KEY_ID', defaultValue: 'rzp_test_RqEBl9COpBTyyz');
+  static const String _prodKeyId = 'rzp_live_RzKEI3xUwyf7Tu';
   
   static String get keyId => ApiConfig.isProduction ? _prodKeyId : _testKeyId;
 

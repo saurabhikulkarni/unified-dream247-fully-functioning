@@ -138,7 +138,7 @@ class _AddMoneyPage extends State<AddMoneyPage> {
     _initRazorpay();
 
     var options = {
-      'key': 'rzp_test_S0bjTVUZm4brLR',
+      'key': 'rzp_live_RzKEI3xUwyf7Tu',
       'amount': (double.parse(_amountController.text) * 100).toInt(),
       'order_id': _razorpayOrderId,
       'name': 'Dream247',

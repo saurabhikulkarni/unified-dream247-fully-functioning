@@ -4,12 +4,11 @@
 import 'package:unified_dream247/config/api_config.dart';
 
 class RazorpayConfig {
-  // ⚠️ TEST MODE - Replace with production credentials before launch
+  // ✅ PRODUCTION MODE - Using Live Razorpay credentials
   // Your Razorpay API Key (Public Key)
   // Available at: https://dashboard.razorpay.com/#/app/keys
-  // PRODUCTION: Change from rzp_test_* to rzp_live_* after approval
   static const String _testKeyId = 'rzp_test_RqEBl9COpBTyyz';
-  static const String _prodKeyId = String.fromEnvironment('RAZORPAY_KEY_ID', defaultValue: 'rzp_test_RqEBl9COpBTyyz');
+  static const String _prodKeyId = 'rzp_live_RzKEI3xUwyf7Tu';
   
   static String get keyId => ApiConfig.isProduction ? _prodKeyId : _testKeyId;
 
@@ -88,7 +87,8 @@ class RazorpayConfig {
 
   /// Validate configuration
   static bool isConfigured() {
-    return keyId != 'rzp_test_RqEBl9COpBTyyz' &&
-        keySecret != 'STORED_ON_BACKEND_SERVER';
+    // Check if using production key
+    return keyId == 'rzp_live_RzKEI3xUwyf7Tu' ||
+        keyId != 'rzp_test_RqEBl9COpBTyyz';
   }
 }
