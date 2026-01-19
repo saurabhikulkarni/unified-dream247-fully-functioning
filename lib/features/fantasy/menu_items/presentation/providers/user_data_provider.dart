@@ -1,9 +1,6 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:unified_dream247/config/routes/route_names.dart';
-import 'package:unified_dream247/features/fantasy/core/app_constants/app_pages.dart';
 import 'package:unified_dream247/features/fantasy/core/utils/app_storage.dart';
 import 'package:unified_dream247/features/fantasy/menu_items/data/models/user_data.dart';
 
@@ -22,37 +19,29 @@ class UserDataProvider extends ChangeNotifier {
       final userDataString = await AppStorage.getStorageValueString('userData');
 
       if (userDataString == null || userDataString.isEmpty) {
-        debugPrint('No user data found in SharedPreferences.');
+        debugPrint('📦 [UserDataProvider] No user data found in SharedPreferences.');
+        debugPrint('📦 [UserDataProvider] This is normal if Fantasy module is initializing...');
         _userData = null;
-        await clearUserData();
-        if (context.mounted) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (context.mounted) {
-              AppNavigation.gotoLoginScreen(context);
-            }
-          });
-        }
+        // DON'T redirect to login - let LandingPage handle authentication
+        // The LandingPage will fetch user data during initialization
+        notifyListeners();
         return;
       }
 
       final dynamic decodedData = jsonDecode(userDataString);
       if (decodedData is Map<String, dynamic>) {
         _userData = UserFullDetailsResponse.fromJson(decodedData);
+        debugPrint('✅ [UserDataProvider] User data loaded: ${_userData?.name ?? _userData?.team ?? "Unknown"}');
       } else {
         throw Exception('Decoded data is not a valid Map<String, dynamic>.');
       }
 
       notifyListeners();
     } catch (e) {
-      debugPrint('Error loading user data: $e');
-      await clearUserData();
-      if (context.mounted) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (context.mounted) {
-            context.go(RouteNames.login);
-          }
-        });
-      }
+      debugPrint('❌ [UserDataProvider] Error loading user data: $e');
+      _userData = null;
+      // DON'T redirect to login here - let LandingPage handle it
+      notifyListeners();
     }
   }
 

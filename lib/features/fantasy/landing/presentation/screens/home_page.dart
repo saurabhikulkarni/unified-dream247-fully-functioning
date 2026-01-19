@@ -4,7 +4,6 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:unified_dream247/config/api_config.dart';
 import 'package:unified_dream247/features/fantasy/core/api_server_constants/api_server_impl/api_impl_header.dart';
@@ -68,42 +67,53 @@ class _HomePageState extends State<HomePage> {
     if (!mounted) return;
     
     if (!isLoggedIn) {
-      // Not logged in at all - redirect to shop login
-      debugPrint('⚠️ [FANTASY] User not logged in, redirecting to shop login');
-      context.go('/shop/login');
+      // Not logged in at all - let parent LandingPage handle redirect
+      debugPrint('⚠️ [FANTASY_HOME] User not logged in');
+      // Don't redirect here - LandingPage already handles this
       return;
     }
     
     // User is logged in to shop, check if fantasy token exists
     if (token == null || token.isEmpty) {
-      debugPrint('⚠️ [FANTASY] Shop login exists but no fantasy token, fetching token...');
-      // Fetch fantasy token automatically
-      final phone = prefs.getString('user_phone') ?? '';
-      final name = prefs.getString('user_name') ?? '';
-      final userId = prefs.getString('user_id'); // Get Hygraph auto-generated ID
+      debugPrint('⚠️ [FANTASY_HOME] No fantasy token yet - waiting for LandingPage to initialize...');
+      // Don't redirect - LandingPage._verifyUserIdAndInit() should be handling token fetch
+      // Wait a bit and check again
+      await Future.delayed(const Duration(milliseconds: 500));
       
-      if (phone.isNotEmpty) {
-        try {
-          final authService = AuthService();
-          final fantasyToken = await authService.fetchFantasyToken(
-            phone: phone,
-            name: name,
-            userId: userId, // Pass Hygraph auto-generated ID
-            isNewUser: false,
-          );
-          
-          if (fantasyToken != null && fantasyToken.isNotEmpty) {
-            await prefs.setString('token', fantasyToken);
-            debugPrint('✅ [FANTASY] Fantasy token fetched and saved automatically');
-          } else {
-            debugPrint('❌ [FANTASY] Failed to fetch fantasy token');
+      final retryToken = prefs.getString(AppStorageKeys.authToken);
+      if (retryToken == null || retryToken.isEmpty) {
+        debugPrint('⚠️ [FANTASY_HOME] Still no token after wait, attempting fetch...');
+        
+        final phone = prefs.getString('user_phone') ?? '';
+        final name = prefs.getString('user_name') ?? '';
+        final userId = prefs.getString('user_id');
+        
+        if (phone.isNotEmpty) {
+          try {
+            final authService = AuthService();
+            final fantasyToken = await authService.fetchFantasyToken(
+              phone: phone,
+              name: name,
+              userId: userId,
+              isNewUser: false,
+            );
+            
+            if (fantasyToken != null && fantasyToken.isNotEmpty) {
+              await prefs.setString('token', fantasyToken);
+              await prefs.setString('auth_token', fantasyToken);
+              debugPrint('✅ [FANTASY_HOME] Fantasy token fetched and saved');
+            } else {
+              debugPrint('❌ [FANTASY_HOME] Failed to fetch fantasy token');
+            }
+          } catch (e) {
+            debugPrint('❌ [FANTASY_HOME] Error fetching fantasy token: $e');
           }
-        } catch (e) {
-          debugPrint('❌ [FANTASY] Error fetching fantasy token: $e');
         }
+      } else {
+        debugPrint('✅ [FANTASY_HOME] Token available after wait');
       }
     } else {
-      debugPrint('✅ [FANTASY] Auth token found, loading fantasy data');
+      debugPrint('✅ [FANTASY_HOME] Auth token found: ${token.substring(0, token.length > 20 ? 20 : token.length)}...');
     }
     
     loadData();

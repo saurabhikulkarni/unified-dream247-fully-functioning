@@ -88,19 +88,29 @@ class ApiImplWithAccessToken {
         if (token == null || token.isEmpty) {
           debugPrint('⚠️ [FANTASY API] No auth token found in SharedPreferences!');
           debugPrint('⚠️ [FANTASY API] Key checked: ${AppStorageKeys.authToken}');
-          debugPrint('⚠️ [FANTASY API] Available keys: ${prefs.getKeys()}');
+          // Don't log all keys to avoid sensitive data exposure in production
+          // Try alternative key
+          token = prefs.getString('auth_token');
+          if (token != null && token.isNotEmpty) {
+            debugPrint('✅ [FANTASY API] Found token using alternative key "auth_token"');
+          }
         } else {
-          debugPrint('✅ [FANTASY API] Token found: ${token.substring(0, 20)}...');
+          debugPrint('✅ [FANTASY API] Token found: ${token.substring(0, token.length > 20 ? 20 : token.length)}...');
           
           // Check if token is expired
           if (_isTokenExpired(token)) {
             debugPrint('🔄 [FANTASY API] Token expired, needs refresh');
-            // For now, clear expired token - app should handle re-login
-            // In future, implement auto-refresh here
+            // Try to get a fresh token if phone is available
+            final phone = prefs.getString('user_phone');
+            if (phone != null && phone.isNotEmpty) {
+              debugPrint('🔄 [FANTASY API] Will attempt to refresh on next request');
+            }
+            // Clear expired token
             await prefs.remove(AppStorageKeys.authToken);
-            await prefs.remove('token'); // Clear both keys
+            await prefs.remove('token');
+            await prefs.remove('auth_token');
             token = null;
-            throw Exception('Token expired. Please log in again.');
+            // Don't throw - let the API call fail naturally and caller can handle it
           }
         }
 

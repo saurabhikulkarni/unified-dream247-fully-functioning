@@ -30,6 +30,8 @@ class _LandingPageState extends State<LandingPage> {
   int _selectedIndex = 0;
   String popUpBannerImage = "";
   bool _isFirstLaunch = false;
+  bool _isInitializing = true;
+  String? _initError;
   HomeUsecases homeUsecases = HomeUsecases(
     HomeDatasource(ApiImplWithAccessToken()),
   );
@@ -37,8 +39,7 @@ class _LandingPageState extends State<LandingPage> {
   @override
   void initState() {
     super.initState();
-    _verifyUserIdAndInit();
-    checkIfFirstLaunch();
+    _initializeFantasyModule();
     screens = [
       HomePage(updateIndex: updateIndex),
       MyMatchesPage(
@@ -53,79 +54,148 @@ class _LandingPageState extends State<LandingPage> {
     ];
   }
 
+  /// Initialize Fantasy module - fetch token and user data
+  Future<void> _initializeFantasyModule() async {
+    setState(() {
+      _isInitializing = true;
+      _initError = null;
+    });
+
+    try {
+      await _verifyUserIdAndInit();
+      checkIfFirstLaunch();
+      
+      if (mounted) {
+        setState(() {
+          _isInitializing = false;
+        });
+      }
+    } catch (e) {
+      debugPrint('❌ [LANDING_PAGE] Initialization error: $e');
+      if (mounted) {
+        setState(() {
+          _isInitializing = false;
+          _initError = e.toString();
+        });
+      }
+    }
+  }
+
   /// Verify that userId is available in SharedPreferences
   /// This ensures the user is properly logged in with Hygraph credentials
   Future<void> _verifyUserIdAndInit() async {
-    try {
-      final userId = await UserIdHelper.getUnifiedUserId();
-      final prefs = await SharedPreferences.getInstance();
-      
-      if (userId.isEmpty) {
-        debugPrint('⚠️ [LANDING_PAGE] No userId found! User is not logged in.');
-        // Redirect to Shop login screen - user must authenticate first
-        if (mounted) {
-          debugPrint('🔄 [LANDING_PAGE] Redirecting to Shop login for authentication');
-          context.go('/shop/login');
-        }
-        return;
-      } else {
-        debugPrint('✅ [LANDING_PAGE] UserId verified: ${userId.substring(0, userId.length > 20 ? 20 : userId.length)}...');
-        debugPrint('✅ [LANDING_PAGE] User is properly authenticated for Fantasy features');
-      }
-      
-      // Check if fantasy token exists
-      final token = prefs.getString('token');
-      if (token == null || token.isEmpty) {
-        debugPrint('⚠️ [LANDING_PAGE] No fantasy token found, fetching...');
-        // Fetch fantasy token
-        final phone = prefs.getString('user_phone') ?? '';
-        final name = prefs.getString('user_name') ?? '';
-        
-        if (phone.isNotEmpty) {
-          try {
-            final authService = AuthService();
-            final fantasyToken = await authService.fetchFantasyToken(
-              phone: phone,
-              name: name,
-              userId: userId,
-              isNewUser: false,
-            );
-            
-            if (fantasyToken != null && fantasyToken.isNotEmpty) {
-              await prefs.setString('token', fantasyToken);
-              debugPrint('✅ [LANDING_PAGE] Fantasy token fetched and saved');
-            } else {
-              debugPrint('❌ [LANDING_PAGE] Failed to fetch fantasy token');
-            }
-          } catch (e) {
-            debugPrint('❌ [LANDING_PAGE] Error fetching fantasy token: $e');
-          }
-        }
-      } else {
-        debugPrint('✅ [LANDING_PAGE] Fantasy token found');
-      }
-      
-      // Fetch user details from Fantasy backend to populate UserDataProvider
-      if (mounted) {
-        try {
-          debugPrint('📥 [LANDING_PAGE] Fetching user details from Fantasy backend...');
-          final userUsecases = UserUsecases(UserDatasource(ApiImplWithAccessToken()));
-          await userUsecases.getUserDetails(context);
-          debugPrint('✅ [LANDING_PAGE] User details fetched successfully');
-        } catch (e) {
-          debugPrint('⚠️ [LANDING_PAGE] Error fetching user details: $e');
-          // Continue anyway - data will be populated when available
-        }
-      }
-      
-      // Show all stored keys for debugging
-      await UserIdHelper.debugPrintStoredKeys();
-    } catch (e) {
-      debugPrint('❌ [LANDING_PAGE] Error verifying userId: $e');
-      // On error, redirect to login for safety
+    final prefs = await SharedPreferences.getInstance();
+    
+    // First check if user is logged in at all
+    final isLoggedIn = prefs.getBool('is_logged_in') ?? false;
+    if (!isLoggedIn) {
+      debugPrint('⚠️ [LANDING_PAGE] User not logged in');
       if (mounted) {
         context.go('/shop/login');
       }
+      return;
+    }
+    
+    final userId = await UserIdHelper.getUnifiedUserId();
+    
+    if (userId.isEmpty) {
+      debugPrint('⚠️ [LANDING_PAGE] No userId found! User is not logged in.');
+      if (mounted) {
+        debugPrint('🔄 [LANDING_PAGE] Redirecting to Shop login for authentication');
+        context.go('/shop/login');
+      }
+      return;
+    }
+    
+    debugPrint('✅ [LANDING_PAGE] UserId verified: ${userId.substring(0, userId.length > 20 ? 20 : userId.length)}...');
+    
+    // Get user phone and name for token fetch
+    final phone = prefs.getString('user_phone') ?? '';
+    final name = prefs.getString('user_name') ?? '';
+    
+    debugPrint('📱 [LANDING_PAGE] Phone: $phone, Name: $name');
+    
+    // Check if fantasy token exists and is valid
+    String? token = prefs.getString('token');
+    bool tokenRefreshed = false;
+    
+    if (token == null || token.isEmpty) {
+      debugPrint('⚠️ [LANDING_PAGE] No fantasy token found, fetching...');
+      token = await _fetchAndSaveFantasyToken(prefs, phone, name, userId);
+      tokenRefreshed = token != null;
+    } else {
+      debugPrint('✅ [LANDING_PAGE] Fantasy token found: ${token.substring(0, token.length > 20 ? 20 : token.length)}...');
+    }
+    
+    // If we still don't have a token, show error
+    if (token == null || token.isEmpty) {
+      debugPrint('❌ [LANDING_PAGE] Could not obtain fantasy token');
+      throw Exception('Could not authenticate with Fantasy server. Please try logging in again.');
+    }
+    
+    // Fetch user details from Fantasy backend to populate UserDataProvider
+    if (mounted) {
+      debugPrint('📥 [LANDING_PAGE] Fetching user details from Fantasy backend...');
+      final userUsecases = UserUsecases(UserDatasource(ApiImplWithAccessToken()));
+      final success = await userUsecases.getUserDetails(context);
+      
+      if (success == true) {
+        debugPrint('✅ [LANDING_PAGE] User details fetched successfully');
+      } else {
+        debugPrint('⚠️ [LANDING_PAGE] getUserDetails returned false, retrying with fresh token...');
+        
+        // Token might be expired - try refreshing
+        if (!tokenRefreshed) {
+          final newToken = await _fetchAndSaveFantasyToken(prefs, phone, name, userId);
+          if (newToken != null) {
+            // Retry getting user details
+            final retrySuccess = await userUsecases.getUserDetails(context);
+            if (retrySuccess != true) {
+              debugPrint('❌ [LANDING_PAGE] Failed to fetch user details even after token refresh');
+            }
+          }
+        }
+      }
+    }
+    
+    // Show all stored keys for debugging
+    await UserIdHelper.debugPrintStoredKeys();
+  }
+
+  /// Helper to fetch and save fantasy token
+  Future<String?> _fetchAndSaveFantasyToken(
+    SharedPreferences prefs,
+    String phone,
+    String name,
+    String userId,
+  ) async {
+    if (phone.isEmpty) {
+      debugPrint('❌ [LANDING_PAGE] Cannot fetch token - no phone number');
+      return null;
+    }
+    
+    try {
+      final authService = AuthService();
+      final fantasyToken = await authService.fetchFantasyToken(
+        phone: phone,
+        name: name,
+        userId: userId,
+        isNewUser: false,
+      );
+      
+      if (fantasyToken != null && fantasyToken.isNotEmpty) {
+        await prefs.setString('token', fantasyToken);
+        await prefs.setString('auth_token', fantasyToken);
+        debugPrint('✅ [LANDING_PAGE] Fantasy token fetched and saved');
+        debugPrint('✅ [LANDING_PAGE] Token: ${fantasyToken.substring(0, fantasyToken.length > 30 ? 30 : fantasyToken.length)}...');
+        return fantasyToken;
+      } else {
+        debugPrint('❌ [LANDING_PAGE] Fantasy backend returned null/empty token');
+        return null;
+      }
+    } catch (e) {
+      debugPrint('❌ [LANDING_PAGE] Error fetching fantasy token: $e');
+      return null;
     }
   }
 
@@ -167,6 +237,104 @@ class _LandingPageState extends State<LandingPage> {
 
   @override
   Widget build(BuildContext context) {
+    // Show loading while initializing
+    if (_isInitializing) {
+      return Scaffold(
+        body: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [AppColors.mainColor, AppColors.secondMainColor],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
+          ),
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                ),
+                const SizedBox(height: 20),
+                Text(
+                  'Loading Game Zone...',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
+    // Show error if initialization failed
+    if (_initError != null) {
+      return Scaffold(
+        body: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [AppColors.mainColor, AppColors.secondMainColor],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
+          ),
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.error_outline, color: Colors.white, size: 64),
+                  const SizedBox(height: 20),
+                  Text(
+                    'Unable to load Game Zone',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    _initError!,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.white70,
+                      fontSize: 14,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  ElevatedButton(
+                    onPressed: _initializeFantasyModule,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: AppColors.mainColor,
+                      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                    ),
+                    child: const Text('Retry'),
+                  ),
+                  const SizedBox(height: 12),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).popUntil((route) => route.isFirst);
+                    },
+                    child: const Text(
+                      'Go Back',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
     return WillPopScope(
       onWillPop: () async {
         // Navigate back to unified home screen
