@@ -15,6 +15,9 @@ import 'package:unified_dream247/features/fantasy/menu_items/presentation/screen
 import 'package:unified_dream247/features/fantasy/more_options/presentation/screens/more_options_page.dart';
 import 'package:unified_dream247/features/fantasy/my_matches/presentation/screens/my_matches_page.dart';
 import 'package:unified_dream247/features/fantasy/winners/presentation/screens/winners_page.dart';
+import 'package:unified_dream247/features/fantasy/menu_items/data/user_datasource.dart';
+import 'package:unified_dream247/features/fantasy/menu_items/domain/use_cases/user_usecases.dart';
+import 'package:unified_dream247/features/shop/services/auth_service.dart';
 
 class LandingPage extends StatefulWidget {
   final int? index;
@@ -55,18 +58,64 @@ class _LandingPageState extends State<LandingPage> {
   Future<void> _verifyUserIdAndInit() async {
     try {
       final userId = await UserIdHelper.getUnifiedUserId();
+      final prefs = await SharedPreferences.getInstance();
       
       if (userId.isEmpty) {
         debugPrint('⚠️ [LANDING_PAGE] No userId found! User is not logged in.');
         // Redirect to Shop login screen - user must authenticate first
         if (mounted) {
           debugPrint('🔄 [LANDING_PAGE] Redirecting to Shop login for authentication');
-          Navigator.pushReplacementNamed(context, '/login');
+          context.go('/shop/login');
         }
         return;
       } else {
         debugPrint('✅ [LANDING_PAGE] UserId verified: ${userId.substring(0, userId.length > 20 ? 20 : userId.length)}...');
         debugPrint('✅ [LANDING_PAGE] User is properly authenticated for Fantasy features');
+      }
+      
+      // Check if fantasy token exists
+      final token = prefs.getString('token');
+      if (token == null || token.isEmpty) {
+        debugPrint('⚠️ [LANDING_PAGE] No fantasy token found, fetching...');
+        // Fetch fantasy token
+        final phone = prefs.getString('user_phone') ?? '';
+        final name = prefs.getString('user_name') ?? '';
+        
+        if (phone.isNotEmpty) {
+          try {
+            final authService = AuthService();
+            final fantasyToken = await authService.fetchFantasyToken(
+              phone: phone,
+              name: name,
+              userId: userId,
+              isNewUser: false,
+            );
+            
+            if (fantasyToken != null && fantasyToken.isNotEmpty) {
+              await prefs.setString('token', fantasyToken);
+              debugPrint('✅ [LANDING_PAGE] Fantasy token fetched and saved');
+            } else {
+              debugPrint('❌ [LANDING_PAGE] Failed to fetch fantasy token');
+            }
+          } catch (e) {
+            debugPrint('❌ [LANDING_PAGE] Error fetching fantasy token: $e');
+          }
+        }
+      } else {
+        debugPrint('✅ [LANDING_PAGE] Fantasy token found');
+      }
+      
+      // Fetch user details from Fantasy backend to populate UserDataProvider
+      if (mounted) {
+        try {
+          debugPrint('📥 [LANDING_PAGE] Fetching user details from Fantasy backend...');
+          final userUsecases = UserUsecases(UserDatasource(ApiImplWithAccessToken()));
+          await userUsecases.getUserDetails(context);
+          debugPrint('✅ [LANDING_PAGE] User details fetched successfully');
+        } catch (e) {
+          debugPrint('⚠️ [LANDING_PAGE] Error fetching user details: $e');
+          // Continue anyway - data will be populated when available
+        }
       }
       
       // Show all stored keys for debugging
@@ -75,7 +124,7 @@ class _LandingPageState extends State<LandingPage> {
       debugPrint('❌ [LANDING_PAGE] Error verifying userId: $e');
       // On error, redirect to login for safety
       if (mounted) {
-        Navigator.pushReplacementNamed(context, '/login');
+        context.go('/shop/login');
       }
     }
   }

@@ -41,6 +41,27 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
     context.push('/shop/entry_point');
   }
 
+  void _onBottomNavTap(int index) {
+    switch (index) {
+      case 0:
+        // Already on Home, do nothing
+        break;
+      case 1:
+        // Navigate to Shop
+        _navigateToShop();
+        break;
+      case 2:
+        // Navigate to Wallet (Fantasy wallet as unified wallet)
+        _navigateToWallet();
+        break;
+    }
+  }
+
+  void _navigateToWallet() {
+    debugPrint('💰 [HOME] Navigating to Wallet');
+    context.push('/fantasy/wallet');
+  }
+
   Future<void> _navigateToFantasy() async {
     // First check if user is logged in
     final isLoggedIn = await _authService.isLoggedIn();
@@ -588,6 +609,7 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
         elevation: 8,
         selectedFontSize: 12,
         unselectedFontSize: 12,
+        onTap: (index) => _onBottomNavTap(index),
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
