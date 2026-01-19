@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:unified_dream247/features/shop/components/product/product_card.dart';
 import 'package:unified_dream247/features/shop/models/product_model.dart';
 import 'package:unified_dream247/features/shop/services/wishlist_service.dart';
@@ -98,7 +99,7 @@ class _WishlistScreenState extends State<WishlistScreen> {
             action: SnackBarAction(
               label: 'View Cart',
               onPressed: () {
-                Navigator.pushNamed(context, cartScreenRoute);
+                context.push('/shop/checkout');
               },
             ),
           ),
@@ -151,7 +152,7 @@ class _WishlistScreenState extends State<WishlistScreen> {
           action: SnackBarAction(
             label: 'View Cart',
             onPressed: () {
-              Navigator.pushNamed(context, cartScreenRoute);
+              context.push('/shop/checkout');
             },
           ),
         ),
@@ -169,10 +170,10 @@ class _WishlistScreenState extends State<WishlistScreen> {
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
             // Check if we can pop, otherwise navigate to home
-            if (Navigator.canPop(context)) {
-              Navigator.pop(context);
+            if (context.canPop()) {
+              context.pop();
             } else {
-              Navigator.pushReplacementNamed(context, entryPointScreenRoute);
+              context.go('/shop/entry_point');
             }
           },
         ),
@@ -205,12 +206,12 @@ class _WishlistScreenState extends State<WishlistScreen> {
                         'Are you sure you want to clear your entire wishlist?'),
                     actions: [
                       TextButton(
-                        onPressed: () => Navigator.pop(context),
+                        onPressed: () => context.pop(),
                         child: const Text('Cancel'),
                       ),
                       TextButton(
                         onPressed: () async {
-                          Navigator.pop(context);
+                          context.pop();
                           setState(() {
                             _isLoading = true;
                           });
@@ -261,7 +262,7 @@ class _WishlistScreenState extends State<WishlistScreen> {
                   ),
                   const SizedBox(height: defaultPadding),
                   ElevatedButton(
-                    onPressed: () => Navigator.pop(context),
+                    onPressed: () => context.pop(),
                     child: const Text('Continue Shopping'),
                   ),
                 ],
@@ -296,11 +297,8 @@ class _WishlistScreenState extends State<WishlistScreen> {
                                         product.priceAfetDiscount,
                                     product: product,
                                     press: () {
-                                      Navigator.pushNamed(
-                                        context,
-                                        productDetailsScreenRoute,
-                                        arguments: {'product': product},
-                                      );
+                                      context.push('/shop/product/${product.id}',
+                                          extra: {'product': product});
                                     },
                                   ),
                                   if (_isEditMode && product.id != null)

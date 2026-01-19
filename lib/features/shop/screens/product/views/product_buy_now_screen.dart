@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:unified_dream247/features/shop/components/custom_modal_bottom_sheet.dart';
 import 'package:unified_dream247/features/shop/components/network_image_with_loader.dart';
 import 'package:unified_dream247/features/shop/models/product_model.dart';
@@ -234,13 +235,13 @@ class _ProductBuyNowScreenState extends State<ProductBuyNowScreen> {
         actions: [
           TextButton(
             onPressed: () {
-              Navigator.pop(context);
+              context.pop();
             },
             child: const Text('Cancel'),
           ),
           ElevatedButton.icon(
             onPressed: () async {
-              Navigator.pop(context);
+              context.pop();
               
               // Add to wishlist
               await _toggleWishlist();
@@ -328,13 +329,13 @@ class _ProductBuyNowScreenState extends State<ProductBuyNowScreen> {
         actions: [
           TextButton(
             onPressed: () {
-              Navigator.pop(context);
+              context.pop();
             },
             child: const Text('Cancel'),
           ),
           TextButton(
             onPressed: () {
-              Navigator.pop(context);
+              context.pop();
               _processRedeemNow();
             },
             child: const Text('Yes, Add to Cart'),
@@ -389,31 +390,15 @@ class _ProductBuyNowScreenState extends State<ProductBuyNowScreen> {
           ),
           actions: [
             TextButton(
-              onPressed: () => Navigator.pop(context),
+              onPressed: () => context.pop(),
               child: const Text('Continue Shopping'),
             ),
             TextButton(
               onPressed: () {
-                Navigator.pop(context);
-                Navigator.pushNamed(
-                  context,
-                  walletScreenRoute,
-                  arguments: {
-                    'walletBalance': walletBalance.toDouble(),
-                    'shoppingTokens': walletBalance,
-                    'requiredAmount': tokensShort.toDouble(),
-                    'returnToCart': false,
-                    'tokensNeeded': tokensShort,
-                  },
-                ).then((result) {
-                  // Refresh wallet balance when returning from wallet screen
-                  if (result != null && result is Map && mounted) {
-                    setState(() {
-                      final num updated = (result['shoppingTokens'] ?? walletBalance) as num;
-                      walletBalance = updated.toDouble();
-                    });
-                  }
-                });
+                context.pop();
+                // Note: Wallet redirection now to Fantasy wallet
+                // Data passing no longer needed as it's a unified wallet
+                context.push('/fantasy/accounts/my-balance');
               },
               child: const Text('Add Tokens to Wallet'),
             ),
@@ -482,23 +467,22 @@ class _ProductBuyNowScreenState extends State<ProductBuyNowScreen> {
           duration: Duration(seconds: 1),
         ),
       );
-
       // Navigate to cart screen after a brief delay
       await Future.delayed(const Duration(milliseconds: 500));
       
       if (!mounted) return;
       
       // Close the product buy now modal first
-      Navigator.pop(context);
+      context.pop();
       
       // Then navigate to cart screen
-      Navigator.pushNamed(context, cartScreenRoute);
+      context.push('/shop/checkout');
       
     } catch (e) {
       if (!mounted) return;
       
       // Close loading dialog
-      Navigator.pop(context);
+      context.pop();
       
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

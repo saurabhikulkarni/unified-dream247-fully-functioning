@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:unified_dream247/features/shop/components/gradient_button.dart';
 import 'package:unified_dream247/features/shop/components/network_image_with_loader.dart';
 import 'package:unified_dream247/features/shop/constants.dart';
@@ -179,35 +180,15 @@ class _CartScreenState extends State<CartScreen> {
           ),
           actions: [
             TextButton(
-              onPressed: () => Navigator.pop(context),
+              onPressed: () => context.pop(),
               child: const Text('Continue Shopping'),
             ),
             TextButton(
               onPressed: () {
-                Navigator.pop(context);
+                context.pop();
                 // Navigate to wallet screen with required amount
-                Navigator.pushNamed(
-                  context,
-                  walletScreenRoute,
-                  arguments: {
-                    'walletBalance': walletBalance.toDouble(),
-                    'shoppingTokens': walletBalance,
-                    'requiredAmount': tokensShort.toDouble(),
-                    'returnToCart': true,
-                  },
-                ).then((result) {
-                  // Refresh wallet balance when returning from wallet screen
-                  if (result != null && result is Map) {
-                    setState(() {
-                      final num updated = (result['shoppingTokens'] ?? walletBalance) as num;
-                      walletBalance = updated.toDouble();
-                    });
-                    // If balance is now sufficient, try payment again
-                    if (walletBalance >= totalTokensNeeded) {
-                      _proceedToPayment(context);
-                    }
-                  }
-                });
+                context.push('/fantasy/accounts/my-balance');
+                // Note: Wallet refresh handled automatically by unified wallet system
               },
               child: const Text('Add Top-up'),
             ),
@@ -218,9 +199,8 @@ class _CartScreenState extends State<CartScreen> {
     }
 
     // Sufficient tokens - navigate to address selection
-    final selectedAddressId = await Navigator.pushNamed(
-      context,
-      addressSelectionScreenRoute,
+    final selectedAddressId = await context.push<String>(
+      '/shop/address-selection',
     );
 
     // If user selected an address, proceed with order creation
@@ -376,7 +356,7 @@ class _CartScreenState extends State<CartScreen> {
       await cartService.clearCompleteCart();
 
       if (!mounted) return;
-      Navigator.pop(context); // Close loading dialog
+      context.pop(); // Close loading dialog
 
       // Show success animation
       await showDialog(
@@ -425,7 +405,7 @@ class _CartScreenState extends State<CartScreen> {
                 ),
                 const SizedBox(height: 24),
                 ElevatedButton(
-                  onPressed: () => Navigator.pop(context),
+                  onPressed: () => context.pop(),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: primaryColor,
                     minimumSize: const Size(double.infinity, 48),
@@ -444,23 +424,19 @@ class _CartScreenState extends State<CartScreen> {
       if (!mounted) return;
 
       // Navigate to order tracking screen with appropriate ID
-      await Navigator.of(context).pushNamed(
-        orderTrackingScreenRoute,
-        arguments: {
+      await context.push<Map>(
+        '/shop/order-tracking',
+        extra: {
           'orderId': shiprocketOrderId ?? order.id ?? order.orderNumber,
         },
       );
       
-      // After order tracking, pop back to home with updated wallet balance
+      // After order tracking, pop back with updated wallet balance
       if (!mounted) return;
-      Navigator.of(context).pop({
-        'walletBalance': walletBalance,
-        'shoppingTokens': walletBalance.toInt(),
-        'needsRefresh': true,
-      });
+      // Note: Cart screen navigation completes here
     } catch (e) {
       if (!mounted) return;
-      Navigator.pop(context); // Close loading dialog
+      context.pop(); // Close loading dialog
       
       // Parse error message for user-friendly display
       String errorMessage = 'Failed to create order';
@@ -510,7 +486,7 @@ class _CartScreenState extends State<CartScreen> {
             ),
             ElevatedButton(
               onPressed: () {
-                Navigator.pop(context);
+                context.pop();
                 // Retry the order creation
                 _proceedToPayment(context);
               },
@@ -548,7 +524,7 @@ class _CartScreenState extends State<CartScreen> {
                   ),
                   const SizedBox(height: defaultPadding),
                   ElevatedButton(
-                    onPressed: () => Navigator.pop(context),
+                    onPressed: () => context.pop(),
                     child: const Text("Continue Shopping"),
                   ),
                 ],

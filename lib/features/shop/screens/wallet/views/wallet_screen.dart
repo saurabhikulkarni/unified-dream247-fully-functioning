@@ -12,9 +12,9 @@ class WalletScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Redirect to Fantasy wallet (unified wallet for entire app)
-    // Use GoRouter for navigation
+    // Use context.push() to maintain back navigation stack
     Future.microtask(() {
-      context.go('/fantasy/accounts/my-balance');
+      context.push('/fantasy/accounts/my-balance');
     });
     
     // Show loading while redirecting

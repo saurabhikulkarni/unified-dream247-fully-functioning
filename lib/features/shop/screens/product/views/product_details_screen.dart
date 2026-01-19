@@ -165,7 +165,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
               backgroundColor: Theme.of(context).scaffoldBackgroundColor,
               floating: true,
               leading: IconButton(
-                onPressed: () => Navigator.pop(context),
+                onPressed: () => context.pop(),
                 icon: const Icon(Icons.arrow_back),
               ),
               actions: [
@@ -382,14 +382,9 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                             price: _relatedProducts[index].price,
                             product: _relatedProducts[index],
                             press: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => ProductDetailsScreen(
-                                    product: _relatedProducts[index],
-                                  ),
-                                ),
-                              );
+                              context.push(
+                                  '/shop/product/${_relatedProducts[index].id}',
+                                  extra: {'product': _relatedProducts[index]});
                             },
                           ),
                         ),
