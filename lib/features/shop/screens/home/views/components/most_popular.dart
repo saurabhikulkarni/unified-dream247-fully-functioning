@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:unified_dream247/features/shop/components/product/secondary_product_card.dart';
 import 'package:unified_dream247/features/shop/components/skleton/product/secondery_produts_skelton.dart';
 import 'package:unified_dream247/features/shop/models/product_model.dart';
@@ -90,8 +91,8 @@ class _MostPopularState extends State<MostPopular> {
                   price: _products[index].price,
                   priceAfetDiscount: _products[index].priceAfetDiscount,
                   press: () {
-                    Navigator.pushNamed(context, productDetailsScreenRoute,
-                        arguments: {'product': _products[index]});
+                    context.push('/shop/product/${_products[index].id}',
+                        extra: {'product': _products[index]});
                   },
                 ),
               ),

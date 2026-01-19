@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:unified_dream247/features/shop/route/route_constants.dart';
 import 'package:unified_dream247/features/shop/services/product_service.dart';
 
@@ -97,8 +98,8 @@ class _FlashSaleState extends State<FlashSale> {
                   priceAfetDiscount: _products[index].priceAfetDiscount,
                   product: _products[index],
                   press: () {
-                    Navigator.pushNamed(context, productDetailsScreenRoute,
-                        arguments: {'product': _products[index]});
+                    context.push('/shop/product/${_products[index].id}',
+                        extra: {'product': _products[index]});
                   },
                 ),
               ),

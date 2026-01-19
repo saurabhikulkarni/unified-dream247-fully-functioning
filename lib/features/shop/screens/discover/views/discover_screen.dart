@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:unified_dream247/features/shop/constants.dart';
 import 'package:unified_dream247/features/shop/models/category_model.dart';
 import 'package:unified_dream247/features/shop/route/route_constants.dart';
@@ -19,7 +20,7 @@ class DiscoverScreen extends StatelessWidget {
               padding: const EdgeInsets.all(defaultPadding),
               child: GestureDetector(
                 onTap: () {
-                  Navigator.pushNamed(context, searchScreenRoute);
+                  context.push('/shop/search');
                 },
                 child: const AbsorbPointer(
                   child: SearchForm(isEnabled: false),
@@ -66,10 +67,9 @@ class DiscoverScreen extends StatelessWidget {
                           color: Theme.of(context).iconTheme.color,
                         ),
                         onTap: () {
-                          Navigator.pushNamed(
-                            context,
-                            categoryProductsScreenRoute,
-                            arguments: {
+                          context.push(
+                            '/shop/category-products/${category.title.toLowerCase()}',
+                            extra: {
                               'categoryName': category.title,
                               'categoryId': category.title.toLowerCase(),
                             },
