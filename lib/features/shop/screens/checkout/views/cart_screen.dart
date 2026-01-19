@@ -187,7 +187,7 @@ class _CartScreenState extends State<CartScreen> {
               onPressed: () {
                 context.pop();
                 // Navigate to wallet screen with required amount
-                context.push('/fantasy/accounts/my-balance');
+                context.push('/fantasy/wallet');
                 // Note: Wallet refresh handled automatically by unified wallet system
               },
               child: const Text('Add Top-up'),

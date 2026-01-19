@@ -398,7 +398,7 @@ class _ProductBuyNowScreenState extends State<ProductBuyNowScreen> {
                 context.pop();
                 // Note: Wallet redirection now to Fantasy wallet
                 // Data passing no longer needed as it's a unified wallet
-                context.push('/fantasy/accounts/my-balance');
+                context.push('/fantasy/wallet');
               },
               child: const Text('Add Tokens to Wallet'),
             ),
