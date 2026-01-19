@@ -289,7 +289,7 @@ if (paymentMethod == 'tokens') {
 // In Shop home/navigation
 onTap: () {
   // Navigate to Fantasy wallet instead of Shop wallet
-  context.go('/fantasy/accounts/my-balance');
+  context.go('/fantasy/wallet');
   // or use Get.to(() => MyBalancePage());
 }
 ```

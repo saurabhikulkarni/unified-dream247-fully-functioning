@@ -264,10 +264,49 @@ class AuthService {
         print('🔑 [AUTH] Parsed response data: $data');
         print('🔑 [AUTH] Response keys available: ${data.keys.toList()}');
         
-        // Try different possible token keys
-        final token = data['token'] as String? ?? 
-                      data['accessToken'] as String? ??
-                      data['access_token'] as String?;
+        // Try different possible token keys from multiple response formats
+        String? token;
+        
+        // Format 1: Direct token field
+        token = data['token'] as String?;
+        if (token != null && token.isNotEmpty) {
+          print('✅ [AUTH] Token found in "token" field');
+        }
+        
+        // Format 2: accessToken field
+        if (token == null || token.isEmpty) {
+          token = data['accessToken'] as String?;
+          if (token != null && token.isNotEmpty) {
+            print('✅ [AUTH] Token found in "accessToken" field');
+          }
+        }
+        
+        // Format 3: access_token field
+        if (token == null || token.isEmpty) {
+          token = data['access_token'] as String?;
+          if (token != null && token.isNotEmpty) {
+            print('✅ [AUTH] Token found in "access_token" field');
+          }
+        }
+        
+        // Format 4: data.auth_key field (nested in data object)
+        if (token == null || token.isEmpty) {
+          final dataObj = data['data'];
+          if (dataObj != null && dataObj is Map) {
+            token = dataObj['auth_key'] as String?;
+            if (token != null && token.isNotEmpty) {
+              print('✅ [AUTH] Token found in "data.auth_key" field');
+            }
+          }
+        }
+        
+        // Format 5: Direct auth_key field
+        if (token == null || token.isEmpty) {
+          token = data['auth_key'] as String?;
+          if (token != null && token.isNotEmpty) {
+            print('✅ [AUTH] Token found in "auth_key" field');
+          }
+        }
         
         if (token != null && token.isNotEmpty) {
           print('✅ [AUTH] Fantasy token fetched successfully');
@@ -276,14 +315,15 @@ class AuthService {
           print('🔑 [AUTH] ========== FANTASY TOKEN READY ==========');
           return token;
         } else {
-          print('⚠️ [AUTH] No token in response');
-          print('⚠️ [AUTH] Response keys: ${data.keys}');
-          print('⚠️ [AUTH] Full response: $data');
+          print('❌ [AUTH] No token found in any expected field');
+          print('❌ [AUTH] Response keys: ${data.keys}');
+          print('❌ [AUTH] Full response structure: $data');
+          print('❌ [AUTH] Tried fields: token, accessToken, access_token, data.auth_key, auth_key');
           return null;
         }
       } else {
-        print('❌ [AUTH] Fantasy token fetch failed: ${response.statusCode}');
-        print('❌ [AUTH] Response: ${response.body}');
+        print('❌ [AUTH] Fantasy token fetch failed with status: ${response.statusCode}');
+        print('❌ [AUTH] Response body: ${response.body}');
         return null;
       }
     } catch (e) {
