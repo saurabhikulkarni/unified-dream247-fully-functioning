@@ -40,7 +40,23 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
     context.go('/shop/entry_point');
   }
 
-  void _navigateToFantasy() {
+  Future<void> _navigateToFantasy() async {
+    // First check if user is logged in
+    final isLoggedIn = await _authService.isLoggedIn();
+    if (!isLoggedIn) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please login first to access Fantasy'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      if (mounted) {
+        context.go('/login');
+      }
+      return;
+    }
+    
+    // Then check if fantasy is enabled
     if (!_authService.isFantasyEnabled()) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Fantasy module is not enabled for your account')),
@@ -48,7 +64,10 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
       return;
     }
     
-    context.go('/fantasy/home');
+    debugPrint('🎮 [HOME] User authenticated, navigating to Fantasy');
+    if (mounted) {
+      context.go('/fantasy/home');
+    }
   }
 
   Future<void> _loadProducts() async {

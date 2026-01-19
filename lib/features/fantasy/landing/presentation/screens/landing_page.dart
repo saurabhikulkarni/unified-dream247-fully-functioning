@@ -56,11 +56,13 @@ class _LandingPageState extends State<LandingPage> {
       final userId = await UserIdHelper.getUnifiedUserId();
       
       if (userId.isEmpty) {
-        debugPrint('⚠️ [LANDING_PAGE] Warning: No userId found! User may not be logged in.');
-        // Optionally redirect to login - uncomment if needed
-        // if (mounted) {
-        //   context.go('/login');
-        // }
+        debugPrint('⚠️ [LANDING_PAGE] No userId found! User is not logged in.');
+        // Redirect to Shop login screen - user must authenticate first
+        if (mounted) {
+          debugPrint('🔄 [LANDING_PAGE] Redirecting to Shop login for authentication');
+          context.go('/login');
+        }
+        return;
       } else {
         debugPrint('✅ [LANDING_PAGE] UserId verified: ${userId.substring(0, userId.length > 20 ? 20 : userId.length)}...');
         debugPrint('✅ [LANDING_PAGE] User is properly authenticated for Fantasy features');
@@ -70,6 +72,10 @@ class _LandingPageState extends State<LandingPage> {
       await UserIdHelper.debugPrintStoredKeys();
     } catch (e) {
       debugPrint('❌ [LANDING_PAGE] Error verifying userId: $e');
+      // On error, redirect to login for safety
+      if (mounted) {
+        context.go('/login');
+      }
     }
   }
 

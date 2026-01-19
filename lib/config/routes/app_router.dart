@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../../core/services/auth_service.dart' as core_auth;
 
 import '../../features/authentication/presentation/pages/otp_verification_page.dart';
 import '../../features/ecommerce/products/presentation/pages/product_detail_page.dart';
@@ -57,6 +58,26 @@ class AppRouter {
   static final GoRouter router = GoRouter(
     initialLocation: RouteNames.splash,
     debugLogDiagnostics: true,
+    redirect: (context, state) async {
+      // Check if user is trying to access Fantasy routes without authentication
+      final isFantasyRoute = state.matchedLocation.startsWith('/fantasy');
+      
+      if (isFantasyRoute) {
+        final authService = core_auth.AuthService();
+        await authService.initialize();
+        final isLoggedIn = await authService.isLoggedIn();
+        
+        if (!isLoggedIn) {
+          debugPrint('🔐 [ROUTER] Unauthenticated user trying to access Fantasy route');
+          debugPrint('🔐 [ROUTER] Redirecting from ${state.matchedLocation} to /login');
+          // Redirect to login if accessing fantasy routes without authentication
+          return '/login';
+        }
+      }
+      
+      // Allow other routes to proceed normally
+      return null;
+    },
     routes: [
       // Splash screen (Shop splash as entry point)
       GoRoute(
