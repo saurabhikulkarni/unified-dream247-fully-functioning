@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:unified_dream247/config/routes/route_names.dart';
 import 'package:unified_dream247/features/shop/constants.dart';
 import 'package:unified_dream247/features/shop/services/auth_service.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -224,11 +225,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     TextButton(
                       onPressed: () async {
-                        // Clear session from AuthService
-                        await AuthService().logout();
+                        // ✅ UNIFIED LOGOUT: Clear session from both Shop and Core AuthService
+                        await AuthService().unifiedLogout();
                         if (!context.mounted) return;
                         Navigator.pop(context);
-                        context.go('/auth/login');
+                        context.go(RouteNames.login);
                       },
                       child: const Text(
                         "Log Out",

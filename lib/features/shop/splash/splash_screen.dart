@@ -1,9 +1,9 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:unified_dream247/config/routes/route_names.dart';
 import 'package:unified_dream247/core/services/auth_service.dart' as core_auth;
 import 'package:unified_dream247/core/services/token_service.dart';
-import 'package:unified_dream247/core/constants/api_constants.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -61,60 +61,108 @@ class _SplashScreenState extends State<SplashScreen>
     if (!mounted) return;
 
     try {
-      final authService = core_auth.AuthService();
-      await authService.initialize();
-      
-      // Check unified login status from local storage
-      final isLoggedIn = await authService.isLoggedIn();
-      final token = authService.getAuthToken();
-      final userId = await authService.getUserId();
+      // ✅ PERSISTENT SESSION CHECK
+      // Check if user has a valid saved session - DO NOT require OTP again
+      final isLoggedIn = await _checkPersistentSession();
 
       if (!mounted) return;
 
-      // ✅ PERSISTENT SESSION: User stays logged in unless they explicitly logout
-      if (isLoggedIn && userId != null && userId.isNotEmpty) {
-        debugPrint('✅ User session found - maintaining login');
-        debugPrint('👤 User ID: ${userId.substring(0, userId.length > 10 ? 10 : userId.length)}...');
-        
-        // Start token refresh timer if token exists
-        if (token != null && token.isNotEmpty) {
-          debugPrint('🔑 Token present - starting refresh timer');
-          final tokenService = TokenService();
-          tokenService.startTokenRefreshTimer(token);
-          
-          // Try to validate/refresh token in background (non-blocking)
-          _refreshTokenInBackground(authService, token);
-        } else {
-          debugPrint('⚠️ No token but user session exists - will refresh on next API call');
-        }
-        
-        debugPrint('🚀 Navigating to home (persistent session)');
+      if (isLoggedIn) {
+        debugPrint('🚀 [SPLASH] Navigating to home (persistent session active)');
         context.go(RouteNames.home);
       } else {
-        debugPrint('❌ No active session - redirecting to login');
+        debugPrint('🔐 [SPLASH] No active session - redirecting to login');
         context.go(RouteNames.login);
       }
     } catch (e) {
-      debugPrint('⚠️ Navigation error: $e');
-      // Even on error, check if we have local session data
-      try {
-        final authService = core_auth.AuthService();
-        await authService.initialize();
-        final isLoggedIn = await authService.isLoggedIn();
-        
-        if (mounted) {
-          if (isLoggedIn) {
-            debugPrint('🔄 Error occurred but session exists - going to home');
-            context.go(RouteNames.home);
-          } else {
-            context.go(RouteNames.login);
-          }
-        }
-      } catch (_) {
-        if (mounted) {
+      debugPrint('⚠️ [SPLASH] Navigation error: $e');
+      // On error, fallback to checking SharedPreferences directly
+      if (mounted) {
+        final fallbackLoggedIn = await _fallbackSessionCheck();
+        if (fallbackLoggedIn) {
+          context.go(RouteNames.home);
+        } else {
           context.go(RouteNames.login);
         }
       }
+    }
+  }
+
+  /// Check for persistent session - user should stay logged in until explicit logout
+  Future<bool> _checkPersistentSession() async {
+    try {
+      final authService = core_auth.AuthService();
+      await authService.initialize();
+      
+      // Check login status from SharedPreferences
+      final isLoggedIn = await authService.isLoggedIn();
+      final userId = authService.getUserId();
+      final token = authService.getAuthToken();
+
+      debugPrint('🔍 [SPLASH] Session check:');
+      debugPrint('   - isLoggedIn: $isLoggedIn');
+      debugPrint('   - userId: ${userId != null ? "${userId.substring(0, userId.length > 10 ? 10 : userId.length)}..." : "null"}');
+      debugPrint('   - hasToken: ${token != null && token.isNotEmpty}');
+
+      // ✅ User is logged in if they have a valid session
+      // Only require: isLoggedIn flag AND userId
+      // Token can be refreshed later if missing
+      if (isLoggedIn && userId != null && userId.isNotEmpty) {
+        debugPrint('✅ [SPLASH] Valid session found - user stays logged in');
+        
+        // Start token refresh timer if token exists (background task)
+        if (token != null && token.isNotEmpty) {
+          debugPrint('🔑 [SPLASH] Token present - starting refresh timer');
+          final tokenService = TokenService();
+          tokenService.startTokenRefreshTimer(token);
+          
+          // Try to refresh token in background (non-blocking)
+          _refreshTokenInBackground(authService, token);
+        } else {
+          debugPrint('⚠️ [SPLASH] No token but session exists - will refresh on next API call');
+        }
+        
+        return true;
+      }
+
+      debugPrint('❌ [SPLASH] No valid session found');
+      return false;
+    } catch (e) {
+      debugPrint('❌ [SPLASH] Error checking session: $e');
+      return false;
+    }
+  }
+
+  /// Fallback session check using SharedPreferences directly
+  Future<bool> _fallbackSessionCheck() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      
+      // Check all possible login keys (for compatibility)
+      final isLoggedIn = prefs.getBool('is_logged_in') ?? false;
+      final userId = prefs.getString('user_id');
+      final altUserId = prefs.getString('userId');
+      
+      debugPrint('🔍 [SPLASH] Fallback session check:');
+      debugPrint('   - is_logged_in: $isLoggedIn');
+      debugPrint('   - user_id: $userId');
+      debugPrint('   - userId: $altUserId');
+      
+      // User is logged in if flag is set AND we have some user ID
+      final hasValidSession = isLoggedIn && 
+          ((userId != null && userId.isNotEmpty) || 
+           (altUserId != null && altUserId.isNotEmpty));
+      
+      if (hasValidSession) {
+        debugPrint('✅ [SPLASH] Fallback: Valid session found');
+      } else {
+        debugPrint('❌ [SPLASH] Fallback: No valid session');
+      }
+      
+      return hasValidSession;
+    } catch (e) {
+      debugPrint('❌ [SPLASH] Fallback check error: $e');
+      return false;
     }
   }
 

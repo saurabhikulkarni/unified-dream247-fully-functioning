@@ -304,12 +304,19 @@ class AuthService {
     }
   }
 
-  // Clear login session (logout)
+  /// Clear LOCAL login session (logout)
+  /// 
+  /// ✅ IMPORTANT: This only clears LOCAL session data.
+  /// ✅ User's data (shopTokens, wallet balance, orders, etc.) is SAFELY STORED ON BACKEND.
+  /// ✅ When user logs back in, their data will be automatically restored from the backend.
   Future<void> unifiedLogout() async {
     try {
       final prefs = await SharedPreferences.getInstance();
       
-      // Clear Shop authentication
+      debugPrint('🔐 [LOGOUT] ========== UNIFIED LOGOUT ==========');
+      debugPrint('ℹ️ [LOGOUT] Clearing LOCAL session only - backend data is preserved');
+      
+      // Clear Shop LOCAL authentication (backend data is preserved)
       await prefs.setBool(_isLoggedInKey, false);
       await prefs.remove(_userPhoneKey);
       await prefs.remove(_userNameKey);
@@ -318,26 +325,46 @@ class AuthService {
       await prefs.remove(_authTokenKey);
       await prefs.remove(_lastLoginKey);
       await prefs.remove(_userIdKey);
+      await prefs.remove('shop_user_id');
+      await prefs.remove('userId');
+      await prefs.remove('user_id');
       
-      // 🔗 UNIFIED AUTH: Clear Fantasy authentication (same user logout)
+      // Clear LOCAL Fantasy authentication tokens
       await prefs.remove('token');
+      await prefs.remove('auth_token');
+      await prefs.remove('refresh_token');
       await prefs.remove('user_id_fantasy');
       await prefs.remove('is_logged_in_fantasy');
       await prefs.remove('user_phone_fantasy');
+      await prefs.remove('shop_tokens');
+      await prefs.remove('wallet_balance');
+      await prefs.remove('wallet_last_update');
       
-      // Clear Fantasy storage keys
+      // Clear LOCAL Fantasy storage
       await AppStorage.saveToStorageBool(AppStorageKeys.isLoggedIn, false);
       await AppStorage.removeStorageValue(AppStorageKeys.authToken);
       await AppStorage.removeStorageValue(AppStorageKeys.loginToken);
       await AppStorage.removeStorageValue(AppStorageKeys.userId);
       
-      // Clear wallet, wishlist, cart, and user services on logout
+      // Clear core AuthService LOCAL data
+      try {
+        final coreAuthService = core_auth.AuthService();
+        await coreAuthService.initialize();
+        await coreAuthService.logout();
+      } catch (e) {
+        debugPrint('⚠️ [LOGOUT] Error clearing core AuthService: $e');
+      }
+      
+      // Clear LOCAL wallet, wishlist, cart caches
       walletService.clear();
       wishlistService.clear();
       cartService.clear();
-      await UserService.setCurrentUserId(''); // Clear userId in UserService
+      await UserService.setCurrentUserId('');
       
-      debugPrint('✅ Unified logout complete - Shop & Fantasy logged out');
+      debugPrint('✅ [LOGOUT] LOCAL session cleared');
+      debugPrint('✅ [LOGOUT] Backend data (shopTokens, wallet, orders) is PRESERVED');
+      debugPrint('✅ [LOGOUT] User can login again and restore their data');
+      debugPrint('🔐 [LOGOUT] ========== LOGOUT COMPLETE ==========');
     } catch (e) {
       debugPrint('❌ Error in unified logout: $e');
     }

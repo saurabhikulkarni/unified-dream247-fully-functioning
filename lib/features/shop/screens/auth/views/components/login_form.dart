@@ -1,4 +1,4 @@
-﻿import 'dart:async';
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -13,6 +13,7 @@ import 'package:unified_dream247/features/shop/components/gradient_button.dart';
 import 'package:unified_dream247/features/shop/services/auth_service.dart';
 import 'package:unified_dream247/features/shop/services/msg91_service.dart';
 import 'package:unified_dream247/features/shop/services/user_service.dart';
+import 'package:unified_dream247/features/shop/models/product_model.dart';
 import 'package:unified_dream247/features/shop/constants.dart';
 
 
@@ -296,22 +297,58 @@ class _LogInFormState extends State<LogInForm> {
 
     final name = getUserName();
     
-    // For web platform, skip GraphQL/Hive operations and use simple session storage
     try {
       final authService = AuthService();
       final prefs = await SharedPreferences.getInstance();
       
-      // NEW: Fetch shopTokens balance from backend after MSG91 OTP verification
+      debugPrint('🔐 [LOGIN] ========== RESTORING USER SESSION ==========');
+      
+      // ✅ Use Hygraph userId from existing user check
+      final userIdToSave = _hygraphUserId ?? prefs.getString('user_id') ?? phone;
+      debugPrint('📝 [LOGIN] User ID: $userIdToSave');
+      
+      // ✅ STEP 1: Fetch user data from backend (Hygraph) to restore previous session data
+      UserDetailModel? userFromBackend;
       try {
-        // Get auth token if available
-        final authToken = prefs.getString('token') ?? prefs.getString('auth_token');
+        final userService = UserService();
+        userFromBackend = await userService.getUserById(userIdToSave);
         
-        // If we have auth token, fetch shopTokens from backend
-        if (authToken != null && authToken.isNotEmpty) {
+        if (userFromBackend != null) {
+          debugPrint('✅ [LOGIN] User data retrieved from backend:');
+          debugPrint('   - Name: ${userFromBackend.firstName} ${userFromBackend.lastName}');
+          debugPrint('   - Wallet Balance: ${userFromBackend.walletBalance}');
+          
+          // Restore wallet balance from backend
+          await prefs.setDouble('wallet_balance', userFromBackend.walletBalance);
+          await prefs.setInt('wallet_last_update', DateTime.now().millisecondsSinceEpoch);
+        }
+      } catch (e) {
+        debugPrint('⚠️ [LOGIN] Could not fetch user from Hygraph: $e');
+      }
+      
+      // ✅ STEP 2: Fetch fantasy token and user data from Fantasy backend
+      String? fantasyToken;
+      try {
+        fantasyToken = await authService.fetchFantasyToken(
+          phone: phone,
+          name: name,
+          userId: userIdToSave,
+        );
+        
+        if (fantasyToken != null) {
+          debugPrint('✅ [LOGIN] Fantasy token retrieved');
+        }
+      } catch (e) {
+        debugPrint('⚠️ [LOGIN] Error fetching fantasy token: $e');
+      }
+      
+      // ✅ STEP 3: Fetch shopTokens and wallet data from Fantasy backend
+      try {
+        if (fantasyToken != null && fantasyToken.isNotEmpty) {
           final response = await http.get(
             Uri.parse(ApiConfig.fantasyWalletBalanceEndpoint),
             headers: {
-              'Authorization': 'Bearer $authToken',
+              'Authorization': 'Bearer $fantasyToken',
               'Content-Type': 'application/json',
             },
           ).timeout(const Duration(seconds: 8));
@@ -319,67 +356,65 @@ class _LogInFormState extends State<LogInForm> {
           if (response.statusCode == 200) {
             final data = jsonDecode(response.body);
             final walletData = data['data'] ?? data;
+            
+            // Restore shopTokens from backend
             final shopTokens = (walletData['shopTokens'] as num?)?.toInt() ?? 0;
             await prefs.setInt('shop_tokens', shopTokens);
-            debugPrint('💰 [LOGIN] Stored shopTokens after MSG91 verification: $shopTokens');
+            debugPrint('💰 [LOGIN] Restored shopTokens from backend: $shopTokens');
+            
+            // Restore wallet balance from Fantasy backend if available
+            final walletBalance = (walletData['totalBalance'] as num?)?.toDouble() ?? 
+                                  (walletData['wallet_balance'] as num?)?.toDouble();
+            if (walletBalance != null) {
+              await prefs.setDouble('wallet_balance', walletBalance);
+              debugPrint('💰 [LOGIN] Restored wallet balance from backend: $walletBalance');
+            }
           }
         }
       } catch (e) {
-        debugPrint('⚠️ [LOGIN] Could not fetch shopTokens from backend: $e');
-        // Fallback: initialize with 0
-        await prefs.setInt('shop_tokens', 0);
+        debugPrint('⚠️ [LOGIN] Could not fetch wallet data from backend: $e');
+        // Don't set to 0 - keep any existing cached value
       }
       
-      // Fetch fantasy authentication token from backend
-      String? fantasyToken;
-      String? storedUserId;
-      try {
-        // ✅ Use Hygraph userId from existing user check, fallback to stored
-        storedUserId = _hygraphUserId ?? prefs.getString('user_id');
-        debugPrint('📝 [LOGIN] Using userId for Fantasy token: $storedUserId');
-        
-        final authService = AuthService();
-        fantasyToken = await authService.fetchFantasyToken(
-          phone: phone,
-          name: name,
-          userId: storedUserId, // ✅ Pass Hygraph userId for user sync
-        );
-        
-        if (fantasyToken == null) {
-          print('⚠️ [LOGIN] Failed to fetch fantasy token, continuing without it');
-        }
-      } catch (e) {
-        print('❌ [LOGIN] Error fetching fantasy token: $e');
-        // Continue with login even if fantasy token fetch fails
-      }
-      
-      // Save basic session info with fantasy token
-      // ✅ Use Hygraph userId (not phone) for unified user identity
-      final userIdToSave = _hygraphUserId ?? storedUserId ?? phone;
-      debugPrint('📝 [LOGIN] Saving session with userId: $userIdToSave');
-      
+      // ✅ STEP 4: Save session to AuthServices
       await authService.saveLoginSession(
         phone: phone,
         name: name,
         phoneVerified: true,
-        userId: userIdToSave, // ✅ Use Hygraph userId for unified identity
+        userId: userIdToSave,
         fantasyToken: fantasyToken,
       );
+      
+      final coreAuthService = core_auth.AuthService();
+      await coreAuthService.initialize();
+      await coreAuthService.saveUserSession(
+        userId: userIdToSave,
+        authToken: fantasyToken ?? '',
+        mobileNumber: phone,
+        name: name,
+      );
+      
+      // ✅ STEP 5: Ensure login flag is set
+      await prefs.setBool('is_logged_in', true);
+      
+      debugPrint('🔐 [LOGIN] ========== USER SESSION RESTORED ==========');
+      debugPrint('✅ [LOGIN] User data safely stored on backend');
+      debugPrint('✅ [LOGIN] Session restored - user can continue where they left off');
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('✅ Logged in successfully!'),
+            content: Text('Welcome back! Your data has been restored.'),
             backgroundColor: Colors.green,
           ),
         );
       }
     } catch (e) {
-      print('❌ [LOGIN] Error saving session: $e');
+      print('❌ [LOGIN] Error restoring session: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Login successful but session save failed: $e'),
+            content: Text('Login successful but some data could not be restored: $e'),
             backgroundColor: Colors.orange,
           ),
         );

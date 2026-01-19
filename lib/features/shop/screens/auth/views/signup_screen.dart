@@ -1,4 +1,3 @@
-﻿import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
@@ -10,6 +9,7 @@ import 'package:unified_dream247/features/shop/services/graphql_client.dart';
 import 'package:unified_dream247/features/shop/services/graphql_queries.dart';
 import 'package:unified_dream247/features/shop/services/user_service.dart';
 import 'package:unified_dream247/features/shop/constants.dart';
+import 'package:unified_dream247/core/services/auth_service.dart' as core_auth;
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -224,6 +224,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           await prefs.setInt('shop_tokens', initialShopTokens);
                           debugPrint('💰 [SIGNUP] Stored initial shopTokens: $initialShopTokens');
                           
+                          // ✅ PERSISTENT SESSION: Save to shop AuthService
                           await authService.saveLoginSession(
                             phone: phone,
                             name: name,
@@ -232,7 +233,24 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             fantasyToken: fantasyToken,
                           );
                           
-                          debugPrint('✅ [SIGNUP] User session saved with shopTokens');
+                          // ✅ PERSISTENT SESSION: Also save to core AuthService
+                          final coreAuthService = core_auth.AuthService();
+                          await coreAuthService.initialize();
+                          await coreAuthService.saveUserSession(
+                            userId: userId,
+                            authToken: fantasyToken ?? '',
+                            mobileNumber: phone,
+                            name: name,
+                          );
+                          
+                          // ✅ VERIFY: Ensure is_logged_in flag is set
+                          final isLoggedInCheck = prefs.getBool('is_logged_in') ?? false;
+                          if (!isLoggedInCheck) {
+                            await prefs.setBool('is_logged_in', true);
+                            debugPrint('⚠️ [SIGNUP] Force-set is_logged_in flag');
+                          }
+                          
+                          debugPrint('✅ [SIGNUP] User session saved - persistent login enabled');
                           
                           if (!mounted) return;
                           Navigator.of(context).pop(); // Hide loading
