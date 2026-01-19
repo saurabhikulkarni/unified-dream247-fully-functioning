@@ -247,13 +247,16 @@ class GraphQLQueries {
 
   // Create new user
   static const String createUser = '''
-    mutation CreateUser(\$firstName: String!, \$lastName: String!, \$username: String!, \$mobileNumber: String!) {
+    mutation CreateUser(\$firstName: String!, \$lastName: String!, \$username: String!, \$mobileNumber: String!, \$modules: [String!]!, \$shopEnabled: Boolean!, \$fantasyEnabled: Boolean!) {
       createUserDetail(
         data: {
           firstName: \$firstName
           lastName: \$lastName
           username: \$username
           mobileNumber: \$mobileNumber
+          modules: \$modules
+          shopEnabled: \$shopEnabled
+          fantasyEnabled: \$fantasyEnabled
         }
       ) {
         id
@@ -261,6 +264,9 @@ class GraphQLQueries {
         lastName
         username
         mobileNumber
+        modules
+        shopEnabled
+        fantasyEnabled
       }
     }
   ''';

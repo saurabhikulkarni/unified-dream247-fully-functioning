@@ -164,6 +164,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             'lastName': lastName,
                             'username': phone, // Use phone as username
                             'mobileNumber': cleanPhone, // Use cleaned phone as String
+                            'modules': ['shop', 'fantasy'], // Enable both modules by default
+                            'shopEnabled': true, // Enable shop module
+                            'fantasyEnabled': true, // Enable fantasy module
                           },
                         );
                         
