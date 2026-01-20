@@ -26,6 +26,7 @@ import 'package:unified_dream247/features/fantasy/landing/domain/use_cases/home_
 import 'package:unified_dream247/features/fantasy/menu_items/data/user_datasource.dart';
 import 'package:unified_dream247/features/fantasy/menu_items/domain/use_cases/user_usecases.dart';
 import 'package:unified_dream247/core/services/wallet_service.dart';
+import 'package:unified_dream247/features/shop/services/auth_service.dart' as shop_auth;
 
 class MyBalancePage extends StatefulWidget {
   const MyBalancePage({super.key});
@@ -59,7 +60,38 @@ class _MyBalancePage extends State<MyBalancePage> {
   /// This ensures app data and user data are available when navigating directly to wallet
   Future<void> _initializeFantasyDataIfNeeded() async {
     try {
-      // Check if app data is already loaded (has payment gateway config)
+      final prefs = await SharedPreferences.getInstance();
+      
+      // 1️⃣ First, ensure we have a valid Fantasy token
+      String? token = prefs.getString('token');
+      if (token == null || token.isEmpty) {
+        debugPrint('⚠️ [WALLET] No fantasy token found, fetching...');
+        
+        final phone = prefs.getString('user_phone') ?? '';
+        final name = prefs.getString('user_name') ?? '';
+        
+        if (phone.isNotEmpty) {
+          final authService = shop_auth.AuthService();
+          token = await authService.fetchFantasyToken(
+            phone: phone,
+            name: name,
+            userId: prefs.getString('user_id') ?? '',
+          );
+          
+          if (token != null && token.isNotEmpty) {
+            await prefs.setString('token', token);
+            debugPrint('✅ [WALLET] Fantasy token refreshed');
+          } else {
+            debugPrint('❌ [WALLET] Could not obtain fantasy token');
+          }
+        } else {
+          debugPrint('❌ [WALLET] No phone number available for token refresh');
+        }
+      } else {
+        debugPrint('✅ [WALLET] Fantasy token exists');
+      }
+      
+      // 2️⃣ Check if app data is already loaded (has payment gateway config)
       final hasAppData = AppSingleton.singleton.appData.androidpaymentgateway != null;
       
       if (!hasAppData) {
@@ -71,7 +103,7 @@ class _MyBalancePage extends State<MyBalancePage> {
         debugPrint('✅ [WALLET] App data loaded');
       }
       
-      // Load user details if not already loaded
+      // 3️⃣ Load user details if not already loaded
       final userUsecases = UserUsecases(UserDatasource(ApiImplWithAccessToken()));
       await userUsecases.getUserDetails(context);
       debugPrint('✅ [WALLET] User details loaded');
@@ -402,7 +434,11 @@ class _MyBalancePage extends State<MyBalancePage> {
                               gradientButton: true,
                               buttonText: 'Add Cash',
                               onButtonTap: () {
-                                Get.to(() => AddMoneyPage());
+                                // Use Navigator.push instead of Get.to to avoid GetX context issues
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (_) => const AddMoneyPage()),
+                                );
                               },
                             ),
                             const SizedBox(height: 12),
