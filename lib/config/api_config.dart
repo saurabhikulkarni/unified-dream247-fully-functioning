@@ -45,7 +45,7 @@ class ApiConfig {
   // ─────────────────────────────────────────────────────────────────────────
   
   /// Shop Backend URLs by environment (base URL without /api suffix)
-  static const String _shopDevUrl = 'http://localhost:3000';
+  static const String _shopDevUrl = 'https://brighthex-dream-24-7-backend-psi.vercel.app';
   static const String _shopStagingUrl = 'https://brighthex-dream-24-7-backend-psi.vercel.app';
   static const String _shopProdUrl = 'https://brighthex-dream-24-7-backend-psi.vercel.app';
   // Note: Full API URL = base + '/api' → https://brighthex-dream-24-7-backend-psi.vercel.app/api

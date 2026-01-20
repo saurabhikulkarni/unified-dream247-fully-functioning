@@ -136,10 +136,10 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
             onTap: () {
               context.go('/shop/profile');
             },
-            child: CircleAvatar(
+            child: const CircleAvatar(
               radius: 20,
-              backgroundColor: const Color(0xFF6B4099),
-              child: const Icon(Icons.person, size: 24, color: Colors.white),
+              backgroundColor: Color(0xFF6B4099),
+              child: Icon(Icons.person, size: 24, color: Colors.white),
             ),
           ),
         ),
@@ -292,7 +292,7 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
                                     foreground: Paint()
                                       ..style = PaintingStyle.fill
                                       ..color = Colors.white,
-                                    shadows: [
+                                    shadows: const [
                                       Shadow(
                                         color: Color.fromRGBO(218, 189, 0, 0.5),
                                         offset: Offset(2, 1),
@@ -311,7 +311,7 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
                                     height: iconSize,
                                     fit: BoxFit.contain,
                                     errorBuilder: (context, error, stackTrace) => 
-                                      Icon(Icons.emoji_events, size: iconSize, color: Color(0xFFFFC107)),
+                                      Icon(Icons.emoji_events, size: iconSize, color: const Color(0xFFFFC107)),
                                   ),
                                 ),
                               ),
@@ -367,7 +367,7 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
                                     foreground: Paint()
                                       ..style = PaintingStyle.fill
                                       ..color = Colors.white,
-                                    shadows: [
+                                    shadows: const [
                                       Shadow(
                                         color: Color.fromRGBO(218, 189, 0, 0.5),
                                         offset: Offset(2, 1),
@@ -386,7 +386,7 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
                                     height: iconSize,
                                     fit: BoxFit.contain,
                                     errorBuilder: (context, error, stackTrace) => 
-                                      Icon(Icons.shopping_bag, size: iconSize, color: Color(0xFFFFC107)),
+                                      Icon(Icons.shopping_bag, size: iconSize, color: const Color(0xFFFFC107)),
                                   ),
                                 ),
                               ),
