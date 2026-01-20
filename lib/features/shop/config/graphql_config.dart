@@ -17,6 +17,9 @@ class GraphQLConfig {
   // Default endpoint to use (CDN for faster reads)
   static const String hygraphEndpoint = hygraphCdnEndpoint;
   
-  // Whether to use auth token (set to true if products not showing)
-  static const bool useAuthToken = true;
+  // Whether to use auth token
+  // Set to FALSE to use CDN (no auth, faster, for published content only)
+  // Set to TRUE only if you need draft content access with a VALID token
+  // NOTE: The auth token above may be expired/invalid - use CDN if getting token errors
+  static const bool useAuthToken = false;
 }
