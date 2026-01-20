@@ -128,6 +128,8 @@ class ApiConfig {
   static String get fantasyUnifiedHistoryEndpoint => '$fantasyBaseUrl/api/user/wallet/unified-history';
   static String get fantasySyncShopTokensEndpoint => '$fantasyBaseUrl/api/user/wallet/sync-shop-tokens-to-shop';
   static String get fantasyRefreshTokenEndpoint => '$fantasyBaseUrl/api/auth/refresh-token';
+  static String get fantasyVersionEndpoint => '$fantasyBaseUrl/user/get-version';
+
 
   // ─────────────────────────────────────────────────────────────────────────
   // HYGRAPH (GraphQL CMS)

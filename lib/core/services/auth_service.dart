@@ -588,6 +588,62 @@ class AuthService {
     }
   }
 
+  /// Sync Fantasy Version & Token
+  /// 
+  /// Calls the /user/get-version API, stores the full response,
+  /// and synchronizes the bearer token if present.
+  Future<Map<String, dynamic>?> syncFantasyVersion() async {
+    try {
+      debugPrint('🔄 [AUTH] Syncing Fantasy Version...');
+      final token = getAuthToken();
+      
+      final response = await http.get(
+        Uri.parse(ApiConfig.fantasyVersionEndpoint),
+        headers: {
+          'Content-Type': 'application/json',
+          if (token != null) 'Authorization': 'Bearer $token',
+        },
+      ).timeout(Duration(seconds: ApiConfig.requestTimeoutSeconds));
+
+      debugPrint('🔄 [AUTH] Version Response: ${response.statusCode}');
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        
+        // 1. Store full response data
+        await _prefs?.setString('fantasy_version_data', response.body);
+        debugPrint('✅ [AUTH] Fantasy version data saved to session');
+        
+        // 2. Extract and sync token if present
+        String? newToken;
+        if (data is Map) {
+           newToken = data['token'] ?? data['data']?['token'] ?? data['auth_key'] ?? data['data']?['auth_key'];
+        }
+        
+        // 3. Update token if we got a new one
+        if (newToken != null && newToken.isNotEmpty) {
+           // Verify if it's different from current
+           if (newToken != token) {
+             debugPrint('♻️ [AUTH] Updating Auth Token from Version API');
+             await _prefs?.setString(StorageConstants.authToken, newToken);
+             await _prefs?.setString('token', newToken); // Legacy compatibility
+           } else {
+             debugPrint('✅ [AUTH] Token is already up to date');
+           }
+        }
+        
+        return data is Map<String, dynamic> ? data : {'data': data};
+      } else {
+        debugPrint('❌ [AUTH] Version Sync Failed: ${response.statusCode}');
+        return null;
+      }
+    } catch (e) {
+      debugPrint('❌ [AUTH] Error syncing fantasy version: $e');
+      return null;
+    }
+  }
+
+
   /// Get current user profile from backend
   Future<Map<String, dynamic>?> getUserProfile() async {
     try {

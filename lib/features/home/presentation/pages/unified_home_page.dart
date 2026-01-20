@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:unified_dream247/config/api_config.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
@@ -65,11 +66,15 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
   Future<void> _navigateToFantasy() async {
     // Remove login check: always call get-version and navigate
     try {
-      final response = await Uri.parse('http://134.209.158.211:4000/user/get-version').resolveUri(Uri());
-      final httpResponse = await http.get(response);
-      debugPrint('🎮 [HOME] Fantasy get-version response: ${httpResponse.body}');
+      // Sync session data before navigation
+      final data = await _authService.syncFantasyVersion();
+      if (data != null) {
+        debugPrint('🎮 [HOME] Fantasy Version Synced: ${data.keys.toList()}');
+      } else {
+        debugPrint('⚠️ [HOME] Fantasy Version Sync returned null');
+      }
     } catch (e) {
-      debugPrint('❌ [HOME] Error calling get-version API: $e');
+      debugPrint('❌ [HOME] Error syncing fantasy version: $e');
     }
     debugPrint('🎮 [HOME] Navigating to Fantasy');
     if (mounted) {
