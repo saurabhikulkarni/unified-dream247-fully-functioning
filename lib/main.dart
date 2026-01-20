@@ -37,6 +37,8 @@ void main() async {
     // Initialize GraphQL with Hive for persistent caching
     // Uses graphql_flutter's initHiveForFlutter() which handles Hive initialization
     await GraphQLService.initHiveStore();
+    // Reset client to ensure new endpoint URLs are picked up
+    GraphQLService.resetClient();
 
     // Load fantasy environment variables
     try {

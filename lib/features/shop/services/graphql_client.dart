@@ -45,10 +45,12 @@ class GraphQLService {
       
       link = authLink.concat(httpLink);
       debugPrint('📡 [GRAPHQL] Using authenticated Content API endpoint');
+      debugPrint('📡 [GRAPHQL] Endpoint: ${GraphQLConfig.hygraphContentApiEndpoint}');
     } else {
       // Use CDN for faster reads (published content only)
       link = HttpLink(GraphQLConfig.hygraphCdnEndpoint);
       debugPrint('📡 [GRAPHQL] Using CDN endpoint (no auth)');
+      debugPrint('📡 [GRAPHQL] Endpoint: ${GraphQLConfig.hygraphCdnEndpoint}');
     }
 
     // Use HiveStore if initialized, otherwise use InMemoryStore

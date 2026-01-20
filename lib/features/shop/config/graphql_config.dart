@@ -5,8 +5,9 @@ class GraphQLConfig {
       'https://ap-south-1.cdn.hygraph.com/content/cmj85rtgv038n07uo8egj5fkb/master';
   
   // Content API endpoint with auth (for mutations and draft content)
+  // NOTE: Must use 'api-ap-south-1' not just 'ap-south-1'
   static const String hygraphContentApiEndpoint =
-      'https://ap-south-1.hygraph.com/v2/cmj85rtgv038n07uo8egj5fkb/master';
+      'https://api-ap-south-1.hygraph.com/v2/cmj85rtgv038n07uo8egj5fkb/master';
   
   // Permanent Auth Token for Content API (read-only)
   // This token allows reading published AND draft content
