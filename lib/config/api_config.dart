@@ -41,14 +41,14 @@ class ApiConfig {
   static bool get isStaging => environment == 'staging';
 
   // ─────────────────────────────────────────────────────────────────────────
-  // SHOP BACKEND (Vercel)
+  // SHOP BACKEND (Node.js)
   // ─────────────────────────────────────────────────────────────────────────
   
   /// Shop Backend URLs by environment (base URL without /api suffix)
-  static const String _shopDevUrl = 'https://brighthex-dream-24-7-backend-psi.vercel.app';
-  static const String _shopStagingUrl = 'https://brighthex-dream-24-7-backend-psi.vercel.app';
-  static const String _shopProdUrl = 'https://brighthex-dream-24-7-backend-psi.vercel.app';
-  // Note: Full API URL = base + '/api' → https://brighthex-dream-24-7-backend-psi.vercel.app/api
+  static const String _shopDevUrl = 'http://134.209.158.211:3000';
+  static const String _shopStagingUrl = 'http://134.209.158.211:3000';
+  static const String _shopProdUrl = 'http://134.209.158.211:3000';
+  // Note: Full API URL = base + '/api' → http://134.209.158.211:3000/api
   
   /// Get Shop Backend base URL (without /api suffix)
   static String get shopBaseUrl {
