@@ -21,7 +21,8 @@ class AuthResponse {
     return AuthResponse(
       success: json['status'] == true || json['success'] == true,
       message: json['message'],
-      accessToken: json['data']?['auth_key'] ?? json['authToken'] ?? json['token'],
+      // Support both auth_key and fantasy_auth_key for token extraction
+      accessToken: json['data']?['auth_key'] ?? json['data']?['fantasy_auth_key'] ?? json['authToken'] ?? json['token'],
       refreshToken: json['data']?['refresh_token'] ?? json['refreshToken'],
       userId: json['data']?['userid'] ?? json['userId'] ?? json['user']?['userId'],
       user: json['data'] != null 
@@ -54,6 +55,8 @@ class UserData {
   final List<String> modules;
   final WalletBalance? balance;
   final bool isNewUser;
+  final String? fantasySyncStatus;  // Status of Fantasy user sync: 'synced', 'pending', 'failed'
+  final String? fantasySyncError;   // Error message if Fantasy sync failed
 
   UserData({
     required this.id,
@@ -71,6 +74,8 @@ class UserData {
     this.modules = const ['shop', 'fantasy'],
     this.balance,
     this.isNewUser = false,
+    this.fantasySyncStatus,
+    this.fantasySyncError,
   });
 
   /// Full name (firstName + lastName or name)
@@ -98,6 +103,8 @@ class UserData {
           ? WalletBalance.fromJson(json['userbalance'])
           : (json['balance'] != null ? WalletBalance.fromJson(json['balance']) : null),
       isNewUser: json['isNewUser'] ?? json['is_new_user'] ?? false,
+      fantasySyncStatus: json['fantasy_sync_status'] ?? json['fantasySyncStatus'],
+      fantasySyncError: json['fantasy_sync_error'] ?? json['fantasySyncError'],
     );
   }
 
@@ -118,6 +125,8 @@ class UserData {
       'modules': modules,
       'userbalance': balance?.toJson(),
       'isNewUser': isNewUser,
+      'fantasy_sync_status': fantasySyncStatus,
+      'fantasy_sync_error': fantasySyncError,
     };
   }
 

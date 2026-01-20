@@ -214,6 +214,19 @@ class _LogInFormState extends State<LogInForm> {
         await prefs.setInt('shop_tokens', shopTokens);
         debugPrint('💰 [OTP_VERIFY] Stored shopTokens: $shopTokens');
         
+        // Extract and store Fantasy sync status fields for debugging
+        final fantasySyncStatus = user['fantasy_sync_status'];
+        final fantasySyncError = user['fantasy_sync_error'];
+        
+        if (fantasySyncStatus != null) {
+          await prefs.setString('fantasy_sync_status', fantasySyncStatus);
+          debugPrint('🔗 [OTP_VERIFY] Fantasy Sync Status: $fantasySyncStatus');
+        }
+        if (fantasySyncError != null) {
+          await prefs.setString('fantasy_sync_error', fantasySyncError);
+          debugPrint('⚠️ [OTP_VERIFY] Fantasy Sync Error: $fantasySyncError');
+        }
+        
         // Store all unified auth data using core auth service
         final coreAuthService = core_auth.AuthService();
         await coreAuthService.initialize();

@@ -267,10 +267,30 @@ class AuthService {
       }
 
       if (data['status'] == true || data['success'] == true) {
-        // Extract tokens from response
-        final accessToken = data['data']?['auth_key'] ?? data['token'] ?? data['authToken'];
+        // Extract tokens from response (support both auth_key and fantasy_auth_key)
+        final accessToken = data['data']?['auth_key'] ?? data['data']?['fantasy_auth_key'] ?? data['token'] ?? data['authToken'];
         final refreshToken = data['data']?['refresh_token'] ?? data['refreshToken'];
         final fantasyUserId = data['data']?['userid'] ?? data['userId'];
+        
+        // Extract sync status fields for debugging
+        final fantasySyncStatus = data['data']?['fantasy_sync_status'] ?? data['fantasy_sync_status'];
+        final fantasySyncError = data['data']?['fantasy_sync_error'] ?? data['fantasy_sync_error'];
+        
+        // Log sync status for debugging
+        if (kDebugMode) {
+          debugPrint('🔗 [AUTH] Fantasy Sync Status: $fantasySyncStatus');
+          if (fantasySyncError != null) {
+            debugPrint('⚠️ [AUTH] Fantasy Sync Error: $fantasySyncError');
+          }
+        }
+        
+        // Store sync status in SharedPreferences for later access
+        if (fantasySyncStatus != null) {
+          await _prefs?.setString('fantasy_sync_status', fantasySyncStatus);
+        }
+        if (fantasySyncError != null) {
+          await _prefs?.setString('fantasy_sync_error', fantasySyncError);
+        }
 
         // Save tokens
         if (accessToken != null) {
