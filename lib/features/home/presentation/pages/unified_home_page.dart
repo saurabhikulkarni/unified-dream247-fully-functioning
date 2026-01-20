@@ -8,6 +8,8 @@ import 'package:unified_dream247/core/services/wallet_service.dart';
 import 'package:unified_dream247/features/shop/services/product_service.dart';
 import 'package:unified_dream247/features/shop/models/product_model.dart';
 import 'dart:math';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class UnifiedHomePage extends StatefulWidget {
   const UnifiedHomePage({super.key});
@@ -61,24 +63,15 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
   }
 
   Future<void> _navigateToFantasy() async {
-    // Check login status using SharedPreferences directly for reliability
-    final prefs = await SharedPreferences.getInstance();
-    final isLoggedIn = prefs.getBool('is_logged_in') ?? false;
-    
-    if (!isLoggedIn) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Please login first to access Game Zone'),
-            backgroundColor: Colors.orange,
-          ),
-        );
-        context.push('/login');
-      }
-      return;
+    // Remove login check: always call get-version and navigate
+    try {
+      final response = await Uri.parse('http://134.209.158.211:4000/user/get-version').resolveUri(Uri());
+      final httpResponse = await http.get(response);
+      debugPrint('🎮 [HOME] Fantasy get-version response: ${httpResponse.body}');
+    } catch (e) {
+      debugPrint('❌ [HOME] Error calling get-version API: $e');
     }
-    
-    debugPrint('🎮 [HOME] User authenticated, navigating to Fantasy');
+    debugPrint('🎮 [HOME] Navigating to Fantasy');
     if (mounted) {
       context.push('/fantasy/home');
     }

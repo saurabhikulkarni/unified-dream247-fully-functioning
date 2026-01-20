@@ -200,89 +200,26 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             // Publishing failed, but user is created
                           }
                           
-                          // Fetch fantasy authentication token from backend
-                          String? fantasyToken;
-                          bool fantasyTokenFetchSuccess = false;
-                          try {
-                            print('🔑 [SIGNUP] ========== FETCHING FANTASY TOKEN ==========');
-                            final authService = AuthService();
-                            fantasyToken = await authService.fetchFantasyToken(
-                              phone: phone,
-                              name: name,
-                              userId: userId, // Hygraph auto-generated ID
-                            );
-                            
-                            if (fantasyToken == null || fantasyToken.isEmpty) {
-                              print('❌ [SIGNUP] Failed to fetch fantasy token');
-                              print('❌ [SIGNUP] User will have limited fantasy access');
-                              fantasyTokenFetchSuccess = false;
-                            } else {
-                              print('✅ [SIGNUP] Fantasy token received successfully');
-                              print('✅ [SIGNUP] Token length: ${fantasyToken.length}');
-                              fantasyTokenFetchSuccess = true;
-                            }
-                          } catch (e) {
-                            print('❌ [SIGNUP] Error fetching fantasy token: $e');
-                            print('❌ [SIGNUP] Stack trace: ${StackTrace.current}');
-                            fantasyTokenFetchSuccess = false;
-                            // Continue with signup even if fantasy token fetch fails
-                          }
-                          
-                          // Save login session with userId from Hygraph and fantasy token
+                          // Save login session with userId from Hygraph (no fantasy token)
                           final authService = AuthService();
-                          
-                          // Store shopTokens balance (new users typically start with 0)
                           final prefs = await SharedPreferences.getInstance();
                           final initialShopTokens = 0; // New users start with 0 tokens
                           await prefs.setInt('shop_tokens', initialShopTokens);
                           debugPrint('💰 [SIGNUP] Stored initial shopTokens: $initialShopTokens');
-                          
-                          // ✅ PERSISTENT SESSION: Save to shop AuthService
                           await authService.saveLoginSession(
                             phone: phone,
                             name: name,
                             phoneVerified: true,
                             userId: userId,
-                            fantasyToken: fantasyToken,
+                            fantasyToken: null,
                           );
-                          
-                          // ✅ VERIFY: Check that fantasy token was saved properly
-                          if (fantasyToken != null && fantasyToken.isNotEmpty) {
-                            final verifyToken1 = prefs.getString('token');
-                            final verifyToken2 = prefs.getString('auth_token');
-                            
-                            if (verifyToken1 == fantasyToken && verifyToken2 == fantasyToken) {
-                              print('✅ [SIGNUP] Token verified in SharedPreferences (both keys)');
-                              print('✅ [SIGNUP] Key "token": ${verifyToken1?.substring(0, verifyToken1.length > 20 ? 20 : verifyToken1.length)}...');
-                              print('✅ [SIGNUP] Key "auth_token": ${verifyToken2?.substring(0, verifyToken2.length > 20 ? 20 : verifyToken2.length)}...');
-                            } else {
-                              print('❌ [SIGNUP] Token verification FAILED!');
-                              if (verifyToken1 != fantasyToken) {
-                                print('  ❌ Key "token" mismatch or missing');
-                              }
-                              if (verifyToken2 != fantasyToken) {
-                                print('  ❌ Key "auth_token" mismatch or missing');
-                              }
-                              
-                              // Show warning to user
-                              if (mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('⚠️ Fantasy authentication may be incomplete. Please try logging in again if you have issues.'),
-                                    backgroundColor: Colors.orange,
-                                    duration: Duration(seconds: 5),
-                                  ),
-                                );
-                              }
-                            }
-                          }
                           
                           // ✅ PERSISTENT SESSION: Also save to core AuthService
                           final coreAuthService = core_auth.AuthService();
                           await coreAuthService.initialize();
                           await coreAuthService.saveUserSession(
                             userId: userId,
-                            authToken: fantasyToken ?? '',
+                            authToken: '',
                             mobileNumber: phone,
                             name: name,
                           );
@@ -295,29 +232,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           }
                           
                           debugPrint('✅ [SIGNUP] User session saved - persistent login enabled');
-                          debugPrint('✅ [SIGNUP] Fantasy token status: ${fantasyTokenFetchSuccess ? "SUCCESS" : "FAILED"}');
                           
                           if (!mounted) return;
                           Navigator.of(context).pop(); // Hide loading
                           
-                          // Show appropriate success message
-                          if (fantasyTokenFetchSuccess) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('✅ Account created successfully! Fantasy gaming is ready.'),
-                                backgroundColor: Colors.green,
-                                duration: Duration(seconds: 3),
-                              ),
-                            );
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('⚠️ Account created but fantasy authentication incomplete. Please try logging in again.'),
-                                backgroundColor: Colors.orange,
-                                duration: Duration(seconds: 5),
-                              ),
-                            );
-                          }
+                          // Show success message
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('✅ Account created successfully!'),
+                              backgroundColor: Colors.green,
+                              duration: Duration(seconds: 3),
+                            ),
+                          );
                           
                           context.go(RouteNames.home);
                         } else {

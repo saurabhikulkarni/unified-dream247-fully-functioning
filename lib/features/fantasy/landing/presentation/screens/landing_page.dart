@@ -39,6 +39,14 @@ class _LandingPageState extends State<LandingPage> {
     HomeDatasource(ApiImplWithAccessToken()),
   );
   late List<Widget> screens;
+  // Save Fantasy Auth Token after successful login (dynamic value)
+  Future<void> saveFantasyAuthToken(String fantasyToken) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('fantasy_auth_token', fantasyToken);
+    await prefs.setString('token', fantasyToken); // Also save as 'token' for API client compatibility
+    debugPrint('✅ [FANTASY] Fantasy Auth Token saved to SharedPreferences (fantasy_auth_token & token)');
+  }
+
   @override
   void initState() {
     super.initState();
@@ -57,7 +65,7 @@ class _LandingPageState extends State<LandingPage> {
     ];
   }
 
-  /// Initialize Fantasy module - fetch token and user data
+  /// Initialize Fantasy module - skip token/auth checks, just load app data and wallet
   Future<void> _initializeFantasyModule() async {
     setState(() {
       _isInitializing = true;
@@ -65,14 +73,10 @@ class _LandingPageState extends State<LandingPage> {
     });
 
     try {
-      await _verifyUserIdAndInit();
-      
-      // ✅ CRITICAL: Load app data (payment gateway config, limits, etc.)
+      // Only load app data and wallet, skip token/userId checks
       debugPrint('📥 [LANDING_PAGE] Loading app data with payment gateway config...');
       await homeUsecases.getAppDataWithHeader(context);
       debugPrint('✅ [LANDING_PAGE] App data loaded successfully');
-      
-      // ✅ Load wallet details to populate WalletDetailsProvider
       if (mounted) {
         debugPrint('📥 [LANDING_PAGE] Loading wallet details...');
         final accountsUsecases = AccountsUsecases(
@@ -81,9 +85,7 @@ class _LandingPageState extends State<LandingPage> {
         await accountsUsecases.myWalletDetails(context);
         debugPrint('✅ [LANDING_PAGE] Wallet details loaded');
       }
-      
       checkIfFirstLaunch();
-      
       if (mounted) {
         setState(() {
           _isInitializing = false;
@@ -98,131 +100,6 @@ class _LandingPageState extends State<LandingPage> {
         });
       }
     }
-  }
-
-  /// Verify that userId is available in SharedPreferences
-  /// This ensures the user is properly logged in with Hygraph credentials
-  Future<void> _verifyUserIdAndInit() async {
-    final prefs = await SharedPreferences.getInstance();
-    
-    // First check if user is logged in at all
-    final isLoggedIn = prefs.getBool('is_logged_in') ?? false;
-    if (!isLoggedIn) {
-      debugPrint('⚠️ [LANDING_PAGE] User not logged in');
-      if (mounted) {
-        context.go('/login');
-      }
-      return;
-    }
-    
-    final userId = await UserIdHelper.getUnifiedUserId();
-    
-    if (userId.isEmpty) {
-      debugPrint('⚠️ [LANDING_PAGE] No userId found! User is not logged in.');
-      if (mounted) {
-        debugPrint('🔄 [LANDING_PAGE] Redirecting to login for authentication');
-        context.go('/login');
-      }
-      return;
-    }
-    
-    debugPrint('✅ [LANDING_PAGE] UserId verified: ${userId.substring(0, userId.length > 20 ? 20 : userId.length)}...');
-    
-    // Get user phone and name for token fetch
-    final phone = prefs.getString('user_phone') ?? '';
-    final name = prefs.getString('user_name') ?? '';
-    
-    debugPrint('📱 [LANDING_PAGE] Phone: $phone, Name: $name');
-    
-    // Check if fantasy token exists and is valid
-    String? token = prefs.getString('token');
-    bool tokenRefreshed = false;
-    
-    if (token == null || token.isEmpty) {
-      debugPrint('⚠️ [LANDING_PAGE] No fantasy token found, fetching...');
-      token = await _fetchAndSaveFantasyToken(prefs, phone, name, userId);
-      tokenRefreshed = token != null;
-    } else {
-      debugPrint('✅ [LANDING_PAGE] Fantasy token found: ${token.substring(0, token.length > 20 ? 20 : token.length)}...');
-    }
-    
-    // If we still don't have a token, show error
-    if (token == null || token.isEmpty) {
-      debugPrint('❌ [LANDING_PAGE] Could not obtain fantasy token');
-      throw Exception('Could not authenticate with Fantasy server. Please try logging in again.');
-    }
-    
-    // Fetch user details from Fantasy backend to populate UserDataProvider
-    if (mounted) {
-      debugPrint('📥 [LANDING_PAGE] Fetching user details from Fantasy backend...');
-      final userUsecases = UserUsecases(UserDatasource(ApiImplWithAccessToken()));
-      final success = await userUsecases.getUserDetails(context);
-      
-      if (success == true) {
-        debugPrint('✅ [LANDING_PAGE] User details fetched successfully');
-      } else {
-        debugPrint('⚠️ [LANDING_PAGE] getUserDetails returned false, retrying with fresh token...');
-        
-        // Token might be expired - try refreshing
-        if (!tokenRefreshed) {
-          final newToken = await _fetchAndSaveFantasyToken(prefs, phone, name, userId);
-          if (newToken != null) {
-            // Retry getting user details
-            final retrySuccess = await userUsecases.getUserDetails(context);
-            if (retrySuccess != true) {
-              debugPrint('❌ [LANDING_PAGE] Failed to fetch user details even after token refresh');
-            }
-          }
-        }
-      }
-    }
-    
-    // Show all stored keys for debugging
-    await UserIdHelper.debugPrintStoredKeys();
-  }
-
-  /// Helper to fetch and save fantasy token
-  Future<String?> _fetchAndSaveFantasyToken(
-    SharedPreferences prefs,
-    String phone,
-    String name,
-    String userId,
-  ) async {
-    if (phone.isEmpty) {
-      debugPrint('❌ [LANDING_PAGE] Cannot fetch token - no phone number');
-      return null;
-    }
-    
-    try {
-      final authService = AuthService();
-      final fantasyToken = await authService.fetchFantasyToken(
-        phone: phone,
-        name: name,
-        userId: userId,
-        isNewUser: false,
-      );
-      
-      if (fantasyToken != null && fantasyToken.isNotEmpty) {
-        await prefs.setString('token', fantasyToken);
-        await prefs.setString('auth_token', fantasyToken);
-        debugPrint('✅ [LANDING_PAGE] Fantasy token fetched and saved');
-        debugPrint('✅ [LANDING_PAGE] Token: ${fantasyToken.substring(0, fantasyToken.length > 30 ? 30 : fantasyToken.length)}...');
-        return fantasyToken;
-      } else {
-        debugPrint('❌ [LANDING_PAGE] Fantasy backend returned null/empty token');
-        return null;
-      }
-    } catch (e) {
-      debugPrint('❌ [LANDING_PAGE] Error fetching fantasy token: $e');
-      return null;
-    }
-  }
-
-  void updateIndex(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-    if (index == 3) Navigator.pop(context);
   }
 
   Future<void> checkIfFirstLaunch() async {
@@ -251,6 +128,12 @@ class _LandingPageState extends State<LandingPage> {
       } else {
         debugPrint("Pop-up banner image is null, empty, or already shown.");
       }
+    });
+  }
+
+  void updateIndex(int index) {
+    setState(() {
+      _selectedIndex = index;
     });
   }
 

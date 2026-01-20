@@ -244,16 +244,16 @@ class AuthService {
       print('🔑 [AUTH] ========== FETCHING FANTASY TOKEN ==========');
       print('🔑 [AUTH] Phone: $phone');
       print('🔑 [AUTH] Name: $name');
-      print('🔑 [AUTH] Backend URL: $baseUrl/api/user/login');
+      print('🔑 [AUTH] Backend URL: $baseUrl/user/get-version');
       print('🔑 [AUTH] Request body: ${json.encode(body)}');
       
       // Make HTTP POST request to fantasy backend
-      final response = await http.post(
-        Uri.parse('$baseUrl/api/user/login'),
+      final response = await http.get(
+        Uri.parse('$baseUrl/user/get-version'),
         headers: {
           'Content-Type': 'application/json',
         },
-        body: json.encode(body),
+        
       ).timeout(const Duration(seconds: 10));
       
       print('🔑 [AUTH] Response status: ${response.statusCode}');
