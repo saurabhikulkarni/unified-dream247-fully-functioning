@@ -91,10 +91,10 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
       debugPrint('📦 [UNIFIED_HOME] Loaded ${allProducts.length} products');
       
       if (allProducts.isNotEmpty) {
-        // Shuffle and take random 4 products
+        // Shuffle and take random 2 products for preview
         allProducts.shuffle(Random());
         setState(() {
-          _products = allProducts.take(4).toList();
+          _products = allProducts.take(2).toList();
           _isLoading = false;
         });
         debugPrint('📦 [UNIFIED_HOME] Displaying ${_products.length} products');
@@ -457,7 +457,7 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
                     ),
                   ),
                   TextButton(
-                    onPressed: () {},
+                    onPressed: _navigateToShop,
                     child: const Text(
                       'View All',
                       style: TextStyle(
