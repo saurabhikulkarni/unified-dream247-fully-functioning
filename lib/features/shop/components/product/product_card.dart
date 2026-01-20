@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter/foundation.dart';
 
 import 'package:unified_dream247/features/shop/constants.dart';
 import 'package:unified_dream247/features/shop/utils/responsive_extension.dart';
@@ -60,14 +61,22 @@ class _ProductCardState extends State<ProductCard> {
   void _checkWishlistStatus() {
     // Check using productId if available
     if (widget.productId != null) {
+      final inWishlist = wishlistService.isInWishlist(widget.productId!);
+      if (kDebugMode) {
+        print('🔍 [PRODUCT_CARD] Checking wishlist for product: ${widget.productId} - In Wishlist: $inWishlist');
+      }
       setState(() {
-        _isInWishlist = wishlistService.isInWishlist(widget.productId!);
+        _isInWishlist = inWishlist;
       });
     } 
     // Otherwise check using product.id if product is available
     else if (widget.product != null && widget.product.id != null) {
+      final inWishlist = wishlistService.isInWishlist(widget.product.id!);
+      if (kDebugMode) {
+        print('🔍 [PRODUCT_CARD] Checking wishlist for product: ${widget.product.id} - In Wishlist: $inWishlist');
+      }
       setState(() {
-        _isInWishlist = wishlistService.isInWishlist(widget.product.id!);
+        _isInWishlist = inWishlist;
       });
     }
   }

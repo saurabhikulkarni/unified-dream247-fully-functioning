@@ -6,7 +6,8 @@ class ProductModel {
   final String? description;
   final double price;
   final CategoryModel? category;
-  final String image; // Image URL with default empty string
+  final String image; // First image URL for card display
+  final List<String> images; // All image URLs for gallery
 
   ProductModel({
     this.id,
@@ -16,6 +17,7 @@ class ProductModel {
     required this.price,
     this.category,
     this.image = '',
+    this.images = const [],
   });
 
   // For backward compatibility with existing UI
@@ -25,19 +27,66 @@ class ProductModel {
 
   /// Factory constructor to create ProductModel from GraphQL JSON response
   factory ProductModel.fromJson(Map<String, dynamic> json) {
-    // Handle image field - can be string or object with url property
+    // Handle image field - Hygraph returns array of assets for "Multiple values" field
     String imageUrl = '';
+    List<String> allImageUrls = [];
+    
+    // Try 'image' field - it's an array in Hygraph
     if (json['image'] != null) {
-      if (json['image'] is String) {
-        imageUrl = json['image'] as String;
+      if (json['image'] is List && (json['image'] as List).isNotEmpty) {
+        // It's an array - extract all image URLs
+        for (var img in (json['image'] as List)) {
+          if (img is Map && img['url'] != null) {
+            allImageUrls.add(img['url'] as String);
+          }
+        }
+        // First image for card display
+        if (allImageUrls.isNotEmpty) {
+          imageUrl = allImageUrls.first;
+        }
       } else if (json['image'] is Map && json['image']['url'] != null) {
+        // Single object format
         imageUrl = json['image']['url'] as String;
+        allImageUrls.add(imageUrl);
+      } else if (json['image'] is String) {
+        // Direct string URL
+        imageUrl = json['image'] as String;
+        allImageUrls.add(imageUrl);
       }
-    } else if (json['imageUrl'] != null) {
-      imageUrl = json['imageUrl'] as String;
     }
     
-    print('[PRODUCT_MODEL] Product: ${json['productName']}, Image URL: $imageUrl');
+    // Try 'productImage' as fallback
+    if (imageUrl.isEmpty && json['productImage'] != null) {
+      if (json['productImage'] is List && (json['productImage'] as List).isNotEmpty) {
+        for (var img in (json['productImage'] as List)) {
+          if (img is Map && img['url'] != null) {
+            allImageUrls.add(img['url'] as String);
+          }
+        }
+        if (allImageUrls.isNotEmpty) {
+          imageUrl = allImageUrls.first;
+        }
+      } else if (json['productImage'] is Map && json['productImage']['url'] != null) {
+        imageUrl = json['productImage']['url'] as String;
+        allImageUrls.add(imageUrl);
+      }
+    }
+    
+    // Try 'imageUrl' as final fallback
+    if (imageUrl.isEmpty && json['imageUrl'] != null) {
+      imageUrl = json['imageUrl'] as String;
+      allImageUrls.add(imageUrl);
+    }
+    
+    // Handle 'images' field if present (for cached data)
+    if (json['images'] != null && json['images'] is List) {
+      allImageUrls = (json['images'] as List).map((e) => e.toString()).toList();
+      if (imageUrl.isEmpty && allImageUrls.isNotEmpty) {
+        imageUrl = allImageUrls.first;
+      }
+    }
+    
+    print('[PRODUCT_MODEL] Product: ${json['productName']}, Image URL: $imageUrl, Total images: ${allImageUrls.length}');
     
     return ProductModel(
       id: json['id']?.toString(),
@@ -49,6 +98,7 @@ class ProductModel {
           ? CategoryModel.fromJson(json['category'] as Map<String, dynamic>)
           : null,
       image: imageUrl,
+      images: allImageUrls,
     );
   }
 
@@ -63,7 +113,8 @@ class ProductModel {
       'price': price,
       'category': category?.toJson(),
       'brandName': category?.categoryName ?? '', // Backward compatibility
-      'image': image, // Save as string for easier loading
+      'image': image, // Save first image as string for card display
+      'images': images, // Save all images for gallery
       'imageUrl': image, // Backward compatibility
     };
   }

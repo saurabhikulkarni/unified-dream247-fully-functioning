@@ -4,11 +4,13 @@ import 'package:unified_dream247/features/shop/services/graphql_client.dart';
 import 'package:unified_dream247/features/shop/services/graphql_queries.dart';
 
 class ProductService {
-  final GraphQLClient _client = GraphQLService.getClient();
+  // Get client lazily to ensure Hive is initialized
+  GraphQLClient get _client => GraphQLService.getClient();
 
   // Fetch all products
   Future<List<ProductModel>> getAllProducts() async {
     try {
+      print('[PRODUCT_SERVICE] Fetching products with query...');
       final QueryResult result = await _client.query(
         QueryOptions(
           document: gql(GraphQLQueries.getAllProducts),
@@ -21,6 +23,8 @@ class ProductService {
         throw Exception(result.exception.toString());
       }
 
+      print('[PRODUCT_SERVICE] Raw response data: ${result.data}');
+
       if (result.data == null || result.data!['products'] == null) {
         print('[PRODUCT_SERVICE] No products data returned');
         return [];
@@ -29,9 +33,11 @@ class ProductService {
       final List<dynamic> productsJson = result.data!['products'] as List<dynamic>;
       print('[PRODUCT_SERVICE] Fetched ${productsJson.length} products');
       
-      // Debug: Print first product structure
+      // Debug: Print first product structure with all fields
       if (productsJson.isNotEmpty) {
-        print('[PRODUCT_SERVICE] First product JSON: ${productsJson.first}');
+        print('[PRODUCT_SERVICE] First product full JSON: ${productsJson.first}');
+        final firstProduct = productsJson.first as Map<String, dynamic>;
+        print('[PRODUCT_SERVICE] Image field value: ${firstProduct['image']}');
       }
       
       return productsJson

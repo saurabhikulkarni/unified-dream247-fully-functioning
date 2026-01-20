@@ -101,6 +101,7 @@ class WishlistService {
       
       if (kDebugMode) {
         print('✓ Loaded $validItems valid wishlist items from local storage');
+        print('📋 Wishlist items: ${_wishlist.map((item) => item['product']?['id']).toList()}');
       }
       _isInitialized = true;
     } catch (e) {
@@ -182,6 +183,12 @@ class WishlistService {
 
   // Check if product is in wishlist
   bool isInWishlist(String productId) {
+    if (!_isInitialized) {
+      if (kDebugMode) {
+        print('⚠️ WARNING: isInWishlist called before initialization! Product: $productId');
+      }
+      return false; // Return false if not initialized
+    }
     return _wishlist.any((item) => item['product']?['id'] == productId);
   }
     

@@ -2,7 +2,7 @@ class GraphQLQueries {
   // Query to fetch all products
   static const String getAllProducts = '''
     query GetAllProducts {
-      products(first: 1000) {
+      products(first: 1000, stage: PUBLISHED) {
         id
         productName
         slug
@@ -23,7 +23,7 @@ class GraphQLQueries {
   // Query to fetch a single product by ID
   static const String getProductById = '''
     query GetProductById(\$id: ID!) {
-      product(where: {id: \$id}) {
+      product(where: {id: \$id}, stage: PUBLISHED) {
         id
         productName
         slug
@@ -44,7 +44,7 @@ class GraphQLQueries {
   // Query to fetch products by category
   static const String getProductsByCategory = '''
     query GetProductsByCategory(\$categoryName: String!) {
-      products(first: 1000, where: {category: {categoryName: \$categoryName}}) {
+      products(first: 1000, where: {category: {categoryName: \$categoryName}}, stage: PUBLISHED) {
         id
         productName
         slug
@@ -65,7 +65,7 @@ class GraphQLQueries {
   // Query to fetch all categories
   static const String getAllCategories = '''
     query GetAllCategories {
-      categories(first: 1000) {
+      categories(first: 1000, stage: PUBLISHED) {
         id
         categoryName
         slug

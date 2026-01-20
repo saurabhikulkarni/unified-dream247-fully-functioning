@@ -31,7 +31,7 @@ import '../../features/shop/screens/discover/views/discover_screen.dart';
 import '../../features/shop/screens/category/views/category_products_screen.dart';
 import '../../features/shop/screens/checkout/views/address_selection_screen.dart';
 import '../../features/shop/screens/checkout/views/order_confirmation_screen.dart';
-import '../../features/shop/screens/wallet/views/wallet_screen.dart';
+// WalletScreen removed - using fantasy MyBalancePage as unified wallet
 import '../../features/shop/screens/user_info/views/user_info_screen.dart';
 import '../../features/shop/screens/terms_and_conditions/views/terms_and_conditions_screen.dart';
 import '../../features/shop/screens/privacy_policy/views/privacy_policy_screen.dart';
@@ -220,9 +220,16 @@ class AppRouter {
         name: 'shop_product_details',
         pageBuilder: (context, state) {
           final productId = state.pathParameters['id']!;
+          // Try to get the product from extra data first (passed from ProductCard)
+          final product = state.extra != null && state.extra is Map
+              ? (state.extra as Map)['product'] as dynamic
+              : null;
           return MaterialPage(
             key: state.pageKey,
-            child: ProductDetailsScreen(productId: productId),
+            child: ProductDetailsScreen(
+              productId: productId,
+              product: product,
+            ),
           );
         },
       ),
@@ -337,7 +344,7 @@ class AppRouter {
         name: 'shop_wallet',
         pageBuilder: (context, state) => MaterialPage(
           key: state.pageKey,
-          child: const WalletScreen(),
+          child: const MyBalancePage(), // Use fantasy wallet screen
         ),
       ),
       GoRoute(

@@ -29,7 +29,6 @@ export '../screens/preferences/views/preferences_screen.dart';
 export '../screens/wallet/views/empty_wallet_screen.dart';
 export '../screens/wallet/views/wallet_screen.dart';
 export '../screens/profile/views/profile_screen.dart';
-export '../screens/profile/views/profile_screen.dart';
 export '../screens/get_help/views/get_help_screen.dart';
 export '../screens/terms_and_conditions/views/terms_and_conditions_screen.dart';
 export '../screens/privacy_policy/views/privacy_policy_screen.dart';

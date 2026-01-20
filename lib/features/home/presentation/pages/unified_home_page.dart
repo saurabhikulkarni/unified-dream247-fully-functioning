@@ -144,61 +144,67 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
           ),
         ),
         actions: [
-          // Shop Tokens Display
+          // Shop Tokens Display - Clickable to navigate to wallet
           Consumer<ShopTokensProvider>(
             builder: (context, shopTokensProvider, child) {
-              return Container(
-                margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(
-                  color: Colors.orange[50],
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Text('🪙', style: TextStyle(fontSize: 16)),
-                    const SizedBox(width: 4),
-                    Text(
-                      shopTokensProvider.shopTokens.toString(),
-                      style: const TextStyle(
-                        color: Colors.black87,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
+              return GestureDetector(
+                onTap: () => _navigateToWallet(),
+                child: Container(
+                  margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: Colors.orange[50],
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text('🪙', style: TextStyle(fontSize: 16)),
+                      const SizedBox(width: 4),
+                      Text(
+                        shopTokensProvider.shopTokens.toString(),
+                        style: const TextStyle(
+                          color: Colors.black87,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               );
             },
           ),
-          // Game Tokens Display (static for now - would need Fantasy provider)
-          Container(
-            margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: Colors.blue[50],
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text('💎', style: TextStyle(fontSize: 16)),
-                const SizedBox(width: 4),
-                FutureBuilder<double>(
-                  future: walletService.getGameTokens(),
-                  builder: (context, snapshot) {
-                    return Text(
-                      snapshot.hasData ? snapshot.data!.toStringAsFixed(0) : '0',
-                      style: const TextStyle(
-                        color: Colors.black87,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                      ),
-                    );
-                  },
-                ),
-              ],
+          // Game Tokens Display - Clickable to navigate to wallet
+          GestureDetector(
+            onTap: () => _navigateToWallet(),
+            child: Container(
+              margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: Colors.blue[50],
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text('💎', style: TextStyle(fontSize: 16)),
+                  const SizedBox(width: 4),
+                  FutureBuilder<double>(
+                    future: walletService.getGameTokens(),
+                    builder: (context, snapshot) {
+                      return Text(
+                        snapshot.hasData ? snapshot.data!.toStringAsFixed(0) : '0',
+                        style: const TextStyle(
+                          color: Colors.black87,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
         ],

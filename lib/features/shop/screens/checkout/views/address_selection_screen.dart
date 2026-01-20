@@ -147,9 +147,9 @@ class _AddressSelectionScreenState extends State<AddressSelectionScreen> {
                           ElevatedButton.icon(
                             onPressed: () async {
                               final result = await context.push<Map>(
-                                '/shop/add-address',
+                                '/shop/address/add',
                               );
-                              if (result != null && result is Map && result['success'] == true) {
+                              if (result != null && result['success'] == true) {
                                 _loadAddresses();
                               }
                             },
@@ -283,9 +283,9 @@ class _AddressSelectionScreenState extends State<AddressSelectionScreen> {
                           child: OutlinedButton.icon(
                             onPressed: () async {
                               final result = await context.push<Map>(
-                                '/shop/add-address',
+                                '/shop/address/add',
                               );
-                              if (result != null && result is Map && result['success'] == true) {
+                              if (result != null && result['success'] == true) {
                                 _loadAddresses();
                               }
                             },

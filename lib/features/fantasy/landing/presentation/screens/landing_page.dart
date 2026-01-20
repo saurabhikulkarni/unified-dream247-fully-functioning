@@ -110,7 +110,7 @@ class _LandingPageState extends State<LandingPage> {
     if (!isLoggedIn) {
       debugPrint('⚠️ [LANDING_PAGE] User not logged in');
       if (mounted) {
-        context.go('/shop/login');
+        context.go('/login');
       }
       return;
     }
@@ -120,8 +120,8 @@ class _LandingPageState extends State<LandingPage> {
     if (userId.isEmpty) {
       debugPrint('⚠️ [LANDING_PAGE] No userId found! User is not logged in.');
       if (mounted) {
-        debugPrint('🔄 [LANDING_PAGE] Redirecting to Shop login for authentication');
-        context.go('/shop/login');
+        debugPrint('🔄 [LANDING_PAGE] Redirecting to login for authentication');
+        context.go('/login');
       }
       return;
     }

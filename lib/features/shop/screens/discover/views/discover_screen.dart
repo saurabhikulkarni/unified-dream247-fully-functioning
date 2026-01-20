@@ -68,11 +68,7 @@ class DiscoverScreen extends StatelessWidget {
                         ),
                         onTap: () {
                           context.push(
-                            '/shop/category-products/${category.title.toLowerCase()}',
-                            extra: {
-                              'categoryName': category.title,
-                              'categoryId': category.title.toLowerCase(),
-                            },
+                            '/shop/category/${category.title.toLowerCase()}?name=${Uri.encodeComponent(category.title)}',
                           );
                         },
                       ),

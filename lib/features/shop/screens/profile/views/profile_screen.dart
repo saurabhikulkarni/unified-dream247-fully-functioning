@@ -153,7 +153,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             text: "Wallet",
             svgSrc: "assets/icons/Wallet.svg",
             press: () {
-              context.push('/shop/wallet');
+              context.push('/fantasy/wallet'); // Use unified fantasy wallet
             },
           ),
           const SizedBox(height: defaultPadding),

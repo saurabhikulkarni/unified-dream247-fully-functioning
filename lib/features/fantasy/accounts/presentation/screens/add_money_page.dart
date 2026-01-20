@@ -277,47 +277,56 @@ class _AddMoneyPage extends State<AddMoneyPage> {
 
     if (!mounted) return;
 
-    if (res != null && res['success'] == true) {
-      // Payment successful - sync tokens from backend
-      final amount = double.parse(_amountController.text);
-      
-      // Initialize wallet service
-      await walletService.initialize();
-      
-      // 1️⃣ Add shop tokens to Hygraph (1 RS = 1 shop token)
-      await walletService.addShopTokens(amount);
-      debugPrint('✅ [ADD_MONEY] Added $amount shop tokens to Hygraph');
-      
-      // 2️⃣ Fetch and sync game tokens from Fantasy backend
-      try {
-        final gameTokensService = GetIt.instance<GameTokensService>();
-        await gameTokensService.refreshGameTokens();
-        debugPrint('✅ [ADD_MONEY] Game tokens synced from Fantasy after topup');
-      } catch (e) {
-        debugPrint('❌ [ADD_MONEY] Error syncing game tokens: $e');
-        // Fallback: Add to local cache
-        await walletService.setGameTokens(
-          (await walletService.getGameTokens()) + amount
+    try {
+      if (res != null && res['success'] == true) {
+        // Payment successful - sync tokens from backend
+        final amount = double.parse(_amountController.text);
+        
+        // Initialize wallet service
+        await walletService.initialize();
+        
+        // 1️⃣ Add shop tokens to Hygraph (1 RS = 1 shop token)
+        await walletService.addShopTokens(amount);
+        debugPrint('✅ [ADD_MONEY] Added $amount shop tokens to Hygraph');
+        
+        // 2️⃣ Fetch and sync game tokens from Fantasy backend
+        try {
+          final gameTokensService = GetIt.instance<GameTokensService>();
+          await gameTokensService.refreshGameTokens();
+          debugPrint('✅ [ADD_MONEY] Game tokens synced from Fantasy after topup');
+        } catch (e) {
+          debugPrint('❌ [ADD_MONEY] Error syncing game tokens: $e');
+          // Fallback: Add to local cache
+          await walletService.setGameTokens(
+            (await walletService.getGameTokens()) + amount
+          );
+        }
+        
+        // 3️⃣ NEW: Sync shop tokens to Shop backend
+        await _syncShopTokensToShopBackend(
+          amount: amount,
+          paymentId: response.paymentId ?? '',
+          orderId: response.orderId ?? '',
         );
+        debugPrint('✅ [ADD_MONEY] Shop backend synced with new tokens');
+        
+        appToast(res['message'] ?? 'Payment Successful', context);
+        setState(() => _showMysteryBox = true);
+      } else {
+        appToast(res?['message'] ?? 'Payment Verification Failed', context);
+        setState(() => _isPaymentFlowLocked = false); // Reset lock on error
       }
-      
-      // 3️⃣ NEW: Sync shop tokens to Shop backend
-      await _syncShopTokensToShopBackend(
-        amount: amount,
-        paymentId: response.paymentId ?? '',
-        orderId: response.orderId ?? '',
-      );
-      debugPrint('✅ [ADD_MONEY] Shop backend synced with new tokens');
-      
-      appToast(res['message'] ?? 'Payment Successful', context);
-      setState(() => _showMysteryBox = true);
-    } else {
-      appToast(res?['message'] ?? 'Payment Verification Failed', context);
+    } catch (e) {
+      debugPrint('❌ [ADD_MONEY] Error in payment success handler: $e');
+      appToast('Error processing payment: $e', context);
+      setState(() => _isPaymentFlowLocked = false); // Reset lock on error
     }
   }
 
   void _handlePaymentError(PaymentFailureResponse response) {
-    appToast('Payment Failed', context);
+    setState(() => _isPaymentFlowLocked = false); // Reset lock on error
+    appToast('Payment Failed: ${response.message}', context);
+    debugPrint('❌ [RAZORPAY] Payment Error: ${response.message} (Code: ${response.code})');
   }
 
   void _handleExternalWallet(ExternalWalletResponse response) {}
@@ -1364,10 +1373,12 @@ class _AddMoneyPage extends State<AddMoneyPage> {
 
       _confettiController.play();
       _showWinDialog(winAmount);
-      setState(() => _isPaymentFlowLocked = true);
     } else {
-      appToast(res?['message'] ?? 'Failed to open Mystery Box', context);
+      appToast(res?['message'] ?? 'Failed to open mystery box', context);
     }
+    
+    // ✅ Reset payment flow lock after mystery box is done
+    setState(() => _isPaymentFlowLocked = false);
   }
 
   void _showWinDialog(int amount) {

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:firebase_core/firebase_core.dart';
 // import 'package:firebase_messaging/firebase_messaging.dart';
@@ -12,9 +11,11 @@ import 'core/services/auth_service.dart' as core_auth;
 import 'core/providers/app_provider.dart';
 import 'features/fantasy/accounts/data/services/game_tokens_service.dart';
 
-// Ecommerce shop services
-import 'core/services/shop/cart_service.dart';
-import 'core/services/shop/wishlist_service.dart';
+// Ecommerce shop services - Use features/shop/services for full GraphQL support
+import 'features/shop/services/cart_service.dart';
+import 'features/shop/services/wishlist_service.dart';
+import 'features/shop/services/user_service.dart';
+import 'features/shop/services/graphql_client.dart';
 import 'core/services/shop/search_service.dart';
 import 'features/shop/services/auth_service.dart' as shop_auth;
 
@@ -33,8 +34,9 @@ void main() async {
       ),
     );
 
-    // Initialize Hive for GraphQL caching (ecommerce)
-    await Hive.initFlutter();
+    // Initialize GraphQL with Hive for persistent caching
+    // Uses graphql_flutter's initHiveForFlutter() which handles Hive initialization
+    await GraphQLService.initHiveStore();
 
     // Load fantasy environment variables
     try {
@@ -74,6 +76,7 @@ void main() async {
     final shopAuthService = shop_auth.AuthService();
     
     // Initialize ecommerce services
+    await UserService.initialize(); // Initialize user service first
     await wishlistService.initialize();
     await cartService.initialize();
     await searchService.initialize();

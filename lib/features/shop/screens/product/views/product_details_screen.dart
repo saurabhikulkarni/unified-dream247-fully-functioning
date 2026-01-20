@@ -200,9 +200,11 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
               ],
             ),
             ProductImages(
-              images: _product!.image.isNotEmpty
-                  ? [_product!.image]
-                  : [productDemoImg1, productDemoImg2, productDemoImg3],
+              images: _product!.images.isNotEmpty
+                  ? _product!.images
+                  : (_product!.image.isNotEmpty 
+                      ? [_product!.image]
+                      : [productDemoImg1, productDemoImg2, productDemoImg3]),
             ),
             ProductInfo(
               brand: _product!.brandName,
@@ -349,7 +351,10 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
               title: "Reviews",
               isShowBottomBorder: true,
               press: () {
-                context.push('/shop/reviews/${widget.product?.id ?? ''}');
+                // Reviews screen not yet implemented
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Reviews coming soon!')),
+                );
               },
             ),
             SliverPadding(

@@ -19,6 +19,23 @@ class NetworkImageWithLoader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Handle empty or invalid URLs
+    if (src.isEmpty || !src.startsWith('http')) {
+      return ClipRRect(
+        borderRadius: BorderRadius.all(Radius.circular(radius)),
+        child: Container(
+          color: Colors.grey[200],
+          child: const Center(
+            child: Icon(
+              Icons.image_not_supported_outlined,
+              size: 40,
+              color: Colors.grey,
+            ),
+          ),
+        ),
+      );
+    }
+    
     return ClipRRect(
       borderRadius: BorderRadius.all(Radius.circular(radius)),
       child: CachedNetworkImage(
@@ -33,7 +50,19 @@ class NetworkImageWithLoader extends StatelessWidget {
           ),
         ),
         placeholder: (context, url) => const Skeleton(),
-        errorWidget: (context, url, error) => const Icon(Icons.error),
+        errorWidget: (context, url, error) {
+          debugPrint('[IMAGE_LOADER] Error loading image: $url - $error');
+          return Container(
+            color: Colors.grey[200],
+            child: const Center(
+              child: Icon(
+                Icons.broken_image_outlined,
+                size: 40,
+                color: Colors.grey,
+              ),
+            ),
+          );
+        },
       ),
     );
   }

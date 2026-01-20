@@ -49,11 +49,7 @@ class _CategoryBannersCarouselState extends State<CategoryBannersCarousel> {
     String categoryId,
     String categoryName,
   ) {
-    context.push('/shop/category-products/$categoryId',
-        extra: {
-          'categoryName': categoryName,
-          'categoryId': categoryId,
-        });
+    context.push('/shop/category/$categoryId?name=${Uri.encodeComponent(categoryName)}');
   }
 
   @override

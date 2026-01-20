@@ -208,27 +208,33 @@ class _EntryPointState extends State<EntryPoint> with WidgetsBindingObserver {
           ),
           Padding(
             padding: EdgeInsets.only(right: rightPadding),
-            child: Consumer<ShopTokensProvider>(
-              builder: (context, shopTokensProvider, child) {
-                return Row(
-                  children: [
-                    SvgPicture.asset(
-                      'assets/icons/coin.svg',
-                      height: tokenIconSize,
-                      width: tokenIconSize,
-                    ),
-                    SizedBox(width: tokenSpacing),
-                    Text(
-                      shopTokensProvider.shopTokens.toString(),
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: tokenFontSize,
-                        color: const Color(0xFFFFC107),
-                      ),
-                    ),
-                  ],
-                );
+            child: GestureDetector(
+              onTap: () {
+                // Navigate to wallet when tokens are tapped
+                context.push('/fantasy/wallet');
               },
+              child: Consumer<ShopTokensProvider>(
+                builder: (context, shopTokensProvider, child) {
+                  return Row(
+                    children: [
+                      SvgPicture.asset(
+                        'assets/icons/coin.svg',
+                        height: tokenIconSize,
+                        width: tokenIconSize,
+                      ),
+                      SizedBox(width: tokenSpacing),
+                      Text(
+                        shopTokensProvider.shopTokens.toString(),
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: tokenFontSize,
+                          color: const Color(0xFFFFC107),
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              ),
             ),
           ),
         ],

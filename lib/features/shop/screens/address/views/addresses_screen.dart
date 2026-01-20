@@ -158,7 +158,7 @@ class _AddressesScreenState extends State<AddressesScreen> {
           IconButton(
             icon: const Icon(Icons.add),
             onPressed: () async {
-              final result = await context.push('/shop/add-address');
+              final result = await context.push('/shop/address/add');
               if (result != null && result is Map && result['success'] == true) {
                 // Add small delay to ensure Hygraph has published the address
                 await Future.delayed(const Duration(milliseconds: 500));
@@ -266,7 +266,7 @@ class _AddressesScreenState extends State<AddressesScreen> {
                                 IconButton(
                                   icon: const Icon(Icons.edit_outlined, size: 20),
                                   onPressed: () {
-                                    context.push('/shop/add-address', extra: {
+                                    context.push('/shop/address/add', extra: {
                                       'addressId': address.id,
                                       'fullName': address.fullName,
                                       'phoneNumber': address.phoneNumber,

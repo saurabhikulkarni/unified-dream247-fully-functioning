@@ -200,7 +200,7 @@ class _CartScreenState extends State<CartScreen> {
 
     // Sufficient tokens - navigate to address selection
     final selectedAddressId = await context.push<String>(
-      '/shop/address-selection',
+      '/shop/checkout',
     );
 
     // If user selected an address, proceed with order creation
