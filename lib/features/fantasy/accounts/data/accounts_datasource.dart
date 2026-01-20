@@ -38,28 +38,32 @@ class AccountsDatasource implements AccountsRepositories {
     String offerId,
   ) async {
     final url = APIServerUrl.depositServerUrl + APIServerUrl.newRequestAddCash;
+    debugPrint('🔄 [ACCOUNTS_DS] requestAddCash URL: $url');
     final body = {
       ApiServerKeys.amount: amount,
       ApiServerKeys.paymentMethod: paymentMethod,
       ApiServerKeys.offerId: offerId,
     };
+    debugPrint('📤 [ACCOUNTS_DS] Request body: $body');
 
     final response = await clientWithToken.post(url, body: body);
     final res = response.data;
+    debugPrint('📥 [ACCOUNTS_DS] Response status: ${response.statusCode}');
+    debugPrint('📥 [ACCOUNTS_DS] Response data: $res');
+    
     if (ApiServerUtil.validateStatusCode(response.statusCode ?? 200)) {
       if (res[ApiResponseString.success] == true) {
-        // ApiServerUtil.showAppToastforApi(
-        //   res[ApiResponseString.message],
-        //   context,
-        // );
+        debugPrint('✅ [ACCOUNTS_DS] Add cash request successful');
         return response.data;
       } else {
+        debugPrint('❌ [ACCOUNTS_DS] Add cash failed: ${res[ApiResponseString.message]}');
         ApiServerUtil.showAppToastforApi(
           res[ApiResponseString.message],
           context,
         );
       }
     } else {
+      debugPrint('❌ [ACCOUNTS_DS] HTTP error: ${response.statusCode}');
       if (context.mounted) {
         ApiServerUtil.manageException(response, context);
       }

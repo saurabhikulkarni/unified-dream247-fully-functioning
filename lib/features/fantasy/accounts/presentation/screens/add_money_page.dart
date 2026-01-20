@@ -37,6 +37,7 @@ import 'package:unified_dream247/features/fantasy/menu_items/data/models/offers_
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:unified_dream247/core/services/wallet_service.dart';
 import 'package:unified_dream247/features/fantasy/accounts/data/services/game_tokens_service.dart';
+import 'package:unified_dream247/features/shop/services/auth_service.dart' as shop_auth;
 import 'package:get_it/get_it.dart';
 
 class AddMoneyPage extends StatefulWidget {
@@ -98,7 +99,38 @@ class _AddMoneyPage extends State<AddMoneyPage> {
   /// Ensure app data and user data are loaded before payment
   Future<void> _ensureDataLoaded() async {
     try {
-      // Check if app data is already loaded (has payment gateway config)
+      final prefs = await SharedPreferences.getInstance();
+      
+      // 1️⃣ First, ensure we have a valid Fantasy token
+      String? token = prefs.getString('token');
+      if (token == null || token.isEmpty) {
+        debugPrint('⚠️ [ADD_MONEY] No fantasy token found, fetching...');
+        
+        final phone = prefs.getString('user_phone') ?? '';
+        final name = prefs.getString('user_name') ?? '';
+        
+        if (phone.isNotEmpty) {
+          final authService = shop_auth.AuthService();
+          token = await authService.fetchFantasyToken(
+            phone: phone,
+            name: name,
+            userId: prefs.getString('user_id') ?? '',
+          );
+          
+          if (token != null && token.isNotEmpty) {
+            await prefs.setString('token', token);
+            debugPrint('✅ [ADD_MONEY] Fantasy token refreshed');
+          } else {
+            debugPrint('❌ [ADD_MONEY] Could not obtain fantasy token');
+          }
+        } else {
+          debugPrint('❌ [ADD_MONEY] No phone number available for token refresh');
+        }
+      } else {
+        debugPrint('✅ [ADD_MONEY] Fantasy token exists');
+      }
+      
+      // 2️⃣ Check if app data is already loaded (has payment gateway config)
       final hasAppData = AppSingleton.singleton.appData.androidpaymentgateway != null;
       
       if (!hasAppData) {
@@ -110,7 +142,7 @@ class _AddMoneyPage extends State<AddMoneyPage> {
         debugPrint('✅ [ADD_MONEY] App data loaded');
       }
       
-      // Check if user data is loaded
+      // 3️⃣ Check if user data is loaded
       if (userData == null) {
         debugPrint('📥 [ADD_MONEY] Loading user data...');
         final userUsecases = UserUsecases(UserDatasource(ApiImplWithAccessToken()));
@@ -155,6 +187,9 @@ class _AddMoneyPage extends State<AddMoneyPage> {
   }
 
   Future<void> _createRazorpayOrder() async {
+    debugPrint('🔄 [ADD_CASH] Creating Razorpay order...');
+    debugPrint('💰 [ADD_CASH] Amount: ${_amountController.text}, PromoId: $promoId');
+    
     final res = await accountsUsecases.requestAddCash(
       context,
       'RazorPay',
@@ -162,15 +197,27 @@ class _AddMoneyPage extends State<AddMoneyPage> {
       promoId,
     );
 
-    if (res == null ||
-        res['data'] == null ||
-        res['data']['order_id'] == null ||
-        res['data']['order_id'].toString().isEmpty) {
-      appToast('Unable to create Razorpay order', context);
+    debugPrint('📥 [ADD_CASH] Response: $res');
+
+    if (res == null) {
+      debugPrint('❌ [ADD_CASH] Response is null - likely auth issue or network error');
+      appToast('Unable to create order. Please check your connection and try again.', context);
       return;
     }
+    
+    if (res['data'] == null ||
+        res['data']['order_id'] == null ||
+        res['data']['order_id'].toString().isEmpty) {
+      final errorMsg = res['message'] ?? 'Unable to create Razorpay order';
+      debugPrint('❌ [ADD_CASH] Order creation failed: $errorMsg');
+      appToast(errorMsg, context);
+      return;
+    }
+    
+    debugPrint('✅ [ADD_CASH] Order created successfully');
     _lastTxnId = res['data']['txnid'];
     _razorpayOrderId = res['data']['order_id'];
+    debugPrint('📋 [ADD_CASH] Order ID: $_razorpayOrderId, TxnId: $_lastTxnId');
     _openCheckout();
   }
 
