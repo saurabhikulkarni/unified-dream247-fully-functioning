@@ -17,6 +17,7 @@ import 'components/product_images.dart';
 import 'components/product_info.dart';
 import 'components/product_list_tile.dart';
 import 'components/selected_size.dart';
+import 'components/product_availability_tag.dart';
 import 'package:unified_dream247/features/shop/components/review_card.dart';
 import 'product_buy_now_screen.dart';
 
@@ -143,6 +144,22 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
           ? CartButton(
               price: _product!.price,
               press: () {
+                // Check if sizes are available and a size has been selected
+                if (_sizes.isNotEmpty) {
+                  // Verify if selected size has stock
+                  if (_selectedSizeIndex < _sizes.length &&
+                      _sizes[_selectedSizeIndex].quantity <= 0) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Selected size is out of stock. Please choose another size.'),
+                        backgroundColor: Colors.red,
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                    return;
+                  }
+                }
+                
                 customModalBottomSheet(
                   context,
                   height: MediaQuery.of(context).size.height * 0.92,
@@ -206,16 +223,42 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                       ? [_product!.image]
                       : [productDemoImg1, productDemoImg2, productDemoImg3]),
             ),
-            ProductInfo(
-              brand: _product!.brandName,
-              title: _product!.title,
-              isAvailable: isAvailable,
-              description: _product!.description ?? 
-                  "A premium quality product with excellent durability. Made from sustainable materials with attention to detail.",
-              rating: 4.4,
-              numOfReviews: 126,
+            // Brand and Title
+            SliverPadding(
+              padding: const EdgeInsets.all(defaultPadding),
+              sliver: SliverToBoxAdapter(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      _product!.brandName.toUpperCase(),
+                      style: const TextStyle(fontWeight: FontWeight.w500),
+                    ),
+                    const SizedBox(height: defaultPadding / 2),
+                    Text(
+                      _product!.title,
+                      maxLines: 2,
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                    const SizedBox(height: defaultPadding),
+                    Row(
+                      children: [
+                        ProductAvailabilityTag(isAvailable: isAvailable),
+                        const Spacer(),
+                        SvgPicture.asset("assets/icons/Star_filled.svg"),
+                        const SizedBox(width: defaultPadding / 4),
+                        Text(
+                          "4.4 ",
+                          style: Theme.of(context).textTheme.bodyLarge,
+                        ),
+                        const Text("(126 Reviews)")
+                      ],
+                    ),
+                  ],
+                ),
+              ),
             ),
-            // Size Selection
+            // Size Selection - Before Description
             if (_sizes.isNotEmpty)
               SliverToBoxAdapter(
                 child: SelectedSize(
@@ -234,6 +277,31 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   },
                 ),
               ),
+            // Product Description - After Size Selection
+            SliverPadding(
+              padding: const EdgeInsets.all(defaultPadding),
+              sliver: SliverToBoxAdapter(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Product info",
+                      style: Theme.of(context)
+                          .textTheme
+                          .titleMedium!
+                          .copyWith(fontWeight: FontWeight.w500),
+                    ),
+                    const SizedBox(height: defaultPadding / 2),
+                    Text(
+                      _product!.description ?? 
+                          "A premium quality product with excellent durability. Made from sustainable materials with attention to detail.",
+                      style: const TextStyle(height: 1.4),
+                    ),
+                    const SizedBox(height: defaultPadding / 2),
+                  ],
+                ),
+              ),
+            ),
             ProductListTile(
               svgSrc: "assets/icons/Product.svg",
               title: "Product Details",

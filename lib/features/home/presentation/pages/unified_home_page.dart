@@ -504,7 +504,12 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
 
                             return GestureDetector(
                               onTap: () {
-                                // Navigate to product details
+                                if (product.id != null) {
+                                  context.push(
+                                    '/shop/product/${product.id}',
+                                    extra: {'product': product},
+                                  );
+                                }
                               },
                               child: Container(
                                 decoration: BoxDecoration(
