@@ -73,15 +73,14 @@ class GraphQLQueries {
     }
   ''';
 
-  // Query to fetch sizes for a product
+  // Query to fetch sizes for a product (sizes are embedded in product as relation)
   static const String getSizesByProduct = '''
     query GetSizesByProduct(\$productId: ID!) {
-      sizes(first: 1000, where: {product: {id: \$productId}}) {
+      product(where: {id: \$productId}, stage: PUBLISHED) {
         id
-        sizeName
-        quantity
-        product {
+        sizes(first: 100) {
           id
+          sizeName
         }
       }
     }

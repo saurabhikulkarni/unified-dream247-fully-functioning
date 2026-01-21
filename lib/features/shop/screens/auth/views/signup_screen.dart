@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:unified_dream247/config/routes/route_names.dart';
 import 'package:unified_dream247/features/shop/screens/auth/views/components/sign_up_form.dart';
 import 'package:unified_dream247/features/shop/services/auth_service.dart';
-import 'package:unified_dream247/features/shop/services/graphql_client.dart';
-import 'package:unified_dream247/features/shop/services/graphql_queries.dart';
-import 'package:unified_dream247/features/shop/services/user_service.dart';
 import 'package:unified_dream247/features/shop/constants.dart';
 import 'package:unified_dream247/core/services/auth_service.dart' as core_auth;
 
@@ -45,9 +41,24 @@ class _SignUpScreenState extends State<SignUpScreen> {
               height: MediaQuery.of(context).size.height * 0.45,
               width: double.infinity,
               child: Image.asset(
-                'assets/images/welcome-min.jpg',
+                'assets/images/welcome-min.webp',
                 fit: BoxFit.cover,
                 alignment: Alignment.center,
+                cacheWidth: 720, // Limit decoded image size to reduce memory
+                cacheHeight: 720,
+                errorBuilder: (context, error, stackTrace) {
+                  debugPrint('❌ [SIGNUP] Image load error: $error');
+                  return Container(
+                    color: const Color(0xFF6B4099),
+                    child: const Center(
+                      child: Icon(
+                        Icons.image_not_supported,
+                        color: Colors.white54,
+                        size: 48,
+                      ),
+                    ),
+                  );
+                },
               ),
             ),
             Padding(
@@ -85,7 +96,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         return;
                       }
 
-                      // First verify OTP
+                      // First verify OTP (backend also creates user in Hygraph)
                       final otpVerified = await _signUpFormState.verifyOtp();
                       if (!mounted) return;
                       
@@ -95,6 +106,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                       final name = _signUpFormState.getUserName();
                       final phone = _signUpFormState.getVerifiedPhone();
+                      
+                      // Get userId and token from backend response (user created by backend in Hygraph)
+                      final userId = _signUpFormState.getVerifiedUserId();
+                      final authToken = _signUpFormState.getVerifiedToken();
+                      final isNewUser = _signUpFormState.isNewUser();
+                      
+                      debugPrint('📝 [SIGNUP] OTP verified. Backend response:');
+                      debugPrint('📝 [SIGNUP] userId: $userId, token: ${authToken != null ? "present (${authToken.length} chars)" : "null"}, isNewUser: $isNewUser');
                       
                       if (phone == null || phone.isEmpty) {
                         ScaffoldMessenger.of(context).showSnackBar(
@@ -114,164 +133,85 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       );
 
                       try {
-                        // Check if user already exists with this phone number (including DRAFT users)
-                        final UserService userService = UserService();
-                        final mobileExists = await userService.checkMobileNumberExists(phone);
+                        // User already created by backend during OTP verification
+                        // No need to call Hygraph directly - backend handles this!
                         
-                        if (mobileExists) {
+                        if (userId == null || userId.isEmpty) {
+                          debugPrint('❌ [SIGNUP] No userId from backend!');
                           if (mounted) {
-                            Navigator.of(context).pop(); // Hide loading dialog
-                            showDialog(
-                              context: context,
-                              builder: (context) => AlertDialog(
-                                title: const Text('Account Already Exists'),
-                                content: const Text('This mobile number is already registered. Please try logging in or use a different number.'),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: const Text('Use Different Number'),
-                                  ),
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                      context.go(RouteNames.login);
-                                    },
-                                    child: const Text('Login'),
-                                  ),
-                                ],
-                              ),
-                            );
-                          }
-                          return;
-                        }
-
-                        // Extract first and last name from full name
-                        final nameParts = name.split(' ');
-                        final firstName = nameParts.isNotEmpty ? nameParts[0] : '';
-                        final lastName = nameParts.length > 1 ? nameParts.sublist(1).join(' ') : '';
-                        
-                        // Clean phone number (remove non-digit characters)
-                        final cleanPhone = phone.replaceAll(RegExp(r'[^\d]'), '');
-                        
-                        debugPrint('📝 [SIGNUP] Creating user in Hygraph...');
-                        debugPrint('📝 [SIGNUP] FirstName: $firstName, LastName: $lastName');
-                        debugPrint('📝 [SIGNUP] Phone: $cleanPhone');
-                        
-                        // Call GraphQL mutation to create user and get their ID
-                        final graphQLClient = GraphQLService.getClient();
-                        final MutationOptions options = MutationOptions(
-                          document: gql(GraphQLQueries.createUser),
-                          variables: {
-                            'firstName': firstName,
-                            'lastName': lastName,
-                            'username': phone, // Use phone as username
-                            'mobileNumber': cleanPhone, // Use cleaned phone as String
-                            'modules': const ['shop', 'fantasy'], // Enable both modules by default
-                            'shopEnabled': true, // Enable shop module
-                            'fantasyEnabled': true, // Enable fantasy module
-                          },
-                        );
-                        
-                        final QueryResult result = await graphQLClient.mutate(options);
-                        
-                        debugPrint('📝 [SIGNUP] GraphQL Response: ${result.data}');
-                        
-                        if (result.hasException) {
-                          debugPrint('❌ [SIGNUP] GraphQL Exception: ${result.exception}');
-                          if (mounted) {
-                            Navigator.of(context).pop(); // Hide loading
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text('Error creating account: ${result.exception?.graphqlErrors.firstOrNull?.message ?? result.exception}'),
-                                backgroundColor: Colors.red,
-                              ),
-                            );
-                          }
-                          return;
-                        }
-                        
-                        // Extract userId from response
-                        final userId = result.data?['createUserDetail']?['id']?.toString();
-                        debugPrint('📝 [SIGNUP] Created User ID: $userId');
-
-                        if (userId != null && userId.isNotEmpty) {
-                          // Publish user (required for Hygraph)
-                          debugPrint('📝 [SIGNUP] Publishing user...');
-                          try {
-                            final publishOptions = MutationOptions(
-                              document: gql(GraphQLQueries.publishUser),
-                              variables: {'id': userId},
-                            );
-                            final publishResult = await graphQLClient.mutate(publishOptions);
-                            if (publishResult.hasException) {
-                              debugPrint('⚠️ [SIGNUP] Publish exception: ${publishResult.exception}');
-                            } else {
-                              debugPrint('✅ [SIGNUP] User published successfully');
-                            }
-                          } catch (e) {
-                            debugPrint('⚠️ [SIGNUP] Publishing failed: $e (user is still created)');
-                          }
-                          
-                          // Save login session with userId from Hygraph (no fantasy token)
-                          final authService = AuthService();
-                          final prefs = await SharedPreferences.getInstance();
-                          const initialShopTokens = 0; // New users start with 0 tokens
-                          await prefs.setInt('shop_tokens', initialShopTokens);
-                          debugPrint('💰 [SIGNUP] Stored initial shopTokens: $initialShopTokens');
-                          await authService.saveLoginSession(
-                            phone: phone,
-                            name: name,
-                            phoneVerified: true,
-                            userId: userId,
-                            fantasyToken: null,
-                          );
-                          
-                          // ✅ PERSISTENT SESSION: Also save to core AuthService
-                          final coreAuthService = core_auth.AuthService();
-                          await coreAuthService.initialize();
-                          await coreAuthService.saveUserSession(
-                            userId: userId,
-                            authToken: '',
-                            mobileNumber: phone,
-                            name: name,
-                          );
-                          
-                          // ✅ VERIFY: Ensure is_logged_in flag is set
-                          final isLoggedInCheck = prefs.getBool('is_logged_in') ?? false;
-                          if (!isLoggedInCheck) {
-                            await prefs.setBool('is_logged_in', true);
-                            debugPrint('⚠️ [SIGNUP] Force-set is_logged_in flag');
-                          }
-                          
-                          debugPrint('✅ [SIGNUP] User session saved - persistent login enabled');
-                          
-                          if (!mounted) return;
-                          Navigator.of(context).pop(); // Hide loading
-                          
-                          // Show success message
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('✅ Account created successfully!'),
-                              backgroundColor: Colors.green,
-                              duration: Duration(seconds: 3),
-                            ),
-                          );
-                          
-                          context.go(RouteNames.home);
-                        } else {
-                          debugPrint('❌ [SIGNUP] userId is null or empty! Full response: ${result.data}');
-                          if (mounted) {
-                            Navigator.of(context).pop(); // Hide loading
+                            Navigator.of(context).pop();
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text('Error: Could not create user account - no user ID returned'),
+                                content: Text('Error: Backend did not return user ID. Please try again or contact support.'),
                                 backgroundColor: Colors.red,
                               ),
                             );
                           }
+                          return;
                         }
+                        
+                        debugPrint('✅ [SIGNUP] User created by backend. UserId: $userId');
+                        
+                        // Save login session with userId from backend (no need for Hygraph calls!)
+                        final authService = AuthService();
+                        final prefs = await SharedPreferences.getInstance();
+                        const initialShopTokens = 0; // New users start with 0 tokens
+                        await prefs.setInt('shop_tokens', initialShopTokens);
+                        debugPrint('💰 [SIGNUP] Stored initial shopTokens: $initialShopTokens');
+                        
+                        // Use token from backend if available
+                        await authService.saveLoginSession(
+                          phone: phone,
+                          name: name,
+                          phoneVerified: true,
+                          userId: userId,
+                          fantasyToken: authToken, // Pass token from backend
+                        );
+                        
+                        // ✅ PERSISTENT SESSION: Also save to core AuthService
+                        final coreAuthService = core_auth.AuthService();
+                        await coreAuthService.initialize();
+                        await coreAuthService.saveUserSession(
+                          userId: userId,
+                          authToken: authToken ?? '', // Use token from backend
+                          mobileNumber: phone,
+                          name: name,
+                        );
+                        
+                        // ✅ FORCE SET ALL LOGIN FLAGS - Critical for session persistence
+                        await prefs.setBool('is_logged_in', true);
+                        await prefs.setBool('is_logged_in_fantasy', true);
+                        await prefs.setString('user_id', userId);
+                        await prefs.setString('userId', userId);
+                        await prefs.setString('shop_user_id', userId);
+                        await prefs.setString('user_id_fantasy', userId);
+                        if (authToken != null && authToken.isNotEmpty) {
+                          await prefs.setString('token', authToken);
+                          await prefs.setString('auth_token', authToken);
+                        }
+                        
+                        // Debug: Verify flags were saved
+                        debugPrint('🔐 [SIGNUP] Session flags after save:');
+                        debugPrint('   - is_logged_in: ${prefs.getBool('is_logged_in')}');
+                        debugPrint('   - is_logged_in_fantasy: ${prefs.getBool('is_logged_in_fantasy')}');
+                        debugPrint('   - user_id: ${prefs.getString('user_id')}');
+                        debugPrint('   - token: ${prefs.getString('token') != null ? "present" : "null"}');
+                        
+                        debugPrint('✅ [SIGNUP] User session saved - persistent login enabled');
+                        
+                        if (!mounted) return;
+                        Navigator.of(context).pop(); // Hide loading
+                        
+                        // Show success message
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('✅ Account created successfully!'),
+                            backgroundColor: Colors.green,
+                            duration: Duration(seconds: 3),
+                          ),
+                        );
+                        
+                        context.go(RouteNames.home);
                       } catch (e, stackTrace) {
                         debugPrint('❌ [SIGNUP] Exception during signup: $e');
                         debugPrint('❌ [SIGNUP] Stack trace: $stackTrace');

@@ -41,9 +41,24 @@ class _LoginScreenState extends State<LoginScreen> {
               height: MediaQuery.of(context).size.height * 0.45,
               width: double.infinity,
               child: Image.asset(
-                'assets/images/welcome-min.jpg',
+                'assets/images/welcome-min.webp',
                 fit: BoxFit.cover,
                 alignment: Alignment.center,
+                cacheWidth: 720, // Limit decoded image size to reduce memory
+                cacheHeight: 720,
+                errorBuilder: (context, error, stackTrace) {
+                  debugPrint('❌ [LOGIN] Image load error: $error');
+                  return Container(
+                    color: const Color(0xFF6B4099),
+                    child: const Center(
+                      child: Icon(
+                        Icons.image_not_supported,
+                        color: Colors.white54,
+                        size: 48,
+                      ),
+                    ),
+                  );
+                },
               ),
             ),
             Padding(

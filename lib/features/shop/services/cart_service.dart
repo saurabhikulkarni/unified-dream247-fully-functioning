@@ -15,7 +15,10 @@ class CartService {
 
   CartService._internal();
 
-  final GraphQLClient _client = GraphQLService.getClient();
+  // Use public client for reads (CDN, no auth needed)
+  final GraphQLClient _readClient = GraphQLService.getPublicClient();
+  // Use authenticated client for mutations (create/update/delete)
+  final GraphQLClient _writeClient = GraphQLService.getClient();
   late SharedPreferences _prefs;
   String? _userId;
 
@@ -340,7 +343,7 @@ class CartService {
   // Fetch cart items for a user from GraphQL
   Future<List<CartModel>> getCartByUser(String userId) async {
     try {
-      final QueryResult result = await _client.query(
+      final QueryResult result = await _readClient.query(
         QueryOptions(
           document: gql(GraphQLQueries.getCartByUser),
           variables: {'userId': userId},
@@ -398,7 +401,7 @@ class CartService {
       
       final QueryResult result;
       if (hasValidSizeId) {
-        result = await _client.mutate(
+        result = await _writeClient.mutate(
           MutationOptions(
             document: gql(GraphQLQueries.createCartItemWithSize),
             variables: {
@@ -410,7 +413,7 @@ class CartService {
           ),
         );
       } else {
-        result = await _client.mutate(
+        result = await _writeClient.mutate(
           MutationOptions(
             document: gql(GraphQLQueries.createCartItemWithoutSize),
             variables: {
@@ -444,7 +447,7 @@ class CartService {
   // Update cart item quantity via GraphQL
   Future<bool> updateCartQuantity(String cartId, int quantity) async {
     try {
-      final QueryResult result = await _client.mutate(
+      final QueryResult result = await _writeClient.mutate(
         MutationOptions(
           document: gql(GraphQLQueries.updateCartItem),
           variables: {
@@ -467,7 +470,7 @@ class CartService {
   // Delete cart item via GraphQL
   Future<bool> deleteCartItem(String cartId) async {
     try {
-      final QueryResult result = await _client.mutate(
+      final QueryResult result = await _writeClient.mutate(
         MutationOptions(
           document: gql(GraphQLQueries.deleteCartItem),
           variables: {'cartId': cartId},
@@ -487,7 +490,7 @@ class CartService {
   // Publish cart (required for Hygraph)
   Future<void> _publishCart(String cartId) async {
     try {
-      await _client.mutate(
+      await _writeClient.mutate(
         MutationOptions(
           document: gql(GraphQLQueries.publishCart),
           variables: {'id': cartId},

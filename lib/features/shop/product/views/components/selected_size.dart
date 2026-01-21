@@ -74,38 +74,67 @@ class SizeButton extends StatelessWidget {
     return SizedBox(
       height: 40,
       width: isLongText ? null : 40, // Dynamic width for long text
-      child: OutlinedButton(
-        onPressed: isAvailable ? press : null,
-        style: OutlinedButton.styleFrom(
-          padding: isLongText 
-              ? const EdgeInsets.symmetric(horizontal: 12, vertical: 8)
-              : EdgeInsets.zero,
-          shape: isLongText
-              ? RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                )
-              : const CircleBorder(),
-          side: isActive 
-              ? const BorderSide(color: primaryColor) 
-              : (!isAvailable 
-                  ? BorderSide(color: Colors.grey.shade300) 
-                  : null),
-          backgroundColor: !isAvailable ? Colors.grey.shade100 : null,
-        ),
-        child: Text(
-          text.toUpperCase(),
-          style: TextStyle(
-            fontSize: isLongText ? 11 : 14, // Smaller font for long text
-            color: !isAvailable
-                ? Colors.grey.shade400
-                : (isActive
-                    ? primaryColor
-                    : Theme.of(context).textTheme.bodyLarge!.color),
-            decoration: !isAvailable ? TextDecoration.lineThrough : null,
-            fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
-          ),
-        ),
-      ),
+      child: isActive
+          ? Container(
+              decoration: BoxDecoration(
+                gradient: appPrimaryGradient,
+                shape: isLongText ? BoxShape.rectangle : BoxShape.circle,
+                borderRadius: isLongText ? BorderRadius.circular(20) : null,
+              ),
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: isAvailable ? press : null,
+                  customBorder: isLongText
+                      ? RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        )
+                      : const CircleBorder(),
+                  child: Container(
+                    padding: isLongText 
+                        ? const EdgeInsets.symmetric(horizontal: 12, vertical: 8)
+                        : EdgeInsets.zero,
+                    alignment: Alignment.center,
+                    child: Text(
+                      text.toUpperCase(),
+                      style: TextStyle(
+                        fontSize: isLongText ? 11 : 14,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            )
+          : OutlinedButton(
+              onPressed: isAvailable ? press : null,
+              style: OutlinedButton.styleFrom(
+                padding: isLongText 
+                    ? const EdgeInsets.symmetric(horizontal: 12, vertical: 8)
+                    : EdgeInsets.zero,
+                shape: isLongText
+                    ? RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      )
+                    : const CircleBorder(),
+                side: !isAvailable 
+                    ? BorderSide(color: Colors.grey.shade300) 
+                    : null,
+                backgroundColor: !isAvailable ? Colors.grey.shade100 : null,
+              ),
+              child: Text(
+                text.toUpperCase(),
+                style: TextStyle(
+                  fontSize: isLongText ? 11 : 14,
+                  color: !isAvailable
+                      ? Colors.grey.shade400
+                      : Theme.of(context).textTheme.bodyLarge!.color,
+                  decoration: !isAvailable ? TextDecoration.lineThrough : null,
+                  fontWeight: FontWeight.normal,
+                ),
+              ),
+            ),
     );
   }
 }

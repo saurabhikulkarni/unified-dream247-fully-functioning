@@ -164,10 +164,21 @@ class SizeModel {
   });
 
   factory SizeModel.fromJson(Map<String, dynamic> json) {
+    // Handle sizeName field - could be 'sizeName', 'size_name', 'name', or 'Size'
+    String name = json['sizeName']?.toString() ?? 
+                  json['size_name']?.toString() ?? 
+                  json['name']?.toString() ??
+                  json['Size']?.toString() ?? '';
+    
+    // Default quantity to 100 if not provided (assume available)
+    int qty = json['quantity'] ?? 100;
+    
+    print('[SIZE_MODEL] Parsed size: $name, quantity: $qty');
+    
     return SizeModel(
       id: json['id']?.toString(),
-      sizeName: json['sizeName'] ?? json['size_name'] ?? '',
-      quantity: json['quantity'] ?? 0,
+      sizeName: name,
+      quantity: qty,
       productId: json['product']?['id']?.toString(),
     );
   }

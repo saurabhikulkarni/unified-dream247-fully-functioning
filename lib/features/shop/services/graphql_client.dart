@@ -79,7 +79,32 @@ class GraphQLService {
   // Clear the cached client (useful for logout or reset)
   static void resetClient() {
     _client = null;
+    _publicClient = null;
     debugPrint('🔄 [GRAPHQL] Client reset');
+  }
+  
+  // Public client for read-only operations (uses CDN, no auth required)
+  static GraphQLClient? _publicClient;
+  
+  /// Get a public GraphQL client that uses CDN endpoint
+  /// This is for READ-ONLY operations like fetching products
+  /// No authentication token is needed - works even if token is invalid
+  static GraphQLClient getPublicClient() {
+    if (_publicClient != null) return _publicClient!;
+    
+    // Always use CDN endpoint for public reads (no auth)
+    final link = HttpLink(GraphQLConfig.hygraphCdnEndpoint);
+    debugPrint('📡 [GRAPHQL] Creating public CDN client (no auth)');
+    debugPrint('📡 [GRAPHQL] CDN Endpoint: ${GraphQLConfig.hygraphCdnEndpoint}');
+    
+    final store = _isInitialized ? HiveStore() : InMemoryStore();
+    
+    _publicClient = GraphQLClient(
+      link: link,
+      cache: GraphQLCache(store: store),
+    );
+    
+    return _publicClient!;
   }
   
   // Clear the GraphQL cache

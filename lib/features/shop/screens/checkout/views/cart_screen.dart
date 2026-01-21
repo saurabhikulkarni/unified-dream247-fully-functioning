@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:unified_dream247/features/shop/components/gradient_button.dart';
 import 'package:unified_dream247/features/shop/components/network_image_with_loader.dart';
 import 'package:unified_dream247/features/shop/constants.dart';
@@ -11,7 +12,8 @@ import 'package:unified_dream247/features/shop/services/cart_service.dart';
 import 'package:unified_dream247/features/shop/services/address_service.dart';
 import 'package:unified_dream247/features/shop/services/order_service_graphql.dart';
 import 'package:unified_dream247/features/shop/route/route_constants.dart';
-import 'package:unified_dream247/features/shop/services/wallet_service.dart';
+import 'package:unified_dream247/core/providers/shop_tokens_provider.dart';
+import 'package:unified_dream247/core/services/wallet_service.dart';
 import 'package:unified_dream247/features/shop/services/user_service.dart';
 import 'package:unified_dream247/features/shop/services/shiprocket_service.dart';
 
@@ -23,38 +25,39 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
-  double walletBalance = 0.0; // User's shopping tokens
-
   // Service instances
   final CartService cartService = CartService();
   final AddressService addressService = AddressService();
   final OrderServiceGraphQL orderServiceGraphQL = OrderServiceGraphQL();
-  final WalletService walletService = WalletService();
+  final UnifiedWalletService _walletService = UnifiedWalletService();
+  
+  // Track per-item error messages (e.g., out of stock)
+  final Map<String, String> _itemErrors = {};
 
   @override
   void initState() {
     super.initState();
-    _loadWalletBalance();
     _syncCart();
+    // Refresh wallet after first frame to ensure context is available
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _refreshWallet();
+    });
+  }
+
+  Future<void> _refreshWallet() async {
+    // Refresh shop tokens from backend to ensure sync
+    if (!mounted) return;
+    final shopTokensProvider = context.read<ShopTokensProvider>();
+    await shopTokensProvider.forceRefresh();
+    if (mounted) {
+      setState(() {}); // Trigger rebuild to show updated balance
+    }
   }
 
   Future<void> _syncCart() async {
     await cartService.syncWithBackend();
     if (mounted) {
       setState(() {});
-    }
-  }
-
-  Future<void> _loadWalletBalance() async {
-    try {
-      final balance = await walletService.getBalance();
-      if (mounted) {
-        setState(() {
-          walletBalance = balance;
-        });
-      }
-    } catch (e) {
-      // Silently handle error
     }
   }
 
@@ -96,6 +99,11 @@ class _CartScreenState extends State<CartScreen> {
   void _updateQuantity(String cartItemId, int newQuantity) async {
     if (newQuantity < 1) return;
     
+    // Clear any previous error for this item
+    setState(() {
+      _itemErrors.remove(cartItemId);
+    });
+    
     try {
       await cartService.updateLocalCartQuantity(cartItemId, newQuantity);
       if (mounted) {
@@ -105,15 +113,25 @@ class _CartScreenState extends State<CartScreen> {
         });
       }
     } catch (e) {
-      // Show error message if stock is insufficient
+      // Show error message on the specific product card
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(e.toString()),
-            backgroundColor: Colors.red,
-            duration: const Duration(seconds: 2),
-          ),
-        );
+        setState(() {
+          // Extract just the error message without "Exception:" prefix
+          String errorMsg = e.toString();
+          if (errorMsg.startsWith('Exception: ')) {
+            errorMsg = errorMsg.substring(11);
+          }
+          _itemErrors[cartItemId] = errorMsg;
+        });
+        
+        // Auto-clear error after 3 seconds
+        Future.delayed(const Duration(seconds: 3), () {
+          if (mounted) {
+            setState(() {
+              _itemErrors.remove(cartItemId);
+            });
+          }
+        });
       }
     }
   }
@@ -150,13 +168,58 @@ class _CartScreenState extends State<CartScreen> {
     }
 
     final totalTokensNeeded = total.toInt();
+    
+    // Show loading while fetching wallet balance
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
+    
+    // Force refresh and get current wallet balance
+    final shopTokensProvider = context.read<ShopTokensProvider>();
+    if (kDebugMode) {
+      print('💰 [CART] Before refresh - Provider tokens: ${shopTokensProvider.shopTokens}');
+    }
+    await shopTokensProvider.forceRefresh();
+    int currentWalletBalance = shopTokensProvider.shopTokens;
+    if (kDebugMode) {
+      print('💰 [CART] After refresh - Provider tokens: $currentWalletBalance');
+    }
+    
+    // If provider still shows 0, try getting directly from UnifiedWalletService
+    if (currentWalletBalance == 0) {
+      try {
+        await _walletService.initialize();
+        final directBalance = await _walletService.getShopTokens();
+        currentWalletBalance = directBalance.toInt();
+        if (kDebugMode) {
+          print('💰 [CART] Direct wallet fetch: $currentWalletBalance');
+        }
+        // Also update the provider
+        if (currentWalletBalance > 0) {
+          shopTokensProvider.updateTokens(currentWalletBalance);
+        }
+      } catch (e) {
+        if (kDebugMode) {
+          print('⚠️ [CART] Error fetching wallet directly: $e');
+        }
+      }
+    }
+    
+    // Close loading dialog
+    if (mounted) {
+      context.pop();
+    }
 
     // Check if wallet has enough tokens
-    if (walletBalance < totalTokensNeeded) {
-      final tokensShort = totalTokensNeeded - walletBalance.toInt();
+    if (currentWalletBalance < totalTokensNeeded) {
+      final tokensShort = totalTokensNeeded - currentWalletBalance;
       showDialog(
         context: context,
-        builder: (context) => AlertDialog(
+        builder: (dialogContext) => AlertDialog(
           title: const Text('Insufficient Shopping Tokens'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
@@ -165,7 +228,7 @@ class _CartScreenState extends State<CartScreen> {
               Text('You need ₹$totalTokensNeeded ($totalTokensNeeded tokens) to complete this purchase.'),
               const SizedBox(height: defaultPadding / 2),
               Text(
-                'Your wallet has: ₹${walletBalance.toInt()} (${walletBalance.toInt()} tokens)',
+                'Your wallet has: ₹$currentWalletBalance ($currentWalletBalance tokens)',
                 style: const TextStyle(fontWeight: FontWeight.w500),
               ),
               const SizedBox(height: defaultPadding / 2),
@@ -180,12 +243,12 @@ class _CartScreenState extends State<CartScreen> {
           ),
           actions: [
             TextButton(
-              onPressed: () => context.pop(),
+              onPressed: () => dialogContext.pop(),
               child: const Text('Continue Shopping'),
             ),
             TextButton(
               onPressed: () {
-                context.pop();
+                dialogContext.pop();
                 // Navigate to wallet screen with required amount
                 context.push('/fantasy/wallet');
                 // Note: Wallet refresh handled automatically by unified wallet system
@@ -346,11 +409,21 @@ class _CartScreenState extends State<CartScreen> {
         }
       }
 
-      // Deduct wallet balance
-      await walletService.deductBalance(total.toDouble());
+      // Deduct wallet balance using unified wallet service
+      final deductSuccess = await _walletService.deductShopTokens(
+        total.toDouble(),
+        itemName: 'Cart Purchase',
+        orderId: order.id ?? order.orderNumber,
+      );
       
-      // Update wallet balance in UI
-      await _loadWalletBalance();
+      if (!deductSuccess) {
+        throw Exception('Failed to deduct wallet balance');
+      }
+      
+      // Refresh shop tokens provider to sync UI
+      if (mounted) {
+        await context.read<ShopTokensProvider>().forceRefresh();
+      }
 
       // Clear cart completely (both local and backend)
       await cartService.clearCompleteCart();
@@ -554,127 +627,171 @@ class _CartScreenState extends State<CartScreen> {
                           child: Card(
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child: Row(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  // Product Image
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(8),
-                                    child: SizedBox(
-                                      width: 80,
-                                      height: 80,
-                                      child: product?.image.isNotEmpty == true
-                                          ? NetworkImageWithLoader(product!.image)
-                                          : Container(
-                                              color: Colors.grey.shade200,
-                                              child: const Icon(Icons.image),
-                                            ),
-                                    ),
-                                  ),
-                                  const SizedBox(width: defaultPadding),
-                                  // Product Details
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          product?.title ?? 'Product',
-                                          style: Theme.of(context).textTheme.titleSmall,
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
+                                  Row(
+                                    children: [
+                                      // Product Image
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(8),
+                                        child: SizedBox(
+                                          width: 80,
+                                          height: 80,
+                                          child: product?.image.isNotEmpty == true
+                                              ? NetworkImageWithLoader(product!.image)
+                                              : Container(
+                                                  color: Colors.grey.shade200,
+                                                  child: const Icon(Icons.image),
+                                                ),
                                         ),
-                                        const SizedBox(height: 4),
-                                        if (item.size != null) ...[
-                                          Text(
-                                            'Size: ${item.size!.sizeName}',
-                                            style: Theme.of(context).textTheme.bodySmall,
-                                          ),
-                                          const SizedBox(height: 2),
-                                          // Show stock availability
-                                          if (item.size!.quantity > 0)
-                                            Text(
-                                              'Stock: ${item.size!.quantity} available',
-                                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                                color: item.size!.quantity < 5 
-                                                  ? Colors.orange 
-                                                  : Colors.green,
-                                                fontSize: 11,
-                                              ),
-                                            )
-                                          else
-                                            Text(
-                                              'Out of Stock',
-                                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                                color: Colors.red,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 11,
-                                              ),
-                                            ),
-                                        ] else
-                                          Text(
-                                            'Size not selected',
-                                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                              color: Colors.red,
-                                              fontStyle: FontStyle.italic,
-                                            ),
-                                          ),
-                                        const SizedBox(height: 4),
-                                        Row(
+                                      ),
+                                      const SizedBox(width: defaultPadding),
+                                      // Product Details
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
-                                            SvgPicture.asset(
-                                              'assets/icons/coin.svg',
-                                              width: 14,
-                                              height: 14,
-                                            ),
-                                            const SizedBox(width: 2),
                                             Text(
-                                              '${product?.price.toInt() ?? 0}',
-                                              style: const TextStyle(
-                                                fontWeight: FontWeight.bold,
+                                              product?.title ?? 'Product',
+                                              style: Theme.of(context).textTheme.titleSmall,
+                                              maxLines: 2,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                            const SizedBox(height: 4),
+                                            if (item.size != null) ...[
+                                              Text(
+                                                'Size: ${item.size!.sizeName}',
+                                                style: Theme.of(context).textTheme.bodySmall,
                                               ),
+                                              const SizedBox(height: 2),
+                                              // Show stock availability
+                                              if (item.size!.quantity > 0)
+                                                Text(
+                                                  'Stock: ${item.size!.quantity} available',
+                                                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                                    color: item.size!.quantity < 5 
+                                                      ? Colors.orange 
+                                                      : Colors.green,
+                                                    fontSize: 11,
+                                                  ),
+                                                )
+                                              else
+                                                Text(
+                                                  'Out of Stock',
+                                                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                                    color: Colors.red,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 11,
+                                                  ),
+                                                ),
+                                            ] else
+                                              Text(
+                                                'Size not selected',
+                                                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                                  color: Colors.red,
+                                                  fontStyle: FontStyle.italic,
+                                                ),
+                                              ),
+                                            const SizedBox(height: 4),
+                                            Row(
+                                              children: [
+                                                SvgPicture.asset(
+                                                  'assets/icons/coin.svg',
+                                                  width: 14,
+                                                  height: 14,
+                                                ),
+                                                const SizedBox(width: 2),
+                                                Text(
+                                                  '${product?.price.toInt() ?? 0}',
+                                                  style: const TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ],
                                             ),
                                           ],
                                         ),
-                                      ],
-                                    ),
-                                  ),
-                                  // Quantity Controls
-                                  Column(
-                                    children: [
-                                      Row(
+                                      ),
+                                      // Quantity Controls
+                                      Column(
                                         children: [
-                                          IconButton(
-                                            key: ValueKey('dec-${item.id}'),
-                                            icon: const Icon(Icons.remove_circle_outline),
-                                            onPressed: item.quantity > 1 ? () {
-                                              _updateQuantity(
-                                                item.id!,
-                                                item.quantity - 1,
-                                              );
-                                            } : null,
+                                          Row(
+                                            children: [
+                                              IconButton(
+                                                key: ValueKey('dec-${item.id}'),
+                                                icon: const Icon(Icons.remove_circle_outline),
+                                                onPressed: item.quantity > 1 ? () {
+                                                  _updateQuantity(
+                                                    item.id!,
+                                                    item.quantity - 1,
+                                                  );
+                                                } : null,
+                                              ),
+                                              Text(
+                                                '${item.quantity}',
+                                                style: Theme.of(context).textTheme.titleMedium,
+                                              ),
+                                              IconButton(
+                                                key: ValueKey('inc-${item.id}'),
+                                                icon: const Icon(Icons.add_circle_outline),
+                                                onPressed: () {
+                                                  _updateQuantity(
+                                                    item.id!,
+                                                    item.quantity + 1,
+                                                  );
+                                                },
+                                              ),
+                                            ],
                                           ),
-                                          Text(
-                                            '${item.quantity}',
-                                            style: Theme.of(context).textTheme.titleMedium,
-                                          ),
                                           IconButton(
-                                            key: ValueKey('inc-${item.id}'),
-                                            icon: const Icon(Icons.add_circle_outline),
-                                            onPressed: () {
-                                              _updateQuantity(
-                                                item.id!,
-                                                item.quantity + 1,
-                                              );
-                                            },
+                                            key: ValueKey('del-${item.id}'),
+                                            icon: const Icon(Icons.delete_outline, color: Colors.red),
+                                            onPressed: () => _removeItem(item.id!),
                                           ),
                                         ],
                                       ),
-                                      IconButton(
-                                        key: ValueKey('del-${item.id}'),
-                                        icon: const Icon(Icons.delete_outline, color: Colors.red),
-                                        onPressed: () => _removeItem(item.id!),
-                                      ),
                                     ],
                                   ),
+                                  // Show inline error message for this specific item
+                                  if (_itemErrors.containsKey(item.id)) ...[
+                                    const SizedBox(height: 8),
+                                    Container(
+                                      width: double.infinity,
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 12,
+                                        vertical: 8,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: Colors.red.shade50,
+                                        borderRadius: BorderRadius.circular(6),
+                                        border: Border.all(
+                                          color: Colors.red.shade200,
+                                          width: 1,
+                                        ),
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          Icon(
+                                            Icons.warning_amber_rounded,
+                                            color: Colors.red.shade700,
+                                            size: 18,
+                                          ),
+                                          const SizedBox(width: 8),
+                                          Expanded(
+                                            child: Text(
+                                              _itemErrors[item.id]!,
+                                              style: TextStyle(
+                                                color: Colors.red.shade700,
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
                                 ],
                               ),
                             ),

@@ -90,16 +90,26 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   }
 
   Future<void> _fetchSizes() async {
-    if (_product?.id == null) return;
+    if (_product?.id == null) {
+      debugPrint('⚠️ [PRODUCT_DETAILS] No product ID, skipping size fetch');
+      return;
+    }
     try {
+      debugPrint('🔄 [PRODUCT_DETAILS] Fetching sizes for product: ${_product!.id}');
       final sizes = await _productService.getSizesByProduct(_product!.id!);
+      debugPrint('✅ [PRODUCT_DETAILS] Fetched ${sizes.length} sizes: ${sizes.map((s) => s.sizeName).toList()}');
       if (mounted) {
         setState(() {
           _sizes = sizes;
+          // Auto-select first available size
+          if (_sizes.isNotEmpty) {
+            final availableIndex = _sizes.indexWhere((s) => s.quantity > 0);
+            _selectedSizeIndex = availableIndex >= 0 ? availableIndex : 0;
+          }
         });
       }
     } catch (e) {
-      // Sizes not available
+      debugPrint('❌ [PRODUCT_DETAILS] Error fetching sizes: $e');
     }
   }
 
@@ -215,25 +225,45 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
               rating: 4.4,
               numOfReviews: 126,
             ),
-            // Size Selection
-            if (_sizes.isNotEmpty)
-              SliverToBoxAdapter(
-                child: SelectedSize(
-                  sizes: _sizes.map((s) => s.sizeName).toList(),
-                  selectedIndex: _selectedSizeIndex,
-                  availableIndices: _sizes
-                      .asMap()
-                      .entries
-                      .where((entry) => entry.value.quantity > 0)
-                      .map((entry) => entry.key)
-                      .toList(),
-                  press: (index) {
-                    setState(() {
-                      _selectedSizeIndex = index;
-                    });
-                  },
-                ),
-              ),
+            // Size Selection - Above Product Details
+            SliverToBoxAdapter(
+              child: _sizes.isNotEmpty
+                  ? SelectedSize(
+                      sizes: _sizes.map((s) => s.sizeName).toList(),
+                      selectedIndex: _selectedSizeIndex,
+                      availableIndices: _sizes
+                          .asMap()
+                          .entries
+                          .where((entry) => entry.value.quantity > 0)
+                          .map((entry) => entry.key)
+                          .toList(),
+                      press: (index) {
+                        setState(() {
+                          _selectedSizeIndex = index;
+                        });
+                      },
+                    )
+                  : Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: defaultPadding),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Select Size',
+                            style: Theme.of(context).textTheme.titleSmall,
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'One size fits all',
+                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                          const SizedBox(height: defaultPadding),
+                        ],
+                      ),
+                    ),
+            ),
             ProductListTile(
               svgSrc: 'assets/icons/Product.svg',
               title: 'Product Details',

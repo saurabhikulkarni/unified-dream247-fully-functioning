@@ -147,7 +147,7 @@ class _EntryPointState extends State<EntryPoint> with WidgetsBindingObserver {
                 padding: EdgeInsets.symmetric(horizontal: iconPadding),
                 constraints: const BoxConstraints(),
                 onPressed: () async {
-                  final result = await context.push('/shop/checkout');
+                  final result = await context.push('/shop/cart');
                   // Refresh cart count and wallet balance after returning from cart
                   if (mounted) {
                     setState(() {

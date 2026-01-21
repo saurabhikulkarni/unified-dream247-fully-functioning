@@ -43,8 +43,6 @@ class _MyBalancePage extends State<MyBalancePage> {
   double _shopTokens = 0.0;
   double _totalSpent = 0.0;
   double _totalAdded = 0.0;
-  List<Map<String, dynamic>> _mergedTransactions = [];
-  bool _isLoadingTransactions = false;
 
   @override
   void initState() {
@@ -53,7 +51,6 @@ class _MyBalancePage extends State<MyBalancePage> {
     loadData();
     _loadShopTokens();
     _loadGameTokens();
-    _loadTransactionHistory();
   }
 
   /// Initialize Fantasy module data if not already loaded
@@ -140,75 +137,6 @@ class _MyBalancePage extends State<MyBalancePage> {
     debugPrint('📊 [FANTASY_WALLET] Shop tokens loaded: $shopTokens');
   }
 
-  /// Load merged transaction history from unified endpoint
-  Future<void> _loadTransactionHistory({int page = 1, int limit = 10}) async {
-    setState(() => _isLoadingTransactions = true);
-    try {
-      final authToken = await _getWalletAuthToken();
-      if (authToken == null) {
-        debugPrint('⚠️ [TRANSACTION_HISTORY] No auth token, skipping');
-        setState(() => _isLoadingTransactions = false);
-        return;
-      }
-
-      final response = await http.get(
-        Uri.parse(
-          '${ApiConfig.fantasyUnifiedHistoryEndpoint}?page=$page&limit=$limit',
-        ),
-        headers: {
-          'Authorization': 'Bearer $authToken',
-          'Content-Type': 'application/json',
-        },
-      ).timeout(const Duration(seconds: 8));
-
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        final responseData = data['data'] ?? data;
-        final transactionList = responseData['transactions'] as List?;
-
-        setState(() {
-          _mergedTransactions = transactionList?.map((t) {
-                return {
-                  'id': t['id'],
-                  'type': t[
-                      'type'], // 'add_money', 'purchase', 'contest_entry', 'contest_won'
-                  'amount': (t['amount'] as num?)?.toDouble() ?? 0.0,
-                  'description': t['description'],
-                  'timestamp':
-                      DateTime.tryParse(t['timestamp'] ?? '') ?? DateTime.now(),
-                  'module': t['module'], // 'shop' or 'fantasy'
-                  'icon': t['icon'], // emoji icon
-                };
-              }).toList() ??
-              [];
-        });
-
-        debugPrint(
-            '✅ [TRANSACTION_HISTORY] Loaded ${_mergedTransactions.length} transactions');
-        debugPrint('📊 [TRANSACTION_HISTORY] Page: $page, Limit: $limit');
-      } else {
-        debugPrint('❌ [TRANSACTION_HISTORY] Failed: ${response.statusCode}');
-      }
-    } catch (e) {
-      debugPrint('❌ [TRANSACTION_HISTORY] Error loading: $e');
-      // Fallback to wallet service
-      try {
-        await walletService.initialize();
-        final merged = await walletService.getMergedTransactionHistory(
-          fantasyTransactions: [],
-        );
-        setState(() {
-          _mergedTransactions = merged;
-        });
-        debugPrint('✅ [TRANSACTION_HISTORY] Loaded from fallback service');
-      } catch (fallbackE) {
-        debugPrint('❌ [TRANSACTION_HISTORY] Fallback also failed: $fallbackE');
-      }
-    } finally {
-      setState(() => _isLoadingTransactions = false);
-    }
-  }
-
   /// Load full wallet balance from optimized endpoint
   Future<void> _loadFullWalletBalance() async {
     try {
@@ -278,43 +206,7 @@ class _MyBalancePage extends State<MyBalancePage> {
     // Also load individual components for redundancy
     await _loadShopTokens();
     await _loadGameTokens();
-    await _loadTransactionHistory();
     setState(() {});
-  }
-
-  /// Format date for display
-  String _formatDate(DateTime dateTime) {
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final yesterday = today.subtract(const Duration(days: 1));
-    final dtDate = DateTime(dateTime.year, dateTime.month, dateTime.day);
-
-    if (dtDate == today) {
-      return 'Today • ${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
-    } else if (dtDate == yesterday) {
-      return 'Yesterday • ${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
-    } else {
-      return '${dateTime.day} ${_getMonthName(dateTime.month)} • ${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
-    }
-  }
-
-  /// Get month name from number
-  String _getMonthName(int month) {
-    const months = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec'
-    ];
-    return months[month - 1];
   }
 
   @override
@@ -550,178 +442,6 @@ class _MyBalancePage extends State<MyBalancePage> {
                   ),
                 ),
 
-                // ═══════ UNIFIED TRANSACTION HISTORY SECTION ═══════
-                Container(
-                  margin: const EdgeInsets.only(top: 24, left: 16, right: 16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Section Header
-                      Text(
-                        'Transaction History',
-                        style: GoogleFonts.inter(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.black,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-
-                      // Transaction List or Empty State
-                      if (_isLoadingTransactions)
-                        Container(
-                          padding: const EdgeInsets.symmetric(vertical: 24),
-                          alignment: Alignment.center,
-                          child: const CircularProgressIndicator(),
-                        )
-                      else if (_mergedTransactions.isEmpty)
-                        Container(
-                          padding: const EdgeInsets.symmetric(vertical: 24),
-                          alignment: Alignment.center,
-                          child: Text(
-                            'No transactions yet',
-                            style: GoogleFonts.inter(
-                              fontSize: 14,
-                              color: AppColors.black.withValues(alpha: 0.5),
-                            ),
-                          ),
-                        )
-                      else
-                        ListView.builder(
-                          physics: const NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          itemCount: _mergedTransactions.length,
-                          itemBuilder: (context, index) {
-                            final txn = _mergedTransactions[index];
-                            final isPositive =
-                                txn['isPositive'] as bool? ?? true;
-                            final amount =
-                                (txn['amount'] as num?)?.toDouble() ?? 0.0;
-                            final description =
-                                txn['description'] as String? ?? '';
-                            final icon = txn['icon'] as String? ?? '📝';
-                            final module =
-                                txn['module'] as String? ?? 'unknown';
-                            final timestamp = txn['timestamp'] is DateTime
-                                ? txn['timestamp'] as DateTime
-                                : DateTime.parse(txn['timestamp'] as String);
-
-                            return Padding(
-                              padding: const EdgeInsets.only(bottom: 12),
-                              child: Container(
-                                padding: const EdgeInsets.all(12),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(12),
-                                  color: AppColors.whiteFade1,
-                                  border: Border.all(
-                                    color: isPositive
-                                        ? AppColors.lightGreen
-                                            .withValues(alpha: 0.3)
-                                        : AppColors.orangeColor
-                                            .withValues(alpha: 0.2),
-                                  ),
-                                ),
-                                child: Row(
-                                  children: [
-                                    // Transaction Icon
-                                    Container(
-                                      padding: const EdgeInsets.all(8),
-                                      decoration: BoxDecoration(
-                                        color: isPositive
-                                            ? AppColors.lightGreen
-                                                .withValues(alpha: 0.2)
-                                            : AppColors.orangeColor
-                                                .withValues(alpha: 0.1),
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      child: Text(
-                                        icon,
-                                        style: const TextStyle(fontSize: 18),
-                                      ),
-                                    ),
-                                    const SizedBox(width: 12),
-
-                                    // Transaction Details
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            description,
-                                            style: GoogleFonts.inter(
-                                              fontSize: 13,
-                                              fontWeight: FontWeight.w600,
-                                              color: AppColors.black,
-                                            ),
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                          const SizedBox(height: 4),
-                                          Row(
-                                            children: [
-                                              Text(
-                                                _formatDate(timestamp),
-                                                style: GoogleFonts.inter(
-                                                  fontSize: 12,
-                                                  color: AppColors.black
-                                                      .withValues(alpha: 0.6),
-                                                ),
-                                              ),
-                                              const SizedBox(width: 8),
-                                              Container(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                  horizontal: 6,
-                                                  vertical: 2,
-                                                ),
-                                                decoration: BoxDecoration(
-                                                  color: module == 'shop'
-                                                      ? AppColors.lightGreen
-                                                          .withValues(
-                                                              alpha: 0.2)
-                                                      : AppColors.blueColor
-                                                          .withValues(
-                                                              alpha: 0.2),
-                                                  borderRadius:
-                                                      BorderRadius.circular(4),
-                                                ),
-                                                child: Text(
-                                                  module == 'shop'
-                                                      ? '🪙 Shop'
-                                                      : '💎 Game',
-                                                  style: GoogleFonts.inter(
-                                                    fontSize: 11,
-                                                    fontWeight: FontWeight.w600,
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-
-                                    // Amount
-                                    Text(
-                                      '${isPositive ? '+' : ''}${amount.toStringAsFixed(0)}',
-                                      style: GoogleFonts.montserrat(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w700,
-                                        color: isPositive
-                                            ? AppColors.lightGreen
-                                            : AppColors.orangeColor,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                    ],
-                  ),
-                ),
                 const SizedBox(height: 24),
 
                 // Transaction, TDS, KYC, Refer Section

@@ -134,6 +134,10 @@ class _SignUpFormState extends State<SignUpForm> {
     }
   }
 
+  String? _verifiedUserId; // Store userId returned from backend after signup
+  String? _verifiedToken; // Store auth token returned from backend
+  bool _isNewUser = false; // Track if this is a new user signup
+  
   Future<bool> verifyOtp() async {
     if (!_otpSent) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -147,6 +151,8 @@ class _SignUpFormState extends State<SignUpForm> {
 
     final phone = _phoneController.text.replaceAll(RegExp(r'[^\d]'), '');
     final otp = _otpController.text.trim();
+    final firstName = _firstNameController.text.trim();
+    final lastName = _lastNameController.text.trim();
 
     if (otp.isEmpty || otp.length < 4) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -166,10 +172,13 @@ class _SignUpFormState extends State<SignUpForm> {
     );
 
     // Verify OTP via MSG91 service (backend API)
+    // Backend will create user in Hygraph using firstName/lastName
     final result = await msg91Service.verifyOtp(
       mobileNumber: phone,
       otp: otp,
       sessionId: _sessionId,
+      firstName: firstName,  // Backend creates user with this
+      lastName: lastName,    // Backend creates user with this
     );
 
     // Hide loading indicator
@@ -178,6 +187,12 @@ class _SignUpFormState extends State<SignUpForm> {
     }
 
     if (result['success'] == true) {
+      // Store userId and token returned from backend
+      _verifiedUserId = result['userId']?.toString();
+      _verifiedToken = result['token']?.toString();
+      _isNewUser = result['isNewUser'] == true;
+      debugPrint('✅ [SIGNUP] OTP verified. UserId: $_verifiedUserId, Token: ${_verifiedToken != null ? "present" : "null"}, isNewUser: $_isNewUser');
+      
       // Mark phone as verified in AuthService
       await AuthService().markPhoneVerified(phone);
       return true;
@@ -191,6 +206,15 @@ class _SignUpFormState extends State<SignUpForm> {
       return false;
     }
   }
+  
+  /// Get the userId returned from backend after OTP verification
+  String? getVerifiedUserId() => _verifiedUserId;
+  
+  /// Get the auth token returned from backend after OTP verification
+  String? getVerifiedToken() => _verifiedToken;
+  
+  /// Check if this is a new user signup
+  bool isNewUser() => _isNewUser;
 
   String? getVerifiedPhone() {
     if (_otpSent && _otpController.text.isNotEmpty) {

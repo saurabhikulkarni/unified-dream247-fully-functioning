@@ -109,6 +109,8 @@ class Msg91Service {
   /// [mobileNumber] - Mobile number in format: 10 digits (e.g., "9876543210")
   /// [otp] - OTP code entered by user
   /// [sessionId] - Optional session ID returned from sendOtp (if backend uses it)
+  /// [firstName] - Optional first name for new user signup (backend creates user in Hygraph)
+  /// [lastName] - Optional last name for new user signup (backend creates user in Hygraph)
   /// 
   /// Returns Map with 'success' boolean and optional 'message'
   /// 
@@ -116,12 +118,16 @@ class Msg91Service {
   /// {
   ///   'success': true,
   ///   'message': 'OTP verified successfully',
-  ///   'token': 'auth_token_here' // Optional: if backend returns auth token
+  ///   'token': 'auth_token_here', // Optional: if backend returns auth token
+  ///   'userId': 'hygraph_user_id', // Returned when backend creates user
+  ///   'isNewUser': true/false      // Whether this is a new signup
   /// }
   Future<Map<String, dynamic>> verifyOtp({
     required String mobileNumber,
     required String otp,
     String? sessionId,
+    String? firstName,
+    String? lastName,
   }) async {
     try {
       // Clean mobile number
@@ -150,6 +156,15 @@ class Msg91Service {
       
       if (sessionId != null && sessionId.isNotEmpty) {
         requestBody['sessionId'] = sessionId;
+      }
+      
+      // Include firstName/lastName for new user signup
+      // Backend will create user in Hygraph using its own HYGRAPH_TOKEN
+      if (firstName != null && firstName.isNotEmpty) {
+        requestBody['firstName'] = firstName;
+      }
+      if (lastName != null && lastName.isNotEmpty) {
+        requestBody['lastName'] = lastName;
       }
 
       if (kDebugMode) {
@@ -193,6 +208,8 @@ class Msg91Service {
           'success': true,
           'message': responseData['message'] ?? 'OTP verified successfully',
           'token': responseData['token'], // Optional auth token from backend
+          'userId': responseData['userId'], // User ID from Hygraph (created by backend)
+          'isNewUser': responseData['isNewUser'] ?? false, // Whether this is a new signup
         };
       } else {
         // ... (existing failure code)

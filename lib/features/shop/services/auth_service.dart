@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/painting.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:http/http.dart' as http;
@@ -402,6 +403,11 @@ class AuthService {
       wishlistService.clear();
       cartService.clear();
       await UserService.setCurrentUserId('');
+      
+      // Clear image cache to prevent memory issues on re-login
+      PaintingBinding.instance.imageCache.clear();
+      PaintingBinding.instance.imageCache.clearLiveImages();
+      debugPrint('🧹 [LOGOUT] Image cache cleared');
       
       debugPrint('✅ [LOGOUT] LOCAL session cleared');
       debugPrint('✅ [LOGOUT] Backend data (shopTokens, wallet, orders) is PRESERVED');

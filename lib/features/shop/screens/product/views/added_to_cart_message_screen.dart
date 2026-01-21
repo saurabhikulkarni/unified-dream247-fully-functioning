@@ -45,7 +45,7 @@ class AddedToCartMessageScreen extends StatelessWidget {
               const SizedBox(height: defaultPadding),
               ElevatedButton(
                 onPressed: () {
-                  context.push('/shop/checkout');
+                  context.push('/shop/cart');
                 },
                 child: const Text('Go to Cart'),
               ),

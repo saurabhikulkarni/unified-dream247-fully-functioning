@@ -18,7 +18,10 @@ class WishlistService {
 
   WishlistService._internal();
 
-  final GraphQLClient _graphQLClient = GraphQLService.getClient();
+  // Use public client for reads (CDN, no auth needed)
+  final GraphQLClient _readClient = GraphQLService.getPublicClient();
+  // Use authenticated client for mutations (create/delete)
+  final GraphQLClient _writeClient = GraphQLService.getClient();
 
   // In-memory storage for wishlist items with their wishlist record IDs
   final List<Map<String, dynamic>> _wishlist = []; // {product, wishlistId}
@@ -278,7 +281,7 @@ class WishlistService {
         fetchPolicy: FetchPolicy.networkOnly, // Always fetch from network
       );
 
-      final QueryResult result = await _graphQLClient.query(options);
+      final QueryResult result = await _readClient.query(options);
 
       if (result.hasException) {
         if (kDebugMode) {
@@ -381,7 +384,7 @@ class WishlistService {
         },
       );
 
-      final QueryResult result = await _graphQLClient.mutate(options);
+      final QueryResult result = await _writeClient.mutate(options);
 
       if (result.hasException) {
         if (kDebugMode) {
@@ -439,7 +442,7 @@ class WishlistService {
         },
       );
 
-      final QueryResult result = await _graphQLClient.mutate(options);
+      final QueryResult result = await _writeClient.mutate(options);
 
       if (result.hasException) {
         if (kDebugMode) {

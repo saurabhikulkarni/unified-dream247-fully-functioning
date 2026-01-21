@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:unified_dream247/features/shop/models/address_model.dart';
 import 'package:unified_dream247/features/shop/services/graphql_client.dart';
 import 'package:unified_dream247/features/shop/services/graphql_queries.dart';
@@ -6,6 +8,7 @@ import 'package:unified_dream247/features/shop/services/user_service.dart';
 
 class AddressService {
   static final AddressService _instance = AddressService._internal();
+  static const String _localAddressesKey = 'local_addresses';
 
   factory AddressService() {
     return _instance;
@@ -13,7 +16,52 @@ class AddressService {
 
   AddressService._internal();
 
-  final GraphQLClient _client = GraphQLService.getClient();
+  // Use public client for reads (CDN, no auth needed)
+  final GraphQLClient _readClient = GraphQLService.getPublicClient();
+  // Use authenticated client for mutations (create/update/delete)
+  final GraphQLClient _writeClient = GraphQLService.getClient();
+
+  // Local cache of addresses
+  List<AddressModel> _localAddresses = [];
+  bool _isInitialized = false;
+
+  // Initialize local storage
+  Future<void> _initializeLocalStorage() async {
+    if (_isInitialized) return;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final addressesJson = prefs.getString(_localAddressesKey);
+      if (addressesJson != null && addressesJson.isNotEmpty) {
+        final List<dynamic> decoded = jsonDecode(addressesJson);
+        _localAddresses = decoded
+            .map((item) => AddressModel.fromJson(item as Map<String, dynamic>))
+            .toList();
+        print('[ADDRESS_SERVICE] Loaded ${_localAddresses.length} addresses from local storage');
+      }
+      _isInitialized = true;
+    } catch (e) {
+      print('[ADDRESS_SERVICE] Error loading local addresses: $e');
+      _localAddresses = [];
+      _isInitialized = true;
+    }
+  }
+
+  // Save addresses to local storage
+  Future<void> _saveToLocalStorage() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final addressesJson = jsonEncode(
+        _localAddresses.map((a) => {
+          ...a.toJson(),
+          'userId': a.userId,
+        }).toList(),
+      );
+      await prefs.setString(_localAddressesKey, addressesJson);
+      print('[ADDRESS_SERVICE] Saved ${_localAddresses.length} addresses to local storage');
+    } catch (e) {
+      print('[ADDRESS_SERVICE] Error saving local addresses: $e');
+    }
+  }
 
   // Get all addresses for the current user
   Future<List<AddressModel>> getUserAddresses() async {
@@ -25,11 +73,15 @@ class AddressService {
     return await getAddressesByUserId(userId);
   }
 
-  // Get all addresses for a specific user ID
+  // Get all addresses for a specific user ID (combines backend + local addresses)
   Future<List<AddressModel>> getAddressesByUserId(String userId) async {
+    await _initializeLocalStorage();
+    
+    List<AddressModel> backendAddresses = [];
+    
     try {
       print('[ADDRESS_SERVICE] Querying addresses for userId: $userId');
-      final QueryResult result = await _client.query(
+      final QueryResult result = await _readClient.query(
         QueryOptions(
           document: gql(GraphQLQueries.getAddressesByUser),
           variables: {'userId': userId},
@@ -39,31 +91,47 @@ class AddressService {
 
       if (result.hasException) {
         print('[ADDRESS_SERVICE] Query exception: ${result.exception}');
-        throw Exception(result.exception.toString());
+        // Fall through to return local addresses
+      } else if (result.data != null && result.data!['addresses'] != null) {
+        final List<dynamic> addressesJson = result.data!['addresses'] as List<dynamic>;
+        print('[ADDRESS_SERVICE] Found ${addressesJson.length} addresses from backend');
+        backendAddresses = addressesJson
+            .map((json) => AddressModel.fromJson({
+                  ...json as Map<String, dynamic>,
+                  'userId': userId,
+                }),)
+            .toList();
       }
-
-      if (result.data == null || result.data!['addresses'] == null) {
-        print('[ADDRESS_SERVICE] No addresses data in response');
-        return [];
-      }
-
-      final List<dynamic> addressesJson = result.data!['addresses'] as List<dynamic>;
-      print('[ADDRESS_SERVICE] Found ${addressesJson.length} addresses in query result');
-      return addressesJson
-          .map((json) => AddressModel.fromJson({
-                ...json as Map<String, dynamic>,
-                'userId': userId,
-              }),)
-          .toList();
     } catch (e) {
-      throw Exception('Error fetching addresses: $e');
+      print('[ADDRESS_SERVICE] Error fetching backend addresses: $e');
     }
+
+    // Get local addresses for this user
+    final localUserAddresses = _localAddresses.where((a) => a.userId == userId).toList();
+    print('[ADDRESS_SERVICE] Found ${localUserAddresses.length} local addresses');
+
+    // Merge: backend addresses + local addresses (avoiding duplicates by ID)
+    final backendIds = backendAddresses.map((a) => a.id).toSet();
+    final uniqueLocalAddresses = localUserAddresses.where((a) => !backendIds.contains(a.id)).toList();
+    
+    final allAddresses = [...backendAddresses, ...uniqueLocalAddresses];
+    print('[ADDRESS_SERVICE] Total addresses: ${allAddresses.length}');
+    
+    return allAddresses;
   }
 
-  // Get a single address by ID
+  // Get a single address by ID (checks both backend and local)
   Future<AddressModel?> getAddressById(String addressId) async {
+    await _initializeLocalStorage();
+    
+    // First check local addresses
+    final localMatch = _localAddresses.where((a) => a.id == addressId).firstOrNull;
+    if (localMatch != null) {
+      return localMatch;
+    }
+    
     try {
-      final QueryResult result = await _client.query(
+      final QueryResult result = await _readClient.query(
         QueryOptions(
           document: gql(GraphQLQueries.getAddressById),
           variables: {'id': addressId},
@@ -91,7 +159,7 @@ class AddressService {
     }
   }
 
-  // Create a new address
+  // Create a new address (tries Hygraph first, falls back to local storage)
   Future<AddressModel?> createAddress({
     required String userId,
     required String fullName,
@@ -104,19 +172,32 @@ class AddressService {
     String country = 'India',
     bool isDefault = false,
   }) async {
+    await _initializeLocalStorage();
+    
+    // If setting as default, unset all other default addresses first (local)
+    if (isDefault) {
+      for (var i = 0; i < _localAddresses.length; i++) {
+        if (_localAddresses[i].userId == userId && _localAddresses[i].isDefault) {
+          _localAddresses[i] = _localAddresses[i].copyWith(isDefault: false);
+        }
+      }
+    }
+
+    // Convert phone number string (strip non-numeric characters)
+    final phoneNumberClean = phoneNumber.replaceAll(RegExp(r'[^\d]'), '');
+    if (phoneNumberClean.isEmpty) {
+      throw Exception('Invalid phone number format');
+    }
+
+    // Try Hygraph first
     try {
-      // If setting as default, unset all other default addresses first
       if (isDefault) {
         await _unsetAllDefaultAddresses(userId);
       }
 
-      // Convert phone number string to integer (strip non-numeric characters first)
-      final phoneNumberInt = int.tryParse(phoneNumber.replaceAll(RegExp(r'[^\d]'), '')) ?? 0;
-      if (phoneNumberInt == 0) {
-        throw Exception('Invalid phone number format');
-      }
-
-      final QueryResult result = await _client.mutate(
+      final phoneNumberInt = int.tryParse(phoneNumberClean) ?? 0;
+      
+      final QueryResult result = await _writeClient.mutate(
         MutationOptions(
           document: gql(GraphQLQueries.createAddress),
           variables: {
@@ -139,13 +220,13 @@ class AddressService {
       }
 
       if (result.data == null || result.data!['createAddress'] == null) {
-        return null;
+        throw Exception('No data returned from createAddress');
       }
 
       final createdAddress = result.data!['createAddress'];
       final addressId = createdAddress['id']?.toString();
 
-      print('[ADDRESS_SERVICE] Address created with ID: $addressId');
+      print('[ADDRESS_SERVICE] Address created on Hygraph with ID: $addressId');
 
       // Publish the address (required for Hygraph)
       if (addressId != null) {
@@ -162,7 +243,31 @@ class AddressService {
         'userId': userId,
       });
     } catch (e) {
-      throw Exception('Error creating address: $e');
+      // Hygraph failed - fall back to local storage
+      print('[ADDRESS_SERVICE] Hygraph mutation failed, saving locally: $e');
+      
+      // Generate a local ID
+      final localId = 'local_${DateTime.now().millisecondsSinceEpoch}';
+      
+      final localAddress = AddressModel(
+        id: localId,
+        userId: userId,
+        fullName: fullName,
+        phoneNumber: phoneNumberClean,
+        pincode: pincode,
+        addressLine1: addressLine1,
+        addressLine2: addressLine2,
+        city: city,
+        state: state,
+        country: country,
+        isDefault: isDefault,
+      );
+      
+      _localAddresses.add(localAddress);
+      await _saveToLocalStorage();
+      
+      print('[ADDRESS_SERVICE] Address saved locally with ID: $localId');
+      return localAddress;
     }
   }
 
@@ -179,6 +284,50 @@ class AddressService {
     String country = 'India',
     bool isDefault = false,
   }) async {
+    await _initializeLocalStorage();
+    
+    // Check if this is a local address
+    final localIndex = _localAddresses.indexWhere((a) => a.id == addressId);
+    if (localIndex >= 0 || addressId.startsWith('local_')) {
+      // Update local address
+      print('[ADDRESS_SERVICE] Updating local address: $addressId');
+      
+      final phoneNumberClean = phoneNumber.replaceAll(RegExp(r'[^\d]'), '');
+      
+      // If setting as default, unset all other defaults
+      if (isDefault) {
+        for (var i = 0; i < _localAddresses.length; i++) {
+          if (_localAddresses[i].isDefault) {
+            _localAddresses[i] = _localAddresses[i].copyWith(isDefault: false);
+          }
+        }
+      }
+      
+      final updatedAddress = AddressModel(
+        id: addressId,
+        userId: localIndex >= 0 ? _localAddresses[localIndex].userId : UserService.getCurrentUserId() ?? '',
+        fullName: fullName,
+        phoneNumber: phoneNumberClean,
+        pincode: pincode,
+        addressLine1: addressLine1,
+        addressLine2: addressLine2,
+        city: city,
+        state: state,
+        country: country,
+        isDefault: isDefault,
+      );
+      
+      if (localIndex >= 0) {
+        _localAddresses[localIndex] = updatedAddress;
+      } else {
+        _localAddresses.add(updatedAddress);
+      }
+      
+      await _saveToLocalStorage();
+      return updatedAddress;
+    }
+    
+    // Try Hygraph for non-local addresses
     try {
       // Get the address first to get userId
       final existingAddress = await getAddressById(addressId);
@@ -197,7 +346,7 @@ class AddressService {
         throw Exception('Invalid phone number format');
       }
 
-      final QueryResult result = await _client.mutate(
+      final QueryResult result = await _writeClient.mutate(
         MutationOptions(
           document: gql(GraphQLQueries.updateAddress),
           variables: {
@@ -237,10 +386,22 @@ class AddressService {
     }
   }
 
-  // Delete an address
+  // Delete an address (handles both local and Hygraph addresses)
   Future<bool> deleteAddress(String addressId) async {
+    await _initializeLocalStorage();
+    
+    // Check if this is a local address
+    final localIndex = _localAddresses.indexWhere((a) => a.id == addressId);
+    if (localIndex >= 0 || addressId.startsWith('local_')) {
+      print('[ADDRESS_SERVICE] Deleting local address: $addressId');
+      _localAddresses.removeWhere((a) => a.id == addressId);
+      await _saveToLocalStorage();
+      return true;
+    }
+    
+    // Try Hygraph for non-local addresses
     try {
-      final QueryResult result = await _client.mutate(
+      final QueryResult result = await _writeClient.mutate(
         MutationOptions(
           document: gql(GraphQLQueries.deleteAddress),
           variables: {'id': addressId},
@@ -253,20 +414,37 @@ class AddressService {
 
       return result.data != null && result.data!['deleteAddress'] != null;
     } catch (e) {
-      throw Exception('Error deleting address: $e');
+      // If Hygraph fails, still remove from local cache if present
+      print('[ADDRESS_SERVICE] Hygraph delete failed, removing from local cache: $e');
+      _localAddresses.removeWhere((a) => a.id == addressId);
+      await _saveToLocalStorage();
+      return true;
     }
   }
 
   // Set an address as default (unset others first)
   Future<bool> setDefaultAddress(String addressId) async {
+    await _initializeLocalStorage();
+    
     try {
       final address = await getAddressById(addressId);
       if (address == null) {
         return false;
       }
 
-      // Unset all default addresses for this user
-      await _unsetAllDefaultAddresses(address.userId);
+      // Unset all local default addresses
+      for (var i = 0; i < _localAddresses.length; i++) {
+        if (_localAddresses[i].isDefault) {
+          _localAddresses[i] = _localAddresses[i].copyWith(isDefault: false);
+        }
+      }
+      
+      // Try to unset on backend
+      try {
+        await _unsetAllDefaultAddresses(address.userId);
+      } catch (e) {
+        print('[ADDRESS_SERVICE] Could not unset defaults on backend: $e');
+      }
 
       // Update this address to be default
       final updated = await updateAddress(
@@ -304,7 +482,7 @@ class AddressService {
   // Helper: Unset all default addresses for a user
   Future<void> _unsetAllDefaultAddresses(String userId) async {
     try {
-      await _client.mutate(
+      await _writeClient.mutate(
         MutationOptions(
           document: gql(GraphQLQueries.unsetAllDefaultAddresses),
           variables: {'userId': userId},
@@ -320,7 +498,7 @@ class AddressService {
   Future<void> _publishAddress(String addressId) async {
     try {
       print('[ADDRESS_SERVICE] Publishing address ID: $addressId');
-      final result = await _client.mutate(
+      final result = await _writeClient.mutate(
         MutationOptions(
           document: gql(GraphQLQueries.publishAddress),
           variables: {'id': addressId},

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:unified_dream247/features/shop/services/cart_service.dart';
 
 /// Shop Home Screen - Entry point for ecommerce features
 /// Shows products, categories, and shopping functionality
@@ -12,9 +14,12 @@ class ShopHomeScreen extends StatefulWidget {
 }
 
 class _ShopHomeScreenState extends State<ShopHomeScreen> {
+  int _cartItemCount = 0;
+  
   @override
   void initState() {
     super.initState();
+    _updateCartCount();
     
     // Verify user ID is available for shop
     if (widget.userId != null) {
@@ -22,6 +27,12 @@ class _ShopHomeScreenState extends State<ShopHomeScreen> {
     } else {
       debugPrint('Shop Home: Warning - No user ID provided');
     }
+  }
+  
+  void _updateCartCount() {
+    setState(() {
+      _cartItemCount = CartService().getLocalCart().length;
+    });
   }
   
   @override
@@ -35,14 +46,49 @@ class _ShopHomeScreenState extends State<ShopHomeScreen> {
           IconButton(
             icon: const Icon(Icons.search),
             onPressed: () {
-              // TODO: Navigate to search screen
+              context.push('/shop/search');
             },
           ),
-          IconButton(
-            icon: const Icon(Icons.shopping_cart),
-            onPressed: () {
-              // TODO: Navigate to cart screen
-            },
+          // Cart icon with badge
+          Stack(
+            alignment: Alignment.center,
+            children: [
+              IconButton(
+                icon: const Icon(Icons.shopping_cart),
+                onPressed: () async {
+                  await context.push('/shop/cart');
+                  // Refresh cart count after returning
+                  if (mounted) {
+                    _updateCartCount();
+                  }
+                },
+              ),
+              if (_cartItemCount > 0)
+                Positioned(
+                  right: 6,
+                  top: 6,
+                  child: Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: const BoxDecoration(
+                      color: Color(0xFFFF4444),
+                      shape: BoxShape.circle,
+                    ),
+                    constraints: const BoxConstraints(
+                      minWidth: 18,
+                      minHeight: 18,
+                    ),
+                    child: Text(
+                      _cartItemCount > 99 ? '99+' : _cartItemCount.toString(),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+            ],
           ),
         ],
       ),

@@ -4,8 +4,9 @@ import 'package:unified_dream247/features/shop/services/graphql_client.dart';
 import 'package:unified_dream247/features/shop/services/graphql_queries.dart';
 
 class ProductService {
-  // Get client lazily to ensure Hive is initialized
-  GraphQLClient get _client => GraphQLService.getClient();
+  // Use PUBLIC client (CDN, no auth) for read-only product fetching
+  // This works even if the Hygraph auth token is invalid
+  GraphQLClient get _client => GraphQLService.getPublicClient();
 
   // Fetch all products
   Future<List<ProductModel>> getAllProducts() async {
@@ -174,9 +175,10 @@ class ProductService {
     }
   }
 
-  // Fetch sizes for a product
+  // Fetch sizes for a product (sizes are embedded in product as relation)
   Future<List<SizeModel>> getSizesByProduct(String productId) async {
     try {
+      print('[PRODUCT_SERVICE] Fetching sizes for product: $productId');
       final QueryResult result = await _client.query(
         QueryOptions(
           document: gql(GraphQLQueries.getSizesByProduct),
@@ -186,18 +188,33 @@ class ProductService {
       );
 
       if (result.hasException) {
+        print('[PRODUCT_SERVICE] Sizes GraphQL Exception: ${result.exception}');
         throw Exception(result.exception.toString());
       }
 
-      if (result.data == null || result.data!['sizes'] == null) {
+      print('[PRODUCT_SERVICE] Sizes raw response: ${result.data}');
+
+      // Sizes are now embedded in the product response
+      if (result.data == null || result.data!['product'] == null) {
+        print('[PRODUCT_SERVICE] No product data returned');
         return [];
       }
 
-      final List<dynamic> sizesJson = result.data!['sizes'] as List<dynamic>;
+      final productData = result.data!['product'] as Map<String, dynamic>;
+      final sizesData = productData['sizes'];
+      
+      if (sizesData == null || sizesData is! List) {
+        print('[PRODUCT_SERVICE] No sizes found in product');
+        return [];
+      }
+
+      final List<dynamic> sizesJson = sizesData as List<dynamic>;
+      print('[PRODUCT_SERVICE] Fetched ${sizesJson.length} sizes: $sizesJson');
       return sizesJson
           .map((json) => SizeModel.fromJson(json as Map<String, dynamic>))
           .toList();
     } catch (e) {
+      print('[PRODUCT_SERVICE] Error fetching sizes: $e');
       throw Exception('Error fetching sizes: $e');
     }
   }

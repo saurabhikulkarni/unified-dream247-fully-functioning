@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:unified_dream247/features/shop/constants.dart';
 import 'package:unified_dream247/features/shop/route/route_constants.dart';
 import 'package:unified_dream247/features/shop/route/screen_export.dart';
@@ -44,7 +45,7 @@ class AddedToCartMessageScreen extends StatelessWidget {
               const SizedBox(height: defaultPadding),
               ElevatedButton(
                 onPressed: () {
-                  Navigator.pushNamed(context, cartScreenRoute);
+                  context.push('/shop/cart');
                 },
                 child: const Text('Go to Cart'),
               ),

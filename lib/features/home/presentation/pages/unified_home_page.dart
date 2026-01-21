@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:unified_dream247/config/api_config.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
 import 'package:unified_dream247/core/services/auth_service.dart' as core_auth;
 import 'package:unified_dream247/core/providers/shop_tokens_provider.dart';
-import 'package:unified_dream247/core/services/wallet_service.dart';
 import 'package:unified_dream247/features/shop/services/product_service.dart';
 import 'package:unified_dream247/features/shop/models/product_model.dart';
+import 'package:unified_dream247/features/fantasy/accounts/presentation/providers/wallet_details_provider.dart';
+import 'package:unified_dream247/features/fantasy/accounts/data/accounts_datasource.dart';
 import 'dart:math';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -30,6 +32,37 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
     super.initState();
     _initAuth();
     _loadProducts();
+    _refreshShopTokens();
+    _refreshGameTokens();
+  }
+
+  /// Refresh shop tokens when entering home page
+  void _refreshShopTokens() {
+    // Use addPostFrameCallback to ensure context is available
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        final shopTokensProvider = context.read<ShopTokensProvider>();
+        shopTokensProvider.forceRefresh();
+        debugPrint('🔄 [HOME] Refreshing shop tokens on page load');
+      }
+    });
+  }
+
+  /// Refresh game tokens when entering home page
+  void _refreshGameTokens() {
+    // Use addPostFrameCallback to ensure context is available
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (mounted) {
+        try {
+          // Fetch wallet details which populates WalletDetailsProvider
+          final accountsDatasource = AccountsDatasourceImpl();
+          await accountsDatasource.myWalletDetails(context);
+          debugPrint('🔄 [HOME] Refreshed game tokens from wallet API');
+        } catch (e) {
+          debugPrint('⚠️ [HOME] Error refreshing game tokens: $e');
+        }
+      }
+    });
   }
 
   Future<void> _initAuth() async {
@@ -278,7 +311,11 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Text('🪙', style: TextStyle(fontSize: 16)),
+                      SvgPicture.asset(
+                        'assets/icons/coin.svg',
+                        width: 18,
+                        height: 18,
+                      ),
                       const SizedBox(width: 4),
                       Text(
                         shopTokensProvider.shopTokens.toString(),
@@ -295,38 +332,41 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
             },
           ),
           // Game Tokens Display - Clickable to navigate to wallet
-          GestureDetector(
-            onTap: () => _navigateToWallet(),
-            child: Container(
-              margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(
-                color: Colors.blue[50],
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Text('💎', style: TextStyle(fontSize: 16)),
-                  const SizedBox(width: 4),
-                  FutureBuilder<double>(
-                    future: walletService.getGameTokens(),
-                    builder: (context, snapshot) {
-                      return Text(
-                        snapshot.hasData
-                            ? snapshot.data!.toStringAsFixed(0)
-                            : '0',
+          Consumer<WalletDetailsProvider>(
+            builder: (context, walletProvider, child) {
+              // Calculate total game tokens (balance + winning + bonus)
+              final balance = double.tryParse(walletProvider.walletData?.balance ?? '0') ?? 0;
+              final winning = double.tryParse(walletProvider.walletData?.winning ?? '0') ?? 0;
+              final bonus = double.tryParse(walletProvider.walletData?.bonus ?? '0') ?? 0;
+              final totalGameTokens = (balance + winning + bonus).toInt();
+              
+              return GestureDetector(
+                onTap: () => _navigateToWallet(),
+                child: Container(
+                  margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: Colors.blue[50],
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text('💎', style: TextStyle(fontSize: 16)),
+                      const SizedBox(width: 4),
+                      Text(
+                        totalGameTokens.toString(),
                         style: const TextStyle(
                           color: Colors.black87,
                           fontWeight: FontWeight.bold,
                           fontSize: 14,
                         ),
-                      );
-                    },
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ),
+                ),
+              );
+            },
           ),
         ],
       ),
@@ -734,9 +774,11 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
                                           const SizedBox(height: 8),
                                           Row(
                                             children: [
-                                              const Text('🪙',
-                                                  style:
-                                                      TextStyle(fontSize: 14)),
+                                              SvgPicture.asset(
+                                                'assets/icons/coin.svg',
+                                                width: 16,
+                                                height: 16,
+                                              ),
                                               const SizedBox(width: 4),
                                               Text(
                                                 product.price
