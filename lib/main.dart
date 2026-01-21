@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:oktoast/oktoast.dart';
 // import 'package:firebase_messaging/firebase_messaging.dart';
 import 'firebase_options.dart';
 import 'app.dart';
@@ -111,7 +112,11 @@ void main() async {
   }
 
   // Run the app
-  runApp(const MyApp());
+  runApp(
+    const OKToast(
+      child: MyApp(),
+    ),
+  );
 }
 
 /// Initialize game tokens on app startup

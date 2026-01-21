@@ -1123,10 +1123,10 @@ class _AddMoneyPage extends State<AddMoneyPage> {
                 : const Color(0xffbcc5d3),
             onTap: (_errorText == null && _amountController.text != '')
                 ? () async {
-                    if (!_isUserVerified) {
-                      appToast('Please verify your account first', context);
-                      return;
-                    }
+                    // if (!_isUserVerified) {
+                    //   appToast('Please verify your account first', context);
+                    //   return;
+                    // }
 
                     // Use sensible defaults if app data not loaded
                     final minLimit = num.parse(
