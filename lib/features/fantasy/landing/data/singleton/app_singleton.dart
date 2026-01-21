@@ -32,6 +32,21 @@ class AppSingleton {
     _matchListModel = matchData;
   }
 
+  /// 🔹 ALL banners
+  List<BannerData> get banners => _appVersionResponse?.bannerData ?? [];
+
+  /// 🔹 App home banners
+  List<BannerData> get appBanners =>
+      banners.where((b) => b.type == 'app').toList();
+
+  /// 🔹 Splash banners
+  List<BannerData> get splashBanners =>
+      banners.where((b) => b.type == 'splash').toList();
+
+  /// 🔹 Invite banners
+  List<BannerData> get inviteBanners =>
+      banners.where((b) => b.bannerType == 'invite').toList();
+
   set appData(AppVersionResponse appData) {
     _appVersionResponse = appData;
   }
@@ -44,3 +59,27 @@ class AppSingleton {
     _contest = contest;
   }
 }
+
+class BannerModel {
+  final String type;
+  final String bannerType;
+  final String image;
+  final String sliderId;
+
+  BannerModel({
+    required this.type,
+    required this.bannerType,
+    required this.image,
+    required this.sliderId,
+  });
+
+  factory BannerModel.fromJson(Map<String, dynamic> json) {
+    return BannerModel(
+      type: json['type'] ?? '',
+      bannerType: json['bannerType'] ?? '',
+      image: json['image'] ?? '',
+      sliderId: json['sliderid'] ?? '',
+    );
+  }
+}
+

@@ -12,9 +12,11 @@ import 'package:unified_dream247/features/fantasy/core/app_constants/app_storage
 import 'package:unified_dream247/features/fantasy/core/global_widgets/no_data_widget.dart';
 import 'package:unified_dream247/features/fantasy/core/global_widgets/size_widget.dart';
 import 'package:unified_dream247/features/fantasy/landing/data/home_datasource.dart';
+import 'package:unified_dream247/features/fantasy/landing/data/models/app_data.dart';
 import 'package:unified_dream247/features/fantasy/landing/data/models/banners_get_set.dart';
 import 'package:unified_dream247/features/fantasy/landing/data/models/joined_matches_model.dart';
 import 'package:unified_dream247/features/fantasy/landing/data/models/match_list_model.dart';
+import 'package:unified_dream247/features/fantasy/landing/data/singleton/app_singleton.dart';
 import 'package:unified_dream247/features/fantasy/landing/domain/use_cases/home_usecases.dart';
 import 'package:unified_dream247/features/fantasy/landing/presentation/widgets/match_card.dart';
 import 'package:unified_dream247/features/fantasy/landing/presentation/widgets/match_list_shimmer_widget.dart';
@@ -32,7 +34,8 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int? selectedSeriesIndex;
-  List<BannersGetSet>? bannerList;
+  List<BannerData> bannerList = [];
+
   List<JoinedMatchesModel> joinedMatches = [];
   List<MatchListModel>? matchList;
   HomeUsecases homeUsecases = HomeUsecases(
@@ -63,31 +66,33 @@ class _HomePageState extends State<HomePage> {
     final prefs = await SharedPreferences.getInstance();
     final isLoggedIn = prefs.getBool('is_logged_in') ?? false;
     final token = prefs.getString(AppStorageKeys.authToken);
-    
+
     if (!mounted) return;
-    
+
     if (!isLoggedIn) {
       // Not logged in at all - let parent LandingPage handle redirect
       debugPrint('⚠️ [FANTASY_HOME] User not logged in');
       // Don't redirect here - LandingPage already handles this
       return;
     }
-    
+
     // User is logged in to shop, check if fantasy token exists
     if (token == null || token.isEmpty) {
-      debugPrint('⚠️ [FANTASY_HOME] No fantasy token yet - waiting for LandingPage to initialize...');
+      debugPrint(
+          '⚠️ [FANTASY_HOME] No fantasy token yet - waiting for LandingPage to initialize...');
       // Don't redirect - LandingPage._verifyUserIdAndInit() should be handling token fetch
       // Wait a bit and check again
       await Future.delayed(const Duration(milliseconds: 500));
-      
+
       final retryToken = prefs.getString(AppStorageKeys.authToken);
       if (retryToken == null || retryToken.isEmpty) {
-        debugPrint('⚠️ [FANTASY_HOME] Still no token after wait, attempting fetch...');
-        
+        debugPrint(
+            '⚠️ [FANTASY_HOME] Still no token after wait, attempting fetch...');
+
         final phone = prefs.getString('user_phone') ?? '';
         final name = prefs.getString('user_name') ?? '';
         final userId = prefs.getString('user_id');
-        
+
         if (phone.isNotEmpty) {
           try {
             final authService = AuthService();
@@ -97,7 +102,7 @@ class _HomePageState extends State<HomePage> {
               userId: userId,
               isNewUser: false,
             );
-            
+
             if (fantasyToken != null && fantasyToken.isNotEmpty) {
               await prefs.setString('token', fantasyToken);
               await prefs.setString('auth_token', fantasyToken);
@@ -113,9 +118,10 @@ class _HomePageState extends State<HomePage> {
         debugPrint('✅ [FANTASY_HOME] Token available after wait');
       }
     } else {
-      debugPrint('✅ [FANTASY_HOME] Auth token found: ${token.substring(0, token.length > 20 ? 20 : token.length)}...');
+      debugPrint(
+          '✅ [FANTASY_HOME] Auth token found: ${token.substring(0, token.length > 20 ? 20 : token.length)}...');
     }
-    
+
     loadData();
   }
 
@@ -141,16 +147,18 @@ class _HomePageState extends State<HomePage> {
       widget.gameType ?? 'Cricket',
     );
     final matchData = await homeUsecases.getMatchList(context, '');
-    
+
     // ⚠️ DEPRECATED: Banner fetching via onboarding removed - now using homeUsecases
-    List<BannersGetSet>? filteredBanners = [];
+    final banners = AppSingleton().appBanners;
+
+    // final bannersData = await onb;
 
     if (!mounted) return;
     setState(() {
       joinedMatches = joinedData ?? [];
       matchList = matchData ?? [];
       _allMatches = List.from(matchList!);
-      bannerList = filteredBanners;
+      bannerList = banners;
       series = matchList
               ?.map((match) => match.seriesname ?? '')
               .where((name) => name.isNotEmpty)
@@ -189,61 +197,106 @@ class _HomePageState extends State<HomePage> {
                     children: [
                       hBox(16),
                       //  Banner Carousel
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(20),
-                          child: CarouselSlider(
-                            options: CarouselOptions(
-                              height: 100.h,
-                              autoPlay: true,
-                              autoPlayCurve: Curves.easeInOutCubic,
-                              enlargeCenterPage: true,
-                              viewportFraction: 0.85,
-                            ),
-                            items: bannerList?.map((item) {
-                              // Fallback handling for null, empty or invalid image
-                              final String fallbackImage = ApiConfig.getMediaUrl('sideBanner-1756816917767-JDAANUQZ.jpeg');
-                              final String imageUrl = (item.image != null &&
-                                      (item.image ?? '').trim().isNotEmpty)
-                                  ? item.image ?? fallbackImage
-                                  : fallbackImage;
+                      if (bannerList.isNotEmpty)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(20),
+                            child: CarouselSlider(
+                              options: CarouselOptions(
+                                height: 100.h,
+                                autoPlay: bannerList.length > 1,
+                                enlargeCenterPage: true,
+                                viewportFraction: 0.85,
+                              ),
+                              items: bannerList.map((item) {
+                                final String fallbackImage =
+                                    ApiConfig.getMediaUrl(
+                                  'sideBanner-1756816917767-JDAANUQZ.jpeg',
+                                );
 
-                              return Stack(
-                                children: [
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(20),
-                                    child: ShaderMask(
-                                      shaderCallback: (rect) =>
-                                          const LinearGradient(
-                                        colors: [
-                                          Color.fromARGB(31, 255, 202, 202),
-                                          Color.fromARGB(136, 255, 240, 240),
-                                        ],
-                                        begin: Alignment.topCenter,
-                                        end: Alignment.bottomCenter,
-                                      ).createShader(rect),
-                                      blendMode: BlendMode.darken,
-                                      child: Image.network(
-                                        imageUrl,
-                                        fit: BoxFit.cover,
-                                        width: double.infinity,
-                                        errorBuilder:
-                                            (context, error, stackTrace) =>
-                                                Image.network(
-                                          fallbackImage,
-                                          fit: BoxFit.cover,
-                                          width: double.infinity,
-                                        ),
-                                      ),
+                                final String imageUrl = (item.image != null &&
+                                        item.image!.trim().isNotEmpty)
+                                    ? item.image!
+                                    : fallbackImage;
+
+                                return ClipRRect(
+                                  borderRadius: BorderRadius.circular(20),
+                                  child: Image.network(
+                                    imageUrl,
+                                    fit: BoxFit.cover,
+                                    width: double.infinity,
+                                    errorBuilder: (_, __, ___) => Image.network(
+                                      fallbackImage,
+                                      fit: BoxFit.cover,
+                                      width: double.infinity,
                                     ),
                                   ),
-                                ],
-                              );
-                            }).toList(),
+                                );
+                              }).toList(),
+                            ),
                           ),
                         ),
-                      ),
+
+                      // Padding(
+                      //   padding: const EdgeInsets.symmetric(horizontal: 10),
+                      //   child: ClipRRect(
+                      //     borderRadius: BorderRadius.circular(20),
+                      //     child: CarouselSlider(
+                      //       options: CarouselOptions(
+                      //         height: 100.h,
+                      //         autoPlay: true,
+                      //         autoPlayCurve: Curves.easeInOutCubic,
+                      //         enlargeCenterPage: true,
+                      //         viewportFraction: 0.85,
+                      //       ),
+                      //       items: bannerList?.map((item) {
+                      //         // Fallback handling for null, empty or invalid image
+                      //         final String fallbackImage =
+                      //             ApiConfig.getMediaUrl(
+                      //                 'sideBanner-1756816917767-JDAANUQZ.jpeg');
+                      //         debugPrint(
+                      //             '==============================${item.image}=============================');
+                      //         final String imageUrl = (item.image != null &&
+                      //                 (item.image ?? '').trim().isNotEmpty)
+                      //             ? item.image ?? fallbackImage
+                      //             : fallbackImage;
+
+                      //         return Stack(
+                      //           children: [
+                      //             ClipRRect(
+                      //               borderRadius: BorderRadius.circular(20),
+                      //               child: ShaderMask(
+                      //                 shaderCallback: (rect) =>
+                      //                     const LinearGradient(
+                      //                   colors: [
+                      //                     Color.fromARGB(31, 255, 202, 202),
+                      //                     Color.fromARGB(136, 255, 240, 240),
+                      //                   ],
+                      //                   begin: Alignment.topCenter,
+                      //                   end: Alignment.bottomCenter,
+                      //                 ).createShader(rect),
+                      //                 blendMode: BlendMode.darken,
+                      //                 child: Image.network(
+                      //                   imageUrl,
+                      //                   fit: BoxFit.cover,
+                      //                   width: double.infinity,
+                      //                   errorBuilder:
+                      //                       (context, error, stackTrace) =>
+                      //                           Image.network(
+                      //                     fallbackImage,
+                      //                     fit: BoxFit.cover,
+                      //                     width: double.infinity,
+                      //                   ),
+                      //                 ),
+                      //               ),
+                      //             ),
+                      //           ],
+                      //         );
+                      //       }).toList(),
+                      //     ),
+                      //   ),
+                      // ),
                       hBox(12),
 
                       //  Recent Matches

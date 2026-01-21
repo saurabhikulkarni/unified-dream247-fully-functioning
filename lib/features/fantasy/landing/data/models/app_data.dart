@@ -24,6 +24,7 @@ class AppVersionResponse {
   String? supportemail;
   String? updationmessage;
   List<GamesGetSet>? games;
+  List<BannerData>? bannerData;
   PaymentGatewayMethod? androidpaymentgateway;
   PaymentGatewayMethod? iospaymentgateway;
   String? s3Folder;
@@ -70,6 +71,7 @@ class AppVersionResponse {
     this.supportemail,
     this.updationmessage,
     this.games,
+    this.bannerData,
     this.disableWithdraw,
     this.s3Folder,
     this.seriesLeaderboard,
@@ -125,6 +127,12 @@ class AppVersionResponse {
       games = <GamesGetSet>[];
       json['games'].forEach((v) {
         games!.add(GamesGetSet.fromJson(v));
+      });
+    }
+    if (json['bannerData'] != null) {
+      bannerData = <BannerData>[];
+      json['bannerData'].forEach((v) {
+        bannerData!.add(BannerData.fromJson(v));
       });
     }
     seriesLeaderboard = ModelParsers.toIntParser(json["seriesLeaderboard"]);
@@ -235,3 +243,26 @@ class Transfer {
         max: ModelParsers.toIntParser(json["max"]),
       );
 }
+
+
+class BannerData {
+  String? type;
+  String? bannerType;
+  String? image;
+  String? sliderId;
+
+  BannerData({
+    this.type,
+    this.bannerType,
+    this.image,
+    this.sliderId,
+  });
+
+  BannerData.fromJson(Map<String, dynamic> json) {
+    type = ModelParsers.toStringParser(json['type']);
+    bannerType = ModelParsers.toStringParser(json['bannerType']);
+    image = ModelParsers.toStringParser(json['image']);
+    sliderId = ModelParsers.toStringParser(json['sliderid']);
+  }
+}
+

@@ -25,7 +25,8 @@ import 'package:unified_dream247/features/fantasy/landing/domain/use_cases/home_
 import 'package:unified_dream247/features/fantasy/menu_items/data/user_datasource.dart';
 import 'package:unified_dream247/features/fantasy/menu_items/domain/use_cases/user_usecases.dart';
 import 'package:unified_dream247/core/services/wallet_service.dart';
-import 'package:unified_dream247/features/shop/services/auth_service.dart' as shop_auth;
+import 'package:unified_dream247/features/shop/services/auth_service.dart'
+    as shop_auth;
 
 class MyBalancePage extends StatefulWidget {
   const MyBalancePage({super.key});
@@ -60,15 +61,15 @@ class _MyBalancePage extends State<MyBalancePage> {
   Future<void> _initializeFantasyDataIfNeeded() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      
+
       // 1️⃣ First, ensure we have a valid Fantasy token
       String? token = prefs.getString('token');
       if (token == null || token.isEmpty) {
         debugPrint('⚠️ [WALLET] No fantasy token found, fetching...');
-        
+
         final phone = prefs.getString('user_phone') ?? '';
         final name = prefs.getString('user_name') ?? '';
-        
+
         if (phone.isNotEmpty) {
           final authService = shop_auth.AuthService();
           token = await authService.fetchFantasyToken(
@@ -76,7 +77,7 @@ class _MyBalancePage extends State<MyBalancePage> {
             name: name,
             userId: prefs.getString('user_id') ?? '',
           );
-          
+
           if (token != null && token.isNotEmpty) {
             await prefs.setString('token', token);
             debugPrint('✅ [WALLET] Fantasy token refreshed');
@@ -89,24 +90,26 @@ class _MyBalancePage extends State<MyBalancePage> {
       } else {
         debugPrint('✅ [WALLET] Fantasy token exists');
       }
-      
+
       // 2️⃣ Check if app data is already loaded (has payment gateway config)
-      final hasAppData = AppSingleton.singleton.appData.androidpaymentgateway != null;
-      
+      final hasAppData =
+          AppSingleton.singleton.appData.androidpaymentgateway != null;
+
       if (!hasAppData) {
-        debugPrint('📥 [WALLET] Loading app data (navigated directly to wallet)...');
+        debugPrint(
+            '📥 [WALLET] Loading app data (navigated directly to wallet)...');
         final homeUsecases = HomeUsecases(
           HomeDatasource(ApiImplWithAccessToken()),
         );
         await homeUsecases.getAppDataWithHeader(context);
         debugPrint('✅ [WALLET] App data loaded');
       }
-      
+
       // 3️⃣ Load user details if not already loaded
-      final userUsecases = UserUsecases(UserDatasource(ApiImplWithAccessToken()));
+      final userUsecases =
+          UserUsecases(UserDatasource(ApiImplWithAccessToken()));
       await userUsecases.getUserDetails(context);
       debugPrint('✅ [WALLET] User details loaded');
-      
     } catch (e) {
       debugPrint('⚠️ [WALLET] Error initializing Fantasy data: $e');
     }
@@ -116,11 +119,11 @@ class _MyBalancePage extends State<MyBalancePage> {
   Future<void> _loadGameTokens() async {
     try {
       await walletService.initialize();
-      
+
       // Fetch from Fantasy backend
       final gameTokens = await walletService.getGameTokens();
       setState(() {});
-      
+
       debugPrint('📊 [FANTASY_WALLET] Game tokens synced: $gameTokens');
     } catch (e) {
       debugPrint('⚠️ [FANTASY_WALLET] Error loading game tokens: $e');
@@ -162,22 +165,26 @@ class _MyBalancePage extends State<MyBalancePage> {
         final data = jsonDecode(response.body);
         final responseData = data['data'] ?? data;
         final transactionList = responseData['transactions'] as List?;
-        
+
         setState(() {
           _mergedTransactions = transactionList?.map((t) {
-            return {
-              'id': t['id'],
-              'type': t['type'], // 'add_money', 'purchase', 'contest_entry', 'contest_won'
-              'amount': (t['amount'] as num?)?.toDouble() ?? 0.0,
-              'description': t['description'],
-              'timestamp': DateTime.tryParse(t['timestamp'] ?? '') ?? DateTime.now(),
-              'module': t['module'], // 'shop' or 'fantasy'
-              'icon': t['icon'], // emoji icon
-            };
-          }).toList() ?? [];
+                return {
+                  'id': t['id'],
+                  'type': t[
+                      'type'], // 'add_money', 'purchase', 'contest_entry', 'contest_won'
+                  'amount': (t['amount'] as num?)?.toDouble() ?? 0.0,
+                  'description': t['description'],
+                  'timestamp':
+                      DateTime.tryParse(t['timestamp'] ?? '') ?? DateTime.now(),
+                  'module': t['module'], // 'shop' or 'fantasy'
+                  'icon': t['icon'], // emoji icon
+                };
+              }).toList() ??
+              [];
         });
-        
-        debugPrint('✅ [TRANSACTION_HISTORY] Loaded ${_mergedTransactions.length} transactions');
+
+        debugPrint(
+            '✅ [TRANSACTION_HISTORY] Loaded ${_mergedTransactions.length} transactions');
         debugPrint('📊 [TRANSACTION_HISTORY] Page: $page, Limit: $limit');
       } else {
         debugPrint('❌ [TRANSACTION_HISTORY] Failed: ${response.statusCode}');
@@ -222,13 +229,13 @@ class _MyBalancePage extends State<MyBalancePage> {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         final walletData = data['data'] ?? data;
-        
+
         setState(() {
           _shopTokens = (walletData['shopTokens'] as num?)?.toDouble() ?? 0.0;
           _totalSpent = (walletData['totalSpent'] as num?)?.toDouble() ?? 0.0;
           _totalAdded = (walletData['totalAdded'] as num?)?.toDouble() ?? 0.0;
         });
-        
+
         debugPrint('✅ [WALLET_SCREEN] Full wallet loaded');
         debugPrint('   Shop Tokens: $_shopTokens');
         debugPrint('   Total Spent: $_totalSpent');
@@ -245,9 +252,9 @@ class _MyBalancePage extends State<MyBalancePage> {
   Future<String?> _getWalletAuthToken() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      return prefs.getString('token') ?? 
-             prefs.getString('auth_token') ?? 
-             prefs.getString('fantasy_token');
+      return prefs.getString('token') ??
+          prefs.getString('auth_token') ??
+          prefs.getString('fantasy_token');
     } catch (e) {
       debugPrint('⚠️ [WALLET_SCREEN] Error getting auth token: $e');
       return null;
@@ -264,10 +271,10 @@ class _MyBalancePage extends State<MyBalancePage> {
 
     lastRefreshTime = now;
     await accountsUsecases.myWalletDetails(context);
-    
+
     // Load full wallet data from optimized endpoint
     await _loadFullWalletBalance();
-    
+
     // Also load individual components for redundancy
     await _loadShopTokens();
     await _loadGameTokens();
@@ -293,7 +300,20 @@ class _MyBalancePage extends State<MyBalancePage> {
 
   /// Get month name from number
   String _getMonthName(int month) {
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec'
+    ];
     return months[month - 1];
   }
 
@@ -426,8 +446,10 @@ class _MyBalancePage extends State<MyBalancePage> {
                             _walletInfoTile(
                               icon: Images.icDeposit,
                               title: 'Shop Token',
-                              value:
-                                  AppUtils.stringifyNumber(num.parse(_shopTokens.toStringAsFixed(0))),
+                              value: AppUtils.stringifyNumber(num.parse(
+                                      walletData?.balance.toString() ?? "0")
+                                  // num.parse(_shopTokens.toStringAsFixed(0))
+                                  ),
                               color: AppColors.lightGreen.withAlpha(20),
                               isShopToken: true,
                               gradientButton: true,
@@ -436,7 +458,8 @@ class _MyBalancePage extends State<MyBalancePage> {
                                 // Use Navigator.push instead of Get.to to avoid GetX context issues
                                 Navigator.push(
                                   context,
-                                  MaterialPageRoute(builder: (_) => const AddMoneyPage()),
+                                  MaterialPageRoute(
+                                      builder: (_) => const AddMoneyPage()),
                                 );
                               },
                             ),
@@ -473,12 +496,13 @@ class _MyBalancePage extends State<MyBalancePage> {
                             ),
                             const SizedBox(height: 12),
                             _walletInfoTile(
-                                icon: Images.icCashback,
-                                title: 'Game Token',
-                                value: walletData?.bonus ?? "0",
-                                color: AppColors.blueColor.withAlpha(40),
-                                tooltip: 'Use these Tokens to play Games.',
-                                isTokenIcon: true,),
+                              icon: Images.icCashback,
+                              title: 'Game Token',
+                              value: walletData?.bonus ?? "0",
+                              color: AppColors.blueColor.withAlpha(40),
+                              tooltip: 'Use these Tokens to play Games.',
+                              isTokenIcon: true,
+                            ),
                             // const SizedBox(height: 10),
                             // Container(
                             //   padding: const EdgeInsets.all(12),
@@ -569,11 +593,15 @@ class _MyBalancePage extends State<MyBalancePage> {
                           itemCount: _mergedTransactions.length,
                           itemBuilder: (context, index) {
                             final txn = _mergedTransactions[index];
-                            final isPositive = txn['isPositive'] as bool? ?? true;
-                            final amount = (txn['amount'] as num?)?.toDouble() ?? 0.0;
-                            final description = txn['description'] as String? ?? '';
+                            final isPositive =
+                                txn['isPositive'] as bool? ?? true;
+                            final amount =
+                                (txn['amount'] as num?)?.toDouble() ?? 0.0;
+                            final description =
+                                txn['description'] as String? ?? '';
                             final icon = txn['icon'] as String? ?? '📝';
-                            final module = txn['module'] as String? ?? 'unknown';
+                            final module =
+                                txn['module'] as String? ?? 'unknown';
                             final timestamp = txn['timestamp'] is DateTime
                                 ? txn['timestamp'] as DateTime
                                 : DateTime.parse(txn['timestamp'] as String);
@@ -587,8 +615,10 @@ class _MyBalancePage extends State<MyBalancePage> {
                                   color: AppColors.whiteFade1,
                                   border: Border.all(
                                     color: isPositive
-                                        ? AppColors.lightGreen.withValues(alpha: 0.3)
-                                        : AppColors.orangeColor.withValues(alpha: 0.2),
+                                        ? AppColors.lightGreen
+                                            .withValues(alpha: 0.3)
+                                        : AppColors.orangeColor
+                                            .withValues(alpha: 0.2),
                                   ),
                                 ),
                                 child: Row(
@@ -598,8 +628,10 @@ class _MyBalancePage extends State<MyBalancePage> {
                                       padding: const EdgeInsets.all(8),
                                       decoration: BoxDecoration(
                                         color: isPositive
-                                            ? AppColors.lightGreen.withValues(alpha: 0.2)
-                                            : AppColors.orangeColor.withValues(alpha: 0.1),
+                                            ? AppColors.lightGreen
+                                                .withValues(alpha: 0.2)
+                                            : AppColors.orangeColor
+                                                .withValues(alpha: 0.1),
                                         borderRadius: BorderRadius.circular(8),
                                       ),
                                       child: Text(
@@ -612,7 +644,8 @@ class _MyBalancePage extends State<MyBalancePage> {
                                     // Transaction Details
                                     Expanded(
                                       child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
                                           Text(
                                             description,
@@ -631,23 +664,32 @@ class _MyBalancePage extends State<MyBalancePage> {
                                                 _formatDate(timestamp),
                                                 style: GoogleFonts.inter(
                                                   fontSize: 12,
-                                                  color: AppColors.black.withValues(alpha: 0.6),
+                                                  color: AppColors.black
+                                                      .withValues(alpha: 0.6),
                                                 ),
                                               ),
                                               const SizedBox(width: 8),
                                               Container(
-                                                padding: const EdgeInsets.symmetric(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
                                                   horizontal: 6,
                                                   vertical: 2,
                                                 ),
                                                 decoration: BoxDecoration(
                                                   color: module == 'shop'
-                                                      ? AppColors.lightGreen.withValues(alpha: 0.2)
-                                                      : AppColors.blueColor.withValues(alpha: 0.2),
-                                                  borderRadius: BorderRadius.circular(4),
+                                                      ? AppColors.lightGreen
+                                                          .withValues(
+                                                              alpha: 0.2)
+                                                      : AppColors.blueColor
+                                                          .withValues(
+                                                              alpha: 0.2),
+                                                  borderRadius:
+                                                      BorderRadius.circular(4),
                                                 ),
                                                 child: Text(
-                                                  module == 'shop' ? '🪙 Shop' : '💎 Game',
+                                                  module == 'shop'
+                                                      ? '🪙 Shop'
+                                                      : '💎 Game',
                                                   style: GoogleFonts.inter(
                                                     fontSize: 11,
                                                     fontWeight: FontWeight.w600,
