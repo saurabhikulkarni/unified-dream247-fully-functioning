@@ -48,6 +48,19 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Wishlist'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            if (Navigator.of(context).canPop()) {
+              Navigator.of(context).pop();
+            } else {
+              context.go('/shop/entry_point');
+            }
+          },
+        ),
+      ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _error != null

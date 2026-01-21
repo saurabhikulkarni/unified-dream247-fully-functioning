@@ -72,8 +72,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: ListView(
+    return WillPopScope(
+      onWillPop: () async {
+        // Handle back button - pop instead of exiting app
+        if (Navigator.of(context).canPop()) {
+          Navigator.of(context).pop();
+          return false;
+        }
+        return true;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Profile'),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {
+              if (Navigator.of(context).canPop()) {
+                Navigator.of(context).pop();
+              } else {
+                context.go(RouteNames.home);
+              }
+            },
+          ),
+        ),
+        body: ListView(
         children: [
           if (_isTestUser)
             Container(
@@ -256,6 +278,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           )
         ],
+      ),
       ),
     );
   }

@@ -19,6 +19,7 @@ import 'components/product_list_tile.dart';
 import 'components/selected_size.dart';
 import 'components/product_availability_tag.dart';
 import 'package:unified_dream247/features/shop/components/review_card.dart';
+import 'components/expandable_description.dart';
 import 'product_buy_now_screen.dart';
 
 class ProductDetailsScreen extends StatefulWidget {
@@ -281,24 +282,10 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
             SliverPadding(
               padding: const EdgeInsets.all(defaultPadding),
               sliver: SliverToBoxAdapter(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Product info",
-                      style: Theme.of(context)
-                          .textTheme
-                          .titleMedium!
-                          .copyWith(fontWeight: FontWeight.w500),
-                    ),
-                    const SizedBox(height: defaultPadding / 2),
-                    Text(
-                      _product!.description ?? 
-                          "A premium quality product with excellent durability. Made from sustainable materials with attention to detail.",
-                      style: const TextStyle(height: 1.4),
-                    ),
-                    const SizedBox(height: defaultPadding / 2),
-                  ],
+                child: ExpandableDescriptionWidget(
+                  description: _product!.description ?? 
+                      "A premium quality product with excellent durability. Made from sustainable materials with attention to detail.",
+                  maxLines: 3,
                 ),
               ),
             ),
