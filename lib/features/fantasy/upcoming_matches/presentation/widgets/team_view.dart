@@ -80,11 +80,11 @@ class _TeamView extends State<TeamView> {
                     widget.mode,
                     widget.data.teamnumber,
                     false,
-                    widget.data.userid ?? "",
+                    widget.data.userid ?? '',
                   );
                 },
                 child: Padding(
-                  padding: EdgeInsets.all(10),
+                  padding: const EdgeInsets.all(10),
                   child: Material(
                     borderRadius: BorderRadius.circular(10),
                     elevation: 5,
@@ -93,10 +93,10 @@ class _TeamView extends State<TeamView> {
                       child: Column(
                         children: [
                           Padding(
-                            padding: (widget.mode == "Upcoming")
+                            padding: (widget.mode == 'Upcoming')
                                 ? const EdgeInsets.only(left: 10.0, right: 10)
                                 : const EdgeInsets.only(
-                                    left: 10.0, right: 10, top: 10, bottom: 10),
+                                    left: 10.0, right: 10, top: 10, bottom: 10,),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -117,7 +117,7 @@ class _TeamView extends State<TeamView> {
                                               !showCheckbox)
                                           ? Row(
                                               children: [
-                                                Icon(Icons.refresh),
+                                                const Icon(Icons.refresh),
                                                 IconButton(
                                                   icon: Icon(
                                                     Icons.edit_outlined,
@@ -128,7 +128,7 @@ class _TeamView extends State<TeamView> {
                                                   onPressed: () async {
                                                     int teamNumber =
                                                         widget.data.teamnumber!;
-                                                    String selectedPlayers = "";
+                                                    String selectedPlayers = '';
 
                                                     List<UserTeamsModel>
                                                         userTeams =
@@ -136,7 +136,7 @@ class _TeamView extends State<TeamView> {
                                                             .getUserTeam(
                                                       context,
                                                       widget.data.jointeamid ??
-                                                          "",
+                                                          '',
                                                     );
                                                     for (var i in userTeams) {
                                                       selectedPlayers +=
@@ -151,9 +151,9 @@ class _TeamView extends State<TeamView> {
                                                       true,
                                                       AppSingleton.singleton
                                                           .matchData.id!,
-                                                      "",
+                                                      '',
                                                       0,
-                                                      "",
+                                                      '',
                                                       selectedPlayers,
                                                       widget.data.captainId,
                                                       widget.data.vicecaptainId,
@@ -170,18 +170,18 @@ class _TeamView extends State<TeamView> {
                                                                 .getTeamswithChallengeId(
                                                           context,
                                                           widget.challengeId ??
-                                                              "",
+                                                              '',
                                                         );
                                                         widget.updateTeams(
-                                                            updatedTeams);
+                                                            updatedTeams,);
                                                       } else {
                                                         List<TeamsModel>
                                                             updatedTeams =
                                                             await upcomingMatchUsecase
                                                                 .getMyTeams(
-                                                                    context);
+                                                                    context,);
                                                         widget.updateTeams(
-                                                            updatedTeams);
+                                                            updatedTeams,);
                                                       }
 
                                                       widget.updateHasChanges
@@ -199,14 +199,14 @@ class _TeamView extends State<TeamView> {
                                                   onPressed: () async {
                                                     int teamNumber =
                                                         widget.length + 1;
-                                                    String selectedPlayers = "";
+                                                    String selectedPlayers = '';
                                                     List<UserTeamsModel>
                                                         userTeams =
                                                         await upcomingMatchUsecase
                                                             .getUserTeam(
                                                       context,
                                                       widget.data.jointeamid ??
-                                                          "",
+                                                          '',
                                                     );
                                                     for (var i in userTeams) {
                                                       selectedPlayers +=
@@ -221,9 +221,9 @@ class _TeamView extends State<TeamView> {
                                                       true,
                                                       AppSingleton.singleton
                                                           .matchData.id!,
-                                                      "",
+                                                      '',
                                                       0,
-                                                      "",
+                                                      '',
                                                       selectedPlayers,
                                                       widget.data.captainId,
                                                       widget.data.vicecaptainId,
@@ -240,18 +240,18 @@ class _TeamView extends State<TeamView> {
                                                                 .getTeamswithChallengeId(
                                                           context,
                                                           widget.challengeId ??
-                                                              "",
+                                                              '',
                                                         );
                                                         widget.updateTeams(
-                                                            updatedTeams);
+                                                            updatedTeams,);
                                                       } else {
                                                         List<TeamsModel>
                                                             updatedTeams =
                                                             await upcomingMatchUsecase
                                                                 .getMyTeams(
-                                                                    context);
+                                                                    context,);
                                                         widget.updateTeams(
-                                                            updatedTeams);
+                                                            updatedTeams,);
                                                       }
 
                                                       widget.updateHasChanges
@@ -288,11 +288,11 @@ class _TeamView extends State<TeamView> {
                           ),
                           Container(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 5, vertical: 15),
+                                horizontal: 5, vertical: 15,),
                             decoration: BoxDecoration(
                                 border: Border.all(
                                     color:
-                                        AppColors.black.withValues(alpha: 0.1))
+                                        AppColors.black.withValues(alpha: 0.1),),
                                 // image: const DecorationImage(
                                 // image: AssetImage(Images.imageGround),
                                 // fit: BoxFit.cover,
@@ -330,19 +330,19 @@ class _TeamView extends State<TeamView> {
                                             Container(
                                               width: 75,
                                               // margin: const EdgeInsets.all(0),
-                                              padding: EdgeInsets.symmetric(
+                                              padding: const EdgeInsets.symmetric(
                                                 vertical: 6,
                                                 horizontal: 6,
                                               ),
                                               decoration: BoxDecoration(
                                                 color:
                                                     (widget.data.captainTeam ==
-                                                            "team1")
+                                                            'team1')
                                                         ? AppColors.letterColor
                                                         : AppColors.letterColor,
                                               ),
                                               child: Text(
-                                                widget.data.captain ?? "",
+                                                widget.data.captain ?? '',
                                                 overflow: TextOverflow.ellipsis,
                                                 textAlign: TextAlign.center,
                                                 style: GoogleFonts.exo2(
@@ -350,7 +350,7 @@ class _TeamView extends State<TeamView> {
                                                   fontSize: 10,
                                                   color: (widget.data
                                                               .captainTeam ==
-                                                          "team1")
+                                                          'team1')
                                                       ? AppColors.white
                                                       : AppColors.white,
                                                 ),
@@ -361,16 +361,16 @@ class _TeamView extends State<TeamView> {
                                               padding:
                                                   const EdgeInsets.symmetric(
                                                       vertical: 6,
-                                                      horizontal: 6),
+                                                      horizontal: 6,),
                                               decoration: BoxDecoration(
                                                 color:
                                                     (widget.data.captainTeam ==
-                                                            "team1")
+                                                            'team1')
                                                         ? AppColors.green
                                                         : AppColors.green,
                                               ),
                                               child: Text(
-                                                "Captain",
+                                                'Captain',
                                                 overflow: TextOverflow.ellipsis,
                                                 textAlign: TextAlign.center,
                                                 style: GoogleFonts.exo2(
@@ -378,7 +378,7 @@ class _TeamView extends State<TeamView> {
                                                   fontSize: 10,
                                                   color: (widget.data
                                                               .captainTeam ==
-                                                          "team1")
+                                                          'team1')
                                                       ? AppColors.white
                                                       : AppColors.white,
                                                 ),
@@ -421,7 +421,7 @@ class _TeamView extends State<TeamView> {
                                                   padding: EdgeInsets.only(
                                                       right: showCheckbox
                                                           ? 5
-                                                          : 10),
+                                                          : 10,),
                                                   child: CircleAvatar(
                                                     radius: 24.r,
                                                     child: ClipOval(
@@ -448,7 +448,7 @@ class _TeamView extends State<TeamView> {
                                               decoration: BoxDecoration(
                                                 color: (widget.data
                                                             .viceCaptainTeam ==
-                                                        "team1")
+                                                        'team1')
                                                     ? AppColors.letterColor
                                                     : AppColors.letterColor,
                                               ),
@@ -461,7 +461,7 @@ class _TeamView extends State<TeamView> {
                                                   fontSize: 10,
                                                   color: (widget.data
                                                               .viceCaptainTeam ==
-                                                          "team1")
+                                                          'team1')
                                                       ? AppColors.white
                                                       : AppColors.white,
                                                 ),
@@ -472,11 +472,11 @@ class _TeamView extends State<TeamView> {
                                               padding:
                                                   const EdgeInsets.symmetric(
                                                       vertical: 6,
-                                                      horizontal: 6),
+                                                      horizontal: 6,),
                                               decoration: BoxDecoration(
                                                 color: (widget.data
                                                             .viceCaptainTeam ==
-                                                        "team1")
+                                                        'team1')
                                                     ? AppColors.green
                                                     : AppColors.green,
                                               ),
@@ -489,7 +489,7 @@ class _TeamView extends State<TeamView> {
                                                   fontSize: 10,
                                                   color: (widget.data
                                                               .viceCaptainTeam ==
-                                                          "team1")
+                                                          'team1')
                                                       ? AppColors.white
                                                       : AppColors.white,
                                                 ),
@@ -519,7 +519,7 @@ class _TeamView extends State<TeamView> {
                                                           .singleton
                                                           .matchData
                                                           .team1Name ??
-                                                      "",
+                                                      '',
                                                   style: GoogleFonts.exo2(
                                                     color:
                                                         AppColors.letterColor,
@@ -552,7 +552,7 @@ class _TeamView extends State<TeamView> {
                                                           .singleton
                                                           .matchData
                                                           .team2Name ??
-                                                      "s",
+                                                      's',
                                                   style: GoogleFonts.exo2(
                                                     color:
                                                         AppColors.letterColor,
@@ -595,7 +595,7 @@ class _TeamView extends State<TeamView> {
                                   text: TextSpan(
                                     children: [
                                       TextSpan(
-                                        text: "WK ",
+                                        text: 'WK ',
                                         style: TextStyle(
                                           fontSize: 14.sp,
                                           color: AppColors.letterColor,
@@ -618,7 +618,7 @@ class _TeamView extends State<TeamView> {
                                   text: TextSpan(
                                     children: [
                                       TextSpan(
-                                        text: "BAT ",
+                                        text: 'BAT ',
                                         style: TextStyle(
                                           fontSize: 14.sp,
                                           color: AppColors.letterColor,
@@ -640,7 +640,7 @@ class _TeamView extends State<TeamView> {
                                   text: TextSpan(
                                     children: [
                                       TextSpan(
-                                        text: "ALL ",
+                                        text: 'ALL ',
                                         style: TextStyle(
                                           fontSize: 14.sp,
                                           color: AppColors.letterColor,
@@ -662,7 +662,7 @@ class _TeamView extends State<TeamView> {
                                   text: TextSpan(
                                     children: [
                                       TextSpan(
-                                        text: "BWL ",
+                                        text: 'BWL ',
                                         style: TextStyle(
                                           fontSize: 14.sp,
                                           color: AppColors.letterColor,

@@ -21,7 +21,7 @@ class _SizeGuideScreenState extends State<SizeGuideScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Size Guide"),
+        title: const Text('Size Guide'),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(defaultPadding),
@@ -32,12 +32,12 @@ class _SizeGuideScreenState extends State<SizeGuideScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  "Measurements",
+                  'Measurements',
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
                 ElevatedButton(
                   onPressed: updateSizes,
-                  child: Text(_isShowCentimetersSize ? "Show Inches" : "Show Centimeters"),
+                  child: Text(_isShowCentimetersSize ? 'Show Inches' : 'Show Centimeters'),
                 ),
               ],
             ),
@@ -50,19 +50,19 @@ class _SizeGuideScreenState extends State<SizeGuideScreen> {
                   children: [
                     Padding(
                       padding: const EdgeInsets.all(8),
-                      child: Text("Size", style: Theme.of(context).textTheme.titleSmall),
+                      child: Text('Size', style: Theme.of(context).textTheme.titleSmall),
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8),
-                      child: Text("XS", style: Theme.of(context).textTheme.titleSmall),
+                      child: Text('XS', style: Theme.of(context).textTheme.titleSmall),
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8),
-                      child: Text("S", style: Theme.of(context).textTheme.titleSmall),
+                      child: Text('S', style: Theme.of(context).textTheme.titleSmall),
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8),
-                      child: Text("M", style: Theme.of(context).textTheme.titleSmall),
+                      child: Text('M', style: Theme.of(context).textTheme.titleSmall),
                     ),
                   ],
                 ),
@@ -70,19 +70,19 @@ class _SizeGuideScreenState extends State<SizeGuideScreen> {
                   children: [
                     const Padding(
                       padding: EdgeInsets.all(8),
-                      child: Text("Chest"),
+                      child: Text('Chest'),
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8),
-                      child: Text(_isShowCentimetersSize ? "76cm" : "30in"),
+                      child: Text(_isShowCentimetersSize ? '76cm' : '30in'),
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8),
-                      child: Text(_isShowCentimetersSize ? "81cm" : "32in"),
+                      child: Text(_isShowCentimetersSize ? '81cm' : '32in'),
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8),
-                      child: Text(_isShowCentimetersSize ? "86cm" : "34in"),
+                      child: Text(_isShowCentimetersSize ? '86cm' : '34in'),
                     ),
                   ],
                 ),
@@ -90,19 +90,19 @@ class _SizeGuideScreenState extends State<SizeGuideScreen> {
                   children: [
                     const Padding(
                       padding: EdgeInsets.all(8),
-                      child: Text("Waist"),
+                      child: Text('Waist'),
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8),
-                      child: Text(_isShowCentimetersSize ? "61cm" : "24in"),
+                      child: Text(_isShowCentimetersSize ? '61cm' : '24in'),
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8),
-                      child: Text(_isShowCentimetersSize ? "66cm" : "26in"),
+                      child: Text(_isShowCentimetersSize ? '66cm' : '26in'),
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8),
-                      child: Text(_isShowCentimetersSize ? "71cm" : "28in"),
+                      child: Text(_isShowCentimetersSize ? '71cm' : '28in'),
                     ),
                   ],
                 ),
@@ -110,19 +110,19 @@ class _SizeGuideScreenState extends State<SizeGuideScreen> {
                   children: [
                     const Padding(
                       padding: EdgeInsets.all(8),
-                      child: Text("Length"),
+                      child: Text('Length'),
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8),
-                      child: Text(_isShowCentimetersSize ? "66cm" : "26in"),
+                      child: Text(_isShowCentimetersSize ? '66cm' : '26in'),
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8),
-                      child: Text(_isShowCentimetersSize ? "69cm" : "27in"),
+                      child: Text(_isShowCentimetersSize ? '69cm' : '27in'),
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8),
-                      child: Text(_isShowCentimetersSize ? "71cm" : "28in"),
+                      child: Text(_isShowCentimetersSize ? '71cm' : '28in'),
                     ),
                   ],
                 ),

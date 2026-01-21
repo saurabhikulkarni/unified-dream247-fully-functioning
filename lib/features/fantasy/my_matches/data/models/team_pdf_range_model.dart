@@ -13,8 +13,8 @@ class TeamPdfRangeModel {
 
   factory TeamPdfRangeModel.fromJson(Map<String, dynamic> json) =>
       TeamPdfRangeModel(
-        min: ModelParsers.toStringParser(json["min"]),
-        max: ModelParsers.toStringParser(json["max"]),
-        index: ModelParsers.toIntParser(json["index"]),
+        min: ModelParsers.toStringParser(json['min']),
+        max: ModelParsers.toStringParser(json['max']),
+        index: ModelParsers.toIntParser(json['index']),
       );
 }

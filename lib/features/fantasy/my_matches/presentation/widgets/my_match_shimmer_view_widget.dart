@@ -51,13 +51,13 @@ class MyMatchShimmerViewWidget extends StatelessWidget {
                         const SizedBox(height: 8),
                         _shimmerBox(height: 10, width: 60),
                       ],
-                    )
+                    ),
                   ],
                 ),
               ),
 
               // Divider
-              Divider(
+              const Divider(
                 color: AppColors.lightGrey,
                 thickness: 0.3,
                 height: 0.3,
@@ -86,7 +86,7 @@ class MyMatchShimmerViewWidget extends StatelessWidget {
                     _shimmerBox(height: 16, width: 90),
                   ],
                 ),
-              )
+              ),
             ],
           ),
         ),
@@ -121,7 +121,7 @@ class MyMatchShimmerViewWidget extends StatelessWidget {
     return Container(
       height: size,
       width: size,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: AppColors.white,
         shape: BoxShape.circle,
       ),

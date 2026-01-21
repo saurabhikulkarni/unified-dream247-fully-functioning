@@ -16,13 +16,13 @@ class GamesGetSet {
   });
 
   factory GamesGetSet.fromJson(Map<String, dynamic> json) => GamesGetSet(
-        id: ModelParsers.toStringParser(json["_id"]),
-        fantasyName: ModelParsers.toStringParser(json["fantasyName"]),
-        sportCategory: json["sport_category"] == null
+        id: ModelParsers.toStringParser(json['_id']),
+        fantasyName: ModelParsers.toStringParser(json['fantasyName']),
+        sportCategory: json['sport_category'] == null
             ? null
-            : SportCategory.fromJson(json["sport_category"]),
-        image: ModelParsers.toStringParser(json["image"]),
-        type: ModelParsers.toStringParser(json["type"]),
+            : SportCategory.fromJson(json['sport_category']),
+        image: ModelParsers.toStringParser(json['image']),
+        type: ModelParsers.toStringParser(json['type']),
       );
 }
 
@@ -46,16 +46,16 @@ class SportCategory {
   });
 
   factory SportCategory.fromJson(Map<String, dynamic> json) => SportCategory(
-        id: json["id"],
-        name: json["name"],
-        maxPlayers: json["max_players"],
-        maxCredits: json["max_credits"],
-        icon: json["icon"],
-        category: json["category"],
-        teamType: json["teamType"] == null
+        id: json['id'],
+        name: json['name'],
+        maxPlayers: json['max_players'],
+        maxCredits: json['max_credits'],
+        icon: json['icon'],
+        category: json['category'],
+        teamType: json['teamType'] == null
             ? []
             : List<TeamType>.from(
-                json["teamType"]!.map((x) => TeamType.fromJson(x)),
+                json['teamType']!.map((x) => TeamType.fromJson(x)),
               ),
       );
 }
@@ -74,13 +74,13 @@ class TeamType {
   });
 
   factory TeamType.fromJson(Map<String, dynamic> json) => TeamType(
-        maxPlayersPerTeam: json["max_players_per_team"],
-        minPlayersPerTeam: json["min_players_per_team"],
-        name: json["name"],
-        playerPositions: json["player_positions"] == null
+        maxPlayersPerTeam: json['max_players_per_team'],
+        minPlayersPerTeam: json['min_players_per_team'],
+        name: json['name'],
+        playerPositions: json['player_positions'] == null
             ? []
             : List<PlayerPosition>.from(
-                json["player_positions"]!
+                json['player_positions']!
                     .map((x) => PlayerPosition.fromJson(x)),
               ),
       );
@@ -109,15 +109,15 @@ class PlayerPosition {
   });
 
   factory PlayerPosition.fromJson(Map<String, dynamic> json) => PlayerPosition(
-        id: ModelParsers.toIntParser(json["id"]),
-        sportCategoryId: ModelParsers.toIntParser(json["sport_category_id"]),
-        name: ModelParsers.toStringParser(json["name"]),
-        fullName: ModelParsers.toStringParser(json["full_name"]),
-        code: ModelParsers.toStringParser(json["code"]),
-        icon: ModelParsers.toStringParser(json["icon"]),
+        id: ModelParsers.toIntParser(json['id']),
+        sportCategoryId: ModelParsers.toIntParser(json['sport_category_id']),
+        name: ModelParsers.toStringParser(json['name']),
+        fullName: ModelParsers.toStringParser(json['full_name']),
+        code: ModelParsers.toStringParser(json['code']),
+        icon: ModelParsers.toStringParser(json['icon']),
         minPlayersPerTeam:
-            ModelParsers.toIntParser(json["min_players_per_team"]),
+            ModelParsers.toIntParser(json['min_players_per_team']),
         maxPlayersPerTeam:
-            ModelParsers.toIntParser(json["max_players_per_team"]),
+            ModelParsers.toIntParser(json['max_players_per_team']),
       );
 }

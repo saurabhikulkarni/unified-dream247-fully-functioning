@@ -8,7 +8,7 @@ import 'package:unified_dream247/features/shop/constants.dart';
 class BannerMStyle2 extends StatelessWidget {
   const BannerMStyle2({
     super.key,
-    this.image = "https://i.imgur.com/J1Qjut7.png",
+    this.image = 'https://i.imgur.com/J1Qjut7.png',
     required this.title,
     required this.press,
     this.subtitle,
@@ -70,7 +70,7 @@ class BannerMStyle2 extends StatelessWidget {
                     backgroundColor: Colors.white,
                   ),
                   child: SvgPicture.asset(
-                    "assets/icons/Arrow - Right.svg",
+                    'assets/icons/Arrow - Right.svg',
                     colorFilter:
                         const ColorFilter.mode(Colors.black, BlendMode.srcIn),
                   ),

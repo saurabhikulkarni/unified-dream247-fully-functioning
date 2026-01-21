@@ -56,7 +56,7 @@ class _MostPopularState extends State<MostPopular> {
         Padding(
           padding: const EdgeInsets.all(defaultPadding),
           child: Text(
-            "Most popular",
+            'Most popular',
             style: Theme.of(context).textTheme.titleSmall,
           ),
         ),
@@ -91,12 +91,12 @@ class _MostPopularState extends State<MostPopular> {
                   priceAfetDiscount: _products[index].priceAfetDiscount,
                   press: () {
                     Navigator.pushNamed(context, productDetailsScreenRoute,
-                        arguments: {'product': _products[index]});
+                        arguments: {'product': _products[index]},);
                   },
                 ),
               ),
             ),
-          )
+          ),
       ],
     );
   }

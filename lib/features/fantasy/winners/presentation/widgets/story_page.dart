@@ -19,7 +19,7 @@ class StoryPage extends StatelessWidget {
       if (item.type == 'image') {
         list.add(
           StoryItem.pageImage(
-            url: item.url ?? "",
+            url: item.url ?? '',
             controller: controller,
             duration: const Duration(seconds: 10),
           ),
@@ -27,7 +27,7 @@ class StoryPage extends StatelessWidget {
       } else if (item.type == 'video') {
         list.add(
           StoryItem.pageVideo(
-            item.url ?? "",
+            item.url ?? '',
             controller: controller,
             duration: const Duration(seconds: 10),
             loadingWidget: const SizedBox(
@@ -93,7 +93,7 @@ class StoryPage extends StatelessWidget {
                         child: ClipOval(
                           child: CachedNetworkImage(
                             imageUrl:
-                                stories[index ?? 0].storyProfileImage ?? "",
+                                stories[index ?? 0].storyProfileImage ?? '',
                           ),
                         ),
                       ),

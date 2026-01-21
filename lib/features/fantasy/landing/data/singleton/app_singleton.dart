@@ -20,7 +20,7 @@ class AppSingleton {
   MatchListModel get matchData => _matchListModel ?? MatchListModel();
   AllNewContestResponseModel get contestData =>
       _contestData ?? AllNewContestResponseModel();
-  String get appVersion => _appVersion ?? "";
+  String get appVersion => _appVersion ?? '';
   AllContestResponseModel get contest => _contest ?? AllContestResponseModel();
   AppVersionResponse get appData => _appVersionResponse ?? AppVersionResponse();
 

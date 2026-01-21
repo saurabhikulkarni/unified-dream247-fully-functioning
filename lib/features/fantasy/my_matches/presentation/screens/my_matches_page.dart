@@ -66,27 +66,27 @@ class _MyMatchesPage extends State<MyMatchesPage>
     if (index == 0 && !hasFetchedUpcoming) {
       upcomingMatchList = myMatchesUsecases.getUpcomingMatches(
         context,
-        "Cricket",
+        'Cricket',
       );
       hasFetchedUpcoming = true;
       lastUpcomingFetch = now;
     } else if (index == 1 && !hasFetchedLive) {
       if (mounted) setState(() => liveMatchList = null);
 
-      liveMatchList = myMatchesUsecases.getLiveMatches(context, "Cricket");
+      liveMatchList = myMatchesUsecases.getLiveMatches(context, 'Cricket');
       hasFetchedLive = true;
       lastLiveFetch = now;
     } else if (index == 2 && !hasFetchedCompleted) {
       completedMatchList = isViewingOldMatches
           ? myMatchesUsecases.getCompletedOldMatches(
               context,
-              "Cricket",
+              'Cricket',
               skip,
               limit,
             )
           : myMatchesUsecases.getCompletedMatches(
               context,
-              "Cricket",
+              'Cricket',
               cursor,
             );
 
@@ -106,7 +106,7 @@ class _MyMatchesPage extends State<MyMatchesPage>
             now.difference(lastUpcomingFetch!) > const Duration(minutes: 1))) {
       upcomingMatchList = myMatchesUsecases.getUpcomingMatches(
         context,
-        "Cricket",
+        'Cricket',
       );
       lastUpcomingFetch = now;
     } else if (index == 1 &&
@@ -114,7 +114,7 @@ class _MyMatchesPage extends State<MyMatchesPage>
             now.difference(lastLiveFetch!) > const Duration(minutes: 1))) {
       if (mounted) setState(() => liveMatchList = null);
 
-      liveMatchList = myMatchesUsecases.getLiveMatches(context, "Cricket");
+      liveMatchList = myMatchesUsecases.getLiveMatches(context, 'Cricket');
       lastLiveFetch = now;
     } else if (index == 2 &&
         (lastCompletedFetch == null ||
@@ -122,13 +122,13 @@ class _MyMatchesPage extends State<MyMatchesPage>
       completedMatchList = isViewingOldMatches
           ? myMatchesUsecases.getCompletedOldMatches(
               context,
-              "Cricket",
+              'Cricket',
               skip,
               limit,
             )
           : myMatchesUsecases.getCompletedMatches(
               context,
-              "Cricket",
+              'Cricket',
               cursor,
             );
       lastCompletedFetch = now;
@@ -200,9 +200,9 @@ class _MyMatchesPage extends State<MyMatchesPage>
           fetchMatches(index);
         },
         children: [
-          matchTab(upcomingMatchList, "Upcoming"),
-          matchTab(liveMatchList, "Live"),
-          matchTab(completedMatchList, "Completed"),
+          matchTab(upcomingMatchList, 'Upcoming'),
+          matchTab(liveMatchList, 'Live'),
+          matchTab(completedMatchList, 'Completed'),
         ],
       ),
     );
@@ -256,7 +256,7 @@ class _MyMatchesPage extends State<MyMatchesPage>
                   data: data,
                   mode: mode,
                   isViewingOldMatches: isViewingOldMatches,
-                  gameType: "Cricket",
+                  gameType: 'Cricket',
                 );
               },
             ),

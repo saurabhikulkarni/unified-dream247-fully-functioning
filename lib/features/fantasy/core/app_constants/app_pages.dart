@@ -245,14 +245,14 @@ import 'package:unified_dream247/features/fantasy/winners/presentation/screens/w
 import 'package:unified_dream247/features/fantasy/winners/presentation/widgets/story_page.dart';
 
 class AppNavigation {
-  static gotoSplashScreen(BuildContext context) async {
+  static Future<void> gotoSplashScreen(BuildContext context) async {
     // Navigate to shop splash screen (app entry point) using GoRouter
     if (context.mounted) {
       context.go(RouteNames.splash);
     }
   }
 
-  static gotoLoginScreen(BuildContext context) async {
+  static Future<void> gotoLoginScreen(BuildContext context) async {
     // Use GoRouter for navigation to login
     if (context.mounted) {
       context.go(RouteNames.login);
@@ -276,7 +276,7 @@ class AppNavigation {
   //   );
   // }
 
-  static gotoLandingScreen(BuildContext context) async {
+  static Future<dynamic> gotoLandingScreen(BuildContext context) async {
     return await Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (context) => const LandingPage()),
@@ -284,28 +284,28 @@ class AppNavigation {
     );
   }
 
-  static gotoNotificationPage(BuildContext context) async {
+  static Future<dynamic> gotoNotificationPage(BuildContext context) async {
     return await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => NotificationPage()),
+      MaterialPageRoute(builder: (context) => const NotificationPage()),
     );
   }
 
-  static gotoLandingScreenReplacement(BuildContext context) async {
+  static Future<dynamic> gotoLandingScreenReplacement(BuildContext context) async {
     return await Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => const LandingPage()),
     );
   }
 
-  static gotoUpcomingContestScreen(BuildContext context, String mode) async {
+  static Future<dynamic> gotoUpcomingContestScreen(BuildContext context, String mode) async {
     return await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => ContestPage(mode: mode)),
     );
   }
 
-  static gotoUpcomingContestDetails(
+  static Future<dynamic> gotoUpcomingContestDetails(
     BuildContext context,
     String? matchChallengeId,
     String? mode,
@@ -323,18 +323,18 @@ class AppNavigation {
     );
   }
 
-  static gotoCreatePrivateContestScreen(
-      BuildContext context, String teamType) async {
+  static Future<dynamic> gotoCreatePrivateContestScreen(
+      BuildContext context, String teamType,) async {
     return await Navigator.push(
       context,
       MaterialPageRoute(
           builder: (context) => CreatePrivateContest(
                 teamType: teamType,
-              )),
+              ),),
     );
   }
 
-  static gotoCreateTeamScreen(
+  static Future<dynamic> gotoCreateTeamScreen(
     BuildContext context,
     int teamNumber,
     bool edit,
@@ -370,7 +370,7 @@ class AppNavigation {
     );
   }
 
-  static gotoCaptainViceCaptain(
+  static Future<dynamic> gotoCaptainViceCaptain(
     BuildContext context,
     bool? hasChanges,
     Function(bool)? updateHasChanges,
@@ -402,7 +402,7 @@ class AppNavigation {
     );
   }
 
-  static gotoPlayerDetails(
+  static Future<dynamic> gotoPlayerDetails(
     BuildContext context,
     CreateTeamPlayersData data,
   ) async {
@@ -412,7 +412,7 @@ class AppNavigation {
     );
   }
 
-  static gotoMyTeamsChallenges(
+  static Future<dynamic> gotoMyTeamsChallenges(
     BuildContext context,
     String teamType,
     String challengeId,
@@ -444,7 +444,7 @@ class AppNavigation {
     );
   }
 
-  static gotoPreviewScreen(
+  static Future<dynamic> gotoPreviewScreen(
     BuildContext context,
     String? joinTeamId,
     bool? multiplyPoints,
@@ -472,7 +472,7 @@ class AppNavigation {
     );
   }
 
-  static gotoLiveMatchDetails(
+  static Future<dynamic> gotoLiveMatchDetails(
     BuildContext context,
     String gameMode,
     bool isViewingOldMatches,
@@ -492,7 +492,7 @@ class AppNavigation {
     );
   }
 
-  static gotoLiveContestDetails(
+  static Future<dynamic> gotoLiveContestDetails(
     BuildContext context,
     LiveChallengesData data,
     String? mode,
@@ -505,7 +505,7 @@ class AppNavigation {
     );
   }
 
-  static gotoTeamCompareScreen(
+  static Future<dynamic> gotoTeamCompareScreen(
     BuildContext context,
     String team1Id,
     String team2Id,
@@ -536,28 +536,28 @@ class AppNavigation {
   //     );
   //   }
 
-  static gotoEditProfileScreen(BuildContext context) async {
+  static Future<dynamic> gotoEditProfileScreen(BuildContext context) async {
     return await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const EditProfile()),
     );
   }
 
-  static gotoMyBalanceScreen(BuildContext context) async {
+  static Future<dynamic> gotoMyBalanceScreen(BuildContext context) async {
     return await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const MyBalancePage()),
     );
   }
 
-  static gotoAddCashScreen(BuildContext context) async {
+  static Future<dynamic> gotoAddCashScreen(BuildContext context) async {
     return await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const AddMoneyPage()),
     );
   }
 
-  static gotoPromoCodeScreen(
+  static Future<dynamic> gotoPromoCodeScreen(
     BuildContext context,
     final String? amount,
     final bool? isApplied,
@@ -594,14 +594,14 @@ class AppNavigation {
   //   );
   // }
 
-  static gotoMyTransactionScreen(BuildContext context) async {
+  static Future<dynamic> gotoMyTransactionScreen(BuildContext context) async {
     return await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const MyTransactions()),
     );
   }
 
-  static gotoReferEarnScreen(BuildContext context) async {
+  static Future<dynamic> gotoReferEarnScreen(BuildContext context) async {
     return await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const ReferAndEarnPage()),
@@ -615,7 +615,7 @@ class AppNavigation {
   //   );
   // }
 
-  static gotoStoryPage(
+  static Future<dynamic> gotoStoryPage(
     BuildContext context,
     List<StoriesModel> stories,
     int index,
@@ -628,7 +628,7 @@ class AppNavigation {
     );
   }
 
-  static gotoWinnersDetailScreen(
+  static Future<dynamic> gotoWinnersDetailScreen(
     BuildContext context,
     WinnersModel data,
   ) async {
@@ -676,14 +676,14 @@ class AppNavigation {
   //     );
   //   }
 
-  static gotoFantasyPointSystem(BuildContext context) async {
+  static Future<dynamic> gotoFantasyPointSystem(BuildContext context) async {
     return await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => FantasyPointsSystem()),
+      MaterialPageRoute(builder: (context) => const FantasyPointsSystem()),
     );
   }
 
-  static gotoWebViewScreen(
+  static Future<dynamic> gotoWebViewScreen(
     BuildContext context,
     String title,
     String url,
@@ -738,10 +738,10 @@ class AppNavigation {
   //     );
   //   }
 
-  static gotoVerifyDetailsScreen(BuildContext context) async {
+  static Future<dynamic> gotoVerifyDetailsScreen(BuildContext context) async {
     return await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => VerifyDetailsPage()),
+      MaterialPageRoute(builder: (context) => const VerifyDetailsPage()),
     );
   }
 
@@ -759,7 +759,7 @@ class AppNavigation {
   //   );
   // }
 
-  static gotoTdsDetailsScreen(BuildContext context) async {
+  static Future<dynamic> gotoTdsDetailsScreen(BuildContext context) async {
     return await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const TdsDetailsScreen()),
@@ -783,14 +783,14 @@ class AppNavigation {
   //     );
   //   }
 
-  static gotoWithdrawScreen(BuildContext context) async {
+  static Future<dynamic> gotoWithdrawScreen(BuildContext context) async {
     return await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const WithdrawScreen()),
     );
   }
 
-  static gotoBankPaymentSuccessDone(
+  static Future<dynamic> gotoBankPaymentSuccessDone(
     BuildContext context,
     BankTransferModel data,
   ) async {
@@ -802,7 +802,7 @@ class AppNavigation {
     );
   }
 
-  static gotoWalletPaymentSuccessDone(
+  static Future<dynamic> gotoWalletPaymentSuccessDone(
     BuildContext context,
     WalletPaymentDoneModel data,
   ) async {
@@ -814,7 +814,7 @@ class AppNavigation {
     );
   }
 
-  static gotoPaymentSuccessDoneP2P(
+  static Future<dynamic> gotoPaymentSuccessDoneP2P(
     BuildContext context,
     P2pPaymentDoneModel data,
   ) async {
@@ -866,51 +866,51 @@ class AppNavigation {
   //   );
   // }
 
-  static gotoResponsibleGamingPage(BuildContext context) async {
+  static Future<dynamic> gotoResponsibleGamingPage(BuildContext context) async {
     return await Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => ResponsibleGaming(),
-        ));
+          builder: (context) => const ResponsibleGaming(),
+        ),);
   }
 
-  static gotoHowtoPlayPage(BuildContext context) async {
+  static Future<dynamic> gotoHowtoPlayPage(BuildContext context) async {
     return await Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => HowToPlay(),
-        ));
+          builder: (context) => const HowToPlay(),
+        ),);
   }
 
-  static gotoPrivacyPolicyPage(BuildContext context) async {
+  static Future<dynamic> gotoPrivacyPolicyPage(BuildContext context) async {
     return await Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => PrivacyPolicyPage(),
-        ));
+          builder: (context) => const PrivacyPolicyPage(),
+        ),);
   }
 
-  static gotoFaqPage(BuildContext context) async {
+  static Future<dynamic> gotoFaqPage(BuildContext context) async {
     return await Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => FaqPage(),
-        ));
+          builder: (context) => const FaqPage(),
+        ),);
   }
 
-  static gotoAboutUsPage(BuildContext context) async {
+  static Future<dynamic> gotoAboutUsPage(BuildContext context) async {
     return await Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => AboutUsPage(),
-        ));
+          builder: (context) => const AboutUsPage(),
+        ),);
   }
 
-  static gotoTermsConditionsPage(BuildContext context) async {
+  static Future<dynamic> gotoTermsConditionsPage(BuildContext context) async {
     return await Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => TermsConditionsPage(),
-        ));
+          builder: (context) => const TermsConditionsPage(),
+        ),);
   }
 }

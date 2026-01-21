@@ -28,9 +28,9 @@ class _BankPaymentSuccessDoneState extends State<BankPaymentSuccessDone> {
             children: [
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 30),
-                color: (widget.data?.paymentstatus == "success")
+                color: (widget.data?.paymentstatus == 'success')
                     ? AppColors.green
-                    : (widget.data?.paymentstatus == "failed")
+                    : (widget.data?.paymentstatus == 'failed')
                         ? AppColors.mainLightColor
                         : AppColors.yellowColor,
                 height: MediaQuery.of(context).size.height * 0.35,
@@ -40,20 +40,20 @@ class _BankPaymentSuccessDoneState extends State<BankPaymentSuccessDone> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Icon(
-                      (widget.data?.paymentstatus == "success")
+                      (widget.data?.paymentstatus == 'success')
                           ? Icons.verified_user
-                          : (widget.data?.paymentstatus == "failed")
+                          : (widget.data?.paymentstatus == 'failed')
                               ? Icons.gpp_maybe
                               : Icons.schedule,
                       size: 40,
                       color: AppColors.white,
                     ),
                     Text(
-                      (widget.data?.paymentstatus == "success")
-                          ? "Payment Successful"
-                          : (widget.data?.paymentstatus == "failed")
-                              ? "Payment Failed"
-                              : "Payment Processing",
+                      (widget.data?.paymentstatus == 'success')
+                          ? 'Payment Successful'
+                          : (widget.data?.paymentstatus == 'failed')
+                              ? 'Payment Failed'
+                              : 'Payment Processing',
                       style: const TextStyle(
                         color: AppColors.white,
                         fontSize: 20,
@@ -62,11 +62,11 @@ class _BankPaymentSuccessDoneState extends State<BankPaymentSuccessDone> {
                     ),
                     const SizedBox(height: 20),
                     Text(
-                      (widget.data?.paymentstatus == "success")
-                          ? "Your transaction was processed securely. We appreciate your trust in us."
-                          : (widget.data?.paymentstatus == "failed")
-                              ? "Your transaction has been failed. Please try again in sometime."
-                              : "Your transaction will be processed securely. We appreciate your trust in us.",
+                      (widget.data?.paymentstatus == 'success')
+                          ? 'Your transaction was processed securely. We appreciate your trust in us.'
+                          : (widget.data?.paymentstatus == 'failed')
+                              ? 'Your transaction has been failed. Please try again in sometime.'
+                              : 'Your transaction will be processed securely. We appreciate your trust in us.',
                       textAlign: TextAlign.center,
                       style: const TextStyle(
                         color: AppColors.white,
@@ -84,7 +84,7 @@ class _BankPaymentSuccessDoneState extends State<BankPaymentSuccessDone> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      "Transaction Details",
+                      'Transaction Details',
                       style: TextStyle(
                         color: AppColors.letterColor,
                         fontSize: 14,
@@ -95,7 +95,7 @@ class _BankPaymentSuccessDoneState extends State<BankPaymentSuccessDone> {
                     Row(
                       children: [
                         Text(
-                          "${widget.data?.mobile}",
+                          '${widget.data?.mobile}',
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
@@ -106,7 +106,7 @@ class _BankPaymentSuccessDoneState extends State<BankPaymentSuccessDone> {
                         Image.asset(Images.verified, height: 20, width: 20),
                         const Spacer(),
                         Text(
-                          "${Strings.indianRupee}${widget.data?.amount}",
+                          '${Strings.indianRupee}${widget.data?.amount}',
                           style: GoogleFonts.tomorrow(
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
@@ -117,28 +117,28 @@ class _BankPaymentSuccessDoneState extends State<BankPaymentSuccessDone> {
                     ),
                     const SizedBox(height: 30),
                     AccountGlobalWidget.detailRow(
-                      "Transaction ID",
-                      widget.data?.transactionId?.toUpperCase() ?? "---",
+                      'Transaction ID',
+                      widget.data?.transactionId?.toUpperCase() ?? '---',
                       context,
                     ),
                     AccountGlobalWidget.detailRow(
-                      "Total Amount for Withdraw",
-                      "${Strings.indianRupee}${widget.data?.amount}",
+                      'Total Amount for Withdraw',
+                      '${Strings.indianRupee}${widget.data?.amount}',
                       context,
                     ),
                     AccountGlobalWidget.detailRow(
-                      "TDS Deduction",
-                      "${Strings.indianRupee}${widget.data?.tdsAmount}",
+                      'TDS Deduction',
+                      '${Strings.indianRupee}${widget.data?.tdsAmount}',
                       context,
                     ),
                     AccountGlobalWidget.detailRow(
-                      "Receiver Received",
-                      "${Strings.indianRupee}${widget.data?.receiverAmount}",
+                      'Receiver Received',
+                      '${Strings.indianRupee}${widget.data?.receiverAmount}',
                       context,
                     ),
                     AccountGlobalWidget.detailRow(
-                      "Date & Time",
-                      "${widget.data?.dateTime}",
+                      'Date & Time',
+                      '${widget.data?.dateTime}',
                       context,
                     ),
                     const SizedBox(height: 10),

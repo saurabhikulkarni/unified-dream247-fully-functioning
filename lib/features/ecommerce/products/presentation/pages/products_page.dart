@@ -37,7 +37,7 @@ class ProductsPage extends StatelessWidget {
               child: ListView(
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.symmetric(horizontal: 16),
-                children: [
+                children: const [
                   _CategoryChip(label: 'All', isSelected: true),
                   _CategoryChip(label: 'Electronics'),
                   _CategoryChip(label: 'Fashion'),
@@ -115,7 +115,7 @@ class _ProductCard extends StatelessWidget {
               color: AppColors.surfaceVariant,
               child: Stack(
                 children: [
-                  Center(
+                  const Center(
                     child: Icon(
                       Icons.shopping_bag,
                       size: 48,
@@ -127,7 +127,7 @@ class _ProductCard extends StatelessWidget {
                     top: 8,
                     right: 8,
                     child: Container(
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         color: AppColors.surface,
                         shape: BoxShape.circle,
                         boxShadow: [

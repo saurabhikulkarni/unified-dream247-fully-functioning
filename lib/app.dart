@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:oktoast/oktoast.dart';
 import 'config/routes/app_router.dart';
 import 'config/theme/app_theme.dart';
 
@@ -53,13 +54,17 @@ class MyApp extends StatelessWidget {
             ChangeNotifierProvider(create: (_) => JoinedLiveContestProvider()),
             ChangeNotifierProvider(create: (_) => LiveLeaderboardProvider()),
           ],
-          child: MaterialApp.router(
-            title: 'DREAM 247',
-            debugShowCheckedModeBanner: false,
-            theme: AppTheme.lightTheme,
-            darkTheme: AppTheme.darkTheme,
-            themeMode: ThemeMode.light,
-            routerConfig: AppRouter.router,
+          child: OKToast(
+            position: ToastPosition.bottom,
+            duration: const Duration(seconds: 2),
+            child: MaterialApp.router(
+              title: 'DREAM 247',
+              debugShowCheckedModeBanner: false,
+              theme: AppTheme.lightTheme,
+              darkTheme: AppTheme.darkTheme,
+              themeMode: ThemeMode.light,
+              routerConfig: AppRouter.router,
+            ),
           ),
         );
       },

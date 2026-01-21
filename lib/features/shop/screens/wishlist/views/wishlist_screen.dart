@@ -203,7 +203,7 @@ class _WishlistScreenState extends State<WishlistScreen> {
                   builder: (context) => AlertDialog(
                     title: const Text('Clear Wishlist?'),
                     content: const Text(
-                        'Are you sure you want to clear your entire wishlist?'),
+                        'Are you sure you want to clear your entire wishlist?',),
                     actions: [
                       TextButton(
                         onPressed: () => context.pop(),
@@ -298,7 +298,7 @@ class _WishlistScreenState extends State<WishlistScreen> {
                                     product: product,
                                     press: () {
                                       context.push('/shop/product/${product.id}',
-                                          extra: {'product': product});
+                                          extra: {'product': product},);
                                     },
                                   ),
                                   if (_isEditMode && product.id != null)
@@ -342,15 +342,15 @@ class _WishlistScreenState extends State<WishlistScreen> {
                               child: ElevatedButton.icon(
                                 onPressed: () => _addToCart(product),
                                 icon: Icon(Icons.shopping_cart_outlined, 
-                                  size: context.isTablet ? 18 : 16),
+                                  size: context.isTablet ? 18 : 16,),
                                 label: Text('Add to Cart', 
-                                  style: TextStyle(fontSize: context.fontSize(12, minSize: 10, maxSize: 14))),
+                                  style: TextStyle(fontSize: context.fontSize(12, minSize: 10, maxSize: 14)),),
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: primaryColor,
                                   foregroundColor: Colors.white,
                                   padding: EdgeInsets.symmetric(
                                     horizontal: context.responsiveSpacing, 
-                                    vertical: context.responsiveSpacing),
+                                    vertical: context.responsiveSpacing,),
                                   minimumSize: Size(0, context.isTablet ? 36 : 32),
                                 ),
                               ),

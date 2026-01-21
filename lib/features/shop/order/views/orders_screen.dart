@@ -73,7 +73,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("My Orders"),
+        title: const Text('My Orders'),
       ),
       body: Builder(
         builder: (context) {
@@ -98,12 +98,12 @@ class _OrdersScreenState extends State<OrdersScreen> {
                   ),
                   const SizedBox(height: defaultPadding),
                   Text(
-                    "No orders yet",
+                    'No orders yet',
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                   const SizedBox(height: defaultPadding / 2),
                   Text(
-                    "Start shopping to place your first order!",
+                    'Start shopping to place your first order!',
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                 ],
@@ -262,7 +262,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                               ),
                             ],
                           ),
-                        )),
+                        ),),
                         
                         // Show "more items" indicator if there are more than 3 items
                         if (order.items.length > 3)
@@ -338,7 +338,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                                   ),
                                 if (order.shiprocketOrderId != null || order.trackingNumber != null)
                                   const SizedBox(width: 8),
-                                Icon(
+                                const Icon(
                                   Icons.arrow_forward_ios,
                                   size: 16,
                                   color: Colors.grey,
@@ -361,13 +361,13 @@ class _OrdersScreenState extends State<OrdersScreen> {
   }
 
   String _formatDate(DateTime date) {
-    return "${date.day} ${_getMonth(date.month)} ${date.year}";
+    return '${date.day} ${_getMonth(date.month)} ${date.year}';
   }
 
   String _getMonth(int month) {
     const months = [
       'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
     ];
     return months[month - 1];
   }

@@ -6,7 +6,7 @@ class AllPlayersProvider extends ChangeNotifier {
 
   List<CreateTeamPlayersData>? get allPlayersList => _allPlayersList;
 
-  setAllPlayers(List<CreateTeamPlayersData>? value) {
+  void setAllPlayers(List<CreateTeamPlayersData>? value) {
     _allPlayersList = value;
     notifyListeners();
   }
@@ -20,7 +20,7 @@ class AllPlayersProvider extends ChangeNotifier {
     var newPlayersList = _allPlayersList;
     newPlayersList
         ?.firstWhere(
-            (element) => element.playerid == newallPlayersList.playerid)
+            (element) => element.playerid == newallPlayersList.playerid,)
         .isSelectedPlayer = newallPlayersList.isSelectedPlayer;
 
     notifyListeners();

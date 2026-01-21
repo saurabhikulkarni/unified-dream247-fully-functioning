@@ -201,7 +201,7 @@ class _DownloadPdfBottomsheetState extends State<DownloadPdfBottomsheet> {
   ) async {
     try {
       final directory = await getDownloadDirectoryPath();
-      final filePath = "${directory.path}/$fileName";
+      final filePath = '${directory.path}/$fileName';
 
       final authToken = await AppStorage.getStorageValueString(
         AppStorageKeys.authToken,
@@ -220,11 +220,11 @@ class _DownloadPdfBottomsheetState extends State<DownloadPdfBottomsheet> {
         ),
       );
 
-      appToast("PDF downloaded to $filePath", context);
+      appToast('PDF downloaded to $filePath', context);
       await openFile(filePath);
     } catch (e) {
-      debugPrint("Error downloading PDF: $e");
-      appToast("Failed to download PDF. Please try again.", context);
+      debugPrint('Error downloading PDF: $e');
+      appToast('Failed to download PDF. Please try again.', context);
     }
   }
 
@@ -234,7 +234,7 @@ class _DownloadPdfBottomsheetState extends State<DownloadPdfBottomsheet> {
       if (directory != null) {
         return Directory('${directory.path}/Download');
       } else {
-        throw Exception("Failed to get download directory.");
+        throw Exception('Failed to get download directory.');
       }
     } else if (Platform.isIOS) {
       return await getApplicationDocumentsDirectory();
@@ -247,7 +247,7 @@ class _DownloadPdfBottomsheetState extends State<DownloadPdfBottomsheet> {
     if (await File(filePath).exists()) {
       await OpenFile.open(filePath);
     } else {
-      debugPrint("File not found: $filePath");
+      debugPrint('File not found: $filePath');
     }
   }
 }

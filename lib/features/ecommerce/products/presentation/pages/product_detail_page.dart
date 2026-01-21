@@ -13,7 +13,7 @@ class ProductDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(title: 'Product Detail'),
+      appBar: const CustomAppBar(title: 'Product Detail'),
       body: Center(
         child: Text('Product Detail Page - ID: $productId'),
       ),

@@ -16,7 +16,7 @@ class OnSaleScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("On Sale"),
+        title: const Text('On Sale'),
       ),
       body: GridView.builder(
         padding: const EdgeInsets.all(defaultPadding),

@@ -152,7 +152,7 @@ class MyLiveMatchTeam extends StatelessWidget {
       children: [
         CircleAvatar(
             radius: 24.r,
-            backgroundImage: AssetImage(Images.imageDefalutPlayer)),
+            backgroundImage: const AssetImage(Images.imageDefalutPlayer),),
         const SizedBox(height: 6),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),

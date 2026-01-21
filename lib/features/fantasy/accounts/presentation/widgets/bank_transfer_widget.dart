@@ -24,7 +24,7 @@ class BankTransferWidget extends StatelessWidget {
         const SizedBox(height: 5.0),
         RichText(
           text: TextSpan(
-            text: "Use Bank Transfer when you withdraw more than ",
+            text: 'Use Bank Transfer when you withdraw more than ',
             style: const TextStyle(
               fontSize: 12.0,
               color: AppColors.letterColor,
@@ -33,7 +33,7 @@ class BankTransferWidget extends StatelessWidget {
             children: <TextSpan>[
               TextSpan(
                 text:
-                    "${Strings.indianRupee}${AppSingleton.singleton.appData.minwithdraw}",
+                    '${Strings.indianRupee}${AppSingleton.singleton.appData.minwithdraw}',
                 style: GoogleFonts.tomorrow(
                   fontSize: 12.0,
                   color: AppColors.letterColor,
@@ -60,7 +60,7 @@ class BankTransferWidget extends StatelessWidget {
               ),
             ),
             subtitle: Text(
-              AppUtils.maskDigits(bankAccNo ?? "---", 4),
+              AppUtils.maskDigits(bankAccNo ?? '---', 4),
               style: const TextStyle(
                 color: AppColors.letterColor,
                 fontWeight: FontWeight.w400,

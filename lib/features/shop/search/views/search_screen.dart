@@ -80,7 +80,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Search"),
+        title: const Text('Search'),
       ),
       body: Column(
         children: [
@@ -89,14 +89,14 @@ class _SearchScreenState extends State<SearchScreen> {
             child: TextField(
               controller: _searchController,
               decoration: InputDecoration(
-                hintText: "Search products...",
+                hintText: 'Search products...',
                 prefixIcon: const Icon(Icons.search),
                 suffixIcon: _searchController.text.isNotEmpty
                     ? IconButton(
                         icon: const Icon(Icons.close),
                         onPressed: () {
                           _searchController.clear();
-                          _performSearch("");
+                          _performSearch('');
                         },
                       )
                     : null,
@@ -122,7 +122,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    "Recent Searches",
+                                    'Recent Searches',
                                     style: Theme.of(context).textTheme.titleMedium,
                                   ),
                                   TextButton(
@@ -131,7 +131,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                         searchService.clearSearchHistory();
                                       });
                                     },
-                                    child: const Text("Clear All"),
+                                    child: const Text('Clear All'),
                                   ),
                                 ],
                               ),
@@ -151,7 +151,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                   _searchController.text = search;
                                   _performSearch(search);
                                 },
-                              )),
+                              ),),
                         ],
                       )
                     : _errorMessage != null
@@ -197,7 +197,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                   ),
                                 ),
                                 title: Text(product.title),
-                                subtitle: Text("${product.price.toInt()} tokens"),
+                                subtitle: Text('${product.price.toInt()} tokens'),
                                 onTap: () {
                                   Navigator.of(context).push(
                                     MaterialPageRoute(

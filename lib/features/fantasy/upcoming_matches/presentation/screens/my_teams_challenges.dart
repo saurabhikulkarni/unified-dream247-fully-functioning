@@ -53,15 +53,15 @@ class _MyTeamsChallenges extends State<MyTeamsChallenges> {
     String type = widget.teamType.trim().toLowerCase();
 
     // default team type = "10-1"
-    if (type.isEmpty || type == "null") {
-      type = "10-1";
+    if (type.isEmpty || type == 'null') {
+      type = '10-1';
     }
 
     // Only filter if type is NOT "10-1"
-    if (type != "10-1") {
+    if (type != '10-1') {
       widget.list = widget.list
           .where(
-            (team) => (team.teamType ?? "").trim().toLowerCase() == type,
+            (team) => (team.teamType ?? '').trim().toLowerCase() == type,
           )
           .toList();
     }
@@ -79,7 +79,7 @@ class _MyTeamsChallenges extends State<MyTeamsChallenges> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          if (widget.mode != "Switch Team" && widget.maxTeams > 1)
+          if (widget.mode != 'Switch Team' && widget.maxTeams > 1)
             Container(
               width: 110,
               padding: const EdgeInsets.fromLTRB(0, 10, 10, 5),
@@ -126,7 +126,7 @@ class _MyTeamsChallenges extends State<MyTeamsChallenges> {
                         height: MediaQuery.of(context).size.height,
                         padding: const EdgeInsets.all(20),
                         alignment: Alignment.topLeft,
-                        child: const Center(child: Text("No Teams Found")),
+                        child: const Center(child: Text('No Teams Found')),
                       )
                     : SizedBox(
                         width: MediaQuery.of(context).size.width,
@@ -142,7 +142,7 @@ class _MyTeamsChallenges extends State<MyTeamsChallenges> {
                               challengeId: widget.challengeId,
                               data: data,
                               chooseTeam: true,
-                              mode: "Upcoming",
+                              mode: 'Upcoming',
                               length: widget.list.length,
                               updateTeams: (pList) {
                                 setState(() {
@@ -163,11 +163,11 @@ class _MyTeamsChallenges extends State<MyTeamsChallenges> {
                     ),
                     color: AppColors.green,
                     textColor: AppColors.white,
-                    text: (widget.mode == "Switch Team")
+                    text: (widget.mode == 'Switch Team')
                         ? 'Switch Team'
                         : 'Join Contest',
                     onTap: () {
-                      if (widget.mode == "Switch Team") {
+                      if (widget.mode == 'Switch Team') {
                         String selectedId = '';
                         int count = 0;
                         for (var ii in widget.list) {
@@ -188,20 +188,20 @@ class _MyTeamsChallenges extends State<MyTeamsChallenges> {
                           upcomingMatchUsecase
                               .switchTeam(
                                 context,
-                                widget.leagueId ?? "",
+                                widget.leagueId ?? '',
                                 selectedId,
                                 widget.challengeId,
-                                widget.leaderboardId ?? "",
+                                widget.leaderboardId ?? '',
                               )
                               .then((value) => {Navigator.of(context).pop()});
                         }
                       } else {
                         int count = 0;
-                        String selectedId = "";
+                        String selectedId = '';
                         for (var ii in widget.list) {
                           if (ii.isPicked) {
                             count++;
-                            selectedId += ",${ii.jointeamid}";
+                            selectedId += ',${ii.jointeamid}';
                           }
                         }
                         if (count >
@@ -229,7 +229,7 @@ class _MyTeamsChallenges extends State<MyTeamsChallenges> {
                             ),
                             builder: (BuildContext context) {
                               return JoinContestBottomsheet(
-                                fantasyType: "Cricket",
+                                fantasyType: 'Cricket',
                                 isClosedContestNew: false,
                                 previousJoined: false,
                                 challengeId: widget.challengeId,

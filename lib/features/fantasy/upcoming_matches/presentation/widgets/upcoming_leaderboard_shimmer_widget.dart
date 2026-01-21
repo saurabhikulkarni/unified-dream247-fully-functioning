@@ -22,7 +22,7 @@ class UpcomingLeaderboardShimmerWidget extends StatelessWidget {
                       child: ShimmerWidget(
                     height: 40,
                     width: 40,
-                  )),
+                  ),),
                 ),
                 Flexible(
                   child: Row(
@@ -31,16 +31,16 @@ class UpcomingLeaderboardShimmerWidget extends StatelessWidget {
                           child: ShimmerWidget(
                         height: 10,
                         width: 100,
-                      )),
+                      ),),
                       Container(
                           margin: const EdgeInsets.only(left: 5),
                           color: AppColors.lightCard,
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 3, vertical: 3),
+                              horizontal: 3, vertical: 3,),
                           child: const ShimmerWidget(
                             height: 5,
                             width: 10,
-                          )),
+                          ),),
                     ],
                   ),
                 ),

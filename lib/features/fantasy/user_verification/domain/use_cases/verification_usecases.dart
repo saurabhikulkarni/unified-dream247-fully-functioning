@@ -9,7 +9,7 @@ class VerificationUsecases {
   VerificationUsecases(this.verificationRepositories);
 
   Future<bool?> socialLogin(
-      BuildContext context, String email, String deviceId) async {
+      BuildContext context, String email, String deviceId,) async {
     var res =
         await verificationRepositories.socialLogin(context, email, deviceId);
     if (res ?? false) {
@@ -19,9 +19,9 @@ class VerificationUsecases {
   }
 
   Future<Map<String, dynamic>?> submitAadharDetails(
-      BuildContext context, String aadhaarNumber) async {
+      BuildContext context, String aadhaarNumber,) async {
     var res = await verificationRepositories.submitAadharDetails(
-        context, aadhaarNumber);
+        context, aadhaarNumber,);
     if (res != null) {
       return res;
     }
@@ -29,9 +29,9 @@ class VerificationUsecases {
   }
 
   Future<bool> verifyAadharOtp(BuildContext context, String refId, String otp,
-      String aadhaarNumber) async {
+      String aadhaarNumber,) async {
     var res = await verificationRepositories.verifyAadharOtp(
-        context, refId, otp, aadhaarNumber);
+        context, refId, otp, aadhaarNumber,);
     if (res ?? false) {
       return true;
     }
@@ -40,9 +40,9 @@ class VerificationUsecases {
   
 
   Future<bool?> submitPANDetails(
-      BuildContext context, String panNumber, String userName) async {
+      BuildContext context, String panNumber, String userName,) async {
     var res = await verificationRepositories.submitPANDetails(
-        context, panNumber, userName);
+        context, panNumber, userName,);
     if (res ?? false) {
       return res;
     }
@@ -52,9 +52,9 @@ class VerificationUsecases {
   Future<bool?> submitBankDetails(BuildContext context, String name,
       String accountNumber, String ifsc,
       String cityName,
-      String bankName ) async {
+      String bankName, ) async {
     var res = await verificationRepositories.submitBankDetails(
-        context, name, accountNumber, ifsc, cityName, bankName );
+        context, name, accountNumber, ifsc, cityName, bankName, );
     if (res ?? false) {
       return res;
     }

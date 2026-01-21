@@ -46,25 +46,25 @@ class JoinedMatchesModel {
   });
 
   JoinedMatchesModel.fromJson(Map<String, dynamic> json) {
-    id = ModelParsers.toStringParser(json["_id"]);
-    matchkey = ModelParsers.toStringParser(json["matchkey"]);
-    fantasyType = ModelParsers.toStringParser(json["fantasy_type"]);
-    shortName = ModelParsers.toStringParser(json["short_name"]);
-    name = ModelParsers.toStringParser(json["name"]);
-    startDate = ModelParsers.toStringParser(json["start_date"]);
-    status = ModelParsers.toStringParser(json["status"]);
-    finalStatus = ModelParsers.toStringParser(json["final_status"]);
-    playing11Status = ModelParsers.toIntParser(json["playing11_status"]);
-    team1 = ModelParsers.toStringParser(json["team1"]);
-    team1ShortName = ModelParsers.toStringParser(json["team1_short_name"]);
-    team1Logo = ModelParsers.toStringParser(json["team1logo"]);
-    team2 = ModelParsers.toStringParser(json["team2"]);
-    team2ShortName = ModelParsers.toStringParser(json["team2_short_name"]);
-    team2Logo = ModelParsers.toStringParser(json["team2logo"]);
-    totalJoinTeam = ModelParsers.toIntParser(json["totalJoinTeam"]);
-    totalJoinedContest = ModelParsers.toIntParser(json["totalJoinedContest"]);
-    textNote = ModelParsers.toStringParser(json["textNote"]);
-    series = ModelParsers.toStringParser(json["series"]);
-    realMatchkey = ModelParsers.toStringParser(json["real_matchkey"]);
+    id = ModelParsers.toStringParser(json['_id']);
+    matchkey = ModelParsers.toStringParser(json['matchkey']);
+    fantasyType = ModelParsers.toStringParser(json['fantasy_type']);
+    shortName = ModelParsers.toStringParser(json['short_name']);
+    name = ModelParsers.toStringParser(json['name']);
+    startDate = ModelParsers.toStringParser(json['start_date']);
+    status = ModelParsers.toStringParser(json['status']);
+    finalStatus = ModelParsers.toStringParser(json['final_status']);
+    playing11Status = ModelParsers.toIntParser(json['playing11_status']);
+    team1 = ModelParsers.toStringParser(json['team1']);
+    team1ShortName = ModelParsers.toStringParser(json['team1_short_name']);
+    team1Logo = ModelParsers.toStringParser(json['team1logo']);
+    team2 = ModelParsers.toStringParser(json['team2']);
+    team2ShortName = ModelParsers.toStringParser(json['team2_short_name']);
+    team2Logo = ModelParsers.toStringParser(json['team2logo']);
+    totalJoinTeam = ModelParsers.toIntParser(json['totalJoinTeam']);
+    totalJoinedContest = ModelParsers.toIntParser(json['totalJoinedContest']);
+    textNote = ModelParsers.toStringParser(json['textNote']);
+    series = ModelParsers.toStringParser(json['series']);
+    realMatchkey = ModelParsers.toStringParser(json['real_matchkey']);
   }
 }

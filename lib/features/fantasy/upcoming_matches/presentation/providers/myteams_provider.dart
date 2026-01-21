@@ -4,7 +4,7 @@ import 'package:unified_dream247/features/fantasy/upcoming_matches/data/models/t
 
 class MyTeamsProvider extends ChangeNotifier {
   final Map<String, List<TeamsModel>> _myTeams = {};
-  String? _matchKey = "";
+  String? _matchKey = '';
 
   Map<String, List<TeamsModel>> get myTeams => _myTeams;
   String? get matchKey => _matchKey;

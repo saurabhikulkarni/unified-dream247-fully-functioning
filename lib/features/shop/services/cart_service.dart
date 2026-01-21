@@ -160,7 +160,7 @@ class CartService {
         quantity: quantity,
         product: product,
         size: size,
-      ));
+      ),);
       _saveToSharedPreferences();
       
       // Sync with backend if user is logged in
@@ -435,7 +435,7 @@ class CartService {
       await _publishCart(cartId);
 
       return CartModel.fromJson(
-          result.data!['createCart'] as Map<String, dynamic>);
+          result.data!['createCart'] as Map<String, dynamic>,);
     } catch (e) {
       throw Exception('Error adding to cart: $e');
     }

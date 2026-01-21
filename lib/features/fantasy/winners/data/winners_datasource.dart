@@ -24,7 +24,7 @@ class WinnersDatasource extends WinnersRepositories {
     if (ApiServerUtil.validateStatusCode(response.statusCode ?? 200)) {
       if (json[ApiResponseString.status] == true) {
         return List<WinnersModel>.from(
-            json[ApiResponseString.data].map((x) => WinnersModel.fromJson(x)));
+            json[ApiResponseString.data].map((x) => WinnersModel.fromJson(x)),);
       }
     } else {
       if (context.mounted) {
@@ -45,7 +45,7 @@ class WinnersDatasource extends WinnersRepositories {
     if (ApiServerUtil.validateStatusCode(response.statusCode ?? 200)) {
       if (res[ApiResponseString.success] == true) {
         return List<StoriesModel>.from(
-            res[ApiResponseString.data].map((x) => StoriesModel.fromJson(x)));
+            res[ApiResponseString.data].map((x) => StoriesModel.fromJson(x)),);
       }
     } else {
       if (context.mounted) {
@@ -62,7 +62,7 @@ class WinnersDatasource extends WinnersRepositories {
       int skip,
       int limit,
       String fantasyType,
-      String matchKey) async {
+      String matchKey,) async {
     final url =
         '${APIServerUrl.completedMatchServerUrl}${APIServerUrl.getContestWinners}$matchKey/$challengeId';
 
@@ -72,10 +72,10 @@ class WinnersDatasource extends WinnersRepositories {
     if (ApiServerUtil.validateStatusCode(response.statusCode ?? 200)) {
       if (res[ApiResponseString.success] == true) {
         return List<WinContestData>.from(
-            res[ApiResponseString.data].map((x) => WinContestData.fromJson(x)));
+            res[ApiResponseString.data].map((x) => WinContestData.fromJson(x)),);
       } else {
         ApiServerUtil.showAppToastforApi(
-            res[ApiResponseString.message], context);
+            res[ApiResponseString.message], context,);
       }
     } else {
       if (context.mounted) {

@@ -55,9 +55,9 @@ class _LiveLeaderboard extends State<LiveLeaderboard> {
   bool scroll = true;
   bool compare = false;
   late ScrollController _scrollController;
-  String team1id = "", team2id = "";
-  String team1Name = "", team2Name = "";
-  String l1 = "", l2 = "";
+  String team1id = '', team2id = '';
+  String team1Name = '', team2Name = '';
+  String l1 = '', l2 = '';
   int _currentMax = 15;
   bool isLoadingMore = false;
   bool isDownloading = false;
@@ -223,7 +223,7 @@ class _LiveLeaderboard extends State<LiveLeaderboard> {
   Widget _headerSection(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-      decoration: BoxDecoration(),
+      decoration: const BoxDecoration(),
       child: Row(
         children: [
           InkWell(
@@ -231,10 +231,10 @@ class _LiveLeaderboard extends State<LiveLeaderboard> {
               setState(() {
                 compare = !compare;
                 if (!compare) {
-                  team1id = "";
-                  team2id = "";
-                  l1 = "";
-                  l2 = "";
+                  team1id = '';
+                  team2id = '';
+                  l1 = '';
+                  l2 = '';
                 }
               });
             },
@@ -247,7 +247,7 @@ class _LiveLeaderboard extends State<LiveLeaderboard> {
                 ),
                 const SizedBox(height: 2),
                 const Text(
-                  "Compare",
+                  'Compare',
                   style: TextStyle(
                     color: AppColors.blackColor,
                     fontSize: 12,
@@ -271,7 +271,7 @@ class _LiveLeaderboard extends State<LiveLeaderboard> {
                     color: AppColors.mainLightColor,
                   ),
                   Text(
-                    "${(progress * 100).toStringAsFixed(0)}%",
+                    '${(progress * 100).toStringAsFixed(0)}%',
                     style: const TextStyle(
                       color: AppColors.blackColor,
                       fontSize: 10,
@@ -317,7 +317,7 @@ class _LiveLeaderboard extends State<LiveLeaderboard> {
                   ),
                   const SizedBox(width: 5),
                   Text(
-                    "Download",
+                    'Download',
                     style: GoogleFonts.inter(
                       color: AppColors.black,
                       fontSize: 13,
@@ -337,11 +337,11 @@ class _LiveLeaderboard extends State<LiveLeaderboard> {
     return Container(
       color: AppColors.white,
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
-      child: Row(
-        children: const [
+      child: const Row(
+        children: [
           Expanded(
             child: Text(
-              "All Teams",
+              'All Teams',
               style: TextStyle(
                 color: AppColors.letterColor,
                 fontSize: 13,
@@ -352,7 +352,7 @@ class _LiveLeaderboard extends State<LiveLeaderboard> {
           SizedBox(
             width: 80,
             child: Text(
-              "Points",
+              'Points',
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: AppColors.letterColor,
@@ -364,7 +364,7 @@ class _LiveLeaderboard extends State<LiveLeaderboard> {
           SizedBox(
             width: 60,
             child: Text(
-              "Rank",
+              'Rank',
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: AppColors.letterColor,
@@ -393,9 +393,9 @@ class _LiveLeaderboard extends State<LiveLeaderboard> {
           await myMatchesUsecases
               .liveViewTeam(
             context,
-            data.jointeamid ?? "",
+            data.jointeamid ?? '',
             data.teamnumber ?? 1,
-            data.userid ?? "",
+            data.userid ?? '',
           )
               ?.then((value) {
             List<UserTeamsModel> finalPlayers = [];
@@ -425,7 +425,7 @@ class _LiveLeaderboard extends State<LiveLeaderboard> {
               'live',
               data.teamnumber,
               false,
-              data.userid ?? "",
+              data.userid ?? '',
             );
           });
         },
@@ -446,13 +446,13 @@ class _LiveLeaderboard extends State<LiveLeaderboard> {
                         ).userData!.team!;
                         if (team1id.isEmpty) {
                           if (data.teamname != selfTeamName) {
-                            appToast("Choose your own team first", context);
+                            appToast('Choose your own team first', context);
                             return;
                           }
                           team1id = data.jointeamid!;
                           team1Name = data.teamname!;
-                          l1 = data.id ?? "";
-                          appToast("Choose another team to compare", context);
+                          l1 = data.id ?? '';
+                          appToast('Choose another team to compare', context);
                         } else if (team2id.isEmpty) {
                           if (data.jointeamid == team1id) {
                             appToast("Can't compare same team", context);
@@ -467,12 +467,12 @@ class _LiveLeaderboard extends State<LiveLeaderboard> {
                           }
                           team2id = data.jointeamid!;
                           team2Name = data.teamname!;
-                          l2 = data.id ?? "";
+                          l2 = data.id ?? '';
                           AppNavigation.gotoTeamCompareScreen(
                             context,
                             team1id,
                             team2id,
-                            data.userid ?? "",
+                            data.userid ?? '',
                             widget.challengeId,
                             l1,
                             l2,
@@ -480,11 +480,11 @@ class _LiveLeaderboard extends State<LiveLeaderboard> {
                         }
                       } else {
                         if (data.jointeamid == team1id) {
-                          team1id = "";
-                          l1 = "";
+                          team1id = '';
+                          l1 = '';
                         } else if (data.jointeamid == team2id) {
-                          team2id = "";
-                          l2 = "";
+                          team2id = '';
+                          l2 = '';
                         }
                       }
                     });
@@ -539,7 +539,7 @@ class _LiveLeaderboard extends State<LiveLeaderboard> {
                       ],
                     ),
                     const SizedBox(height: 3),
-                    if (data.winingamount != "" &&
+                    if (data.winingamount != '' &&
                         double.parse(data.winingamount!) != 0)
                       Text(
                         'Won ${Strings.indianRupee}${AppUtils.changeNumberToValue(num.parse(data.winingamount!))}',
@@ -609,7 +609,7 @@ class _LiveLeaderboard extends State<LiveLeaderboard> {
         progress = 0.0;
       });
       final directory = await getDownloadDirectoryPath();
-      final filePath = "${directory.path}/$fileName";
+      final filePath = '${directory.path}/$fileName';
       Dio dio = Dio();
       await dio.download(
         url,
@@ -626,13 +626,13 @@ class _LiveLeaderboard extends State<LiveLeaderboard> {
         isDownloading = false;
         progress = 0.0;
       });
-      appToast("PDF downloaded to $filePath", context);
+      appToast('PDF downloaded to $filePath', context);
       await openFile(filePath);
     } catch (e) {
       setState(() {
         isDownloading = false;
       });
-      appToast("Failed to download PDF. Please try again.", context);
+      appToast('Failed to download PDF. Please try again.', context);
     }
   }
 

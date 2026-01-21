@@ -64,26 +64,26 @@ class OrderStatusCard extends StatelessWidget {
                             ),
                             child: Row(
                               children: [
-                                const Text("Order"),
+                                const Text('Order'),
                                 const SizedBox(width: defaultPadding / 2),
-                                Text("#$orderId"),
+                                Text('#$orderId'),
                               ],
                             ),
                           ),
                           const SizedBox(height: defaultPadding / 2),
                           Text(
-                            "Placed on $placedOn",
+                            'Placed on $placedOn',
                             style: Theme.of(context).textTheme.titleSmall,
                           ),
                         ],
                       ),
                       SvgPicture.asset(
-                        "assets/icons/miniRight.svg",
+                        'assets/icons/miniRight.svg',
                         height: context.isTablet ? 28 : 24,
                         width: context.isTablet ? 28 : 24,
                         colorFilter: ColorFilter.mode(
-                            Theme.of(context).dividerColor, BlendMode.srcIn),
-                      )
+                            Theme.of(context).dividerColor, BlendMode.srcIn,),
+                      ),
                     ],
                   ),
                 ),
@@ -105,7 +105,7 @@ class OrderStatusCard extends StatelessWidget {
                   child: Column(
                     children: products ?? [],
                   ),
-                )
+                ),
               ],
             ),
           ),

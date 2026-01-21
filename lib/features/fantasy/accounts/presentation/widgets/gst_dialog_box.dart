@@ -49,7 +49,7 @@ class _GstDialogBoxState extends State<GstDialogBox> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               const Text(
-                "Add Cash to Current Balance",
+                'Add Cash to Current Balance',
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
@@ -59,7 +59,7 @@ class _GstDialogBoxState extends State<GstDialogBox> {
               Row(
                 children: [
                   Text(
-                    "${Strings.indianRupee}${formatAmount(depositedAmount)}",
+                    '${Strings.indianRupee}${formatAmount(depositedAmount)}',
                     style: GoogleFonts.tomorrow(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
@@ -98,7 +98,7 @@ class _GstDialogBoxState extends State<GstDialogBox> {
                       child: Row(
                         children: [
                           const Text(
-                            "Deposit Amount (excl. Govt. Tax)",
+                            'Deposit Amount (excl. Govt. Tax)',
                             style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.w400,
@@ -112,7 +112,7 @@ class _GstDialogBoxState extends State<GstDialogBox> {
                             color: AppColors.lightBlue,
                             child: const Center(
                               child: Text(
-                                "A",
+                                'A',
                                 style: TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w600,
@@ -123,7 +123,7 @@ class _GstDialogBoxState extends State<GstDialogBox> {
                           ),
                           const Spacer(),
                           Text(
-                            "${Strings.indianRupee}${formatAmount(exclusiveAmount)}",
+                            '${Strings.indianRupee}${formatAmount(exclusiveAmount)}',
                             style: GoogleFonts.tomorrow(
                               fontSize: 12,
                               fontWeight: FontWeight.w400,
@@ -139,7 +139,7 @@ class _GstDialogBoxState extends State<GstDialogBox> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           const Text(
-                            "Govt. Tax (28% GST)",
+                            'Govt. Tax (28% GST)',
                             style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.w400,
@@ -147,7 +147,7 @@ class _GstDialogBoxState extends State<GstDialogBox> {
                             ),
                           ),
                           Text(
-                            "${Strings.indianRupee}${formatAmount(govtTax)}",
+                            '${Strings.indianRupee}${formatAmount(govtTax)}',
                             style: GoogleFonts.tomorrow(
                               fontSize: 12,
                               fontWeight: FontWeight.w400,
@@ -171,7 +171,7 @@ class _GstDialogBoxState extends State<GstDialogBox> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           const Text(
-                            "Total",
+                            'Total',
                             style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.w600,
@@ -179,7 +179,7 @@ class _GstDialogBoxState extends State<GstDialogBox> {
                             ),
                           ),
                           Text(
-                            "${Strings.indianRupee}${formatAmount(depositedAmount)}",
+                            '${Strings.indianRupee}${formatAmount(depositedAmount)}',
                             style: GoogleFonts.tomorrow(
                               fontSize: 12,
                               fontWeight: FontWeight.w600,
@@ -205,7 +205,7 @@ class _GstDialogBoxState extends State<GstDialogBox> {
                                 ),
                                 child: const Center(
                                   child: Text(
-                                    "%",
+                                    '%',
                                     style: TextStyle(
                                       color: AppColors.green,
                                       fontSize: 10,
@@ -215,7 +215,7 @@ class _GstDialogBoxState extends State<GstDialogBox> {
                               ),
                               const SizedBox(width: 8),
                               const Text(
-                                "Discount Point Worth",
+                                'Discount Point Worth',
                                 style: TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w400,
@@ -229,7 +229,7 @@ class _GstDialogBoxState extends State<GstDialogBox> {
                                 color: AppColors.lightBlue,
                                 child: const Center(
                                   child: Text(
-                                    "B",
+                                    'B',
                                     style: TextStyle(
                                       fontSize: 12,
                                       fontWeight: FontWeight.w600,
@@ -241,7 +241,7 @@ class _GstDialogBoxState extends State<GstDialogBox> {
                             ],
                           ),
                           Text(
-                            "${Strings.indianRupee}${formatAmount(govtTax)}",
+                            '${Strings.indianRupee}${formatAmount(govtTax)}',
                             style: GoogleFonts.tomorrow(
                               fontSize: 12,
                               fontWeight: FontWeight.w500,
@@ -267,7 +267,7 @@ class _GstDialogBoxState extends State<GstDialogBox> {
                           Row(
                             children: [
                               const Text(
-                                "Add to Current Balance",
+                                'Add to Current Balance',
                                 style: TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w600,
@@ -281,7 +281,7 @@ class _GstDialogBoxState extends State<GstDialogBox> {
                                 color: AppColors.lightBlue,
                                 child: const Center(
                                   child: Text(
-                                    "A",
+                                    'A',
                                     style: TextStyle(
                                       fontSize: 12,
                                       fontWeight: FontWeight.w600,
@@ -299,7 +299,7 @@ class _GstDialogBoxState extends State<GstDialogBox> {
                                 color: AppColors.lightBlue,
                                 child: const Center(
                                   child: Text(
-                                    "B",
+                                    'B',
                                     style: TextStyle(
                                       fontSize: 12,
                                       fontWeight: FontWeight.w600,
@@ -311,7 +311,7 @@ class _GstDialogBoxState extends State<GstDialogBox> {
                             ],
                           ),
                           Text(
-                            "${Strings.indianRupee}${formatAmount(depositedAmount)}",
+                            '${Strings.indianRupee}${formatAmount(depositedAmount)}',
                             style: GoogleFonts.tomorrow(
                               fontSize: 12,
                               fontWeight: FontWeight.w600,

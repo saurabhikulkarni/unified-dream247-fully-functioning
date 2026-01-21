@@ -40,5 +40,5 @@ class AppColors {
     AppColors.mainLightColor,
     AppColors.secondMainColor,
     AppColors.mainColor,
-  ], begin: AlignmentGeometry.topCenter, end: AlignmentGeometry.bottomCenter);
+  ], begin: AlignmentGeometry.topCenter, end: AlignmentGeometry.bottomCenter,);
 }

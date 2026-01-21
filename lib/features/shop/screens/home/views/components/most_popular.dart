@@ -57,7 +57,7 @@ class _MostPopularState extends State<MostPopular> {
         Padding(
           padding: const EdgeInsets.all(defaultPadding),
           child: Text(
-            "Most popular",
+            'Most popular',
             style: Theme.of(context).textTheme.titleSmall,
           ),
         ),
@@ -92,12 +92,12 @@ class _MostPopularState extends State<MostPopular> {
                   priceAfetDiscount: _products[index].priceAfetDiscount,
                   press: () {
                     context.push('/shop/product/${_products[index].id}',
-                        extra: {'product': _products[index]});
+                        extra: {'product': _products[index]},);
                   },
                 ),
               ),
             ),
-          )
+          ),
       ],
     );
   }

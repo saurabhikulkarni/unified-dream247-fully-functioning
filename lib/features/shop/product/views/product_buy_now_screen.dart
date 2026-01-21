@@ -43,7 +43,7 @@ class _ProductBuyNowScreenState extends State<ProductBuyNowScreen> {
   bool _isInWishlist = false;
 
   // Default sizes if none from API
-  static const List<String> _defaultSizes = ["S", "M", "L", "XL", "XXL"];
+  static const List<String> _defaultSizes = ['S', 'M', 'L', 'XL', 'XXL'];
 
   @override
   void initState() {
@@ -86,7 +86,7 @@ class _ProductBuyNowScreenState extends State<ProductBuyNowScreen> {
     if (_selectedSizeIndex < availableSizes.length) {
       return availableSizes[_selectedSizeIndex];
     }
-    return "M";
+    return 'M';
   }
 
   double get totalPrice => widget.product.price * _quantity;
@@ -556,7 +556,7 @@ class _ProductBuyNowScreenState extends State<ProductBuyNowScreen> {
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(
-                horizontal: defaultPadding / 2, vertical: defaultPadding),
+                horizontal: defaultPadding / 2, vertical: defaultPadding,),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -572,7 +572,7 @@ class _ProductBuyNowScreenState extends State<ProductBuyNowScreen> {
                 IconButton(
                   onPressed: _toggleWishlist,
                   icon: SvgPicture.asset(
-                    "assets/icons/Wishlist.svg",
+                    'assets/icons/Wishlist.svg',
                     colorFilter: ColorFilter.mode(
                       _isInWishlist ? Colors.red : Theme.of(context).textTheme.bodyLarge!.color!,
                       BlendMode.srcIn,
@@ -638,8 +638,8 @@ class _ProductBuyNowScreenState extends State<ProductBuyNowScreen> {
                 SliverPadding(
                   padding: const EdgeInsets.symmetric(vertical: defaultPadding),
                   sliver: ProductListTile(
-                    title: "Size guide",
-                    svgSrc: "assets/icons/Sizeguid.svg",
+                    title: 'Size guide',
+                    svgSrc: 'assets/icons/Sizeguid.svg',
                     isShowBottomBorder: true,
                     press: () {
                       customModalBottomSheet(
@@ -659,13 +659,13 @@ class _ProductBuyNowScreenState extends State<ProductBuyNowScreen> {
                       children: [
                         const SizedBox(height: defaultPadding / 2),
                         Text(
-                          "Product Info",
+                          'Product Info',
                           style: Theme.of(context).textTheme.titleSmall,
                         ),
                         const SizedBox(height: defaultPadding / 2),
                         Text(
                           widget.product.description ?? 
-                              "Premium quality product with excellent durability.",
+                              'Premium quality product with excellent durability.',
                         ),
                       ],
                     ),
@@ -674,8 +674,8 @@ class _ProductBuyNowScreenState extends State<ProductBuyNowScreen> {
                 SliverPadding(
                   padding: const EdgeInsets.symmetric(vertical: defaultPadding),
                   sliver: ProductListTile(
-                    title: "Check stores",
-                    svgSrc: "assets/icons/Stores.svg",
+                    title: 'Check stores',
+                    svgSrc: 'assets/icons/Stores.svg',
                     isShowBottomBorder: true,
                     press: () {
                       customModalBottomSheet(
@@ -687,10 +687,10 @@ class _ProductBuyNowScreenState extends State<ProductBuyNowScreen> {
                   ),
                 ),
                 const SliverToBoxAdapter(
-                    child: SizedBox(height: defaultPadding))
+                    child: SizedBox(height: defaultPadding),),
               ],
             ),
-          )
+          ),
         ],
       ),
     );

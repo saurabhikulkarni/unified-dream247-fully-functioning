@@ -111,7 +111,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ProfileCard(
             name: _userName,
-            email: "user@shop.com",
+            email: 'user@shop.com',
             // No default image after login
             imageSrc: null,
             // proLableText: "Sliver",
@@ -123,35 +123,35 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: defaultPadding, vertical: defaultPadding),
             child: Text(
-              "Account",
+              'Account',
               style: Theme.of(context).textTheme.titleSmall,
             ),
           ),
           const SizedBox(height: defaultPadding / 2),
           ProfileMenuListTile(
-            text: "Orders",
-            svgSrc: "assets/icons/Order.svg",
+            text: 'Orders',
+            svgSrc: 'assets/icons/Order.svg',
             press: () {
               Navigator.pushNamed(context, ordersScreenRoute);
             },
           ),
           ProfileMenuListTile(
-            text: "Wishlist",
-            svgSrc: "assets/icons/Wishlist.svg",
+            text: 'Wishlist',
+            svgSrc: 'assets/icons/Wishlist.svg',
             press: () {
               Navigator.pushNamed(context, wishlistScreenRoute);
             },
           ),
           ProfileMenuListTile(
-            text: "Addresses",
-            svgSrc: "assets/icons/Address.svg",
+            text: 'Addresses',
+            svgSrc: 'assets/icons/Address.svg',
             press: () {
               Navigator.pushNamed(context, addressesScreenRoute);
             },
           ),
           ProfileMenuListTile(
-            text: "Wallet",
-            svgSrc: "assets/icons/Wallet.svg",
+            text: 'Wallet',
+            svgSrc: 'assets/icons/Wallet.svg',
             press: () {
               // Redirect to Fantasy wallet instead of Shop wallet
               context.goNamed('fantasy_wallet');
@@ -160,50 +160,50 @@ class _ProfileScreenState extends State<ProfileScreen> {
           const SizedBox(height: defaultPadding),
           Padding(
             padding: const EdgeInsets.symmetric(
-                horizontal: defaultPadding, vertical: defaultPadding / 2),
+                horizontal: defaultPadding, vertical: defaultPadding / 2,),
             child: Text(
-              "Help & Support",
+              'Help & Support',
               style: Theme.of(context).textTheme.titleSmall,
             ),
           ),
           ProfileMenuListTile(
-            text: "Get Help",
-            svgSrc: "assets/icons/Help.svg",
+            text: 'Get Help',
+            svgSrc: 'assets/icons/Help.svg',
             press: () {
               Navigator.pushNamed(context, getHelpScreenRoute);
             },
           ),
           ProfileMenuListTile(
-            text: "FAQ",
-            svgSrc: "assets/icons/FAQ.svg",
+            text: 'FAQ',
+            svgSrc: 'assets/icons/FAQ.svg',
             press: () {
               _openFAQ();
             },
           ),
           ProfileMenuListTile(
-            text: "Terms & Conditions",
-            svgSrc: "assets/icons/info.svg",
+            text: 'Terms & Conditions',
+            svgSrc: 'assets/icons/info.svg',
             press: () {
               Navigator.pushNamed(context, termsAndConditionsScreenRoute);
             },
           ),
           ProfileMenuListTile(
-            text: "Privacy Policy",
-            svgSrc: "assets/icons/Lock.svg",
+            text: 'Privacy Policy',
+            svgSrc: 'assets/icons/Lock.svg',
             press: () {
               Navigator.pushNamed(context, privacyPolicyScreenRoute);
             },
           ),
           ProfileMenuListTile(
-            text: "Refund Policy",
-            svgSrc: "assets/icons/Return.svg",
+            text: 'Refund Policy',
+            svgSrc: 'assets/icons/Return.svg',
             press: () {
               Navigator.pushNamed(context, refundPolicyScreenRoute);
             },
           ),
           ProfileMenuListTile(
-            text: "Shipping Policy",
-            svgSrc: "assets/icons/Delivery.svg",
+            text: 'Shipping Policy',
+            svgSrc: 'assets/icons/Delivery.svg',
             press: () {
               Navigator.pushNamed(context, shippingPolicyScreenRoute);
             },
@@ -217,12 +217,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
               showDialog(
                 context: context,
                 builder: (context) => AlertDialog(
-                  title: const Text("Log Out"),
-                  content: const Text("Are you sure you want to log out?"),
+                  title: const Text('Log Out'),
+                  content: const Text('Are you sure you want to log out?'),
                   actions: [
                     TextButton(
                       onPressed: () => Navigator.pop(context),
-                      child: const Text("Cancel"),
+                      child: const Text('Cancel'),
                     ),
                     TextButton(
                       onPressed: () async {
@@ -237,7 +237,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         );
                       },
                       child: const Text(
-                        "Log Out",
+                        'Log Out',
                         style: TextStyle(color: errorColor),
                       ),
                     ),
@@ -247,7 +247,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             },
             minLeadingWidth: 24,
             leading: SvgPicture.asset(
-              "assets/icons/Logout.svg",
+              'assets/icons/Logout.svg',
               height: 24,
               width: 24,
               colorFilter: const ColorFilter.mode(
@@ -256,10 +256,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
             title: const Text(
-              "Log Out",
+              'Log Out',
               style: TextStyle(color: errorColor, fontSize: 14, height: 1),
             ),
-          )
+          ),
         ],
       ),
     );

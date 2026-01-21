@@ -43,7 +43,7 @@ class CreateTeam extends StatefulWidget {
     this.guruTeamId,
     this.viceCaptainId,
     required this.isContestDetail,
-    this.teamType = "10-1",
+    this.teamType = '10-1',
   });
 
   @override
@@ -59,8 +59,8 @@ class _CreateTeam extends State<CreateTeam> {
   Future<PlayersModel?>? allPlayers;
   List<CreateTeamPlayersData> list = [];
   List<List<CreateTeamPlayersData>> playersList = [];
-  String filter = "both";
-  String selectedRole = "All Players";
+  String filter = 'both';
+  String selectedRole = 'All Players';
 
   UpcomingMatchUsecase upcomingMatchUsecase = UpcomingMatchUsecase(
     UpcomingMatchDatsource(ApiImpl(), ApiImplWithAccessToken()),
@@ -137,7 +137,7 @@ class _CreateTeam extends State<CreateTeam> {
           7;
 
       printX(
-        "Team1: $team1Count | Team2: $team2Count | Max Allowed: $maxPerTeam",
+        'Team1: $team1Count | Team2: $team2Count | Max Allowed: $maxPerTeam',
       );
 
       // Update position-wise counts (WK, BAT, AR, BOWL)
@@ -272,11 +272,11 @@ class _CreateTeam extends State<CreateTeam> {
 
   @override
   Widget build(BuildContext context) {
-    printX("MatchData => ${AppSingleton.singleton.matchData}");
-    printX("Team1 Logo => ${AppSingleton.singleton.matchData.team1Logo}");
-    printX("Team2 Logo => ${AppSingleton.singleton.matchData.team2Logo}");
-    printX("Team1 Name => ${AppSingleton.singleton.matchData.team1Name}");
-    printX("Team2 Name => ${AppSingleton.singleton.matchData.team2Name}");
+    printX('MatchData => ${AppSingleton.singleton.matchData}');
+    printX('Team1 Logo => ${AppSingleton.singleton.matchData.team1Logo}');
+    printX('Team2 Logo => ${AppSingleton.singleton.matchData.team2Logo}');
+    printX('Team1 Name => ${AppSingleton.singleton.matchData.team1Name}');
+    printX('Team2 Name => ${AppSingleton.singleton.matchData.team2Name}');
 
     return ContestHead(
       safeAreaColor: AppColors.white,
@@ -327,7 +327,7 @@ class _CreateTeam extends State<CreateTeam> {
                             ClipOval(
                               child: Image.network(
                                 AppSingleton.singleton.matchData.team1Logo ??
-                                    "",
+                                    '',
                                 width: 20,
                                 height: 20,
                                 errorBuilder: (_, __, ___) => const SizedBox(
@@ -338,7 +338,7 @@ class _CreateTeam extends State<CreateTeam> {
                             ),
                             const SizedBox(width: 6),
                             Text(
-                              AppSingleton.singleton.matchData.team1Name ?? "",
+                              AppSingleton.singleton.matchData.team1Name ?? '',
                               style: GoogleFonts.exo2(
                                 color: AppColors.white,
                                 fontWeight: FontWeight.w600,
@@ -379,7 +379,7 @@ class _CreateTeam extends State<CreateTeam> {
                             ),
                             SizedBox(width: 8.w),
                             Text(
-                              AppSingleton.singleton.matchData.team2Name ?? "",
+                              AppSingleton.singleton.matchData.team2Name ?? '',
                               style: GoogleFonts.exo2(
                                 color: AppColors.white,
                                 fontWeight: FontWeight.w600,
@@ -390,7 +390,7 @@ class _CreateTeam extends State<CreateTeam> {
                             ClipOval(
                               child: Image.network(
                                 AppSingleton.singleton.matchData.team2Logo ??
-                                    "",
+                                    '',
                                 width: 20.w,
                                 height: 20.h,
                                 errorBuilder: (_, __, ___) => SizedBox(
@@ -458,7 +458,7 @@ class _CreateTeam extends State<CreateTeam> {
                             position.name ?? '',
                             isSelected: selectedRole == (position.name ?? ''),
                           );
-                        }).toList(),
+                        }),
                     ],
                   ),
                 ),
@@ -476,7 +476,7 @@ class _CreateTeam extends State<CreateTeam> {
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.symmetric(vertical: 12),
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: AppColors.mainColor,
                 ),
                 child: Center(
@@ -537,14 +537,14 @@ class _CreateTeam extends State<CreateTeam> {
                               }
                               await AppNavigation.gotoPreviewScreen(
                                 context,
-                                "",
+                                '',
                                 false,
                                 finalPlayers,
-                                "Team Preview",
-                                "Upcoming",
+                                'Team Preview',
+                                'Upcoming',
                                 0,
                                 false,
-                                "",
+                                '',
                               );
                             },
                             filled: false,
@@ -570,8 +570,8 @@ class _CreateTeam extends State<CreateTeam> {
                                   widget.teamNumber,
                                   widget.discount,
                                   widget.isGuru ?? 0,
-                                  widget.guruTeamId ?? "",
-                                  widget.challengeId ?? "",
+                                  widget.guruTeamId ?? '',
+                                  widget.challengeId ?? '',
                                   widget.isContestDetail,
                                   list,
                                   widget.teamType,
@@ -709,7 +709,7 @@ class _CreateTeam extends State<CreateTeam> {
 
     // Function to sort players: group by role first, then by points within role
     List<CreateTeamPlayersData> sortPlayersByRoleAndPoints(
-        List<CreateTeamPlayersData> players) {
+        List<CreateTeamPlayersData> players,) {
       // Group by role
       Map<String, List<CreateTeamPlayersData>> playersByRole = {};
       for (var player in players) {
@@ -722,8 +722,8 @@ class _CreateTeam extends State<CreateTeam> {
 
       // Sort each role group by points (descending)
       for (var role in playersByRole.keys) {
-        playersByRole[role]!.sort((a, b) => num.parse(b.totalpoints ?? "0")
-            .compareTo(num.parse(a.totalpoints ?? "0")));
+        playersByRole[role]!.sort((a, b) => num.parse(b.totalpoints ?? '0')
+            .compareTo(num.parse(a.totalpoints ?? '0')),);
       }
 
       // Combine in role order
@@ -762,7 +762,7 @@ class _CreateTeam extends State<CreateTeam> {
                 Container(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     color: AppColors.lightCard,
                     border: Border(
                       bottom: BorderSide(color: AppColors.lightGrey, width: 1),
@@ -772,20 +772,20 @@ class _CreateTeam extends State<CreateTeam> {
                     children: [
                       ClipOval(
                         child: Image.network(
-                          AppSingleton.singleton.matchData.team1Logo ?? "",
+                          AppSingleton.singleton.matchData.team1Logo ?? '',
                           width: 20,
                           height: 20,
-                          errorBuilder: (_, __, ___) => SizedBox(
+                          errorBuilder: (_, __, ___) => const SizedBox(
                             width: 20,
                             height: 20,
                           ),
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 6,
                       ),
                       Text(
-                        AppSingleton.singleton.matchData.team1Name ?? "",
+                        AppSingleton.singleton.matchData.team1Name ?? '',
                         style: GoogleFonts.exo2(
                           color: AppColors.letterColor,
                           fontWeight: FontWeight.w600,
@@ -798,7 +798,7 @@ class _CreateTeam extends State<CreateTeam> {
                 Container(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     color: AppColors.lightCard,
                     border: Border(
                       bottom: BorderSide(color: AppColors.lightGrey, width: 1),
@@ -867,7 +867,7 @@ class _CreateTeam extends State<CreateTeam> {
                 Container(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     color: AppColors.lightCard,
                     border: Border(
                       bottom: BorderSide(color: AppColors.lightGrey, width: 1),
@@ -877,7 +877,7 @@ class _CreateTeam extends State<CreateTeam> {
                     children: [
                       ClipOval(
                         child: Image.network(
-                          AppSingleton.singleton.matchData.team2Logo ?? "",
+                          AppSingleton.singleton.matchData.team2Logo ?? '',
                           width: 20,
                           height: 20,
                           errorBuilder: (_, __, ___) => const SizedBox(
@@ -888,7 +888,7 @@ class _CreateTeam extends State<CreateTeam> {
                       ),
                       const SizedBox(width: 6),
                       Text(
-                        AppSingleton.singleton.matchData.team2Name ?? "",
+                        AppSingleton.singleton.matchData.team2Name ?? '',
                         style: GoogleFonts.exo2(
                           color: AppColors.letterColor,
                           fontWeight: FontWeight.w600,
@@ -901,7 +901,7 @@ class _CreateTeam extends State<CreateTeam> {
                 Container(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     color: AppColors.lightCard,
                     border: Border(
                       bottom: BorderSide(color: AppColors.lightGrey, width: 1),

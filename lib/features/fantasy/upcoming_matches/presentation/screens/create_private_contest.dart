@@ -108,13 +108,13 @@ class _CreatePrivateContest extends State<CreatePrivateContest> {
                   AppSingleton.singleton.matchData.id!,
                   matchchallengeid,
                   0,
-                  "",
-                  "",
-                  "",
-                  "",
+                  '',
+                  '',
+                  '',
+                  '',
                   0,
                   false,
-                  widget.teamType ?? "10-1");
+                  widget.teamType ?? '10-1',);
               List<TeamsModel> updatedTeams =
                   await upcomingMatchUsecase.getMyTeams(context);
               Provider.of<MyTeamsProvider>(
@@ -122,7 +122,7 @@ class _CreatePrivateContest extends State<CreatePrivateContest> {
                 listen: false,
               ).updateMyTeams(
                 updatedTeams,
-                AppSingleton.singleton.matchData.id ?? "",
+                AppSingleton.singleton.matchData.id ?? '',
               );
             } else if (count == 1) {
               showModalBottomSheet(
@@ -137,7 +137,7 @@ class _CreatePrivateContest extends State<CreatePrivateContest> {
                   return JoinContestBottomsheet(
                     discount: 0,
                     isClosedContestNew: false,
-                    fantasyType: "Cricket",
+                    fantasyType: 'Cricket',
                     previousJoined: false,
                     challengeId: matchchallengeid,
                     selectedTeam: value[0].jointeamid!,
@@ -152,13 +152,13 @@ class _CreatePrivateContest extends State<CreatePrivateContest> {
               Navigator.pop(context);
               await AppNavigation.gotoMyTeamsChallenges(
                 context,
-                widget.teamType ?? "10-1",
+                widget.teamType ?? '10-1',
                 matchchallengeid,
                 value,
                 1,
-                "Join Team",
-                "",
-                "",
+                'Join Team',
+                '',
+                '',
                 false,
                 0,
                 num.parse(entryFeeController.text),
@@ -175,7 +175,7 @@ class _CreatePrivateContest extends State<CreatePrivateContest> {
     super.initState();
     teamNameController.text =
         Provider.of<UserDataProvider>(context, listen: false).userData?.team ??
-            "";
+            '';
   }
 
   @override
@@ -281,7 +281,7 @@ class _CreatePrivateContest extends State<CreatePrivateContest> {
                                                     horizontal: 10,
                                                   ),
                                                   hintText:
-                                                      "Enter Contest Name",
+                                                      'Enter Contest Name',
                                                 ),
                                                 style: const TextStyle(
                                                   fontWeight: FontWeight.w300,
@@ -345,7 +345,7 @@ class _CreatePrivateContest extends State<CreatePrivateContest> {
                               keyboardType: TextInputType.number,
                               controller: entryFeeController,
                               labelText: 'Entry Fee',
-                              hintText: "Entry Fee",
+                              hintText: 'Entry Fee',
                               prefixIcon: const Icon(Icons.currency_rupee),
                               style: GoogleFonts.tomorrow(
                                 color: AppColors.blackColor,

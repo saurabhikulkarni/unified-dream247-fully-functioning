@@ -8,12 +8,12 @@ class TransactionsModel {
 
   factory TransactionsModel.fromJson(Map<String, dynamic> json) =>
       TransactionsModel(
-        transactions: json["transactions"] == null
+        transactions: json['transactions'] == null
             ? []
             : List<TransactionData>.from(
-                json["transactions"]!.map((x) => TransactionData.fromJson(x)),
+                json['transactions']!.map((x) => TransactionData.fromJson(x)),
               ),
-        totalCount: ModelParsers.toIntParser(json["totalCount"]),
+        totalCount: ModelParsers.toIntParser(json['totalCount']),
       );
 }
 
@@ -58,24 +58,24 @@ class TransactionData {
 
   factory TransactionData.fromJson(Map<String, dynamic> json) =>
       TransactionData(
-        id: ModelParsers.toStringParser(json["_id"]),
-        type: ModelParsers.toStringParser(json["type"]),
-        transactionId: ModelParsers.toStringParser(json["id"]),
-        transactionType: ModelParsers.toStringParser(json["transaction_type"]),
-        amount: ModelParsers.toStringParser(json["amount"]),
-        matchName: ModelParsers.toStringParser(json["matchName"]),
-        dateTime: ModelParsers.toStringParser(json["date_time"]),
-        txnid: ModelParsers.toStringParser(json["txnid"]),
-        paymentstatus: ModelParsers.toStringParser(json["paymentstatus"]),
-        paymentmethod: ModelParsers.toStringParser(json["paymentmethod"]),
+        id: ModelParsers.toStringParser(json['_id']),
+        type: ModelParsers.toStringParser(json['type']),
+        transactionId: ModelParsers.toStringParser(json['id']),
+        transactionType: ModelParsers.toStringParser(json['transaction_type']),
+        amount: ModelParsers.toStringParser(json['amount']),
+        matchName: ModelParsers.toStringParser(json['matchName']),
+        dateTime: ModelParsers.toStringParser(json['date_time']),
+        txnid: ModelParsers.toStringParser(json['txnid']),
+        paymentstatus: ModelParsers.toStringParser(json['paymentstatus']),
+        paymentmethod: ModelParsers.toStringParser(json['paymentmethod']),
         statusDescription: ModelParsers.toStringParser(
-          json["status_description"],
+          json['status_description'],
         ),
-        utr: ModelParsers.toStringParser(json["utr"]),
-        withdrawfrom: ModelParsers.toStringParser(json["withdrawfrom"]),
-        expiresAt: ModelParsers.toStringParser(json["expiresAt"]),
-        gstAmount: ModelParsers.toStringParser(json["gst_amount"]),
-        tdsAmount: ModelParsers.toStringParser(json["tds_amount"]),
-        cashback: ModelParsers.toStringParser(json["cashback"]),
+        utr: ModelParsers.toStringParser(json['utr']),
+        withdrawfrom: ModelParsers.toStringParser(json['withdrawfrom']),
+        expiresAt: ModelParsers.toStringParser(json['expiresAt']),
+        gstAmount: ModelParsers.toStringParser(json['gst_amount']),
+        tdsAmount: ModelParsers.toStringParser(json['tds_amount']),
+        cashback: ModelParsers.toStringParser(json['cashback']),
       );
 }

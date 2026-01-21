@@ -35,7 +35,7 @@ class _PreviewPlayerinfoScreenState extends State<PreviewPlayerinfoScreen> {
   Future<void> loadData() async {
     final allPlayers = await myMatchesUsecases.matchPlayerTeams(
       context,
-      widget.joinTeamId ?? "",
+      widget.joinTeamId ?? '',
     );
     if (allPlayers == null) {
       list = Future.value([]);
@@ -433,7 +433,7 @@ class _PreviewPlayerinfoScreenState extends State<PreviewPlayerinfoScreen> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          "---",
+                                          '---',
                                           style: GoogleFonts.exo2(
                                             color: AppColors.white,
                                             fontSize: 15,
@@ -442,7 +442,7 @@ class _PreviewPlayerinfoScreenState extends State<PreviewPlayerinfoScreen> {
                                           overflow: TextOverflow.ellipsis,
                                         ),
                                         Text(
-                                          "---",
+                                          '---',
                                           style: GoogleFonts.exo2(
                                             color: AppColors.white,
                                             fontSize: 14,
@@ -931,8 +931,8 @@ class _PreviewPlayerinfoScreenState extends State<PreviewPlayerinfoScreen> {
                                                               .data?[index]
                                                               .card?[cardIndex]
                                                               .type ==
-                                                          "Ball Faced")
-                                                      ? "NA"
+                                                          'Ball Faced')
+                                                      ? 'NA'
                                                       : '${snapshot.data?[index].card?[cardIndex].points ?? "0"}',
                                                   style: GoogleFonts.tomorrow(
                                                     fontWeight: FontWeight.w600,

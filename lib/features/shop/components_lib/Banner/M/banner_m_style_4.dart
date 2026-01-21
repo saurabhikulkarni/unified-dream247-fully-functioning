@@ -9,7 +9,7 @@ import 'package:unified_dream247/features/shop/constants.dart';
 class BannerMStyle4 extends StatelessWidget {
   const BannerMStyle4({
     super.key,
-    this.image = "https://i.imgur.com/R4iKkDD.png",
+    this.image = 'https://i.imgur.com/R4iKkDD.png',
     required this.title,
     required this.press,
     required this.discountParcent,
@@ -41,7 +41,7 @@ class BannerMStyle4 extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.symmetric(
                             horizontal: defaultPadding / 2,
-                            vertical: defaultPadding / 8),
+                            vertical: defaultPadding / 8,),
                         color: Colors.white70,
                         child: Text(
                           subtitle!,
@@ -65,14 +65,14 @@ class BannerMStyle4 extends StatelessWidget {
                     ),
                     // const SizedBox(height: defaultPadding / 4),
                     Text(
-                      "UP TO $discountParcent% OFF",
+                      'UP TO $discountParcent% OFF',
                       style: const TextStyle(
                         fontFamily: grandisExtendedFont,
                         color: Colors.white,
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
                       ),
-                    )
+                    ),
                   ],
                 ),
               ),
@@ -87,7 +87,7 @@ class BannerMStyle4 extends StatelessWidget {
                     backgroundColor: Colors.white,
                   ),
                   child: SvgPicture.asset(
-                    "assets/icons/Arrow - Right.svg",
+                    'assets/icons/Arrow - Right.svg',
                     colorFilter:
                         const ColorFilter.mode(Colors.black, BlendMode.srcIn),
                   ),

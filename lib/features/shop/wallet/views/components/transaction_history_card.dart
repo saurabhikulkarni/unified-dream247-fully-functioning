@@ -21,11 +21,11 @@ class TransactionHistoryCard extends StatelessWidget {
   String _getIcon() {
     switch (transactionType.toLowerCase()) {
       case 'top-up':
-        return "assets/icons/Plus1.svg";
+        return 'assets/icons/Plus1.svg';
       case 'purchase':
-        return "assets/icons/Return.svg";
+        return 'assets/icons/Return.svg';
       default:
-        return "assets/icons/Product.svg";
+        return 'assets/icons/Product.svg';
     }
   }
 
@@ -79,7 +79,7 @@ class TransactionHistoryCard extends StatelessWidget {
           ),
         ),
         trailing: Text(
-          isIncome ? "+ ₹$amountStr" : "- ₹$amountStr",
+          isIncome ? '+ ₹$amountStr' : '- ₹$amountStr',
           style: Theme.of(context).textTheme.titleSmall!.copyWith(
                 color: isIncome ? Colors.green : Colors.red,
                 fontWeight: FontWeight.w600,

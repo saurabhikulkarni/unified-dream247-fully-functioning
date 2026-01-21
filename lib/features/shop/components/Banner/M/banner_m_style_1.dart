@@ -6,7 +6,7 @@ import 'package:unified_dream247/features/shop/constants.dart';
 class BannerMStyle1 extends StatelessWidget {
   const BannerMStyle1({
     super.key,
-    this.image = "https://i.imgur.com/UP7xhPG.png",
+    this.image = 'https://i.imgur.com/UP7xhPG.png',
     required this.text,
     required this.press,
   });
@@ -40,7 +40,7 @@ class BannerMStyle1 extends StatelessWidget {
               ),
               const Spacer(),
               const Text(
-                "Shop now",
+                'Shop now',
                 style: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.w600,

@@ -18,7 +18,7 @@ class HowToPlay extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             /// Heading
-            Text(
+            const Text(
               Strings.howToPlay,
               style: TextStyle(
                 color: AppColors.black,
@@ -27,11 +27,11 @@ class HowToPlay extends StatelessWidget {
               ),
             ),
 
-            SizedBox(height: 18),
+            const SizedBox(height: 18),
 
             /// Intro
             Text(
-              "Follow four simple steps in the Dream247 app to create your fantasy cricket team and start winning:",
+              'Follow four simple steps in the Dream247 app to create your fantasy cricket team and start winning:',
               style: TextStyle(
                 color: AppColors.black.withValues(alpha: 0.85),
                 fontSize: 14,
@@ -39,46 +39,46 @@ class HowToPlay extends StatelessWidget {
               ),
             ),
 
-            SizedBox(height: 25),
+            const SizedBox(height: 25),
 
             // ------------------ STEP 1 ------------------
-            _stepTitle("1. Choose a Match"),
+            _stepTitle('1. Choose a Match'),
             _stepDesc(
-              "Open the app, choose an upcoming cricket match (T20, ODI, or Test), and create your team before the deadline.",
+              'Open the app, choose an upcoming cricket match (T20, ODI, or Test), and create your team before the deadline.',
             ),
 
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
 
             // ------------------ STEP 2 ------------------
-            _stepTitle("2. Create Fantasy Team"),
+            _stepTitle('2. Create Fantasy Team'),
             _stepDesc(
-              "Select 11 players from both teams within your budget. Maximum 7 players can be picked from one team.\n\n"
-              "• Captain = 2× points\n"
-              "• Vice-Captain = 1.5× points",
+              'Select 11 players from both teams within your budget. Maximum 7 players can be picked from one team.\n\n'
+              '• Captain = 2× points\n'
+              '• Vice-Captain = 1.5× points',
             ),
 
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
 
             // ------------------ STEP 3 ------------------
-            _stepTitle("3. Join Contests"),
+            _stepTitle('3. Join Contests'),
             _stepDesc(
-              "Choose any contest based on entry fee, ranking size, and potential winnings. Track your team’s performance as the match goes live.",
+              'Choose any contest based on entry fee, ranking size, and potential winnings. Track your team’s performance as the match goes live.',
             ),
 
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
 
             // ------------------ STEP 4 ------------------
-            _stepTitle("4. Track Leaderboards & Withdraw"),
+            _stepTitle('4. Track Leaderboards & Withdraw'),
             _stepDesc(
-              "Monitor your rank during the match. Withdraw your winnings easily through bank transfer, UPI, or other available payment methods.",
+              'Monitor your rank during the match. Withdraw your winnings easily through bank transfer, UPI, or other available payment methods.',
             ),
 
-            SizedBox(height: 25),
+            const SizedBox(height: 25),
 
             // ------------------ FINAL SECTION ------------------
             Text(
-              "After completing all four steps, your predictions will appear on the Fantasy Cricket Table. "
-              "Once the match ends, the total points for each Cricket Table will be displayed.",
+              'After completing all four steps, your predictions will appear on the Fantasy Cricket Table. '
+              'Once the match ends, the total points for each Cricket Table will be displayed.',
               style: TextStyle(
                 fontSize: 14,
                 color: AppColors.black.withValues(alpha: 0.85),
@@ -86,12 +86,12 @@ class HowToPlay extends StatelessWidget {
               ),
             ),
 
-            SizedBox(height: 15),
+            const SizedBox(height: 15),
 
             /// HIGHLIGHTED WEBSITE
-            Text(
-              "So what are you waiting for?\nCreate your Cricket Table now on the Dream247 App.\n\n"
-              "Download now:  ",
+            const Text(
+              'So what are you waiting for?\nCreate your Cricket Table now on the Dream247 App.\n\n'
+              'Download now:  ',
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
@@ -100,8 +100,8 @@ class HowToPlay extends StatelessWidget {
               ),
             ),
 
-            Text(
-              "www.Dream247.com",
+            const Text(
+              'www.Dream247.com',
               style: TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.bold,
@@ -110,7 +110,7 @@ class HowToPlay extends StatelessWidget {
               ),
             ),
 
-            SizedBox(height: 25),
+            const SizedBox(height: 25),
           ],
         ),
       ),
@@ -121,7 +121,7 @@ class HowToPlay extends StatelessWidget {
   Widget _stepTitle(String text) {
     return Text(
       text,
-      style: TextStyle(
+      style: const TextStyle(
         fontSize: 17,
         fontWeight: FontWeight.w700,
         color: AppColors.black,

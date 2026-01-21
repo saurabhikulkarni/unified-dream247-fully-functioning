@@ -14,13 +14,13 @@ class PriceCardModel {
   });
 
   factory PriceCardModel.fromJson(Map<String, dynamic> json) => PriceCardModel(
-        success: ModelParsers.toStringParser(json["success"]),
-        status: ModelParsers.toBoolParser(json["status"]),
-        message: ModelParsers.toStringParser(json["message"]),
-        data: json["data"] == null
+        success: ModelParsers.toStringParser(json['success']),
+        status: ModelParsers.toBoolParser(json['status']),
+        message: ModelParsers.toStringParser(json['message']),
+        data: json['data'] == null
             ? []
             : List<PriceCardWinnerData>.from(
-                json["data"]!.map((x) => PriceCardWinnerData.fromJson(x))),
+                json['data']!.map((x) => PriceCardWinnerData.fromJson(x)),),
       );
 }
 
@@ -37,13 +37,13 @@ class PriceCardWinnerData {
 
   factory PriceCardWinnerData.fromJson(Map<String, dynamic> json) =>
       PriceCardWinnerData(
-        priceCard: json["PriceCard"] == null
+        priceCard: json['PriceCard'] == null
             ? []
             : List<PriceCardData>.from(
-                json["PriceCard"]!.map((x) => PriceCardData.fromJson(x))),
+                json['PriceCard']!.map((x) => PriceCardData.fromJson(x)),),
         details:
-            json["details"] == null ? null : Details.fromJson(json["details"]),
-        winner: ModelParsers.toIntParser(json["winner"]),
+            json['details'] == null ? null : Details.fromJson(json['details']),
+        winner: ModelParsers.toIntParser(json['winner']),
       );
 }
 
@@ -57,8 +57,8 @@ class Details {
   });
 
   factory Details.fromJson(Map<String, dynamic> json) => Details(
-        totalWiningAmount: ModelParsers.toNumParser(json["totalWiningAmount"]),
-        fristPrice: ModelParsers.toNumParser(json["fristPrice"]),
+        totalWiningAmount: ModelParsers.toNumParser(json['totalWiningAmount']),
+        fristPrice: ModelParsers.toNumParser(json['fristPrice']),
       );
 }
 
@@ -76,9 +76,9 @@ class PriceCardData {
   });
 
   factory PriceCardData.fromJson(Map<String, dynamic> json) => PriceCardData(
-        rank: ModelParsers.toIntParser(json["rank"]),
-        prize: ModelParsers.toNumParser(json["prize"]),
-        min: ModelParsers.toIntParser(json["min"]),
-        max: ModelParsers.toIntParser(json["max"]),
+        rank: ModelParsers.toIntParser(json['rank']),
+        prize: ModelParsers.toNumParser(json['prize']),
+        min: ModelParsers.toIntParser(json['min']),
+        max: ModelParsers.toIntParser(json['max']),
       );
 }

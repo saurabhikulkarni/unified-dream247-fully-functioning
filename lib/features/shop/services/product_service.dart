@@ -69,7 +69,7 @@ class ProductService {
       }
 
       return ProductModel.fromJson(
-          result.data!['product'] as Map<String, dynamic>);
+          result.data!['product'] as Map<String, dynamic>,);
     } catch (e) {
       throw Exception('Error fetching product: $e');
     }

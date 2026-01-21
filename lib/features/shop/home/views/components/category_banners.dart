@@ -40,7 +40,7 @@ class CategoryBanners extends StatelessWidget {
                 title: banner.categoryName,
                 subtitle: banner.subtitle,
                 image: banner.bannerImageUrl,
-                buttonText: "Shop Now",
+                buttonText: 'Shop Now',
                 onPressed: () => _navigateToCategoryProducts(
                   context,
                   banner.id,

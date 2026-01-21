@@ -18,11 +18,11 @@ class VerificationDatasource implements VerificationRepositories {
 
   @override
   Future<bool?> socialLogin(
-      BuildContext context, String email, String deviceId) async {
+      BuildContext context, String email, String deviceId,) async {
     final url = APIServerUrl.kycServerUrl + APIServerUrl.socialAuthentication;
     final body = {
       ApiServerKeys.email: email,
-      ApiServerKeys.deviceToken: deviceId
+      ApiServerKeys.deviceToken: deviceId,
     };
 
     final response = await clientWithToken.post(url, body: body);
@@ -30,11 +30,11 @@ class VerificationDatasource implements VerificationRepositories {
     if (ApiServerUtil.validateStatusCode(response.statusCode ?? 200)) {
       if (res[ApiResponseString.success] == true) {
         ApiServerUtil.showAppToastforApi(
-            res[ApiResponseString.message], context);
+            res[ApiResponseString.message], context,);
         return true;
       } else {
         ApiServerUtil.showAppToastforApi(
-            res[ApiResponseString.message], context);
+            res[ApiResponseString.message], context,);
       }
     } else {
       if (context.mounted) {
@@ -46,7 +46,7 @@ class VerificationDatasource implements VerificationRepositories {
 
   @override
   Future<Map<String, dynamic>?> submitAadharDetails(
-      BuildContext context, String aadhaarNumber) async {
+      BuildContext context, String aadhaarNumber,) async {
     final url = APIServerUrl.kycServerUrl + APIServerUrl.sendAadhaarOTP;
 
     final body = {ApiServerKeys.aadharNumber: aadhaarNumber};
@@ -57,11 +57,11 @@ class VerificationDatasource implements VerificationRepositories {
     if (ApiServerUtil.validateStatusCode(response.statusCode ?? 200)) {
       if (res[ApiResponseString.success] == true) {
         ApiServerUtil.showAppToastforApi(
-            res[ApiResponseString.message], context);
+            res[ApiResponseString.message], context,);
         return response.data;
       } else {
         ApiServerUtil.showAppToastforApi(
-            res[ApiResponseString.message], context);
+            res[ApiResponseString.message], context,);
       }
     } else {
       if (context.mounted) {
@@ -73,13 +73,13 @@ class VerificationDatasource implements VerificationRepositories {
 
   @override
   Future<bool?> verifyAadharOtp(BuildContext context, String refId, String otp,
-      String aadhaarNumber) async {
+      String aadhaarNumber,) async {
     final url = APIServerUrl.kycServerUrl + APIServerUrl.verifyAadhaarOTP;
 
     final body = {
       ApiServerKeys.refId: refId,
       ApiServerKeys.otp: otp,
-      ApiServerKeys.aadharNumber: aadhaarNumber
+      ApiServerKeys.aadharNumber: aadhaarNumber,
     };
 
     final response = await clientWithToken.post(url, body: body);
@@ -87,7 +87,7 @@ class VerificationDatasource implements VerificationRepositories {
     if (ApiServerUtil.validateStatusCode(response.statusCode ?? 200)) {
       if (res[ApiResponseString.success] == true) {
         ApiServerUtil.showAppToastforApi(
-            res[ApiResponseString.message], context);
+            res[ApiResponseString.message], context,);
 
         if (context.mounted) {
           Provider.of<KycDetailsProvider>(context, listen: false)
@@ -98,7 +98,7 @@ class VerificationDatasource implements VerificationRepositories {
         return true;
       } else {
         ApiServerUtil.showAppToastforApi(
-            res[ApiResponseString.message], context);
+            res[ApiResponseString.message], context,);
       }
     } else {
       if (context.mounted) {
@@ -110,12 +110,12 @@ class VerificationDatasource implements VerificationRepositories {
 
   @override
   Future<bool?> submitPANDetails(
-      BuildContext context, String panNumber, String userName) async {
+      BuildContext context, String panNumber, String userName,) async {
     final url = APIServerUrl.kycServerUrl + APIServerUrl.verifyPanRequest;
 
     final body = {
       ApiServerKeys.panNumber: panNumber,
-      ApiServerKeys.name: userName
+      ApiServerKeys.name: userName,
     };
 
     final response = await clientWithToken.post(url, body: body);
@@ -124,12 +124,12 @@ class VerificationDatasource implements VerificationRepositories {
     if (ApiServerUtil.validateStatusCode(response.statusCode ?? 200)) {
       if (res[ApiResponseString.status] == true) {
         ApiServerUtil.showAppToastforApi(
-            res[ApiResponseString.message], context);
+            res[ApiResponseString.message], context,);
 
         return true;
       } else {
         ApiServerUtil.showAppToastforApi(
-            res[ApiResponseString.message], context);
+            res[ApiResponseString.message], context,);
 
         if (context.mounted) {
           Provider.of<KycDetailsProvider>(context, listen: false)
@@ -155,7 +155,7 @@ class VerificationDatasource implements VerificationRepositories {
       String accountNumber,
       String ifsc,
       String cityName,
-      String bankName) async {
+      String bankName,) async {
     final url = APIServerUrl.kycServerUrl + APIServerUrl.verifyBankRequest;
 
     final body = {
@@ -163,9 +163,9 @@ class VerificationDatasource implements VerificationRepositories {
       ApiServerKeys.accNo: accountNumber,
       ApiServerKeys.confirmAccNo: accountNumber,
       ApiServerKeys.ifscCode: ifsc,
-      ApiServerKeys.type: "bank",
+      ApiServerKeys.type: 'bank',
       ApiServerKeys.cityName: cityName,
-      ApiServerKeys.bankName: bankName
+      ApiServerKeys.bankName: bankName,
     };
 
     final response = await clientWithToken.post(url, body: body);
@@ -174,7 +174,7 @@ class VerificationDatasource implements VerificationRepositories {
     if (ApiServerUtil.validateStatusCode(response.statusCode ?? 200)) {
       if (res[ApiResponseString.status] == true) {
         ApiServerUtil.showAppToastforApi(
-            res[ApiResponseString.message], context);
+            res[ApiResponseString.message], context,);
         if (context.mounted) {
           Provider.of<KycDetailsProvider>(context, listen: false)
               .kycData!
@@ -189,7 +189,7 @@ class VerificationDatasource implements VerificationRepositories {
         return true;
       } else {
         ApiServerUtil.showAppToastforApi(
-            res[ApiResponseString.message], context);
+            res[ApiResponseString.message], context,);
       }
     } else {
       if (context.mounted) {
@@ -214,7 +214,7 @@ class VerificationDatasource implements VerificationRepositories {
         return kycDetails;
       } else {
         ApiServerUtil.showAppToastforApi(
-            res[ApiResponseString.message], context);
+            res[ApiResponseString.message], context,);
       }
     } else {
       if (context.mounted) {

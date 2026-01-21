@@ -35,8 +35,8 @@ class SingleTabPlayer extends StatefulWidget {
 }
 
 class _SingleTabPlayerState extends State<SingleTabPlayer> {
-  String sortBy = "";
-  String filter = "";
+  String sortBy = '';
+  String filter = '';
   bool isPointsEnable = false;
   bool isCreditEnable = false;
   bool isSelectedPlayerEnable = false;
@@ -52,8 +52,8 @@ class _SingleTabPlayerState extends State<SingleTabPlayer> {
   Widget build(BuildContext context) {
     widget.list.sort(
       (a, b) => num.parse(
-        b.totalpoints ?? "0",
-      ).compareTo(num.parse(a.totalpoints ?? "0")),
+        b.totalpoints ?? '0',
+      ).compareTo(num.parse(a.totalpoints ?? '0')),
     );
 
     if (sortBy == 'players') {
@@ -76,11 +76,11 @@ class _SingleTabPlayerState extends State<SingleTabPlayer> {
       widget.list.sort(
         (a, b) => isPointsEnable
             ? num.parse(
-                a.totalpoints ?? "0",
-              ).compareTo(num.parse(b.totalpoints ?? "0"))
+                a.totalpoints ?? '0',
+              ).compareTo(num.parse(b.totalpoints ?? '0'))
             : num.parse(
-                b.totalpoints ?? "0",
-              ).compareTo(num.parse(a.totalpoints ?? "0")),
+                b.totalpoints ?? '0',
+              ).compareTo(num.parse(a.totalpoints ?? '0')),
       );
     }
     List<CreateTeamPlayersData> listFiltered = [];
@@ -148,7 +148,7 @@ class _SingleTabPlayerState extends State<SingleTabPlayer> {
               InkWell(
                 onTap: () {
                   setState(() {
-                    sortBy = "players";
+                    sortBy = 'players';
                     isSelectedPlayerEnable = !isSelectedPlayerEnable;
                   });
                 },
@@ -166,7 +166,7 @@ class _SingleTabPlayerState extends State<SingleTabPlayer> {
                           fontSize: 12,
                         ),
                       ),
-                      if (sortBy == "players")
+                      if (sortBy == 'players')
                         Icon(
                           isSelectedPlayerEnable
                               ? Icons.arrow_upward
@@ -181,7 +181,7 @@ class _SingleTabPlayerState extends State<SingleTabPlayer> {
               InkWell(
                 onTap: () {
                   setState(() {
-                    sortBy = "points";
+                    sortBy = 'points';
                     isPointsEnable = !isPointsEnable;
                   });
                 },
@@ -197,7 +197,7 @@ class _SingleTabPlayerState extends State<SingleTabPlayer> {
                           fontSize: 12,
                         ),
                       ),
-                      if (sortBy == "points")
+                      if (sortBy == 'points')
                         Icon(
                           isPointsEnable
                               ? Icons.arrow_upward
@@ -214,7 +214,7 @@ class _SingleTabPlayerState extends State<SingleTabPlayer> {
                 child: InkWell(
                   onTap: () {
                     setState(() {
-                      sortBy = "credits";
+                      sortBy = 'credits';
                       isCreditEnable = !isCreditEnable;
                     });
                   },
@@ -230,7 +230,7 @@ class _SingleTabPlayerState extends State<SingleTabPlayer> {
                             fontSize: 12,
                           ),
                         ),
-                        if (sortBy == "credits")
+                        if (sortBy == 'credits')
                           Icon(
                             isCreditEnable
                                 ? Icons.arrow_upward
@@ -376,7 +376,7 @@ class _SingleTabPlayerState extends State<SingleTabPlayer> {
                     InkWell(
                       onTap: () {
                         filter = 'team1';
-                        widget.changeFilter("team1");
+                        widget.changeFilter('team1');
                         Navigator.pop(myContext);
                         setState(() {});
                       },
@@ -390,7 +390,7 @@ class _SingleTabPlayerState extends State<SingleTabPlayer> {
                               children: [
                                 Text(
                                   '${AppSingleton.singleton.matchData.team1Name}',
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     color: AppColors.letterColor,
                                     fontSize: 14,
                                     fontWeight: FontWeight.w600,
@@ -398,7 +398,7 @@ class _SingleTabPlayerState extends State<SingleTabPlayer> {
                                 ),
                                 Text(
                                   '${AppSingleton.singleton.matchData.teamfullname1}',
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     color: AppColors.letterColor,
                                     fontSize: 12,
                                     fontWeight: FontWeight.w300,
@@ -420,7 +420,7 @@ class _SingleTabPlayerState extends State<SingleTabPlayer> {
                     InkWell(
                       onTap: () {
                         filter = 'team2';
-                        widget.changeFilter("team2");
+                        widget.changeFilter('team2');
                         Navigator.pop(myContext);
                         setState(() {});
                       },
@@ -434,7 +434,7 @@ class _SingleTabPlayerState extends State<SingleTabPlayer> {
                               children: [
                                 Text(
                                   '${AppSingleton.singleton.matchData.team2Name}',
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     color: AppColors.letterColor,
                                     fontSize: 14,
                                     fontWeight: FontWeight.w600,
@@ -442,7 +442,7 @@ class _SingleTabPlayerState extends State<SingleTabPlayer> {
                                 ),
                                 Text(
                                   '${AppSingleton.singleton.matchData.teamfullname2}',
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     color: AppColors.letterColor,
                                     fontSize: 12,
                                     fontWeight: FontWeight.w300,
@@ -464,7 +464,7 @@ class _SingleTabPlayerState extends State<SingleTabPlayer> {
                     InkWell(
                       onTap: () {
                         filter = 'both';
-                        widget.changeFilter("both");
+                        widget.changeFilter('both');
                         Navigator.pop(myContext);
                         setState(() {});
                       },

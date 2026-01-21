@@ -33,9 +33,9 @@ class PaymentProcess extends StatelessWidget {
           children: [
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 30),
-              color: (paymentStatus == "Success")
+              color: (paymentStatus == 'Success')
                   ? AppColors.green
-                  : (paymentStatus == "Failure")
+                  : (paymentStatus == 'Failure')
                       ? AppColors.whiteFade1
                       : AppColors.yellowColor,
               height: MediaQuery.of(context).size.height * 0.35,
@@ -45,20 +45,20 @@ class PaymentProcess extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Icon(
-                    (paymentStatus == "Success")
+                    (paymentStatus == 'Success')
                         ? Icons.verified_user
-                        : (paymentStatus == "Failure")
+                        : (paymentStatus == 'Failure')
                             ? Icons.gpp_maybe
                             : Icons.schedule,
                     size: 40,
                     color: AppColors.white,
                   ),
                   Text(
-                    (paymentStatus == "Success")
-                        ? "Payment Successful"
-                        : (paymentStatus == "Failure")
-                            ? "Payment Failed"
-                            : "Payment Processing",
+                    (paymentStatus == 'Success')
+                        ? 'Payment Successful'
+                        : (paymentStatus == 'Failure')
+                            ? 'Payment Failed'
+                            : 'Payment Processing',
                     style: const TextStyle(
                       color: AppColors.white,
                       fontSize: 20,
@@ -67,11 +67,11 @@ class PaymentProcess extends StatelessWidget {
                   ),
                   const SizedBox(height: 20),
                   Text(
-                    (paymentStatus == "Success")
-                        ? "Your transaction was processed securely. We appreciate your trust in us."
-                        : (paymentStatus == "Failure")
-                            ? "Your transaction has been failed. Please try again in sometime."
-                            : "Your transaction will be processed securely. We appreciate your trust in us.",
+                    (paymentStatus == 'Success')
+                        ? 'Your transaction was processed securely. We appreciate your trust in us.'
+                        : (paymentStatus == 'Failure')
+                            ? 'Your transaction has been failed. Please try again in sometime.'
+                            : 'Your transaction will be processed securely. We appreciate your trust in us.',
                     textAlign: TextAlign.center,
                     style: const TextStyle(
                       color: AppColors.white,
@@ -89,7 +89,7 @@ class PaymentProcess extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
-                    "Transaction Details",
+                    'Transaction Details',
                     style: TextStyle(
                       color: AppColors.letterColor,
                       fontSize: 14,
@@ -100,7 +100,7 @@ class PaymentProcess extends StatelessWidget {
                   Row(
                     children: [
                       Text(
-                        "${userData?.mobile}",
+                        '${userData?.mobile}',
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
@@ -111,7 +111,7 @@ class PaymentProcess extends StatelessWidget {
                       Image.asset(Images.verified, height: 20, width: 20),
                       const Spacer(),
                       Text(
-                        "${Strings.indianRupee}$amount",
+                        '${Strings.indianRupee}$amount',
                         style: GoogleFonts.tomorrow(
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
@@ -121,16 +121,16 @@ class PaymentProcess extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 30),
-                  (paymentStatus == "Success")
+                  (paymentStatus == 'Success')
                       ? AccountGlobalWidget.detailRow(
-                          "Transaction ID",
-                          success?.paymentId?.toUpperCase() ?? "---",
+                          'Transaction ID',
+                          success?.paymentId?.toUpperCase() ?? '---',
                           context,
                         )
                       : const SizedBox.shrink(),
                   AccountGlobalWidget.detailRow(
-                    "Total Amount to add:",
-                    "${Strings.indianRupee}$amount",
+                    'Total Amount to add:',
+                    '${Strings.indianRupee}$amount',
                     context,
                   ),
                   InkWell(

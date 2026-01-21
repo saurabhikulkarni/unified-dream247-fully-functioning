@@ -20,17 +20,17 @@ class StoriesModel {
   });
 
   StoriesModel.fromJson(Map<String, dynamic> json) {
-    id = ModelParsers.toStringParser(json["_id"]);
-    title = ModelParsers.toStringParser(json["title"]);
-    storyData = json["storyData"] == null
+    id = ModelParsers.toStringParser(json['_id']);
+    title = ModelParsers.toStringParser(json['title']);
+    storyData = json['storyData'] == null
         ? null
-        : (json["storyData"] as List)
+        : (json['storyData'] as List)
             .map((e) => SingleStoryData.fromJson(e))
             .toList();
-    storyProfileImage = ModelParsers.toStringParser(json["storyProfileImage"]);
-    isActive = ModelParsers.toBoolParser(json["is_active"]);
-    createdAt = ModelParsers.toStringParser(json["createdAt"]);
-    updatedAt = ModelParsers.toStringParser(json["updatedAt"]);
+    storyProfileImage = ModelParsers.toStringParser(json['storyProfileImage']);
+    isActive = ModelParsers.toBoolParser(json['is_active']);
+    createdAt = ModelParsers.toStringParser(json['createdAt']);
+    updatedAt = ModelParsers.toStringParser(json['updatedAt']);
   }
 }
 
@@ -41,7 +41,7 @@ class SingleStoryData {
   SingleStoryData({this.url, this.type});
 
   SingleStoryData.fromJson(Map<String, dynamic> json) {
-    url = ModelParsers.toStringParser(json["url"]);
-    type = ModelParsers.toStringParser(json["type"]);
+    url = ModelParsers.toStringParser(json['url']);
+    type = ModelParsers.toStringParser(json['type']);
   }
 }

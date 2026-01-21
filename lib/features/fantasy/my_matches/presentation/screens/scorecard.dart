@@ -39,15 +39,15 @@ class _ScorecardState extends State<Scorecard> {
 
   Future<void> fetchScore() async {
     var provider = Provider.of<ScorecardProvider>(context, listen: false);
-    String matchKey = AppSingleton.singleton.matchData.id ?? "";
+    String matchKey = AppSingleton.singleton.matchData.id ?? '';
 
     setState(() {
       isLoading = true;
     });
 
-    if (widget.mode == "Completed" ||
-        widget.mode == "Abandoned" ||
-        widget.mode == "Cancelled") {
+    if (widget.mode == 'Completed' ||
+        widget.mode == 'Abandoned' ||
+        widget.mode == 'Cancelled') {
       if ((provider.scoreCard[matchKey]?.isNotEmpty ?? false)) {
         setState(() {
           list = provider.scoreCard[matchKey];
@@ -66,7 +66,7 @@ class _ScorecardState extends State<Scorecard> {
       }
     }
 
-    if (widget.mode == "Live") {
+    if (widget.mode == 'Live') {
       final data = await myMatchesUsecases.getScorecard(context);
       if (mounted) {
         setState(() {
@@ -90,7 +90,7 @@ class _ScorecardState extends State<Scorecard> {
     if ((list ?? []).isEmpty) {
       return const Center(
         child: Text(
-          "No Score Found",
+          'No Score Found',
           style: TextStyle(
             color: AppColors.letterColor,
             fontSize: 14,
@@ -133,17 +133,17 @@ class _ScorecardState extends State<Scorecard> {
                                               .singleton.matchData.team1Name)
                                       ? AppSingleton
                                               .singleton.matchData.team2Logo ??
-                                          ""
+                                          ''
                                       : AppSingleton
                                               .singleton.matchData.team1Logo ??
-                                          "",
+                                          '',
                                   height: 35,
                                   width: 35,
                                 ),
                               ),
                               const SizedBox(width: 5),
                               Text(
-                                "${list?[0].shortName}",
+                                '${list?[0].shortName}',
                                 style: GoogleFonts.exo2(
                                   fontSize: 16,
                                   color: AppColors.letterColor,
@@ -155,7 +155,7 @@ class _ScorecardState extends State<Scorecard> {
                           Row(
                             children: [
                               Text(
-                                list?[0].scores ?? "",
+                                list?[0].scores ?? '',
                                 maxLines: 1,
                                 overflow: TextOverflow.clip,
                                 style: GoogleFonts.tomorrow(
@@ -212,17 +212,17 @@ class _ScorecardState extends State<Scorecard> {
                                             .singleton.matchData.team2Name)
                                     ? AppSingleton
                                             .singleton.matchData.team1Logo ??
-                                        ""
+                                        ''
                                     : AppSingleton
                                             .singleton.matchData.team2Logo ??
-                                        "",
+                                        '',
                                 height: 35,
                                 width: 35,
                               ),
                             ),
                             const SizedBox(width: 5),
                             Text(
-                              "${list?[1].shortName}",
+                              '${list?[1].shortName}',
                               style: GoogleFonts.exo2(
                                 fontSize: 16,
                                 color: AppColors.letterColor,
@@ -234,7 +234,7 @@ class _ScorecardState extends State<Scorecard> {
                         Row(
                           children: [
                             Text(
-                              list?[1].scores ?? "",
+                              list?[1].scores ?? '',
                               maxLines: 1,
                               overflow: TextOverflow.clip,
                               style: GoogleFonts.tomorrow(

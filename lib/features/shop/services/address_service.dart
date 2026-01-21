@@ -53,7 +53,7 @@ class AddressService {
           .map((json) => AddressModel.fromJson({
                 ...json as Map<String, dynamic>,
                 'userId': userId,
-              }))
+              }),)
           .toList();
     } catch (e) {
       throw Exception('Error fetching addresses: $e');

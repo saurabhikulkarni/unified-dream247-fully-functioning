@@ -30,7 +30,7 @@ class MatchCard extends StatelessWidget {
         AppSingleton().matchData = data;
         AppUtils.teamsCount.value = 0;
         AppUtils.contestCount.value = 0;
-        AppNavigation.gotoUpcomingContestScreen(context, "upcoming");
+        AppNavigation.gotoUpcomingContestScreen(context, 'upcoming');
       },
       child: Container(
         margin: const EdgeInsets.only(top: 12, bottom: 6),
@@ -58,7 +58,7 @@ class MatchCard extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Text(
-                      data.seriesname ?? "",
+                      data.seriesname ?? '',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: GoogleFonts.poppins(
@@ -109,7 +109,7 @@ class MatchCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    AppUtils.formatDate(data.timeStart ?? ""),
+                    AppUtils.formatDate(data.timeStart ?? ''),
                     style: GoogleFonts.poppins(
                       fontSize: 12.sp,
                       fontWeight: FontWeight.w500,
@@ -117,13 +117,13 @@ class MatchCard extends StatelessWidget {
                     ),
                   ),
                   Container(
-                    padding: EdgeInsets.all(5),
+                    padding: const EdgeInsets.all(5),
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8),
-                        gradient: LinearGradient(colors: [
-                          const Color.fromARGB(255, 251, 246, 247),
-                          const Color.fromARGB(255, 254, 220, 223)
-                        ])),
+                        gradient: const LinearGradient(colors: [
+                          Color.fromARGB(255, 251, 246, 247),
+                          Color.fromARGB(255, 254, 220, 223),
+                        ],),),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -134,7 +134,7 @@ class MatchCard extends StatelessWidget {
                         ),
                         4.horizontalSpace,
                         Text(
-                          "Win ${Strings.indianRupee}${AppUtils.changeNumberToValue(data.mega ?? 0)}",
+                          'Win ${Strings.indianRupee}${AppUtils.changeNumberToValue(data.mega ?? 0)}',
                           style: GoogleFonts.poppins(
                             fontSize: 12.sp,
                             color: Colors.deepOrange,
@@ -162,7 +162,7 @@ class MatchCard extends StatelessWidget {
           children: [
             ClipOval(
               child: Image.network(
-                logo ?? "",
+                logo ?? '',
                 height: 32.h,
                 width: 32.w,
                 errorBuilder: (_, __, ___) =>
@@ -171,7 +171,7 @@ class MatchCard extends StatelessWidget {
             ),
             6.horizontalSpace,
             Text(
-              name ?? "",
+              name ?? '',
               style: GoogleFonts.poppins(
                 fontWeight: FontWeight.bold,
                 fontSize: 15.sp,
@@ -182,7 +182,7 @@ class MatchCard extends StatelessWidget {
         SizedBox(
           width: 80.sp,
           child: Text(
-            fullname ?? "",
+            fullname ?? '',
             overflow: TextOverflow.ellipsis,
             style: GoogleFonts.poppins(
               fontSize: 10.sp,
@@ -195,7 +195,7 @@ class MatchCard extends StatelessWidget {
 
   // 🔸 MATCH STATUS BADGE -----------------------------------
   Widget _statusBadge() {
-    if (data.launchStatus == "live") {
+    if (data.launchStatus == 'live') {
       return Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
         decoration: BoxDecoration(
@@ -203,7 +203,7 @@ class MatchCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(8),
         ),
         child: Text(
-          "Live",
+          'Live',
           style: GoogleFonts.poppins(
             color: Colors.red,
             fontSize: 12.sp,
@@ -221,7 +221,7 @@ class MatchCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(8),
         ),
         child: Text(
-          "Lineup",
+          'Lineup',
           style: GoogleFonts.poppins(
             color: Colors.green,
             fontSize: 12.sp,
@@ -238,7 +238,7 @@ class MatchCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
       ),
       child: Text(
-        "Upcoming",
+        'Upcoming',
         style: GoogleFonts.poppins(
           color: Colors.grey[700],
           fontSize: 12.sp,
@@ -262,7 +262,7 @@ class MatchCard extends StatelessWidget {
           Icon(Icons.check_circle, color: Colors.green, size: 14.sp),
           4.horizontalSpace,
           Text(
-            "LINEUP",
+            'LINEUP',
             style: GoogleFonts.poppins(
               color: Colors.green,
               fontSize: 11.sp,
@@ -279,12 +279,12 @@ class MatchCard extends StatelessWidget {
     return Column(
       children: [
         AppUtils().showCountdownTimerTextColor(
-          data.timeStart ?? "",
+          data.timeStart ?? '',
           Colors.red,
         ),
         4.verticalSpace,
         Text(
-          AppUtils.formatTime(data.timeStart ?? ""),
+          AppUtils.formatTime(data.timeStart ?? ''),
           style: GoogleFonts.poppins(
             fontSize: 11.sp,
             fontWeight: FontWeight.w600,

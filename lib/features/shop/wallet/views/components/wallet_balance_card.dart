@@ -46,11 +46,11 @@ class WalletBalanceCard extends StatelessWidget {
             children: [
               // Available Shopping Token Text
               Text(
-                "Available Shopping Tokens",
+                'Available Shopping Tokens',
                 style: TextStyle(
                     color: whileColor80,
                     fontWeight: FontWeight.w500,
-                    fontSize: titleFontSize),
+                    fontSize: titleFontSize,),
               ),
               SizedBox(height: context.responsiveSpacing),
               // Shopping Tokens - Centered

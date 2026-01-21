@@ -93,7 +93,7 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Track Order"),
+        title: const Text('Track Order'),
         centerTitle: true,
       ),
       body: FutureBuilder<ShiprocketOrderData?>(
@@ -117,12 +117,12 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen> {
                   ),
                   const SizedBox(height: defaultPadding),
                   Text(
-                    "Unable to load tracking details",
+                    'Unable to load tracking details',
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                   const SizedBox(height: defaultPadding / 2),
                   Text(
-                    "Please try again later",
+                    'Please try again later',
                     style: TextStyle(
                       fontSize: 14,
                       color: Colors.grey.shade600,
@@ -135,7 +135,7 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen> {
                         _trackingFuture = _fetchTrackingData();
                       });
                     },
-                    child: const Text("Retry"),
+                    child: const Text('Retry'),
                   ),
                 ],
               ),
@@ -217,7 +217,7 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen> {
   }
 
   Widget _buildOrderStatusCard(
-      ShiprocketOrderData trackingData, BuildContext context) {
+      ShiprocketOrderData trackingData, BuildContext context,) {
     Color statusColor = _getStatusColor(trackingData.orderStatus);
 
     return Container(
@@ -242,7 +242,7 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Order Status",
+                      'Order Status',
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.grey.shade600,
@@ -296,7 +296,7 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen> {
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    "Current Location: ${trackingData.currentLocation}",
+                    'Current Location: ${trackingData.currentLocation}',
                     style: TextStyle(
                       fontSize: 13,
                       color: Colors.grey.shade700,
@@ -324,13 +324,13 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "Shipping Details",
+            'Shipping Details',
             style: Theme.of(context).textTheme.titleSmall,
           ),
           const SizedBox(height: defaultPadding),
-          _buildDetailRow("Courier", trackingData.courierName ?? "N/A"),
+          _buildDetailRow('Courier', trackingData.courierName ?? 'N/A'),
           _buildDetailRow(
-              "Tracking Number", trackingData.trackingNumber ?? "N/A"),
+              'Tracking Number', trackingData.trackingNumber ?? 'N/A',),
         ],
       ),
     );

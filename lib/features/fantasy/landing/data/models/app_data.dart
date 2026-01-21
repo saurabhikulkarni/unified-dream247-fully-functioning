@@ -101,7 +101,7 @@ class AppVersionResponse {
   AppVersionResponse.fromJson(Map<String, dynamic> json) {
     version = ModelParsers.toIntParser(json['version']);
     maintenance = ModelParsers.toIntParser(json['maintenance']);
-    maintenanceIos = ModelParsers.toIntParser(json["iOSmaintenance"]);
+    maintenanceIos = ModelParsers.toIntParser(json['iOSmaintenance']);
     point = ModelParsers.toStringParser(json['point']);
     appstatus = ModelParsers.toStringParser(json['appstatus']);
     androidversion = ModelParsers.toIntParser(json['androidversion']);
@@ -122,7 +122,7 @@ class AppVersionResponse {
     supportemail = ModelParsers.toStringParser(json['supportemail']);
     updationmessage = ModelParsers.toStringParser(json['updationmessage']);
     disableWithdraw = ModelParsers.toIntParser(json['disableWithdraw']);
-    s3Folder = ModelParsers.toStringParser(json["s3Folder"]);
+    s3Folder = ModelParsers.toStringParser(json['s3Folder']);
     if (json['games'] != null) {
       games = <GamesGetSet>[];
       json['games'].forEach((v) {
@@ -137,42 +137,42 @@ class AppVersionResponse {
     }
     seriesLeaderboard = ModelParsers.toIntParser(json["seriesLeaderboard"]);
     investmentLeaderboard = ModelParsers.toIntParser(
-      json["investmentLeaderboard"],
+      json['investmentLeaderboard'],
     );
-    privateContest = ModelParsers.toIntParser(json["privateContest"]);
-    guruTeam = ModelParsers.toIntParser(json["guruTeam"]);
-    tds = ModelParsers.toIntParser(json["tds"]);
-    myJoinedContest = ModelParsers.toBoolParser(json["myjoinedContest"]);
-    transactionDetails = ModelParsers.toBoolParser(json["transactionDetails"]);
-    p2pCashback = ModelParsers.toNumParser(json["p_to_p"]);
+    privateContest = ModelParsers.toIntParser(json['privateContest']);
+    guruTeam = ModelParsers.toIntParser(json['guruTeam']);
+    tds = ModelParsers.toIntParser(json['tds']);
+    myJoinedContest = ModelParsers.toBoolParser(json['myjoinedContest']);
+    transactionDetails = ModelParsers.toBoolParser(json['transactionDetails']);
+    p2pCashback = ModelParsers.toNumParser(json['p_to_p']);
     winningDepositCashback = ModelParsers.toNumParser(
-      json["winning_to_deposit"],
+      json['winning_to_deposit'],
     );
     verificationOnJoinContest = ModelParsers.toBoolParser(
-      json["verificationOnJoinContest"],
+      json['verificationOnJoinContest'],
     );
     viewcompletedmatches = ModelParsers.toBoolParser(
-      json["viewcompletedmatches"],
+      json['viewcompletedmatches'],
     );
-    androidpaymentgateway = json["androidpaymentgateway"] == null
+    androidpaymentgateway = json['androidpaymentgateway'] == null
         ? null
-        : PaymentGatewayMethod.fromJson(json["androidpaymentgateway"]);
-    iospaymentgateway = json["iospaymentgateway"] == null
+        : PaymentGatewayMethod.fromJson(json['androidpaymentgateway']);
+    iospaymentgateway = json['iospaymentgateway'] == null
         ? null
-        : PaymentGatewayMethod.fromJson(json["iospaymentgateway"]);
-    selftransfer = json["selftransfer"] == null
+        : PaymentGatewayMethod.fromJson(json['iospaymentgateway']);
+    selftransfer = json['selftransfer'] == null
         ? null
-        : Transfer.fromJson(json["selftransfer"]);
-    ptoptransfer = json["ptoptransfer"] == null
+        : Transfer.fromJson(json['selftransfer']);
+    ptoptransfer = json['ptoptransfer'] == null
         ? null
-        : Transfer.fromJson(json["ptoptransfer"]);
-    pdfUrl = ModelParsers.toStringParser(json["pdfUrl"]);
-    cricketgame = ModelParsers.toBoolParser(json["cricketgame"]);
-    dualgame = ModelParsers.toBoolParser(json["dualgame"]);
-    flexibleContest = ModelParsers.toIntParser(json["flexibleContest"]);
-    applyForGuru = ModelParsers.toBoolParser(json["applyForGuru"]);
-    playerJsonUrl = ModelParsers.toStringParser(json["playerJsonUrl"]);
-    gst = ModelParsers.toIntParser(json["gst"]);
+        : Transfer.fromJson(json['ptoptransfer']);
+    pdfUrl = ModelParsers.toStringParser(json['pdfUrl']);
+    cricketgame = ModelParsers.toBoolParser(json['cricketgame']);
+    dualgame = ModelParsers.toBoolParser(json['dualgame']);
+    flexibleContest = ModelParsers.toIntParser(json['flexibleContest']);
+    applyForGuru = ModelParsers.toBoolParser(json['applyForGuru']);
+    playerJsonUrl = ModelParsers.toStringParser(json['playerJsonUrl']);
+    gst = ModelParsers.toIntParser(json['gst']);
   }
 }
 
@@ -195,24 +195,24 @@ class PaymentGatewayMethod {
 
   factory PaymentGatewayMethod.fromJson(Map<String, dynamic> json) =>
       PaymentGatewayMethod(
-        isSabPaisa: json["isSabPaisa"] == null
+        isSabPaisa: json['isSabPaisa'] == null
             ? null
-            : PayLimits.fromJson(json["isSabPaisa"]),
-        isRazorPay: json["isRazorPay"] == null
+            : PayLimits.fromJson(json['isSabPaisa']),
+        isRazorPay: json['isRazorPay'] == null
             ? null
-            : PayLimits.fromJson(json["isRazorPay"]),
-        isCashFree: json["isCashFree"] == null
+            : PayLimits.fromJson(json['isRazorPay']),
+        isCashFree: json['isCashFree'] == null
             ? null
-            : PayLimits.fromJson(json["isCashFree"]),
-        isPhonePe: json["isPhonePe"] == null
+            : PayLimits.fromJson(json['isCashFree']),
+        isPhonePe: json['isPhonePe'] == null
             ? null
-            : PayLimits.fromJson(json["isPhonePe"]),
-        isYesBank: json["isYesBank"] == null
+            : PayLimits.fromJson(json['isPhonePe']),
+        isYesBank: json['isYesBank'] == null
             ? null
-            : PayLimits.fromJson(json["isYesBank"]),
-        isPaySprint: json["isPaySprint"] == null
+            : PayLimits.fromJson(json['isYesBank']),
+        isPaySprint: json['isPaySprint'] == null
             ? null
-            : PayLimits.fromJson(json["isPaySprint"]),
+            : PayLimits.fromJson(json['isPaySprint']),
       );
 }
 
@@ -224,9 +224,9 @@ class PayLimits {
   PayLimits({this.status, this.min, this.max});
 
   factory PayLimits.fromJson(Map<String, dynamic> json) => PayLimits(
-        status: ModelParsers.toBoolParser(json["status"]),
-        min: ModelParsers.toStringParser(json["min"]),
-        max: ModelParsers.toStringParser(json["max"]),
+        status: ModelParsers.toBoolParser(json['status']),
+        min: ModelParsers.toStringParser(json['min']),
+        max: ModelParsers.toStringParser(json['max']),
       );
 }
 
@@ -238,12 +238,11 @@ class Transfer {
   Transfer({this.status, this.min, this.max});
 
   factory Transfer.fromJson(Map<String, dynamic> json) => Transfer(
-        status: ModelParsers.toBoolParser(json["status"]),
-        min: ModelParsers.toIntParser(json["min"]),
-        max: ModelParsers.toIntParser(json["max"]),
+        status: ModelParsers.toBoolParser(json['status']),
+        min: ModelParsers.toIntParser(json['min']),
+        max: ModelParsers.toIntParser(json['max']),
       );
 }
-
 
 class BannerData {
   String? type;
@@ -265,4 +264,3 @@ class BannerData {
     sliderId = ModelParsers.toStringParser(json['sliderid']);
   }
 }
-

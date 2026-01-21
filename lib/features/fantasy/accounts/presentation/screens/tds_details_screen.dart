@@ -25,7 +25,7 @@ class _TdsDetailsScreenState extends State<TdsDetailsScreen> {
   TdsDashboardModel? tdsDataList;
   FinancialReport? selectedTdsData;
   List<String>? financialYearList;
-  String selectedFy = "";
+  String selectedFy = '';
 
   @override
   void initState() {
@@ -39,9 +39,9 @@ class _TdsDetailsScreenState extends State<TdsDetailsScreen> {
       setState(() {
         tdsDataList = response;
         financialYearList = response.financialReport
-            ?.map((e) => e.financialYear ?? "")
+            ?.map((e) => e.financialYear ?? '')
             .toList();
-        selectedFy = financialYearList?.first ?? "2025-2026";
+        selectedFy = financialYearList?.first ?? '2025-2026';
         selectedTdsData = tdsDataList?.financialReport?.firstWhere(
           (element) => element.financialYear == selectedFy,
         );
@@ -94,8 +94,8 @@ class _TdsDetailsScreenState extends State<TdsDetailsScreen> {
                       fontWeight: FontWeight.w500,
                     ),
                     menuStyle: MenuStyle(
-                      backgroundColor: WidgetStatePropertyAll(AppColors.white),
-                      elevation: WidgetStatePropertyAll(5),
+                      backgroundColor: const WidgetStatePropertyAll(AppColors.white),
+                      elevation: const WidgetStatePropertyAll(5),
                       shape: WidgetStatePropertyAll(
                         RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8.0),
@@ -140,7 +140,7 @@ class _TdsDetailsScreenState extends State<TdsDetailsScreen> {
                 ),
                 tdsInfo(
                   Strings.netWinning,
-                  "${Strings.totalCommissionTillDate} ${selectedTdsData?.financialYear}",
+                  '${Strings.totalCommissionTillDate} ${selectedTdsData?.financialYear}',
                   "${Strings.indianRupee}${AppUtils.formatAmount(selectedTdsData?.netWin.toString() ?? "0.0")}",
                 ),
                 Container(
@@ -150,7 +150,7 @@ class _TdsDetailsScreenState extends State<TdsDetailsScreen> {
                 ),
                 tdsInfo(
                   Strings.totalDeposit,
-                  "${Strings.totalDepositTillDate} ${selectedTdsData?.financialYear}",
+                  '${Strings.totalDepositTillDate} ${selectedTdsData?.financialYear}',
                   "${Strings.indianRupee}${AppUtils.formatAmount(selectedTdsData?.successDeposit.toString() ?? "0.0")}",
                 ),
                 Container(
@@ -160,7 +160,7 @@ class _TdsDetailsScreenState extends State<TdsDetailsScreen> {
                 ),
                 tdsInfo(
                   Strings.totalWithdraw,
-                  "${Strings.totalWithdrawTillDate} ${selectedTdsData?.financialYear}",
+                  '${Strings.totalWithdrawTillDate} ${selectedTdsData?.financialYear}',
                   "${Strings.indianRupee}${AppUtils.formatAmount(selectedTdsData?.successWithdraw.toString() ?? "0.0")}",
                 ),
                 Container(
@@ -199,7 +199,7 @@ class _TdsDetailsScreenState extends State<TdsDetailsScreen> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
-                  tdsDataList?.tdsFormula ?? "",
+                  tdsDataList?.tdsFormula ?? '',
                   style: GoogleFonts.exo2(
                     color: AppColors.letterColor,
                     fontWeight: FontWeight.w500,
@@ -207,7 +207,7 @@ class _TdsDetailsScreenState extends State<TdsDetailsScreen> {
                   ),
                 ),
                 Text(
-                  tdsDataList?.example ?? "",
+                  tdsDataList?.example ?? '',
                   style: GoogleFonts.exo2(
                     color: AppColors.letterColor,
                     fontWeight: FontWeight.w500,

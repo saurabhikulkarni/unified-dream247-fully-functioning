@@ -50,7 +50,7 @@ Widget customTextFieldReadOnly(
       floatingLabelBehavior: FloatingLabelBehavior.never,
       labelText: hint,
       filled: true,
-      counterText: "",
+      counterText: '',
       fillColor: AppColors.transparent,
       border: const OutlineInputBorder(
         borderRadius: BorderRadius.all(Radius.circular(10)),
@@ -85,7 +85,7 @@ Widget customTextFieldReadOnlyUppercase(
     decoration: InputDecoration(
       labelText: hint,
       filled: true,
-      counterText: "",
+      counterText: '',
       fillColor: AppColors.transparent,
       border: const OutlineInputBorder(
         borderRadius: BorderRadius.all(Radius.circular(10)),

@@ -20,7 +20,7 @@ class _PaymentWebViewScreenState extends State<PaymentWebViewScreen> {
     return SubContainer(
       showAppBar: true,
       showWalletIcon: false,
-      headerText: "",
+      headerText: '',
       addPadding: false,
       child: Stack(
         children: [

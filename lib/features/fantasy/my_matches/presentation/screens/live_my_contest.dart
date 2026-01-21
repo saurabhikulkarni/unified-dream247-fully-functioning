@@ -56,7 +56,7 @@ class _LiveMyContests extends State<LiveMyContests> {
   }
 
   void _scrollListener() {
-    if (widget.mode == "Live") {
+    if (widget.mode == 'Live') {
       if (_scrollController.position.pixels >=
               _scrollController.position.maxScrollExtent - 200 &&
           shownItemCount < list.length &&
@@ -85,7 +85,7 @@ class _LiveMyContests extends State<LiveMyContests> {
               _scrollController.position.maxScrollExtent &&
           scroll &&
           !isLoadingMore &&
-          skip < num.parse(widget.totalContestCount ?? "0")) {
+          skip < num.parse(widget.totalContestCount ?? '0')) {
         loadData();
       }
     }
@@ -96,14 +96,14 @@ class _LiveMyContests extends State<LiveMyContests> {
       context,
       listen: false,
     );
-    String matchKey = AppSingleton.singleton.matchData.id ?? "";
+    String matchKey = AppSingleton.singleton.matchData.id ?? '';
 
     if (!mounted) return Future.error('Widget not mounted');
 
     setState(() => isLoadingMore = true);
 
     try {
-      if (widget.mode == "Live") {
+      if (widget.mode == 'Live') {
         final result = await myMatchesUsecases.getJoinedLiveContests(
           context,
           0,
@@ -144,7 +144,7 @@ class _LiveMyContests extends State<LiveMyContests> {
         }
       }
     } catch (e, st) {
-      debugPrint("Error: $e\n$st");
+      debugPrint('Error: $e\n$st');
       rethrow;
     } finally {
       if (mounted) {
@@ -176,7 +176,7 @@ class _LiveMyContests extends State<LiveMyContests> {
                 (chunkSize < list.length) ? chunkSize : list.length;
           });
         } catch (e) {
-          debugPrint("Refresh failed: $e");
+          debugPrint('Refresh failed: $e');
         }
       },
       child: FutureBuilder<LiveChallengesModel>(
@@ -213,7 +213,7 @@ class _LiveMyContests extends State<LiveMyContests> {
                         controller: _scrollController,
                         physics: const AlwaysScrollableScrollPhysics(),
                         padding: const EdgeInsets.only(bottom: 20),
-                        itemCount: (widget.mode == "Live")
+                        itemCount: (widget.mode == 'Live')
                             ? (shownItemCount < list.length
                                 ? shownItemCount + 1
                                 : shownItemCount)
@@ -245,8 +245,8 @@ class _LiveMyContests extends State<LiveMyContests> {
                           return LiveContestView(
                             data: data,
                             mode: widget.mode,
-                            challengeId: data.matchchallengeid ?? "",
-                            finalStatus: data.matchFinalstatus ?? "",
+                            challengeId: data.matchchallengeid ?? '',
+                            finalStatus: data.matchFinalstatus ?? '',
                           );
                         },
                       ),
@@ -273,11 +273,11 @@ class _LiveMyContests extends State<LiveMyContests> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          _buildStatsColumn("Investment", investment),
-          _buildStatsColumn("Winning", winning),
+          _buildStatsColumn('Investment', investment),
+          _buildStatsColumn('Winning', winning),
           _buildStatsColumn(
-            "Profit",
-            (widget.mode == "Live") ? 0 : profit,
+            'Profit',
+            (widget.mode == 'Live') ? 0 : profit,
             color: profit >= 0 ? AppColors.green : Colors.red,
           ),
         ],

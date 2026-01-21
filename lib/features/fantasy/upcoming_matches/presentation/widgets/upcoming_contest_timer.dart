@@ -68,7 +68,7 @@ class _UpcomingContestTimerState extends State<UpcomingContestTimer>
                 ),
               ),
               TextSpan(
-                text: " VS ",
+                text: ' VS ',
                 style: GoogleFonts.exo2(
                   fontSize: 14.0,
                   color: AppColors.white,

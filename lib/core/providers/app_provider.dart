@@ -48,19 +48,27 @@ class AppProvider extends ChangeNotifier {
   /// Calls the optimized shop-tokens-only endpoint
   Future<void> refreshShopTokens() async {
     if (_isRefreshing) {
-      debugPrint('⚠️ [APP_PROVIDER] Refresh already in progress, skipping');
-      return;
+      return; // Silent skip if already refreshing
     }
 
     try {
       _isRefreshing = true;
       final prefs = await SharedPreferences.getInstance();
+      
+      // Check if user is logged in first
+      final isLoggedIn = prefs.getBool('is_logged_in') ?? false;
+      if (!isLoggedIn) {
+        // User not logged in, skip refresh silently (don't spam logs)
+        _isRefreshing = false;
+        return;
+      }
+      
       final authToken = prefs.getString('token') ?? 
                        prefs.getString('auth_token') ?? 
                        prefs.getString('fantasy_token');
       
       if (authToken == null || authToken.isEmpty) {
-        debugPrint('⚠️ [APP_PROVIDER] No auth token available for refresh');
+        // No token but logged in - this shouldn't happen normally
         _isRefreshing = false;
         return;
       }

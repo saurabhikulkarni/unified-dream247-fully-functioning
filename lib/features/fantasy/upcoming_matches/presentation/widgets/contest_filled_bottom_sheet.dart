@@ -100,7 +100,7 @@ class _ContestFilledBottomSheetState extends State<ContestFilledBottomSheet>
               ),
               Image.asset(Images.icSadEmoji, height: 30, width: 30),
               Text(
-                "So close! That contest filled up",
+                'So close! That contest filled up',
                 style: GoogleFonts.exo2(
                   color: AppColors.letterColor,
                   fontWeight: FontWeight.bold,
@@ -158,7 +158,7 @@ class _ContestFilledBottomSheetState extends State<ContestFilledBottomSheet>
                         Padding(
                           padding: const EdgeInsets.all(4),
                           child: Text(
-                            "${Strings.indianRupee}${widget.winAmount}",
+                            '${Strings.indianRupee}${widget.winAmount}',
                             style: GoogleFonts.tomorrow(
                               color: AppColors.letterColor,
                               fontWeight: FontWeight.w600,
@@ -234,7 +234,7 @@ class _ContestFilledBottomSheetState extends State<ContestFilledBottomSheet>
               ),
               const SizedBox(height: 15),
               const Text(
-                "You can check other competitors after joining the contest",
+                'You can check other competitors after joining the contest',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 14,
@@ -247,7 +247,7 @@ class _ContestFilledBottomSheetState extends State<ContestFilledBottomSheet>
               MainButton(
                 color: AppColors.green,
                 textColor: AppColors.white,
-                text: "Join ${Strings.indianRupee}${widget.entryFee}",
+                text: 'Join ${Strings.indianRupee}${widget.entryFee}',
                 onTap: () async {
                   Navigator.pop(context);
                   await upcomingMatchUsecase.closedContestJoin(

@@ -25,7 +25,7 @@ class SelectedSize extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.all(defaultPadding),
           child: Text(
-            "Select Size",
+            'Select Size',
             style: Theme.of(context).textTheme.titleSmall,
           ),
         ),
@@ -36,7 +36,7 @@ class SelectedSize extends StatelessWidget {
               final isAvailable = availableIndices == null || availableIndices!.contains(index);
               return Padding(
                 padding: EdgeInsets.only(
-                    left: index == 0 ? defaultPadding : defaultPadding / 2),
+                    left: index == 0 ? defaultPadding : defaultPadding / 2,),
                 child: SizeButton(
                   text: sizes[index],
                   isActive: selectedIndex == index,
@@ -46,7 +46,7 @@ class SelectedSize extends StatelessWidget {
               );
             },
           ),
-        )
+        ),
       ],
     );
   }

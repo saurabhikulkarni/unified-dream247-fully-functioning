@@ -70,15 +70,15 @@ class _JoinByCodeContest extends State<JoinByCodeContest> {
                     child: CustomTextfield(
                       keyboardType: TextInputType.text,
                       controller: codeController,
-                      labelText: "Invite Code",
-                      hintText: "Enter Invite Code",
+                      labelText: 'Invite Code',
+                      hintText: 'Enter Invite Code',
                     ),
                   ),
                   InkWell(
                     onTap: () {
                       if (codeController.text.isEmpty) {
                         appToast(
-                          "Please enter your contest code first",
+                          'Please enter your contest code first',
                           context,
                         );
                       } else {
@@ -138,13 +138,13 @@ class _JoinByCodeContest extends State<JoinByCodeContest> {
                 AppSingleton.singleton.matchData.id!,
                 matchchallengeid,
                 0,
-                "",
-                "",
-                "",
-                "",
+                '',
+                '',
+                '',
+                '',
                 0,
                 false,
-                "",
+                '',
               );
 
               if (hasChanges == true) {
@@ -155,7 +155,7 @@ class _JoinByCodeContest extends State<JoinByCodeContest> {
                   listen: false,
                 ).updateMyTeams(
                   updatedTeams,
-                  AppSingleton.singleton.matchData.id ?? "",
+                  AppSingleton.singleton.matchData.id ?? '',
                 );
               }
             } else if (count == 1) {
@@ -169,7 +169,7 @@ class _JoinByCodeContest extends State<JoinByCodeContest> {
                 ),
                 builder: (BuildContext context) {
                   return JoinContestBottomsheet(
-                    fantasyType: "Cricket",
+                    fantasyType: 'Cricket',
                     isClosedContestNew: false,
                     previousJoined: false,
                     challengeId: matchchallengeid,
@@ -185,7 +185,7 @@ class _JoinByCodeContest extends State<JoinByCodeContest> {
               Navigator.pop(context);
               await AppNavigation.gotoMyTeamsChallenges(
                 context,
-                "",
+                '',
                 matchchallengeid,
                 Provider.of<MyTeamsProvider>(
                       context,
@@ -193,9 +193,9 @@ class _JoinByCodeContest extends State<JoinByCodeContest> {
                     ).myTeams[AppSingleton.singleton.matchData.id] ??
                     [],
                 1,
-                "Join Team",
-                "",
-                "",
+                'Join Team',
+                '',
+                '',
                 false,
                 0,
                 entryFee,

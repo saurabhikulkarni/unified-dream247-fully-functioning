@@ -96,7 +96,7 @@ class MyMatchesDatasource extends MyMatchesRepositories {
     int cursor,
   ) async {
     final url =
-        "${APIServerUrl.completedMatchServerUrl}${APIServerUrl.getCompletedMatches}$gameType&limit=10&cursor=$cursor";
+        '${APIServerUrl.completedMatchServerUrl}${APIServerUrl.getCompletedMatches}$gameType&limit=10&cursor=$cursor';
 
     final response = await clientwithToken.get(url);
     final res = response.data;
@@ -123,7 +123,7 @@ class MyMatchesDatasource extends MyMatchesRepositories {
     int limit,
   ) async {
     final url =
-        "${APIServerUrl.completedMatchServerUrl}${APIServerUrl.getCompletedOldMatches}$gameType&skip=$skip&limit=$limit";
+        '${APIServerUrl.completedMatchServerUrl}${APIServerUrl.getCompletedOldMatches}$gameType&skip=$skip&limit=$limit';
 
     final response = await clientwithToken.get(url);
     final res = response.data;
@@ -152,7 +152,7 @@ class MyMatchesDatasource extends MyMatchesRepositories {
       context,
       listen: false,
     );
-    String matchKey = AppSingleton.singleton.matchData.id ?? "";
+    String matchKey = AppSingleton.singleton.matchData.id ?? '';
 
     final url =
         '${APIServerUrl.myJoinContestServerUrl}${APIServerUrl.getJoinedContests}${AppSingleton.singleton.matchData.id!}&skip=$skip&limit=$limit';
@@ -256,7 +256,7 @@ class MyMatchesDatasource extends MyMatchesRepositories {
   @override
   Future<List<ScorecardModel>> getScorecard(BuildContext context) async {
     var provider = Provider.of<ScorecardProvider>(context, listen: false);
-    String matchKey = AppSingleton.singleton.matchData.id ?? "";
+    String matchKey = AppSingleton.singleton.matchData.id ?? '';
     final url = APIServerUrl.liveMatchServerUrl +
         APIServerUrl.getScorecard +
         AppSingleton.singleton.matchData.id!;
@@ -322,7 +322,7 @@ class MyMatchesDatasource extends MyMatchesRepositories {
     BuildContext context,
   ) async {
     var provider = Provider.of<LiveScoreProvider>(context, listen: false);
-    String matchKey = AppSingleton.singleton.matchData.id ?? "";
+    String matchKey = AppSingleton.singleton.matchData.id ?? '';
     final url = APIServerUrl.liveMatchServerUrl +
         APIServerUrl.getMatchLiveScore +
         AppSingleton.singleton.matchData.id!;
@@ -415,7 +415,7 @@ class MyMatchesDatasource extends MyMatchesRepositories {
     BuildContext context,
   ) async {
     var provider = Provider.of<PlayerStatsProvider>(context, listen: false);
-    String matchKey = AppSingleton.singleton.matchData.id ?? "";
+    String matchKey = AppSingleton.singleton.matchData.id ?? '';
 
     final url =
         '${APIServerUrl.completedMatchServerUrl}${APIServerUrl.matchplayerfantasyscorecards + matchKey}';
@@ -513,7 +513,7 @@ class MyMatchesDatasource extends MyMatchesRepositories {
   @override
   Future<List<TeamsModel>> liveGetMyTeams(BuildContext context) async {
     var provider = Provider.of<MyTeamsProvider>(context, listen: false);
-    String matchKey = AppSingleton.singleton.matchData.id ?? "";
+    String matchKey = AppSingleton.singleton.matchData.id ?? '';
 
     final url = APIServerUrl.getMyTeamsServerUrl +
         APIServerUrl.liveGetMyTeams +
@@ -546,7 +546,7 @@ class MyMatchesDatasource extends MyMatchesRepositories {
     String joinTeamId,
   ) async {
     final url =
-        "${APIServerUrl.getMyTeamsServerUrl}${APIServerUrl.liveGetUserTeam}${AppSingleton.singleton.matchData.id!}&joinTeamId=$joinTeamId";
+        '${APIServerUrl.getMyTeamsServerUrl}${APIServerUrl.liveGetUserTeam}${AppSingleton.singleton.matchData.id!}&joinTeamId=$joinTeamId';
 
     final response = await clientwithToken.get(url);
     final res = response.data;
@@ -580,7 +580,7 @@ class MyMatchesDatasource extends MyMatchesRepositories {
     String userId,
   ) async {
     final url =
-        "${APIServerUrl.teamsServerUrl}${APIServerUrl.liveViewTeam}${AppSingleton.singleton.matchData.id!}&jointeamid=$teamId&teamnumber=$teamNumber&userId=$userId";
+        '${APIServerUrl.teamsServerUrl}${APIServerUrl.liveViewTeam}${AppSingleton.singleton.matchData.id!}&jointeamid=$teamId&teamnumber=$teamNumber&userId=$userId';
 
     final response = await clientwithToken.get(url);
 

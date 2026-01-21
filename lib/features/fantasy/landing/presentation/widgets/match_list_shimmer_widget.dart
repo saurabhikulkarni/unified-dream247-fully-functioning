@@ -38,26 +38,26 @@ class MatchListShimmerViewWidget extends StatelessWidget {
                     ShimmerWidget(
                         height: 26,
                         width: 26,
-                        borderRadius: BorderRadius.circular(50)),
-                    SizedBox(width: 6),
-                    ShimmerWidget(height: 14, width: 40),
-                    SizedBox(width: 5),
-                    ShimmerWidget(height: 12, width: 12),
-                    SizedBox(width: 6),
-                    ShimmerWidget(height: 14, width: 40),
-                    SizedBox(width: 6),
+                        borderRadius: BorderRadius.circular(50),),
+                    const SizedBox(width: 6),
+                    const ShimmerWidget(height: 14, width: 40),
+                    const SizedBox(width: 5),
+                    const ShimmerWidget(height: 12, width: 12),
+                    const SizedBox(width: 6),
+                    const ShimmerWidget(height: 14, width: 40),
+                    const SizedBox(width: 6),
                     ShimmerWidget(
                         height: 26,
                         width: 26,
-                        borderRadius: BorderRadius.circular(50)),
+                        borderRadius: BorderRadius.circular(50),),
                   ],
                 ),
                 const SizedBox(height: 8),
 
                 // Countdown + time
-                Row(
+                const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
+                  children: [
                     ShimmerWidget(height: 12, width: 50),
                     SizedBox(width: 6),
                     ShimmerWidget(height: 12, width: 40),

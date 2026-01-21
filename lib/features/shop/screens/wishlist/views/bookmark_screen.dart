@@ -59,7 +59,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                         SliverPadding(
                           padding: const EdgeInsets.symmetric(
                               horizontal: defaultPadding,
-                              vertical: defaultPadding),
+                              vertical: defaultPadding,),
                           sliver: SliverGrid(
                             gridDelegate:
                                 const SliverGridDelegateWithMaxCrossAxisExtent(
@@ -81,7 +81,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                                   press: () {
                                     context.push(
                                         '/shop/product/${_products[index].id}',
-                                        extra: {'product': _products[index]});
+                                        extra: {'product': _products[index]},);
                                   },
                                 );
                               },

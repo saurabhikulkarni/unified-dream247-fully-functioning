@@ -94,7 +94,7 @@ class _WinnersPageState extends State<WinnersPage> {
                                 child: CircleAvatar(
                                   radius: 25,
                                   backgroundImage: NetworkImage(
-                                    story.storyProfileImage ?? "",
+                                    story.storyProfileImage ?? '',
                                   ),
                                 ),
                               ),
@@ -214,9 +214,9 @@ Widget recentWinner(BuildContext context, WinnersModel data) {
                           alignment: Alignment.centerLeft,
                           child: Text(
                             textAlign: TextAlign.center,
-                            data.seriesName ?? "",
+                            data.seriesName ?? '',
                             overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
+                            style: const TextStyle(
                               color: AppColors.letterColor,
                               fontSize: 12,
                               fontWeight: FontWeight.bold,
@@ -228,8 +228,8 @@ Widget recentWinner(BuildContext context, WinnersModel data) {
                     Padding(
                       padding: const EdgeInsets.all(10),
                       child: Text(
-                        AppUtils.formatDate(data.startDate ?? ""),
-                        style: TextStyle(
+                        AppUtils.formatDate(data.startDate ?? ''),
+                        style: const TextStyle(
                           color: AppColors.letterColor,
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
@@ -255,15 +255,15 @@ Widget recentWinner(BuildContext context, WinnersModel data) {
                               children: [
                                 ClipOval(
                                   child: Image.network(
-                                    data.teamAImage ?? "",
+                                    data.teamAImage ?? '',
                                     height: 35,
                                     width: 35,
                                   ),
                                 ),
                                 const SizedBox(width: 5),
                                 Text(
-                                  "${data.teamAShortName}",
-                                  style: TextStyle(
+                                  '${data.teamAShortName}',
+                                  style: const TextStyle(
                                     fontSize: 16,
                                     color: AppColors.letterColor,
                                     fontWeight: FontWeight.bold,
@@ -273,9 +273,9 @@ Widget recentWinner(BuildContext context, WinnersModel data) {
                             ),
                             const SizedBox(height: 3.0),
                             Text(
-                              "${data.teamAName}",
+                              '${data.teamAName}',
                               overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 12,
                                 color: AppColors.letterColor,
                                 fontWeight: FontWeight.w500,
@@ -295,8 +295,8 @@ Widget recentWinner(BuildContext context, WinnersModel data) {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 Text(
-                                  "${data.teamBShortName}",
-                                  style: TextStyle(
+                                  '${data.teamBShortName}',
+                                  style: const TextStyle(
                                     fontSize: 15,
                                     color: AppColors.letterColor,
                                     fontWeight: FontWeight.bold,
@@ -305,7 +305,7 @@ Widget recentWinner(BuildContext context, WinnersModel data) {
                                 const SizedBox(width: 5),
                                 ClipOval(
                                   child: Image.network(
-                                    data.teamBImage ?? "",
+                                    data.teamBImage ?? '',
                                     height: 35,
                                     width: 35,
                                   ),
@@ -314,9 +314,9 @@ Widget recentWinner(BuildContext context, WinnersModel data) {
                             ),
                             const SizedBox(height: 3.0),
                             Text(
-                              "${data.teamBName}",
+                              '${data.teamBName}',
                               overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 12,
                                 color: AppColors.letterColor,
                                 fontWeight: FontWeight.w500,
@@ -352,7 +352,7 @@ Widget recentWinner(BuildContext context, WinnersModel data) {
                       const SizedBox(width: 8),
                       Text(
                         'Strings.indianRupee ${AppUtils.changeNumberToValue(data.firstContesWinAmount ?? 0)}',
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: AppColors.letterColor,
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -431,7 +431,7 @@ Widget singleRankWinner(WinContestData data) {
                   const SizedBox(width: 4),
                   Text(
                     'Rank ${AppUtils.stringifyNumber(num.parse(data.rank.toString()))}',
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: AppColors.white,
                       fontWeight: FontWeight.w500,
                       fontSize: 12,
@@ -443,7 +443,7 @@ Widget singleRankWinner(WinContestData data) {
             const SizedBox(height: 12),
             Text(
               '${data.userTeamName}',
-              style: TextStyle(
+              style: const TextStyle(
                 color: AppColors.blackColor,
                 fontWeight: FontWeight.w400,
                 fontSize: 12,
@@ -475,8 +475,8 @@ Widget singleRankWinner(WinContestData data) {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text(
-                "Won",
+              const Text(
+                'Won',
                 style: TextStyle(
                   fontWeight: FontWeight.w500,
                   fontSize: 12,
@@ -484,10 +484,10 @@ Widget singleRankWinner(WinContestData data) {
                 ),
               ),
               Text(
-                (data.prize == "" || (data.prize ?? "").isEmpty)
+                (data.prize == '' || (data.prize ?? '').isEmpty)
                     ? ' ${Strings.indianRupee}${AppUtils.changeNumberToValue(data.amount?.toInt() ?? 0)}'
                     : ' ${Strings.indianRupee}${AppUtils.changeNumberToValue(num.parse(data.prize ?? "0"))}',
-                style: TextStyle(
+                style: const TextStyle(
                   color: AppColors.letterColor,
                   fontWeight: FontWeight.w600,
                   fontSize: 14,

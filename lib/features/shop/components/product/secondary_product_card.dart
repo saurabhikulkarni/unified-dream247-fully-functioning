@@ -39,7 +39,7 @@ class SecondaryProductCard extends StatelessWidget {
           OutlinedButton.styleFrom(
               minimumSize: Size(cardWidth, cardHeight),
               maximumSize: Size(cardWidth, cardHeight),
-              padding: EdgeInsets.all(context.responsiveSpacing)),
+              padding: EdgeInsets.all(context.responsiveSpacing),),
       child: Row(
         children: [
           AspectRatio(
@@ -85,7 +85,7 @@ class SecondaryProductCard extends StatelessWidget {
                             ),
                             const SizedBox(width: 2),
                             Text(
-                              "${priceAfetDiscount!.toInt()}",
+                              '${priceAfetDiscount!.toInt()}',
                               style: TextStyle(
                                 color: const Color(0xFF31B0D8),
                                 fontWeight: FontWeight.w500,
@@ -103,7 +103,7 @@ class SecondaryProductCard extends StatelessWidget {
                             ),
                             const SizedBox(width: 2),
                             Text(
-                              "${price.toInt()}",
+                              '${price.toInt()}',
                               style: TextStyle(
                                 color: Theme.of(context)
                                     .textTheme
@@ -124,7 +124,7 @@ class SecondaryProductCard extends StatelessWidget {
                             ),
                             const SizedBox(width: 2),
                             Text(
-                              "${price.toInt()}",
+                              '${price.toInt()}',
                               style: TextStyle(
                                 color: const Color(0xFF31B0D8),
                                 fontWeight: FontWeight.w500,

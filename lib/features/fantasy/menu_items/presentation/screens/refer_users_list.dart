@@ -193,12 +193,12 @@ class _ReferUsersList extends State<ReferUsersList> with SingleTickerProviderSta
         final users = snapshot.data?.referredUsers ?? [];
         
         if (users.isEmpty) {
-          return Center(
+          return const Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(Icons.people_outline, size: 64, color: AppColors.greyColor),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
                 Text(
                   'NO REFERRED USERS',
                   style: TextStyle(
@@ -207,7 +207,7 @@ class _ReferUsersList extends State<ReferUsersList> with SingleTickerProviderSta
                     color: AppColors.letterColor,
                   ),
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: 8),
                 Text(
                   'Start referring friends to earn commission',
                   style: TextStyle(
@@ -264,7 +264,7 @@ class _ReferUsersList extends State<ReferUsersList> with SingleTickerProviderSta
                       errorWidget: (context, url, error) => const Icon(Icons.person),
                     ),
                   )
-                : Icon(Icons.person, size: 32, color: AppColors.mainLightColor),
+                : const Icon(Icons.person, size: 32, color: AppColors.mainLightColor),
           ),
           const SizedBox(width: 12),
           
@@ -323,7 +323,7 @@ class _ReferUsersList extends State<ReferUsersList> with SingleTickerProviderSta
                   color: AppColors.mainLightColor.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(4),
                 ),
-                child: Text(
+                child: const Text(
                   'Earned',
                   style: TextStyle(
                     fontSize: 10,
@@ -350,12 +350,12 @@ class _ReferUsersList extends State<ReferUsersList> with SingleTickerProviderSta
         final transactions = snapshot.data?.commissionHistory ?? [];
         
         if (transactions.isEmpty) {
-          return Center(
+          return const Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(Icons.history, size: 64, color: AppColors.greyColor),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
                 Text(
                   'NO COMMISSION HISTORY',
                   style: TextStyle(
@@ -364,7 +364,7 @@ class _ReferUsersList extends State<ReferUsersList> with SingleTickerProviderSta
                     color: AppColors.letterColor,
                   ),
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: 8),
                 Text(
                   'Your commission transactions will appear here',
                   style: TextStyle(

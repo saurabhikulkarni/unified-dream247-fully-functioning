@@ -42,7 +42,7 @@ class _PaymentSuccessDoneP2PState extends State<PaymentSuccessDoneP2P> {
                         color: AppColors.white,
                       ),
                       Text(
-                        "Payment Successful",
+                        'Payment Successful',
                         style: TextStyle(
                           color: AppColors.white,
                           fontSize: 20,
@@ -51,7 +51,7 @@ class _PaymentSuccessDoneP2PState extends State<PaymentSuccessDoneP2P> {
                       ),
                       SizedBox(height: 20),
                       Text(
-                        "Your transaction was processed securely. We appreciate your trust in us.",
+                        'Your transaction was processed securely. We appreciate your trust in us.',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: AppColors.white,
@@ -80,7 +80,7 @@ class _PaymentSuccessDoneP2PState extends State<PaymentSuccessDoneP2P> {
                       Row(
                         children: [
                           Text(
-                            "${widget.data?.mobile}",
+                            '${widget.data?.mobile}',
                             style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
@@ -91,7 +91,7 @@ class _PaymentSuccessDoneP2PState extends State<PaymentSuccessDoneP2P> {
                           Image.asset(Images.verified, height: 20, width: 20),
                           const Spacer(),
                           Text(
-                            "${Strings.indianRupee}${widget.data?.amountTransferred}",
+                            '${Strings.indianRupee}${widget.data?.amountTransferred}',
                             style: GoogleFonts.tomorrow(
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
@@ -102,7 +102,7 @@ class _PaymentSuccessDoneP2PState extends State<PaymentSuccessDoneP2P> {
                       ),
                       const SizedBox(height: 5),
                       Text(
-                        widget.data?.name ?? "",
+                        widget.data?.name ?? '',
                         style: const TextStyle(
                           fontWeight: FontWeight.w500,
                           fontSize: 14,
@@ -116,33 +116,33 @@ class _PaymentSuccessDoneP2PState extends State<PaymentSuccessDoneP2P> {
                       ),
                       const SizedBox(height: 15),
                       AccountGlobalWidget.detailRow(
-                        "Transaction ID",
-                        widget.data?.transactionId?.toUpperCase() ?? "---",
+                        'Transaction ID',
+                        widget.data?.transactionId?.toUpperCase() ?? '---',
                         context,
                       ),
                       AccountGlobalWidget.detailRow(
-                        "You Sent",
-                        "${Strings.indianRupee}${widget.data?.amountTransferred}",
+                        'You Sent',
+                        '${Strings.indianRupee}${widget.data?.amountTransferred}',
                         context,
                       ),
                       AccountGlobalWidget.detailRow(
-                        "TDS Deduction",
-                        "${Strings.indianRupee}${widget.data?.tdsDeducted}",
+                        'TDS Deduction',
+                        '${Strings.indianRupee}${widget.data?.tdsDeducted}',
                         context,
                       ),
                       AccountGlobalWidget.detailRow(
-                        "Receiver Received",
-                        "${Strings.indianRupee}${widget.data?.receivedAmount}",
+                        'Receiver Received',
+                        '${Strings.indianRupee}${widget.data?.receivedAmount}',
                         context,
                       ),
                       AccountGlobalWidget.detailRow(
-                        "Cashback You Won",
-                        "${Strings.indianRupee}${widget.data?.cashbackReceived}",
+                        'Cashback You Won',
+                        '${Strings.indianRupee}${widget.data?.cashbackReceived}',
                         context,
                       ),
                       AccountGlobalWidget.detailRow(
-                        "Date & Time",
-                        "${widget.data?.dateTime}",
+                        'Date & Time',
+                        '${widget.data?.dateTime}',
                         context,
                       ),
                       const SizedBox(height: 15),

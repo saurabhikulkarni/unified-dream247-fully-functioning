@@ -30,20 +30,20 @@ class _MyTransactions extends State<MyTransactions>
   bool hasMore = true;
   int skip = 0;
   int limit = 15;
-  String type = "depositAndWithdrawals";
+  String type = 'depositAndWithdrawals';
   bool oldTransactions = false;
   int _currentIndex = 0;
   AccountsUsecases accountsUsecases = AccountsUsecases(
     AccountsDatasource(ApiImpl(), ApiImplWithAccessToken()),
   );
-  String selectedStatus = "success";
+  String selectedStatus = 'success';
 
   Map<String, List<TransactionData>> transactionsMap = {
-    "depositAndWithdrawals": [],
-    "credit": [],
-    "debit": [],
-    "reward": [],
-    "promotion": [],
+    'depositAndWithdrawals': [],
+    'credit': [],
+    'debit': [],
+    'reward': [],
+    'promotion': [],
   };
 
   @override
@@ -114,7 +114,7 @@ class _MyTransactions extends State<MyTransactions>
     }
   }
 
-  String _latestRequestId = "";
+  String _latestRequestId = '';
 
   void fetchTransactions([int? tabIndex, String? status]) async {
     if (tabIndex != null) {
@@ -221,39 +221,39 @@ class _MyTransactions extends State<MyTransactions>
             ),
             splashBorderRadius: BorderRadius.circular(10),
             tabs: [
-              Padding(
+              const Padding(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+                    EdgeInsets.symmetric(horizontal: 18, vertical: 12),
                 child: Text(
                   'Deposit & Withdrawal',
                 ),
               ),
-              Padding(
+              const Padding(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+                    EdgeInsets.symmetric(horizontal: 18, vertical: 12),
                 child: Text(
                   'Credit',
                 ),
               ),
-              Padding(
+              const Padding(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+                    EdgeInsets.symmetric(horizontal: 18, vertical: 12),
                 child: Text(
                   'Debit',
                 ),
               ),
-              Padding(
+              const Padding(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+                    EdgeInsets.symmetric(horizontal: 18, vertical: 12),
                 child: Text(
                   'Reward',
                 ),
               ),
               if (userData!.promoterVerify == 1 &&
                   userData.isPromoterBlocked == false)
-                Padding(
+                const Padding(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+                      EdgeInsets.symmetric(horizontal: 18, vertical: 12),
                   child: Text(
                     'Promoter',
                   ),
@@ -293,12 +293,12 @@ class _MyTransactions extends State<MyTransactions>
                     ? Column(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          (tabType == "depositAndWithdrawals")
+                          (tabType == 'depositAndWithdrawals')
                               ? Row(
                                   children: [
                                     GestureDetector(
                                       onTap: () =>
-                                          fetchTransactions(0, "success"),
+                                          fetchTransactions(0, 'success'),
                                       child: Container(
                                         margin: const EdgeInsets.only(
                                           left: 15,
@@ -310,7 +310,7 @@ class _MyTransactions extends State<MyTransactions>
                                           vertical: 5,
                                         ),
                                         decoration: BoxDecoration(
-                                          color: selectedStatus == "success"
+                                          color: selectedStatus == 'success'
                                               ? AppColors.mainLightColor
                                               : AppColors.white,
                                           border: Border.all(
@@ -322,7 +322,7 @@ class _MyTransactions extends State<MyTransactions>
                                         child: Text(
                                           Strings.success,
                                           style: TextStyle(
-                                            color: selectedStatus == "success"
+                                            color: selectedStatus == 'success'
                                                 ? AppColors.white
                                                 : AppColors.black,
                                             fontWeight: FontWeight.bold,
@@ -333,7 +333,7 @@ class _MyTransactions extends State<MyTransactions>
                                     ),
                                     GestureDetector(
                                       onTap: () =>
-                                          fetchTransactions(0, "pending"),
+                                          fetchTransactions(0, 'pending'),
                                       child: Container(
                                         margin: const EdgeInsets.only(
                                           left: 5,
@@ -345,7 +345,7 @@ class _MyTransactions extends State<MyTransactions>
                                           vertical: 5,
                                         ),
                                         decoration: BoxDecoration(
-                                          color: selectedStatus == "pending"
+                                          color: selectedStatus == 'pending'
                                               ? AppColors.mainLightColor
                                               : AppColors.white,
                                           border: Border.all(
@@ -357,7 +357,7 @@ class _MyTransactions extends State<MyTransactions>
                                         child: Text(
                                           Strings.pending,
                                           style: TextStyle(
-                                            color: selectedStatus == "pending"
+                                            color: selectedStatus == 'pending'
                                                 ? AppColors.white
                                                 : AppColors.black,
                                             fontWeight: FontWeight.bold,
@@ -368,7 +368,7 @@ class _MyTransactions extends State<MyTransactions>
                                     ),
                                     GestureDetector(
                                       onTap: () =>
-                                          fetchTransactions(0, "failed"),
+                                          fetchTransactions(0, 'failed'),
                                       child: Container(
                                         margin: const EdgeInsets.only(
                                           left: 5,
@@ -380,7 +380,7 @@ class _MyTransactions extends State<MyTransactions>
                                           vertical: 5,
                                         ),
                                         decoration: BoxDecoration(
-                                          color: selectedStatus == "failed"
+                                          color: selectedStatus == 'failed'
                                               ? AppColors.mainLightColor
                                               : AppColors.white,
                                           border: Border.all(
@@ -392,7 +392,7 @@ class _MyTransactions extends State<MyTransactions>
                                         child: Text(
                                           Strings.failed,
                                           style: TextStyle(
-                                            color: selectedStatus == "failed"
+                                            color: selectedStatus == 'failed'
                                                 ? AppColors.white
                                                 : AppColors.black,
                                             fontWeight: FontWeight.bold,
@@ -423,12 +423,12 @@ class _MyTransactions extends State<MyTransactions>
                     : Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          (tabType == "depositAndWithdrawals")
+                          (tabType == 'depositAndWithdrawals')
                               ? Row(
                                   children: [
                                     GestureDetector(
                                       onTap: () =>
-                                          fetchTransactions(0, "success"),
+                                          fetchTransactions(0, 'success'),
                                       child: Container(
                                         margin: const EdgeInsets.only(
                                           left: 15,
@@ -440,7 +440,7 @@ class _MyTransactions extends State<MyTransactions>
                                           vertical: 5,
                                         ),
                                         decoration: BoxDecoration(
-                                          color: selectedStatus == "success"
+                                          color: selectedStatus == 'success'
                                               ? AppColors.mainLightColor
                                               : AppColors.white,
                                           border: Border.all(
@@ -452,7 +452,7 @@ class _MyTransactions extends State<MyTransactions>
                                         child: Text(
                                           Strings.success,
                                           style: TextStyle(
-                                            color: selectedStatus == "success"
+                                            color: selectedStatus == 'success'
                                                 ? AppColors.white
                                                 : AppColors.black,
                                             fontWeight: FontWeight.bold,
@@ -463,7 +463,7 @@ class _MyTransactions extends State<MyTransactions>
                                     ),
                                     GestureDetector(
                                       onTap: () =>
-                                          fetchTransactions(0, "pending"),
+                                          fetchTransactions(0, 'pending'),
                                       child: Container(
                                         margin: const EdgeInsets.only(
                                           left: 5,
@@ -475,7 +475,7 @@ class _MyTransactions extends State<MyTransactions>
                                           vertical: 5,
                                         ),
                                         decoration: BoxDecoration(
-                                          color: selectedStatus == "pending"
+                                          color: selectedStatus == 'pending'
                                               ? AppColors.mainLightColor
                                               : AppColors.white,
                                           border: Border.all(
@@ -487,7 +487,7 @@ class _MyTransactions extends State<MyTransactions>
                                         child: Text(
                                           Strings.pending,
                                           style: TextStyle(
-                                            color: selectedStatus == "pending"
+                                            color: selectedStatus == 'pending'
                                                 ? AppColors.white
                                                 : AppColors.black,
                                             fontWeight: FontWeight.bold,
@@ -498,7 +498,7 @@ class _MyTransactions extends State<MyTransactions>
                                     ),
                                     GestureDetector(
                                       onTap: () =>
-                                          fetchTransactions(0, "failed"),
+                                          fetchTransactions(0, 'failed'),
                                       child: Container(
                                         margin: const EdgeInsets.only(
                                           left: 5,
@@ -510,7 +510,7 @@ class _MyTransactions extends State<MyTransactions>
                                           vertical: 5,
                                         ),
                                         decoration: BoxDecoration(
-                                          color: selectedStatus == "failed"
+                                          color: selectedStatus == 'failed'
                                               ? AppColors.mainLightColor
                                               : AppColors.white,
                                           border: Border.all(
@@ -522,7 +522,7 @@ class _MyTransactions extends State<MyTransactions>
                                         child: Text(
                                           Strings.failed,
                                           style: TextStyle(
-                                            color: selectedStatus == "failed"
+                                            color: selectedStatus == 'failed'
                                                 ? AppColors.white
                                                 : AppColors.black,
                                             fontWeight: FontWeight.bold,
@@ -594,8 +594,8 @@ class _MyTransactions extends State<MyTransactions>
                 ),
                 child: Text(
                   oldTransactions
-                      ? "View Recent Transactions"
-                      : "View Old Transactions",
+                      ? 'View Recent Transactions'
+                      : 'View Old Transactions',
                   style: const TextStyle(
                     color: AppColors.mainColor,
                     fontSize: 14,
@@ -662,7 +662,7 @@ class _MyTransactions extends State<MyTransactions>
                           Padding(
                             padding: const EdgeInsets.all(1),
                             child: Text(
-                              data.type ?? "",
+                              data.type ?? '',
                               style: const TextStyle(
                                 color: AppColors.letterColor,
                                 fontWeight: FontWeight.w500,
@@ -671,8 +671,8 @@ class _MyTransactions extends State<MyTransactions>
                             ),
                           ),
                           if (_tabController.index == 0)
-                            if ((data.gstAmount ?? '') != "" ||
-                                (data.gstAmount ?? "").isNotEmpty)
+                            if ((data.gstAmount ?? '') != '' ||
+                                (data.gstAmount ?? '').isNotEmpty)
                               Padding(
                                 padding: const EdgeInsets.all(1),
                                 child: Text(
@@ -685,8 +685,8 @@ class _MyTransactions extends State<MyTransactions>
                                 ),
                               ),
                           if (_tabController.index == 0)
-                            if ((data.cashback ?? '') != "" ||
-                                (data.cashback ?? "").isNotEmpty)
+                            if ((data.cashback ?? '') != '' ||
+                                (data.cashback ?? '').isNotEmpty)
                               Padding(
                                 padding: const EdgeInsets.all(1),
                                 child: Text(
@@ -712,7 +712,7 @@ class _MyTransactions extends State<MyTransactions>
                                 ),
                               ),
                           (_tabController.index == 3)
-                              ? ((data.expiresAt ?? "").isNotEmpty)
+                              ? ((data.expiresAt ?? '').isNotEmpty)
                                   ? Text(
                                       "This will expire on ${AppUtils.formatDateTime(data.expiresAt ?? "")}.",
                                       style: const TextStyle(
@@ -724,22 +724,22 @@ class _MyTransactions extends State<MyTransactions>
                                   : const SizedBox.shrink()
                               : const SizedBox.shrink(),
                           (_tabController.index == 0)
-                              ? ((data.paymentstatus ?? "").isNotEmpty)
+                              ? ((data.paymentstatus ?? '').isNotEmpty)
                                   ? Row(
                                       children: [
                                         Padding(
                                           padding: const EdgeInsets.all(1),
                                           child: Text(
                                             data.paymentstatus?.toUpperCase() ??
-                                                "",
+                                                '',
                                             style: TextStyle(
                                               color: (data.paymentstatus ==
-                                                          "success" ||
+                                                          'success' ||
                                                       data.paymentstatus ==
-                                                          "refund")
+                                                          'refund')
                                                   ? AppColors.green
                                                   : (data.paymentstatus ==
-                                                          "pending")
+                                                          'pending')
                                                       ? AppColors.yellowColor
                                                       : AppColors.mainLightColor,
                                               fontWeight: FontWeight.w500,
@@ -747,8 +747,8 @@ class _MyTransactions extends State<MyTransactions>
                                             ),
                                           ),
                                         ),
-                                        (data.paymentstatus == "success")
-                                            ? ((data.utr ?? "").isEmpty)
+                                        (data.paymentstatus == 'success')
+                                            ? ((data.utr ?? '').isEmpty)
                                                 ? const SizedBox.shrink()
                                                 : Padding(
                                                     padding:
@@ -756,7 +756,7 @@ class _MyTransactions extends State<MyTransactions>
                                                       1,
                                                     ),
                                                     child: Text(
-                                                      "- UTR:${data.utr}",
+                                                      '- UTR:${data.utr}',
                                                       style: const TextStyle(
                                                         color: AppColors
                                                             .letterColor,
@@ -789,7 +789,7 @@ class _MyTransactions extends State<MyTransactions>
                                   : const SizedBox.shrink()
                               : const SizedBox.shrink(),
                           (_tabController.index == 0)
-                              ? ((data.paymentmethod ?? "").isNotEmpty)
+                              ? ((data.paymentmethod ?? '').isNotEmpty)
                                   ? Padding(
                                       padding: const EdgeInsets.all(1),
                                       child: Text(
@@ -809,7 +809,7 @@ class _MyTransactions extends State<MyTransactions>
                               (data.matchName != null && data.matchName != '')
                                   ? '${AppUtils.formatDateTime(data.dateTime ?? "")} - ${data.matchName}'
                                   : AppUtils.formatDateTime(
-                                      data.dateTime ?? "",
+                                      data.dateTime ?? '',
                                     ),
                               style: const TextStyle(
                                 color: AppColors.letterColor,
@@ -824,9 +824,9 @@ class _MyTransactions extends State<MyTransactions>
                   ),
                   RichText(
                     text: TextSpan(
-                      text: (data.transactionType! == "Credit") ? "+" : "-",
+                      text: (data.transactionType! == 'Credit') ? '+' : '-',
                       style: GoogleFonts.tomorrow(
-                        color: (data.transactionType! == "Credit")
+                        color: (data.transactionType! == 'Credit')
                             ? AppColors.green
                             : AppColors.mainLightColor,
                         fontWeight: FontWeight.w700,
@@ -836,7 +836,7 @@ class _MyTransactions extends State<MyTransactions>
                         TextSpan(
                           text: "${Strings.indianRupee}${data.amount ?? "0"}",
                           style: GoogleFonts.tomorrow(
-                            color: (data.transactionType! == "Credit")
+                            color: (data.transactionType! == 'Credit')
                                 ? AppColors.green
                                 : AppColors.mainLightColor,
                             fontWeight: FontWeight.w700,

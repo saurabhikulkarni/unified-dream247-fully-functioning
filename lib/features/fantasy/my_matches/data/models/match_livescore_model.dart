@@ -14,17 +14,17 @@ class MatchLiveScoreModel {
       this.teams,
       this.statusNote,
       this.teama,
-      this.teamb});
+      this.teamb,});
 
   MatchLiveScoreModel.fromJson(Map<String, dynamic> json) {
-    id = ModelParsers.toStringParser(json["_id"]);
-    matchkey = ModelParsers.toStringParser(json["matchkey"]);
-    teams = json["teams"] == null
+    id = ModelParsers.toStringParser(json['_id']);
+    matchkey = ModelParsers.toStringParser(json['matchkey']);
+    teams = json['teams'] == null
         ? null
-        : (json["teams"] as List).map((e) => Teams.fromJson(e)).toList();
-    statusNote = ModelParsers.toStringParser(json["status_note"]);
-    teama = json["teama"] == null ? null : Teama.fromJson(json["teama"]);
-    teamb = json["teamb"] == null ? null : Teama.fromJson(json["teamb"]);
+        : (json['teams'] as List).map((e) => Teams.fromJson(e)).toList();
+    statusNote = ModelParsers.toStringParser(json['status_note']);
+    teama = json['teama'] == null ? null : Teama.fromJson(json['teama']);
+    teamb = json['teamb'] == null ? null : Teama.fromJson(json['teamb']);
   }
 }
 
@@ -54,21 +54,21 @@ class Teams {
       this.sex,
       this.scoresFull,
       this.scores,
-      this.overs});
+      this.overs,});
 
   Teams.fromJson(Map<String, dynamic> json) {
-    tid = ModelParsers.toIntParser(json["tid"]);
-    title = ModelParsers.toStringParser(json["title"]);
-    abbr = ModelParsers.toStringParser(json["abbr"]);
-    altName = ModelParsers.toStringParser(json["alt_name"]);
-    type = ModelParsers.toStringParser(json["type"]);
-    thumbUrl = ModelParsers.toStringParser(json["thumb_url"]);
-    logoUrl = ModelParsers.toStringParser(json["logo_url"]);
-    country = ModelParsers.toStringParser(json["country"]);
-    sex = ModelParsers.toStringParser(json["sex"]);
-    scoresFull = ModelParsers.toStringParser(json["scores_full"]);
-    scores = ModelParsers.toStringParser(json["scores"]);
-    overs = ModelParsers.toStringParser(json["overs"]);
+    tid = ModelParsers.toIntParser(json['tid']);
+    title = ModelParsers.toStringParser(json['title']);
+    abbr = ModelParsers.toStringParser(json['abbr']);
+    altName = ModelParsers.toStringParser(json['alt_name']);
+    type = ModelParsers.toStringParser(json['type']);
+    thumbUrl = ModelParsers.toStringParser(json['thumb_url']);
+    logoUrl = ModelParsers.toStringParser(json['logo_url']);
+    country = ModelParsers.toStringParser(json['country']);
+    sex = ModelParsers.toStringParser(json['sex']);
+    scoresFull = ModelParsers.toStringParser(json['scores_full']);
+    scores = ModelParsers.toStringParser(json['scores']);
+    overs = ModelParsers.toStringParser(json['overs']);
   }
 }
 
@@ -94,13 +94,13 @@ class Teama {
   });
 
   factory Teama.fromJson(Map<String, dynamic> json) => Teama(
-        teamId: ModelParsers.toIntParser(json["team_id"]),
-        name: ModelParsers.toStringParser(json["name"]),
-        shortName: ModelParsers.toStringParser(json["short_name"]),
-        logoUrl: ModelParsers.toStringParser(json["logo_url"]),
-        thumbUrl: ModelParsers.toStringParser(json["thumb_url"]),
-        scoresFull: ModelParsers.toStringParser(json["scores_full"]),
-        scores: ModelParsers.toStringParser(json["scores"]),
-        overs: ModelParsers.toStringParser(json["overs"]),
+        teamId: ModelParsers.toIntParser(json['team_id']),
+        name: ModelParsers.toStringParser(json['name']),
+        shortName: ModelParsers.toStringParser(json['short_name']),
+        logoUrl: ModelParsers.toStringParser(json['logo_url']),
+        thumbUrl: ModelParsers.toStringParser(json['thumb_url']),
+        scoresFull: ModelParsers.toStringParser(json['scores_full']),
+        scores: ModelParsers.toStringParser(json['scores']),
+        overs: ModelParsers.toStringParser(json['overs']),
       );
 }

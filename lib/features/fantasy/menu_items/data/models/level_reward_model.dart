@@ -24,16 +24,16 @@ class LevelRewardModel {
   });
 
   LevelRewardModel.fromJson(Map<String, dynamic> json) {
-    currentLevel = ModelParsers.toIntParser(json["currentLevel"]);
-    nextLevel = ModelParsers.toIntParser(json["nextLevel"]);
-    totalPlayContest = ModelParsers.toIntParser(json["totalPlayContest"]);
-    totalWinningContest = ModelParsers.toIntParser(json["totalWinningContest"]);
-    nextLevelReward = ModelParsers.toIntParser(json["nextLevelReward"]);
-    processForNext = ModelParsers.toIntParser(json["processForNext"]);
-    rewardType = ModelParsers.toStringParser(json["rewardType"]);
+    currentLevel = ModelParsers.toIntParser(json['currentLevel']);
+    nextLevel = ModelParsers.toIntParser(json['nextLevel']);
+    totalPlayContest = ModelParsers.toIntParser(json['totalPlayContest']);
+    totalWinningContest = ModelParsers.toIntParser(json['totalWinningContest']);
+    nextLevelReward = ModelParsers.toIntParser(json['nextLevelReward']);
+    processForNext = ModelParsers.toIntParser(json['processForNext']);
+    rewardType = ModelParsers.toStringParser(json['rewardType']);
     numberOfWinningContest = ModelParsers.toStringParser(
-      json["NumberOfWinningContest"],
+      json['NumberOfWinningContest'],
     );
-    allLevelCompleted = ModelParsers.toBoolParser(json["allLevelCompleted"]);
+    allLevelCompleted = ModelParsers.toBoolParser(json['allLevelCompleted']);
   }
 }

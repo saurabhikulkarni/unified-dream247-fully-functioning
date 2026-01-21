@@ -32,7 +32,7 @@ class NoDataWidget extends StatelessWidget {
         Image.asset(image ?? Images.noContests, height: 250, width: 300),
         if (showButton)
           Container(
-            margin: EdgeInsets.only(top: 20),
+            margin: const EdgeInsets.only(top: 20),
             width: 250,
             height: 45,
             decoration: BoxDecoration(
@@ -44,7 +44,7 @@ class NoDataWidget extends StatelessWidget {
               onTap: onTap,
               child: Center(
                 child: Text(
-                  buttonText ?? "Join Contest Now",
+                  buttonText ?? 'Join Contest Now',
                   style: GoogleFonts.exo2(
                     color: AppColors.white,
                     fontSize: 14,

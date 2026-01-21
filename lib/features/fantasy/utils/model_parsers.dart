@@ -35,8 +35,8 @@ class ModelParsers {
     if (value is bool) return value;
     if (value is String) {
       String lowerValue = value.trim().toLowerCase();
-      if (lowerValue == "true" || lowerValue == "1") return true;
-      if (lowerValue == "false" || lowerValue == "0") return false;
+      if (lowerValue == 'true' || lowerValue == '1') return true;
+      if (lowerValue == 'false' || lowerValue == '0') return false;
     }
     if (value is num) return value == 1;
     return null;

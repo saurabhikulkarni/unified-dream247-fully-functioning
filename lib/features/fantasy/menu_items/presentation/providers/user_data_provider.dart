@@ -49,7 +49,7 @@ class UserDataProvider extends ChangeNotifier {
     _userData = data;
     if (data != null) {
       await AppStorage.saveToStorageString(
-        "userData",
+        'userData',
         jsonEncode(data.toJson()),
       );
     } else {
@@ -60,9 +60,9 @@ class UserDataProvider extends ChangeNotifier {
 
   Future<void> clearUserData() async {
     _userData = null;
-    await AppStorage.saveToStorageString("userData", "");
-    await AppStorage.saveToStorageString("authToken", "");
-    await AppStorage.saveToStorageBool("loggedIn", false);
+    await AppStorage.saveToStorageString('userData', '');
+    await AppStorage.saveToStorageString('authToken', '');
+    await AppStorage.saveToStorageBool('loggedIn', false);
     notifyListeners();
   }
 }

@@ -14,7 +14,7 @@ class WalletTransferWidget extends StatefulWidget {
 class _WalletTransferWidgetState extends State<WalletTransferWidget> {
   num calculateCashbackAmount() {
     try {
-      final num withdrawal = num.tryParse(widget.amount ?? "0") ?? 0;
+      final num withdrawal = num.tryParse(widget.amount ?? '0') ?? 0;
       final cashbackRate = num.tryParse(
             AppSingleton.singleton.appData.winningDepositCashback.toString(),
           ) ??
@@ -22,7 +22,7 @@ class _WalletTransferWidgetState extends State<WalletTransferWidget> {
 
       return (withdrawal * cashbackRate) / 100;
     } catch (e) {
-      debugPrint("Error in calculating cashback: $e");
+      debugPrint('Error in calculating cashback: $e');
       return 0;
     }
   }
@@ -50,7 +50,7 @@ class _WalletTransferWidgetState extends State<WalletTransferWidget> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const Text(
-                    "Withdraw Amount",
+                    'Withdraw Amount',
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w500,
@@ -59,7 +59,7 @@ class _WalletTransferWidgetState extends State<WalletTransferWidget> {
                   ),
                   RichText(
                     text: TextSpan(
-                      text: "₹",
+                      text: '₹',
                       style: const TextStyle(
                         fontWeight: FontWeight.w700,
                         fontSize: 15,
@@ -96,8 +96,8 @@ class _WalletTransferWidgetState extends State<WalletTransferWidget> {
                           text: (AppSingleton.singleton.appData
                                       .winningDepositCashback ==
                                   null)
-                              ? " 10% "
-                              : " ${AppSingleton.singleton.appData.winningDepositCashback}% ",
+                              ? ' 10% '
+                              : ' ${AppSingleton.singleton.appData.winningDepositCashback}% ',
                           style: const TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.w600,
@@ -105,7 +105,7 @@ class _WalletTransferWidgetState extends State<WalletTransferWidget> {
                           ),
                         ),
                         const TextSpan(
-                          text: "Extra Cash",
+                          text: 'Extra Cash',
                           style: TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.w500,
@@ -117,7 +117,7 @@ class _WalletTransferWidgetState extends State<WalletTransferWidget> {
                   ),
                   RichText(
                     text: TextSpan(
-                      text: "₹",
+                      text: '₹',
                       style: const TextStyle(
                         fontWeight: FontWeight.w700,
                         fontSize: 15,
@@ -142,7 +142,7 @@ class _WalletTransferWidgetState extends State<WalletTransferWidget> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const Text(
-                    "Received In Deposit Wallet",
+                    'Received In Deposit Wallet',
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w500,
@@ -151,7 +151,7 @@ class _WalletTransferWidgetState extends State<WalletTransferWidget> {
                   ),
                   RichText(
                     text: TextSpan(
-                      text: "₹",
+                      text: '₹',
                       style: const TextStyle(
                         fontWeight: FontWeight.w700,
                         fontSize: 15,

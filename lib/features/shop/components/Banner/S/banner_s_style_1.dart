@@ -8,7 +8,7 @@ import 'banner_s.dart';
 class BannerSStyle1 extends StatelessWidget {
   const BannerSStyle1({
     super.key,
-    this.image = "https://i.imgur.com/K41Mj7C.png",
+    this.image = 'https://i.imgur.com/K41Mj7C.png',
     required this.title,
     required this.press,
     this.subtitle,
@@ -70,7 +70,7 @@ class BannerSStyle1 extends StatelessWidget {
                     backgroundColor: Colors.white,
                   ),
                   child: SvgPicture.asset(
-                    "assets/icons/Arrow - Right.svg",
+                    'assets/icons/Arrow - Right.svg',
                     colorFilter:
                         const ColorFilter.mode(Colors.black, BlendMode.srcIn),
                   ),

@@ -22,15 +22,15 @@ class WalletPaymentDoneModel {
   factory WalletPaymentDoneModel.fromJson(Map<String, dynamic> json) =>
       WalletPaymentDoneModel(
         winningTransactionId: ModelParsers.toStringParser(
-          json["winningTransactionId"],
+          json['winningTransactionId'],
         ),
         depositTransactionId: ModelParsers.toStringParser(
-          json["depositTransactionId"],
+          json['depositTransactionId'],
         ),
-        transferredAmount: ModelParsers.toNumParser(json["transferredAmount"]),
-        tds: ModelParsers.toNumParser(json["tds"]),
-        cashback: ModelParsers.toNumParser(json["cashback"]),
-        receivedAmount: ModelParsers.toNumParser(json["receivedAmount"]),
-        dateTime: ModelParsers.toStringParser(json["dateTime"]),
+        transferredAmount: ModelParsers.toNumParser(json['transferredAmount']),
+        tds: ModelParsers.toNumParser(json['tds']),
+        cashback: ModelParsers.toNumParser(json['cashback']),
+        receivedAmount: ModelParsers.toNumParser(json['receivedAmount']),
+        dateTime: ModelParsers.toStringParser(json['dateTime']),
       );
 }

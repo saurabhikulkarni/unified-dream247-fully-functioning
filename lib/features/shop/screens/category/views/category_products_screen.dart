@@ -68,7 +68,7 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const Icon(Icons.error_outline,
-                            size: 64, color: Colors.grey),
+                            size: 64, color: Colors.grey,),
                         const SizedBox(height: defaultPadding),
                         Text(
                           'Error loading products',
@@ -94,7 +94,7 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             const Icon(Icons.shopping_bag_outlined,
-                                size: 64, color: Colors.grey),
+                                size: 64, color: Colors.grey,),
                             const SizedBox(height: defaultPadding),
                             Text(
                               'No products in ${widget.categoryName}',
@@ -122,7 +122,7 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
                           product: _products[index],
                           press: () {
                             context.push('/shop/product/${_products[index].id}',
-                                extra: {'product': _products[index]});
+                                extra: {'product': _products[index]},);
                           },
                         ),
                       ),

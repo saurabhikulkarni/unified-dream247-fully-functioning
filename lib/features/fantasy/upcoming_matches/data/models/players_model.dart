@@ -16,15 +16,15 @@ class PlayersModel {
   });
 
   PlayersModel.fromJson(Map<String, dynamic> json) {
-    success = ModelParsers.toBoolParser(json["success"]);
-    message = ModelParsers.toStringParser(json["message"]);
-    status = ModelParsers.toBoolParser(json["status"]);
-    data = json["data"] == null
+    success = ModelParsers.toBoolParser(json['success']);
+    message = ModelParsers.toStringParser(json['message']);
+    status = ModelParsers.toBoolParser(json['status']);
+    data = json['data'] == null
         ? null
-        : (json["data"] as List)
+        : (json['data'] as List)
             .map((e) => CreateTeamPlayersData.fromJson(e))
             .toList();
-    ttlCridit = ModelParsers.toIntParser(json["ttlCridit"]);
+    ttlCridit = ModelParsers.toIntParser(json['ttlCridit']);
   }
 }
 
@@ -80,35 +80,35 @@ class CreateTeamPlayersData {
   });
 
   CreateTeamPlayersData.fromJson(Map<String, dynamic> json) {
-    role = ModelParsers.toStringParser(json["role"]);
-    credit = ModelParsers.toNumParser(json["credit"]);
-    name = ModelParsers.toStringParser(json["name"]);
-    playingstatus = ModelParsers.toIntParser(json["playingstatus"]);
-    lastMatchPlayingStatus = ModelParsers.toBoolParser(json["lastMatchPlayed"]);
-    vplaying = ModelParsers.toIntParser(json["vplaying"]);
-    totalSelected = ModelParsers.toNumParser(json["totalSelected"]);
-    captainSelected = ModelParsers.toIntParser(json["captainSelected"]);
-    vicecaptainSelected = ModelParsers.toIntParser(json["vicecaptainSelected"]);
-    playerid = ModelParsers.toStringParser(json["playerid"]);
-    pId = ModelParsers.toStringParser(json["p_id"]);
-    playersKey = ModelParsers.toIntParser(json["players_key"]);
-    image = ModelParsers.toStringParser(json["image"]);
-    teamName = ModelParsers.toStringParser(json["teamName"]);
-    teamcolor = ModelParsers.toStringParser(json["teamcolor"]);
-    teamLogo = ModelParsers.toStringParser(json["team_logo"]);
-    teamShortName = ModelParsers.toStringParser(json["team_short_name"]);
-    totalpoints = ModelParsers.toStringParser(json["totalpoints"]);
-    team = ModelParsers.toStringParser(json["team"]);
+    role = ModelParsers.toStringParser(json['role']);
+    credit = ModelParsers.toNumParser(json['credit']);
+    name = ModelParsers.toStringParser(json['name']);
+    playingstatus = ModelParsers.toIntParser(json['playingstatus']);
+    lastMatchPlayingStatus = ModelParsers.toBoolParser(json['lastMatchPlayed']);
+    vplaying = ModelParsers.toIntParser(json['vplaying']);
+    totalSelected = ModelParsers.toNumParser(json['totalSelected']);
+    captainSelected = ModelParsers.toIntParser(json['captainSelected']);
+    vicecaptainSelected = ModelParsers.toIntParser(json['vicecaptainSelected']);
+    playerid = ModelParsers.toStringParser(json['playerid']);
+    pId = ModelParsers.toStringParser(json['p_id']);
+    playersKey = ModelParsers.toIntParser(json['players_key']);
+    image = ModelParsers.toStringParser(json['image']);
+    teamName = ModelParsers.toStringParser(json['teamName']);
+    teamcolor = ModelParsers.toStringParser(json['teamcolor']);
+    teamLogo = ModelParsers.toStringParser(json['team_logo']);
+    teamShortName = ModelParsers.toStringParser(json['team_short_name']);
+    totalpoints = ModelParsers.toStringParser(json['totalpoints']);
+    team = ModelParsers.toStringParser(json['team']);
     playerSelectionPercentage = ModelParsers.toNumParser(
-      json["player_selection_percentage"],
+      json['player_selection_percentage'],
     );
     captainSelectionPercentage = ModelParsers.toNumParser(
-      json["captain_selection_percentage"],
+      json['captain_selection_percentage'],
     );
     viceCaptainSelectionPercentage = ModelParsers.toNumParser(
-      json["vice_captain_selection_percentage"],
+      json['vice_captain_selection_percentage'],
     );
     isSelectedPlayer =
-        ModelParsers.toBoolParser(json["isSelectedPlayer"]) ?? false;
+        ModelParsers.toBoolParser(json['isSelectedPlayer']) ?? false;
   }
 }

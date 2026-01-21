@@ -41,7 +41,7 @@ class _NotificationPageState extends State<NotificationPage> {
                         margin: const EdgeInsets.all(10).copyWith(bottom: 0),
                         height: 70,
                       );
-                    });
+                    },);
               } else if (snapshot.hasError) {
                 return Center(
                   child: Text(
@@ -71,7 +71,7 @@ class _NotificationPageState extends State<NotificationPage> {
                   },
                 );
               }
-            }));
+            },),);
   }
 
   Widget singleNotification(NotificationModel data) {

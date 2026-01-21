@@ -1,4 +1,5 @@
 /// GraphQL queries for products from Hygraph backend
+library;
 
 /// Query to fetch all products with pagination
 const String getAllProductsQuery = '''

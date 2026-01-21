@@ -79,7 +79,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                             content: Text(
-                                'Please agree to the terms and privacy policy'),
+                                'Please agree to the terms and privacy policy',),
                           ),
                         );
                         return;
@@ -114,18 +114,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       );
 
                       try {
-                        // Check if user already exists with this phone number
+                        // Check if user already exists with this phone number (including DRAFT users)
                         final UserService userService = UserService();
-                        final existingUser = await userService.getUserByMobileNumber(phone);
+                        final mobileExists = await userService.checkMobileNumberExists(phone);
                         
-                        if (existingUser != null) {
+                        if (mobileExists) {
                           if (mounted) {
                             Navigator.of(context).pop(); // Hide loading dialog
                             showDialog(
                               context: context,
                               builder: (context) => AlertDialog(
                                 title: const Text('Account Already Exists'),
-                                content: const Text('User with this mobile number already exists. Please try logging in or create an account with a different number.'),
+                                content: const Text('This mobile number is already registered. Please try logging in or use a different number.'),
                                 actions: [
                                   TextButton(
                                     onPressed: () {
@@ -155,6 +155,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         // Clean phone number (remove non-digit characters)
                         final cleanPhone = phone.replaceAll(RegExp(r'[^\d]'), '');
                         
+                        debugPrint('📝 [SIGNUP] Creating user in Hygraph...');
+                        debugPrint('📝 [SIGNUP] FirstName: $firstName, LastName: $lastName');
+                        debugPrint('📝 [SIGNUP] Phone: $cleanPhone');
+                        
                         // Call GraphQL mutation to create user and get their ID
                         final graphQLClient = GraphQLService.getClient();
                         final MutationOptions options = MutationOptions(
@@ -164,7 +168,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             'lastName': lastName,
                             'username': phone, // Use phone as username
                             'mobileNumber': cleanPhone, // Use cleaned phone as String
-                            'modules': ['shop', 'fantasy'], // Enable both modules by default
+                            'modules': const ['shop', 'fantasy'], // Enable both modules by default
                             'shopEnabled': true, // Enable shop module
                             'fantasyEnabled': true, // Enable fantasy module
                           },
@@ -172,12 +176,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         
                         final QueryResult result = await graphQLClient.mutate(options);
                         
+                        debugPrint('📝 [SIGNUP] GraphQL Response: ${result.data}');
+                        
                         if (result.hasException) {
+                          debugPrint('❌ [SIGNUP] GraphQL Exception: ${result.exception}');
                           if (mounted) {
                             Navigator.of(context).pop(); // Hide loading
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: Text('Error: ${result.exception}'),
+                                content: Text('Error creating account: ${result.exception?.graphqlErrors.firstOrNull?.message ?? result.exception}'),
                                 backgroundColor: Colors.red,
                               ),
                             );
@@ -187,23 +194,30 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         
                         // Extract userId from response
                         final userId = result.data?['createUserDetail']?['id']?.toString();
+                        debugPrint('📝 [SIGNUP] Created User ID: $userId');
 
                         if (userId != null && userId.isNotEmpty) {
                           // Publish user (required for Hygraph)
+                          debugPrint('📝 [SIGNUP] Publishing user...');
                           try {
                             final publishOptions = MutationOptions(
                               document: gql(GraphQLQueries.publishUser),
                               variables: {'id': userId},
                             );
-                            await graphQLClient.mutate(publishOptions);
+                            final publishResult = await graphQLClient.mutate(publishOptions);
+                            if (publishResult.hasException) {
+                              debugPrint('⚠️ [SIGNUP] Publish exception: ${publishResult.exception}');
+                            } else {
+                              debugPrint('✅ [SIGNUP] User published successfully');
+                            }
                           } catch (e) {
-                            // Publishing failed, but user is created
+                            debugPrint('⚠️ [SIGNUP] Publishing failed: $e (user is still created)');
                           }
                           
                           // Save login session with userId from Hygraph (no fantasy token)
                           final authService = AuthService();
                           final prefs = await SharedPreferences.getInstance();
-                          final initialShopTokens = 0; // New users start with 0 tokens
+                          const initialShopTokens = 0; // New users start with 0 tokens
                           await prefs.setInt('shop_tokens', initialShopTokens);
                           debugPrint('💰 [SIGNUP] Stored initial shopTokens: $initialShopTokens');
                           await authService.saveLoginSession(
@@ -247,17 +261,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           
                           context.go(RouteNames.home);
                         } else {
+                          debugPrint('❌ [SIGNUP] userId is null or empty! Full response: ${result.data}');
                           if (mounted) {
                             Navigator.of(context).pop(); // Hide loading
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text('Error: Could not create user account'),
+                                content: Text('Error: Could not create user account - no user ID returned'),
                                 backgroundColor: Colors.red,
                               ),
                             );
                           }
                         }
-                      } catch (e) {
+                      } catch (e, stackTrace) {
+                        debugPrint('❌ [SIGNUP] Exception during signup: $e');
+                        debugPrint('❌ [SIGNUP] Stack trace: $stackTrace');
                         if (mounted) {
                           Navigator.of(context).pop(); // Hide loading
                           ScaffoldMessenger.of(context).showSnackBar(
@@ -280,12 +297,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           context.go(RouteNames.login);
                         },
                         child: const Text('Log in'),
-                      )
+                      ),
                     ],
                   ),
                 ],
               ),
-            )
+            ),
           ],
         ),
       ),

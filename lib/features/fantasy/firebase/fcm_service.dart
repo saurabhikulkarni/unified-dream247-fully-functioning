@@ -19,7 +19,7 @@ class FCMService {
 
     if (granted.authorizationStatus != AuthorizationStatus.authorized) {
       await AppStorage.saveToStorageBool(
-          AppStorageKeys.notificationSound, false);
+          AppStorageKeys.notificationSound, false,);
     }
 
     // 🔔 Local notification init
@@ -58,7 +58,7 @@ class FCMService {
     // 📱 FCM token
     String? token = await _messaging.getToken();
     if (token != null && token.isNotEmpty) {
-      debugPrint("📱 FCM Token: $token");
+      debugPrint('📱 FCM Token: $token');
       await AppStorage.saveToStorageString(
         AppStorageKeys.fcmToken,
         token,
@@ -66,13 +66,13 @@ class FCMService {
     }
 
     // 📢 Topic subscription
-    await _messaging.subscribeToTopic("All");
-    debugPrint("✅ Subscribed to topic: All");
+    await _messaging.subscribeToTopic('All');
+    debugPrint('✅ Subscribed to topic: All');
 
     // 🚨 FOREGROUND NOTIFICATION FIX (KEY PART)
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       if (kDebugMode) {
-        print("📩 Foreground message: ${message.notification?.title}");
+        print('📩 Foreground message: ${message.notification?.title}');
       }
 
       if (message.notification != null) {
@@ -84,7 +84,7 @@ class FCMService {
   /// 🔔 Show notification when app is OPEN
   static Future<void> _showForegroundNotification(RemoteMessage message) async {
     final bool playSound = await AppStorage.getStorageValueBool(
-            AppStorageKeys.notificationSound) ??
+            AppStorageKeys.notificationSound,) ??
         true;
 
     final AndroidNotificationDetails androidDetails =
