@@ -2,7 +2,6 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/app_colors.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/app_pages.dart';
@@ -56,7 +55,7 @@ class AppDrawer extends StatelessWidget {
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
-                border: Border(
+                border: const Border(
                   left: BorderSide(color: AppColors.greyColor, width: 0.8),
                 ),
               ),
@@ -81,7 +80,10 @@ class AppDrawer extends StatelessWidget {
                     ),
                     child: InkWell(
                       borderRadius: BorderRadius.circular(18),
-                      onTap: () => Get.to(() => EditProfile()),
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const EditProfile()),
+                      ),
                       child: Row(
                         children: [
                           CircleAvatar(
@@ -100,7 +102,7 @@ class AppDrawer extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  userData?.team ?? "User",
+                                  userData?.team ?? 'User',
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
@@ -161,7 +163,11 @@ class AppDrawer extends StatelessWidget {
                     child: Column(
                       children: [
                         InkWell(
-                          onTap: () => Get.to(() => MyBalancePage()),
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) => const MyBalancePage()),
+                          ),
                           borderRadius: const BorderRadius.only(
                             topLeft: Radius.circular(18),
                             topRight: Radius.circular(18),
@@ -194,7 +200,7 @@ class AppDrawer extends StatelessWidget {
                                   height: 15,
                                 ),
                                 Text(
-                                  walletData?.bonus ?? "0.0",
+                                  walletData?.bonus ?? '0.0',
                                   style: TextStyle(
                                     fontSize: 15.sp,
                                     fontWeight: FontWeight.w700,
@@ -206,9 +212,10 @@ class AppDrawer extends StatelessWidget {
                           ),
                         ),
                         InkWell(
-                          onTap: () => Get.to(
-                            () => AddMoneyPage(),
-                            transition: Transition.cupertino,
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) => const AddMoneyPage()),
                           ),
                           child: Container(
                             height: 42.h,
@@ -253,41 +260,56 @@ class AppDrawer extends StatelessWidget {
                   // MENU ITEMS
                   _drawerItem(
                     icon: Icons.verified_outlined,
-                    title: "KYC (Verify Account)",
-                    onTap: () => Get.to(() => VerifyDetailsPage()),
+                    title: 'KYC (Verify Account)',
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => const VerifyDetailsPage()),
+                    ),
                   ),
                   _drawerItem(
                     svg: Images.referEarn,
                     title: Strings.referEarn,
-                    onTap: () => Get.to(() => ReferAndEarnPage()),
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => const ReferAndEarnPage()),
+                    ),
                   ),
                   _drawerItem(
                     svg: Images.howToPlay,
-                    title: "How to Play",
+                    title: 'How to Play',
                     onTap: () => AppNavigation.gotoHowtoPlayPage(context),
                   ),
                   _drawerItem(
                     svg: Images.respplay,
-                    title: "Responsible Gaming",
+                    title: 'Responsible Gaming',
                     onTap: () =>
                         AppNavigation.gotoResponsibleGamingPage(context),
                   ),
                   _drawerItem(
                     svg: Images.settings,
                     title: Strings.settings,
-                    onTap: () => Get.to(() => SettingsPage()),
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const SettingsPage()),
+                    ),
                   ),
                   _drawerItem(
                     icon: Icons.headset_mic_outlined,
-                    title: "24x7 Help & Support",
-                    onTap: () => Get.to(() => SupportPage()),
+                    title: '24x7 Help & Support',
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const SupportPage()),
+                    ),
                   ),
                   _drawerItem(
                     icon: Icons.logout,
                     title: Strings.logout,
-                    onTap: () => Get.dialog(
-                      const LogoutDialog(),
+                    onTap: () => showDialog(
+                      context: context,
                       barrierDismissible: false,
+                      builder: (_) => const LogoutDialog(),
                     ),
                   ),
                   const Divider(
@@ -338,7 +360,7 @@ class AppDrawer extends StatelessWidget {
                   svg,
                   width: 22.w,
                   height: 22.h,
-                  colorFilter: ColorFilter.mode(
+                  colorFilter: const ColorFilter.mode(
                     AppColors.letterColor,
                     BlendMode.srcIn,
                   ),

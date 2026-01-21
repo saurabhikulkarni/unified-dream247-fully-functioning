@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart' as foundation;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
@@ -15,7 +16,6 @@ import 'package:unified_dream247/features/shop/services/msg91_service.dart';
 import 'package:unified_dream247/features/shop/services/user_service.dart';
 import 'package:unified_dream247/features/shop/models/product_model.dart';
 import 'package:unified_dream247/features/shop/constants.dart';
-
 
 class LogInForm extends StatefulWidget {
   const LogInForm({
@@ -77,7 +77,7 @@ class _LogInFormState extends State<LogInForm> {
   Future<void> _sendOtp() async {
     // Validate Indian mobile number before sending OTP
     String phone = _phoneController.text.replaceAll(RegExp(r'[^\d]'), '');
-    
+
     // Check if it's a valid Indian mobile number (10 digits, starts with 6-9)
     if (!RegExp(r'^[6-9]\d{9}$').hasMatch(phone)) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -100,7 +100,7 @@ class _LogInFormState extends State<LogInForm> {
     try {
       final UserService userService = UserService();
       final existingUser = await userService.getUserByMobileNumber(phone);
-      
+
       if (existingUser == null) {
         if (mounted) {
           Navigator.of(context).pop(); // Hide loading dialog
@@ -108,7 +108,8 @@ class _LogInFormState extends State<LogInForm> {
             context: context,
             builder: (context) => AlertDialog(
               title: const Text('Account Not Found'),
-              content: const Text('No account exists with this mobile number. Please sign up first.'),
+              content: const Text(
+                  'No account exists with this mobile number. Please sign up first.'),
               actions: [
                 TextButton(
                   onPressed: () {
@@ -129,10 +130,11 @@ class _LogInFormState extends State<LogInForm> {
         }
         return;
       }
-      
+
       // ✅ Store Hygraph userId for later use when saving session
       _hygraphUserId = existingUser.id;
-      debugPrint('📝 [LOGIN] Found existing user with Hygraph ID: $_hygraphUserId');
+      debugPrint(
+          '📝 [LOGIN] Found existing user with Hygraph ID: $_hygraphUserId');
     } catch (e) {
       // If user check fails, continue with OTP anyway (fallback)
       print('⚠️ [LOGIN] Error checking user existence: $e');
@@ -156,7 +158,8 @@ class _LogInFormState extends State<LogInForm> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(result['message'] ?? 'OTP sent to your mobile number.'),
+            content:
+                Text(result['message'] ?? 'OTP sent to your mobile number.'),
             backgroundColor: Colors.green,
           ),
         );
@@ -165,7 +168,8 @@ class _LogInFormState extends State<LogInForm> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(result['message'] ?? 'Failed to send OTP. Please try again.'),
+            content: Text(
+                result['message'] ?? 'Failed to send OTP. Please try again.'),
             backgroundColor: Colors.red,
           ),
         );
@@ -174,7 +178,9 @@ class _LogInFormState extends State<LogInForm> {
   }
 
   String? getVerifiedPhone() {
-    if (_otpSent && _otpController.text.isNotEmpty && _otpController.text.length >= 4) {
+    if (_otpSent &&
+        _otpController.text.isNotEmpty &&
+        _otpController.text.length >= 4) {
       return _phoneController.text.replaceAll(RegExp(r'[^\d]'), '');
     }
     return null;
@@ -187,66 +193,108 @@ class _LogInFormState extends State<LogInForm> {
   /// Verify OTP using unified backend endpoint
   Future<Map<String, dynamic>> verifyOtpUnified() async {
     try {
-      final phone = _phoneController.text.trim();
+      final phoneRaw = _phoneController.text.trim();
+      final phone = phoneRaw.replaceAll(RegExp(r'[^\d]'), '');
       final otp = _otpController.text.trim();
       final name = _nameController.text.trim();
-      
+
+      final requestBody = <String, dynamic>{
+        'mobileNumber': phone,
+        'otp': otp,
+      };
+
+      if (_sessionId != null && _sessionId!.isNotEmpty) {
+        requestBody['sessionId'] = _sessionId;
+      }
+
       // Call unified verify-otp endpoint
-      final response = await http.post(
-        Uri.parse('${ApiConstants.shopBackendUrl}${ApiConstants.verifyOtpEndpoint}'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'mobileNumber': phone,
-          'otp': otp,
-        }),
-      ).timeout(const Duration(seconds: 15));
-      
+      final response = await http
+          .post(
+            Uri.parse(
+                '${ApiConstants.shopBackendUrl}${ApiConstants.verifyOtpEndpoint}'),
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode(requestBody),
+          )
+          .timeout(const Duration(seconds: 15));
+
+      if (foundation.kDebugMode) {
+        debugPrint('📱 [OTP_VERIFY] Response Body: ${response.body}');
+      }
+
       final data = jsonDecode(response.body);
-      
+
       if (data['success'] == true) {
-        final user = data['user'];
-        final token = data['token'];
+        final user = data['user'] ?? {}; // Handle null user object
+        final token = data['token'] ?? user['token']; // Check root token first
         final refreshToken = data['refreshToken'];
-        
-        // Store shopTokens balance BEFORE saving session
+
+        // Store shopTokens balance
         final prefs = await SharedPreferences.getInstance();
         final shopTokens = user['shopTokens'] ?? 0;
         await prefs.setInt('shop_tokens', shopTokens);
-        debugPrint('💰 [OTP_VERIFY] Stored shopTokens: $shopTokens');
-        
+
         // Extract and store Fantasy sync status fields for debugging
         final fantasySyncStatus = user['fantasy_sync_status'];
         final fantasySyncError = user['fantasy_sync_error'];
-        
+
         if (fantasySyncStatus != null) {
           await prefs.setString('fantasy_sync_status', fantasySyncStatus);
-          debugPrint('🔗 [OTP_VERIFY] Fantasy Sync Status: $fantasySyncStatus');
         }
         if (fantasySyncError != null) {
           await prefs.setString('fantasy_sync_error', fantasySyncError);
-          debugPrint('⚠️ [OTP_VERIFY] Fantasy Sync Error: $fantasySyncError');
         }
-        
+
         // Store all unified auth data using core auth service
         final coreAuthService = core_auth.AuthService();
         await coreAuthService.initialize();
+
+        // FALLBACK STRATEGY: Use _hygraphUserId if response doesn't contain ID
+        // Check both 'user' object and root-level fields
+        final userId = data['userId'] ??
+            data['id'] ??
+            user['id'] ??
+            user['userId'] ??
+            user['hygraph_user_id'] ??
+            _hygraphUserId ??
+            '';
+        final authToken = data['authToken'] ??
+            data['token'] ??
+            user['token'] ??
+            user['authToken'] ??
+            '';
+
+        debugPrint('📝 [OTP_VERIFY] Parsed User ID: $userId');
+        debugPrint('🔑 [OTP_VERIFY] Parsed Auth Token: $authToken');
+
+        if (userId.isEmpty || authToken.isEmpty) {
+          debugPrint(
+              '❌ [OTP_VERIFY] Critical data missing! userId: $userId, token: $authToken');
+          return {
+            'success': false,
+            'message': 'Login failed: Missing required user data (ID/Token)'
+          };
+        }
+
         await coreAuthService.saveUserSession(
-          userId: user['id'],                                        // Hygraph ID
-          authToken: token,
+          userId: userId,
+          authToken: authToken,
           mobileNumber: phone,
-          name: name,
-          fantasyUserId: user['fantasy_user_id'],                   // MongoDB ID
+          name: name.isNotEmpty ? name : (user['name'] ?? ''),
+          fantasyUserId: user['fantasy_user_id'] ?? user['fantasyUserId'],
           shopEnabled: user['shop_enabled'] ?? true,
           fantasyEnabled: user['fantasy_enabled'] ?? true,
           modules: List<String>.from(user['modules'] ?? ['shop', 'fantasy']),
           refreshToken: refreshToken,
         );
-        
+
         debugPrint('✅ [OTP_VERIFY] User session saved with shopTokens');
         return {'success': true, 'message': 'Login successful'};
       }
-      
-      return {'success': false, 'message': data['message'] ?? 'OTP verification failed'};
+
+      return {
+        'success': false,
+        'message': data['message'] ?? 'OTP verification failed'
+      };
     } catch (e) {
       debugPrint('❌ [OTP_VERIFY] Error: $e');
       return {'success': false, 'message': 'Error: $e'};
@@ -274,12 +322,8 @@ class _LogInFormState extends State<LogInForm> {
       builder: (context) => const Center(child: CircularProgressIndicator()),
     );
 
-    // Verify OTP via MSG91 service (backend API)
-    final result = await msg91Service.verifyOtp(
-      mobileNumber: phone,
-      otp: otp,
-      sessionId: _sessionId,
-    );
+    // Verify OTP using UNIFIED endpoint which handles tokens properly
+    final result = await verifyOtpUnified();
 
     // Hide loading indicator
     if (mounted) {
@@ -295,7 +339,8 @@ class _LogInFormState extends State<LogInForm> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(result['message'] ?? 'Invalid OTP. Please try again.'),
+            content:
+                Text(result['message'] ?? 'Invalid OTP. Please try again.'),
             backgroundColor: Colors.red,
           ),
         );
@@ -309,36 +354,40 @@ class _LogInFormState extends State<LogInForm> {
     if (phone == null) return;
 
     final name = getUserName();
-    
+
     try {
       final authService = AuthService();
       final prefs = await SharedPreferences.getInstance();
-      
+
       debugPrint('🔐 [LOGIN] ========== RESTORING USER SESSION ==========');
-      
+
       // ✅ Use Hygraph userId from existing user check
-      final userIdToSave = _hygraphUserId ?? prefs.getString('user_id') ?? phone;
+      final userIdToSave =
+          _hygraphUserId ?? prefs.getString('user_id') ?? phone;
       debugPrint('📝 [LOGIN] User ID: $userIdToSave');
-      
+
       // ✅ STEP 1: Fetch user data from backend (Hygraph) to restore previous session data
       UserDetailModel? userFromBackend;
       try {
         final userService = UserService();
         userFromBackend = await userService.getUserById(userIdToSave);
-        
+
         if (userFromBackend != null) {
           debugPrint('✅ [LOGIN] User data retrieved from backend:');
-          debugPrint('   - Name: ${userFromBackend.firstName} ${userFromBackend.lastName}');
+          debugPrint(
+              '   - Name: ${userFromBackend.firstName} ${userFromBackend.lastName}');
           debugPrint('   - Wallet Balance: ${userFromBackend.walletBalance}');
-          
+
           // Restore wallet balance from backend
-          await prefs.setDouble('wallet_balance', userFromBackend.walletBalance);
-          await prefs.setInt('wallet_last_update', DateTime.now().millisecondsSinceEpoch);
+          await prefs.setDouble(
+              'wallet_balance', userFromBackend.walletBalance);
+          await prefs.setInt(
+              'wallet_last_update', DateTime.now().millisecondsSinceEpoch);
         }
       } catch (e) {
         debugPrint('⚠️ [LOGIN] Could not fetch user from Hygraph: $e');
       }
-      
+
       // ✅ STEP 2: Fetch fantasy token and user data from Fantasy backend
       String? fantasyToken;
       try {
@@ -347,14 +396,14 @@ class _LogInFormState extends State<LogInForm> {
           name: name,
           userId: userIdToSave,
         );
-        
+
         if (fantasyToken != null) {
           debugPrint('✅ [LOGIN] Fantasy token retrieved');
         }
       } catch (e) {
         debugPrint('⚠️ [LOGIN] Error fetching fantasy token: $e');
       }
-      
+
       // ✅ STEP 3: Fetch shopTokens and wallet data from Fantasy backend
       try {
         if (fantasyToken != null && fantasyToken.isNotEmpty) {
@@ -365,22 +414,25 @@ class _LogInFormState extends State<LogInForm> {
               'Content-Type': 'application/json',
             },
           ).timeout(const Duration(seconds: 8));
-          
+
           if (response.statusCode == 200) {
             final data = jsonDecode(response.body);
             final walletData = data['data'] ?? data;
-            
+
             // Restore shopTokens from backend
             final shopTokens = (walletData['shopTokens'] as num?)?.toInt() ?? 0;
             await prefs.setInt('shop_tokens', shopTokens);
-            debugPrint('💰 [LOGIN] Restored shopTokens from backend: $shopTokens');
-            
+            debugPrint(
+                '💰 [LOGIN] Restored shopTokens from backend: $shopTokens');
+
             // Restore wallet balance from Fantasy backend if available
-            final walletBalance = (walletData['totalBalance'] as num?)?.toDouble() ?? 
-                                  (walletData['wallet_balance'] as num?)?.toDouble();
+            final walletBalance =
+                (walletData['totalBalance'] as num?)?.toDouble() ??
+                    (walletData['wallet_balance'] as num?)?.toDouble();
             if (walletBalance != null) {
               await prefs.setDouble('wallet_balance', walletBalance);
-              debugPrint('💰 [LOGIN] Restored wallet balance from backend: $walletBalance');
+              debugPrint(
+                  '💰 [LOGIN] Restored wallet balance from backend: $walletBalance');
             }
           }
         }
@@ -388,7 +440,7 @@ class _LogInFormState extends State<LogInForm> {
         debugPrint('⚠️ [LOGIN] Could not fetch wallet data from backend: $e');
         // Don't set to 0 - keep any existing cached value
       }
-      
+
       // ✅ STEP 4: Save session to AuthServices
       await authService.saveLoginSession(
         phone: phone,
@@ -397,22 +449,31 @@ class _LogInFormState extends State<LogInForm> {
         userId: userIdToSave,
         fantasyToken: fantasyToken,
       );
-      
-      final coreAuthService = core_auth.AuthService();
-      await coreAuthService.initialize();
-      await coreAuthService.saveUserSession(
-        userId: userIdToSave,
-        authToken: fantasyToken ?? '',
-        mobileNumber: phone,
-        name: name,
-      );
-      
+
+      // ✅ STEP 4b: Only update core auth service if we have a valid fantasy token
+      // IMPORTANT: Don't overwrite existing token with empty string!
+      if (fantasyToken != null && fantasyToken.isNotEmpty) {
+        final coreAuthService = core_auth.AuthService();
+        await coreAuthService.initialize();
+        await coreAuthService.saveUserSession(
+          userId: userIdToSave,
+          authToken: fantasyToken,
+          mobileNumber: phone,
+          name: name,
+        );
+        debugPrint('✅ [LOGIN] Core auth session updated with fantasy token');
+      } else {
+        debugPrint(
+            '⚠️ [LOGIN] Skipping core auth update - no fantasy token (keeping existing token)');
+      }
+
       // ✅ STEP 5: Ensure login flag is set
       await prefs.setBool('is_logged_in', true);
-      
+
       debugPrint('🔐 [LOGIN] ========== USER SESSION RESTORED ==========');
       debugPrint('✅ [LOGIN] User data safely stored on backend');
-      debugPrint('✅ [LOGIN] Session restored - user can continue where they left off');
+      debugPrint(
+          '✅ [LOGIN] Session restored - user can continue where they left off');
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -427,7 +488,8 @@ class _LogInFormState extends State<LogInForm> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Login successful but some data could not be restored: $e'),
+            content: Text(
+                'Login successful but some data could not be restored: $e'),
             backgroundColor: Colors.orange,
           ),
         );
@@ -471,7 +533,7 @@ class _LogInFormState extends State<LogInForm> {
               }
               // Remove non-numeric characters for validation
               String cleanPhone = value.replaceAll(RegExp(r'[^\d]'), '');
-              
+
               // Validate Indian mobile number (10 digits, starts with 6-9)
               if (!RegExp(r'^[6-9]\d{9}$').hasMatch(cleanPhone)) {
                 return 'Enter a valid Indian mobile number (10 digits starting with 6-9)';
@@ -487,7 +549,8 @@ class _LogInFormState extends State<LogInForm> {
                   await _sendOtp();
                 }
               },
-              padding: const EdgeInsets.symmetric(vertical: defaultPadding / 1.5),
+              padding:
+                  const EdgeInsets.symmetric(vertical: defaultPadding / 1.5),
               child: const Text('Send OTP'),
             ),
           if (_otpSent) ...[
@@ -512,9 +575,11 @@ class _LogInFormState extends State<LogInForm> {
             Align(
               alignment: Alignment.centerRight,
               child: TextButton(
-                onPressed: _secondsLeft == 0 ? () async {
-                  await _sendOtp();
-                } : null,
+                onPressed: _secondsLeft == 0
+                    ? () async {
+                        await _sendOtp();
+                      }
+                    : null,
                 child: Text(
                   _secondsLeft == 0
                       ? 'Resend OTP'

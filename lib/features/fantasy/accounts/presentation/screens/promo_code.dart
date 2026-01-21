@@ -21,7 +21,7 @@ class PromoCode extends StatefulWidget {
 
 class _PromoCode extends State<PromoCode> {
   bool isApplied = false;
-  String promoId = "";
+  String promoId = '';
 
   @override
   void initState() {
@@ -52,14 +52,40 @@ class _PromoCode extends State<PromoCode> {
               },
             );
           } else {
-            return snapshot.data!.isEmpty
-                ? Container()
-                : ListView.builder(
-                    itemCount: snapshot.data?.length,
-                    itemBuilder: (context, index) {
-                      return singleItemOfferCode(snapshot.data![index]);
-                    },
-                  );
+            // Handle null or empty data safely
+            final offers = snapshot.data;
+            if (offers == null || offers.isEmpty) {
+              return Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.local_offer_outlined,
+                        size: 64,
+                        color: Colors.grey[400],
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        'No offers available at the moment',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.grey[600],
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }
+            return ListView.builder(
+              itemCount: offers.length,
+              itemBuilder: (context, index) {
+                return singleItemOfferCode(offers[index]);
+              },
+            );
           }
         },
       ),
@@ -153,7 +179,7 @@ class _PromoCode extends State<PromoCode> {
                     ),
                   ),
                   const SizedBox(height: 10),
-                  Divider(
+                  const Divider(
                     height: 1,
                     thickness: 1,
                     indent: 1,
@@ -178,7 +204,7 @@ class _PromoCode extends State<PromoCode> {
                               ),
                             ),
                             Text(
-                              "Min Amt: ${Strings.indianRupee}${data.minAmount}, Max Amt: ${Strings.indianRupee}${data.maxAmount}",
+                              'Min Amt: ${Strings.indianRupee}${data.minAmount}, Max Amt: ${Strings.indianRupee}${data.maxAmount}',
                               style: const TextStyle(
                                 fontWeight: FontWeight.w400,
                                 fontSize: 10,
@@ -199,23 +225,23 @@ class _PromoCode extends State<PromoCode> {
                                 if ((data.usedCount ?? 0) >=
                                     (data.userTime ?? 1)) {
                                   appToast(
-                                    "You have already exhausted limit to use this offer code.",
+                                    'You have already exhausted limit to use this offer code.',
                                     context,
                                   );
                                   setState(() {
-                                    promoId = "";
+                                    promoId = '';
                                     isApplied = false;
                                   });
                                 } else {
                                   setState(() {
-                                    promoId = data.id ?? "";
+                                    promoId = data.id ?? '';
                                     isApplied = true;
                                     appToast(Strings.promoCodeApplied, context);
                                   });
                                 }
                               } else {
                                 setState(() {
-                                  promoId = "";
+                                  promoId = '';
                                   isApplied = false;
                                   appToast(
                                     Strings.promoCodeNotApplied,
@@ -239,7 +265,7 @@ class _PromoCode extends State<PromoCode> {
                             child: Padding(
                               padding: const EdgeInsets.symmetric(vertical: 2),
                               child: Text(
-                                (!isApplied) ? Strings.apply : "Applied",
+                                (!isApplied) ? Strings.apply : 'Applied',
                                 style: const TextStyle(
                                   fontWeight: FontWeight.w400,
                                   fontSize: 12,

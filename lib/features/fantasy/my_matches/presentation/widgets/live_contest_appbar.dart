@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/app_colors.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/app_pages.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/images.dart';
@@ -26,7 +25,7 @@ class LiveContestAppBar extends StatelessWidget implements PreferredSizeWidget {
     return Container(
       decoration: transparent
           ? const BoxDecoration()
-          : BoxDecoration(gradient: AppColors.appBarGradient),
+          : const BoxDecoration(gradient: AppColors.appBarGradient),
       child: SafeArea(
         child: Container(
           padding: const EdgeInsets.only(right: 10.0, top: 10.0, bottom: 10.0),
@@ -43,17 +42,18 @@ class LiveContestAppBar extends StatelessWidget implements PreferredSizeWidget {
                         AppNavigation.gotoLandingScreen(context);
                       }
                     },
-                    icon: Icon(Icons.arrow_back_ios_rounded,
-                        size: 20,
-                        color: transparent
-                            ? AppColors.blackColor
-                            : AppColors.white,
-                        shadows: [
-                          Shadow(
-                            color: Colors.black.withOpacity(0.4),
-                            blurRadius: 6,
-                          ),
-                        ]),
+                    icon: Icon(
+                      Icons.arrow_back_ios_rounded,
+                      size: 20,
+                      color:
+                          transparent ? AppColors.blackColor : AppColors.white,
+                      shadows: [
+                        Shadow(
+                          color: Colors.black.withOpacity(0.4),
+                          blurRadius: 6,
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
@@ -61,9 +61,9 @@ class LiveContestAppBar extends StatelessWidget implements PreferredSizeWidget {
                 mode: mode,
                 transparent: transparent,
               ),
-              if (mode == "Live")
+              if (mode == 'Live')
                 _liveBadge()
-              else if (mode == "Completed")
+              else if (mode == 'Completed')
                 _completedBadge()
               else if (showWalletIcon)
                 Row(
@@ -81,9 +81,10 @@ class LiveContestAppBar extends StatelessWidget implements PreferredSizeWidget {
                     const SizedBox(width: 15),
                     GestureDetector(
                       onTap: () {
-                        Get.to(
-                          () => const MyBalancePage(),
-                          transition: Transition.cupertino,
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => const MyBalancePage()),
                         );
                       },
                       child: Image.asset(
@@ -137,7 +138,7 @@ Widget _liveBadge() {
         ),
         const SizedBox(width: 6),
         Text(
-          "LIVE",
+          'LIVE',
           style: GoogleFonts.exo2(
             fontSize: 11,
             fontWeight: FontWeight.bold,
@@ -176,7 +177,7 @@ Widget _completedBadge() {
         ),
         const SizedBox(width: 6),
         Text(
-          "COMPLETED",
+          'COMPLETED',
           style: GoogleFonts.exo2(
             fontSize: 11,
             fontWeight: FontWeight.bold,

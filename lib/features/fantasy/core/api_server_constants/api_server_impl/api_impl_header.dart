@@ -57,9 +57,12 @@ class ApiImplWithAccessToken {
       }
 
       return isExpired;
+      return isExpired;
     } catch (e) {
-      debugPrint('⚠️ [TOKEN] Error checking expiry: $e');
-      return true; // Assume expired on error
+      debugPrint('⚠️ [TOKEN] Error checking expiry (might not be JWT): $e');
+      // If we can't parse it as JWT, assume it's a simple API Key and Valid
+      // Do NOT assume expired, as that deletes the token!
+      return false; 
     }
   }
 
@@ -71,6 +74,7 @@ class ApiImplWithAccessToken {
     bool isJson = true,
     bool showLog = true,
     int retryCount = 3,
+    String? customToken,
   }) async {
     int attempt = 0;
 
@@ -82,35 +86,26 @@ class ApiImplWithAccessToken {
         }
 
         final SharedPreferences prefs = await SharedPreferences.getInstance();
-        String? token = prefs.getString(AppStorageKeys.authToken);
+        String? token = customToken;
+        
+        // If custom token is not provided, try to load from storage
+        if (token == null || token.isEmpty) {
+           token = prefs.getString(AppStorageKeys.authToken);
+           
+           // Fallback checks
+           if (token == null || token.isEmpty) token = prefs.getString('token'); // Canonical shared key
+           if (token == null || token.isEmpty) token = prefs.getString('auth_token'); // Legacy key
+           if (token == null || token.isEmpty) token = prefs.getString('temp_otp_token'); // Recovery key
+        }
 
         // Debug: Log token status
         if (token == null || token.isEmpty) {
-          debugPrint('⚠️ [FANTASY API] No auth token found in SharedPreferences!');
-          debugPrint('⚠️ [FANTASY API] Key checked: ${AppStorageKeys.authToken}');
-          // Don't log all keys to avoid sensitive data exposure in production
-          // Try alternative key
-          token = prefs.getString('auth_token');
-          if (token != null && token.isNotEmpty) {
-            debugPrint('✅ [FANTASY API] Found token using alternative key "auth_token"');
-          }
+          debugPrint('⚠️ [FANTASY API] No auth token found!');
         } else {
-          debugPrint('✅ [FANTASY API] Token found: ${token.substring(0, token.length > 20 ? 20 : token.length)}...');
-          
-          // Check if token is expired
-          if (_isTokenExpired(token)) {
-            debugPrint('🔄 [FANTASY API] Token expired, needs refresh');
-            // Try to get a fresh token if phone is available
-            final phone = prefs.getString('user_phone');
-            if (phone != null && phone.isNotEmpty) {
-              debugPrint('🔄 [FANTASY API] Will attempt to refresh on next request');
-            }
-            // Clear expired token
-            await prefs.remove(AppStorageKeys.authToken);
-            await prefs.remove('token');
-            await prefs.remove('auth_token');
-            token = null;
-            // Don't throw - let the API call fail naturally and caller can handle it
+          // Check expiry if we loaded from storage (trusted custom tokens assumed valid/checked by caller)
+          if (customToken == null && _isTokenExpired(token)) {
+             debugPrint('🔄 [FANTASY API] Stored token expired, dropping.');
+             token = null;
           }
         }
 
@@ -126,7 +121,6 @@ class ApiImplWithAccessToken {
           responseType: ResponseType.json,
           validateStatus: (status) => true,
         );
-
         if (showLog) {
           debugPrint('============ ENDPOINT ===============');
           debugPrint(url);
@@ -176,12 +170,14 @@ class ApiImplWithAccessToken {
     String url, {
     Map<String, dynamic>? queryParameters,
     bool showLog = true,
+    String? token,
   }) {
     return _request(
       'GET',
       url,
       queryParameters: queryParameters,
       showLog: showLog,
+      customToken: token,
     );
   }
 
@@ -189,32 +185,36 @@ class ApiImplWithAccessToken {
     String url, {
     Map<String, dynamic>? body,
     bool showLog = true,
+    String? token,
   }) {
-    return _request('POST', url, body: body, showLog: showLog);
+    return _request('POST', url, body: body, showLog: showLog, customToken: token);
   }
 
   Future<Response> put(
     String url, {
     Map<String, dynamic>? body,
     bool showLog = true,
+    String? token,
   }) {
-    return _request('PUT', url, body: body, showLog: showLog);
+    return _request('PUT', url, body: body, showLog: showLog, customToken: token);
   }
 
   Future<Response> patch(
     String url, {
     Map<String, dynamic>? body,
     bool showLog = true,
+    String? token,
   }) {
-    return _request('PATCH', url, body: body, showLog: showLog);
+    return _request('PATCH', url, body: body, showLog: showLog, customToken: token);
   }
 
   Future<Response> delete(
     String url, {
     Map<String, dynamic>? body,
     bool showLog = true,
+    String? token,
   }) {
-    return _request('DELETE', url, body: body, showLog: showLog);
+    return _request('DELETE', url, body: body, showLog: showLog, customToken: token);
   }
 
   Future<Uint8List> readBytes(String url, {bool showLog = true}) async {

@@ -1,4 +1,3 @@
-import 'package:get/get.dart';
 import 'dart:convert';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/material.dart';
@@ -428,7 +427,7 @@ class _MyBalancePage extends State<MyBalancePage> {
                               icon: Images.icDeposit,
                               title: 'Shop Token',
                               value:
-                                  '${AppUtils.stringifyNumber(num.parse(_shopTokens.toStringAsFixed(0)))}',
+                                  AppUtils.stringifyNumber(num.parse(_shopTokens.toStringAsFixed(0))),
                               color: AppColors.lightGreen.withAlpha(20),
                               isShopToken: true,
                               gradientButton: true,
@@ -446,7 +445,7 @@ class _MyBalancePage extends State<MyBalancePage> {
                               icon: Images.icWinning,
                               title: Strings.winning,
                               isDiamondIcon: true,
-                              value: "${walletData?.winning ?? "0"}",
+                              value: walletData?.winning ?? "0",
                               color: AppColors.orangeColor.withAlpha(40),
                               buttonText:
                                   // (Provider.of<WalletDetailsProvider>(
@@ -476,10 +475,10 @@ class _MyBalancePage extends State<MyBalancePage> {
                             _walletInfoTile(
                                 icon: Images.icCashback,
                                 title: 'Game Token',
-                                value: "${walletData?.bonus ?? "0"}",
+                                value: walletData?.bonus ?? "0",
                                 color: AppColors.blueColor.withAlpha(40),
                                 tooltip: 'Use these Tokens to play Games.',
-                                isTokenIcon: true),
+                                isTokenIcon: true,),
                             // const SizedBox(height: 10),
                             // Container(
                             //   padding: const EdgeInsets.all(12),

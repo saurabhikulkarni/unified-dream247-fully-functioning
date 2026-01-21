@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/services/auth_service.dart' as core_auth;
 
 import '../../features/authentication/presentation/pages/otp_verification_page.dart';
@@ -15,7 +16,8 @@ import '../../features/home/presentation/pages/unified_home_page.dart';
 // Shop screen imports
 import '../../features/shop/splash/splash_screen.dart' as shop_splash;
 import '../../features/shop/screens/auth/views/login_screen.dart' as shop_auth;
-import '../../features/shop/screens/auth/views/signup_screen.dart' as shop_signup;
+import '../../features/shop/screens/auth/views/signup_screen.dart'
+    as shop_signup;
 import '../../features/shop/home/screens/shop_home_screen.dart';
 import '../../features/shop/entry_point.dart';
 import '../../features/shop/screens/product/views/product_details_screen.dart';
@@ -24,7 +26,8 @@ import '../../features/shop/screens/order/views/orders_screen.dart';
 import '../../features/shop/screens/order/views/order_tracking_screen.dart';
 import '../../features/shop/screens/wishlist/views/bookmark_screen.dart';
 import '../../features/shop/screens/search/views/search_screen.dart';
-import '../../features/shop/screens/profile/views/profile_screen.dart' as shop_profile;
+import '../../features/shop/screens/profile/views/profile_screen.dart'
+    as shop_profile;
 import '../../features/shop/screens/address/views/addresses_screen.dart';
 import '../../features/shop/screens/address/views/add_address_screen.dart';
 import '../../features/shop/screens/discover/views/discover_screen.dart';
@@ -44,11 +47,13 @@ import '../../features/fantasy/upcoming_matches/presentation/screens/contest_pag
 import '../../features/fantasy/my_matches/presentation/screens/my_matches_page.dart';
 import '../../features/fantasy/my_matches/presentation/screens/live_match_details_screen.dart';
 import '../../features/fantasy/accounts/presentation/screens/my_balance_page.dart';
-import '../../features/fantasy/accounts/presentation/screens/add_money_page.dart' as fantasy_add_money;
+import '../../features/fantasy/accounts/presentation/screens/add_money_page.dart'
+    as fantasy_add_money;
 import '../../features/fantasy/accounts/presentation/screens/withdraw_screen.dart';
 import '../../features/fantasy/accounts/presentation/screens/my_transactions.dart';
 import '../../features/fantasy/user_verification/presentation/screens/verify_details_page.dart';
-import '../../features/fantasy/menu_items/presentation/screens/edit_profile_page.dart' show EditProfile;
+import '../../features/fantasy/menu_items/presentation/screens/edit_profile_page.dart'
+    show EditProfile;
 import '../../features/fantasy/menu_items/presentation/screens/refer_and_earn_page.dart';
 
 import 'route_names.dart';
@@ -61,20 +66,50 @@ class AppRouter {
     redirect: (context, state) async {
       // Check if user is trying to access Fantasy routes without authentication
       final isFantasyRoute = state.matchedLocation.startsWith('/fantasy');
-      
+
       if (isFantasyRoute) {
         final authService = core_auth.AuthService();
         await authService.initialize();
+
+        // Check both Shop and Fantasy login flags
         final isLoggedIn = await authService.isLoggedIn();
-        
-        if (!isLoggedIn) {
-          debugPrint('🔐 [ROUTER] Unauthenticated user trying to access Fantasy route');
-          debugPrint('🔐 [ROUTER] Redirecting from ${state.matchedLocation} to /login');
+        final prefs = await SharedPreferences.getInstance();
+        final isLoggedInFantasy =
+            prefs.getBool('is_logged_in_fantasy') ?? false;
+        final token = prefs.getString('token');
+        final authToken = prefs.getString('auth_token');
+
+        // Consider user logged in if either flag is true AND we have a valid token
+        final hasValidToken = (token != null && token.isNotEmpty) ||
+            (authToken != null && authToken.isNotEmpty);
+        final isAuthenticated =
+            (isLoggedIn || isLoggedInFantasy) && hasValidToken;
+
+        debugPrint('🔐 [ROUTER] Fantasy Route Auth Check:');
+        debugPrint('   - is_logged_in: $isLoggedIn');
+        debugPrint('   - is_logged_in_fantasy: $isLoggedInFantasy');
+        debugPrint(
+            '   - token: ${token != null ? "${token.length} chars" : "NULL"}');
+        debugPrint(
+            '   - auth_token: ${authToken != null ? "${authToken.length} chars" : "NULL"}');
+        debugPrint('   - isAuthenticated: $isAuthenticated');
+
+        // If Fantasy login exists but Shop doesn't, sync the flags
+        if (isLoggedInFantasy && !isLoggedIn && hasValidToken) {
+          debugPrint('🔄 [ROUTER] Syncing Fantasy auth to Shop flags...');
+          await prefs.setBool('is_logged_in', true);
+        }
+
+        if (!isAuthenticated) {
+          debugPrint(
+              '🔐 [ROUTER] Unauthenticated user trying to access Fantasy route');
+          debugPrint(
+              '🔐 [ROUTER] Redirecting from ${state.matchedLocation} to /login');
           // Redirect to login if accessing fantasy routes without authentication
           return '/login';
         }
       }
-      
+
       // Allow other routes to proceed normally
       return null;
     },
@@ -88,7 +123,7 @@ class AppRouter {
           child: const shop_splash.SplashScreen(),
         ),
       ),
-      
+
       // Authentication routes (Shop login/signup screens)
       GoRoute(
         path: RouteNames.login,
@@ -117,7 +152,7 @@ class AppRouter {
           );
         },
       ),
-      
+
       // Main home - Unified Home Page with Game Zone & Shop sections
       GoRoute(
         path: RouteNames.home,
@@ -127,7 +162,7 @@ class AppRouter {
           child: const UnifiedHomePage(),
         ),
       ),
-      
+
       // E-commerce routes
       GoRoute(
         path: RouteNames.products,
@@ -148,7 +183,7 @@ class AppRouter {
           );
         },
       ),
-      
+
       // Gaming routes
       GoRoute(
         path: RouteNames.matches,
@@ -169,7 +204,7 @@ class AppRouter {
           );
         },
       ),
-      
+
       // Wallet routes
       GoRoute(
         path: RouteNames.wallet,
@@ -187,7 +222,7 @@ class AppRouter {
           child: const AddMoneyPage(),
         ),
       ),
-      
+
       // Profile routes
       GoRoute(
         path: RouteNames.profile,
@@ -197,7 +232,7 @@ class AppRouter {
           child: const ProfilePage(),
         ),
       ),
-      
+
       // ========== Shopping Module Routes ==========
       GoRoute(
         path: '/shop/entry_point',
@@ -374,11 +409,13 @@ class AppRouter {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.help_outline, size: 80, color: Theme.of(context).primaryColor),
+                    Icon(Icons.help_outline,
+                        size: 80, color: Theme.of(context).primaryColor),
                     const SizedBox(height: 24),
                     const Text(
                       'Need Help?',
-                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                      style:
+                          TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 16),
                     const Text(
@@ -425,7 +462,7 @@ class AppRouter {
           child: const ShippingPolicyScreen(),
         ),
       ),
-      
+
       // ========== Fantasy Gaming Module Routes ==========
       GoRoute(
         path: '/fantasy/home',

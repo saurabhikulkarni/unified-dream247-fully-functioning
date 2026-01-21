@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:unified_dream247/config/msg91_config.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// Service for MSG91 OTP verification via backend API
 /// 
@@ -42,6 +43,7 @@ class Msg91Service {
 
       if (kDebugMode) {
         print('📱 [MSG91] Sending OTP to: $cleanMobile');
+        print('📱 [MSG91] Request URL: ${Msg91Config.sendOtpEndpoint}');
       }
       
       final response = await http.post(
@@ -150,6 +152,12 @@ class Msg91Service {
         requestBody['sessionId'] = sessionId;
       }
 
+      if (kDebugMode) {
+        print('📱 [MSG91] Verifying OTP...');
+        print('📱 [MSG91] Request URL: ${Msg91Config.verifyOtpEndpoint}');
+        print('📱 [MSG91] Request Body: $requestBody');
+      }
+
       final response = await http.post(
         Uri.parse(Msg91Config.verifyOtpEndpoint),
         headers: {
@@ -158,15 +166,36 @@ class Msg91Service {
         body: jsonEncode(requestBody),
       ).timeout(Duration(seconds: Msg91Config.requestTimeoutSeconds));
 
+      if (kDebugMode) {
+        print('📱 [MSG91] Response StatusCode: ${response.statusCode}');
+        print('📱 [MSG91] Full Response Body: ${response.body}');
+      }
+
       final responseData = jsonDecode(response.body) as Map<String, dynamic>;
 
       if (response.statusCode == 200 && responseData['success'] == true) {
+        final token = responseData['token'];
+        if (token != null && token is String && token.isNotEmpty) {
+           try {
+             final prefs = await SharedPreferences.getInstance();
+             await prefs.setString('temp_otp_token', token);
+             await prefs.setString('auth_token', token); // Also try to set directly
+             await prefs.setString('token', token);
+             if (kDebugMode) {
+               print('✅ [MSG91] Intercepted and saved Auth Token: ${token.substring(0, 5)}...');
+             }
+           } catch (e) {
+             print('⚠️ [MSG91] Failed to save intercepted token: $e');
+           }
+        }
+        
         return {
           'success': true,
           'message': responseData['message'] ?? 'OTP verified successfully',
           'token': responseData['token'], // Optional auth token from backend
         };
       } else {
+        // ... (existing failure code)
         return {
           'success': false,
           'message': responseData['message'] ?? 'Invalid OTP. Please try again.',

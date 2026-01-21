@@ -182,11 +182,13 @@ class AuthService {
         cartService.setUserId(userId);
         await UserService.setCurrentUserId(userId);
         
-        // Fantasy session flags
+        // Fantasy session flags - SYNC BOTH login flags
         await prefs.setBool('is_logged_in_fantasy', true);
+        await prefs.setBool(_isLoggedInKey, true);  // Also set Shop login flag for sync
         await prefs.setString('user_phone_fantasy', phone);
         
         print('✅ [AUTH] UserId saved to all storage keys');
+        print('✅ [AUTH] Both is_logged_in and is_logged_in_fantasy set to true');
       }
       
       // Store user phone (shared identifier across both systems)

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/app_colors.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/images.dart';
 import 'package:unified_dream247/features/fantasy/accounts/presentation/screens/my_balance_page.dart';
@@ -19,7 +18,7 @@ class SecondAppbar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(gradient: AppColors.appBarGradient),
+      decoration: const BoxDecoration(gradient: AppColors.appBarGradient),
       child: SafeArea(
         child: Container(
           padding: const EdgeInsets.only(right: 10.0, top: 10.0, bottom: 10.0),
@@ -34,7 +33,7 @@ class SecondAppbar extends StatelessWidget implements PreferredSizeWidget {
                         final canGoBack = await onBackPressed!();
                         if (!canGoBack) return;
                       }
-                      Get.back();
+                      Navigator.of(context).pop();
                     },
                     icon: const Icon(
                       Icons.arrow_back_ios_rounded,
@@ -56,7 +55,10 @@ class SecondAppbar extends StatelessWidget implements PreferredSizeWidget {
               if (showWalletIcon)
                 GestureDetector(
                   onTap: () {
-                    Get.to(() => MyBalancePage());
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const MyBalancePage()),
+                    );
                   },
                   child: Container(
                     padding: const EdgeInsets.symmetric(

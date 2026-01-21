@@ -5,6 +5,7 @@ import 'package:unified_dream247/features/fantasy/accounts/data/services/game_to
 import 'package:unified_dream247/features/fantasy/core/api_server_constants/api_server_impl/api_impl_header.dart';
 import 'package:unified_dream247/features/fantasy/core/api_server_constants/api_server_urls.dart';
 import 'package:unified_dream247/features/fantasy/core/utils/user_id_helper.dart';
+import 'package:unified_dream247/core/services/auth_service.dart' as core_auth;
 
 /// Game Tokens Service
 /// Handles fetching and caching of game tokens from Fantasy backend
@@ -122,10 +123,20 @@ class GameTokensService {
   Future<GameTokens?> _fetchFromBackend() async {
     try {
       final url = '${APIServerUrl.userServerUrl}${APIServerUrl.myWalletDetails}';
-
+      
+      // EXPLICIT TOKEN FETCH: Fix for "No auth token found"
+      // Get the token directly from the auth service (in-memory or prefs)
+      final token = core_auth.authService.getAuthToken();
+      
       debugPrint('🔄 [GAME_TOKENS_SERVICE] Calling backend: $url');
+      if (token != null) {
+         debugPrint('🔑 [GAME_TOKENS_SERVICE] Using explicit token: ${token.substring(0, 10)}...');
+      } else {
+         debugPrint('⚠️ [GAME_TOKENS_SERVICE] No explicit token found in AuthService');
+      }
 
-      final response = await _apiClient.get(url);
+      // Pass the token explicitly to the API client
+      final response = await _apiClient.get(url, token: token);
       final res = response.data;
 
       if (res is! Map<String, dynamic>) {

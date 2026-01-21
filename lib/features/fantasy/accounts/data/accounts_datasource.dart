@@ -50,13 +50,14 @@ class AccountsDatasource implements AccountsRepositories {
     final res = response.data;
     debugPrint('📥 [ACCOUNTS_DS] Response status: ${response.statusCode}');
     debugPrint('📥 [ACCOUNTS_DS] Response data: $res');
-    
+
     if (ApiServerUtil.validateStatusCode(response.statusCode ?? 200)) {
       if (res[ApiResponseString.success] == true) {
         debugPrint('✅ [ACCOUNTS_DS] Add cash request successful');
         return response.data;
       } else {
-        debugPrint('❌ [ACCOUNTS_DS] Add cash failed: ${res[ApiResponseString.message]}');
+        debugPrint(
+            '❌ [ACCOUNTS_DS] Add cash failed: ${res[ApiResponseString.message]}');
         ApiServerUtil.showAppToastforApi(
           res[ApiResponseString.message],
           context,
@@ -126,9 +127,14 @@ class AccountsDatasource implements AccountsRepositories {
 
     if (ApiServerUtil.validateStatusCode(response.statusCode ?? 200)) {
       if (res[ApiResponseString.success] == true) {
-        return List<OffersModel>.from(
-          res[ApiResponseString.data].map((x) => OffersModel.fromJson(x)),
-        );
+        // Safely handle null or non-list data
+        final data = res[ApiResponseString.data];
+        if (data != null && data is List) {
+          return List<OffersModel>.from(
+            data.map((x) => OffersModel.fromJson(x)),
+          );
+        }
+        return []; // Return empty list if data is not a list
       }
     } else {
       if (context.mounted) {
@@ -522,6 +528,7 @@ class AccountsDatasource implements AccountsRepositories {
     return null;
   }
 
+  @override
   Future<List<TokenTierModel>?> getTokenTiers(
     BuildContext context,
   ) async {
@@ -533,9 +540,14 @@ class AccountsDatasource implements AccountsRepositories {
 
     if (ApiServerUtil.validateStatusCode(response.statusCode ?? 200)) {
       if (res[ApiResponseString.success] == true) {
-        return List<TokenTierModel>.from(
-          res[ApiResponseString.data].map((x) => TokenTierModel.fromJson(x)),
-        );
+        // Safely handle null or non-list data
+        final data = res[ApiResponseString.data];
+        if (data != null && data is List) {
+          return List<TokenTierModel>.from(
+            data.map((x) => TokenTierModel.fromJson(x)),
+          );
+        }
+        return []; // Return empty list if data is not a list
       } else {
         ApiServerUtil.showAppToastforApi(
           res[ApiResponseString.message],
@@ -645,7 +657,8 @@ class AccountsDatasource implements AccountsRepositories {
   /// Used to sync game tokens with backend after successful topup
   /// Response includes: balance, winning, bonus, totalamount
   Future<Map<String, dynamic>?> fetchGameTokensAfterPayment(
-      BuildContext context) async {
+    BuildContext context,
+  ) async {
     try {
       final url =
           '${APIServerUrl.userServerUrl}${APIServerUrl.myWalletDetails}';

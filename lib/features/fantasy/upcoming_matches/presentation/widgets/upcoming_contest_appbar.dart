@@ -2,7 +2,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/app_colors.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/app_pages.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/images.dart';
@@ -26,7 +25,7 @@ class UpcomingContestAppBar extends StatelessWidget
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(gradient: AppColors.appBarGradient),
+      decoration: const BoxDecoration(gradient: AppColors.appBarGradient),
       child: SafeArea(
         child: Container(
           padding: const EdgeInsets.only(right: 10.0, top: 10.0, bottom: 10.0),
@@ -77,9 +76,10 @@ class UpcomingContestAppBar extends StatelessWidget
                       const SizedBox(width: 15),
                       GestureDetector(
                         onTap: () {
-                          Get.to(
-                            () => const MyBalancePage(),
-                            transition: Transition.cupertino,
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) => const MyBalancePage()),
                           );
                         },
                         child: Image.asset(

@@ -3,7 +3,7 @@ class StorageConstants {
   // Authentication
   static const String accessToken = 'access_token';
   static const String refreshToken = 'refresh_token';
-  static const String authToken = 'auth_token';
+  static const String authToken = 'token'; // Changed from 'auth_token' to match Fantasy API
   static const String userId = 'user_id';
   static const String userEmail = 'user_email';
   static const String userPhone = 'user_phone';

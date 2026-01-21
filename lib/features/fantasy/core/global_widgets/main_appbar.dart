@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/app_colors.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/app_pages.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/images.dart';
@@ -24,7 +23,7 @@ class MainAppbar extends StatelessWidget implements PreferredSizeWidget {
     final userData =
         Provider.of<UserDataProvider>(context, listen: true).userData;
     return Container(
-      decoration: BoxDecoration(gradient: AppColors.appBarGradient),
+      decoration: const BoxDecoration(gradient: AppColors.appBarGradient),
       child: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10),
@@ -41,9 +40,11 @@ class MainAppbar extends StatelessWidget implements PreferredSizeWidget {
                     children: [
                       // Back button
                       IconButton(
-                        icon: const Icon(Icons.arrow_back, color: AppColors.white),
+                        icon: const Icon(Icons.arrow_back,
+                            color: AppColors.white),
                         onPressed: () {
-                          Navigator.of(context).popUntil((route) => route.isFirst);
+                          Navigator.of(context)
+                              .popUntil((route) => route.isFirst);
                         },
                       ),
                       const SizedBox(width: 8),
@@ -53,19 +54,19 @@ class MainAppbar extends StatelessWidget implements PreferredSizeWidget {
                           AppUtils.scaffoldKey.currentState?.openDrawer();
                         },
                         child: CircleAvatar(
-                      radius: 20,
-                      backgroundColor: AppColors.white.withAlpha(140),
-                      backgroundImage: (userData?.image != null &&
-                              (userData?.image ?? "").isNotEmpty)
-                          ? NetworkImage(userData?.image ?? "")
-                          : const AssetImage(Images.imageDefalutPlayer)
-                              as ImageProvider,
+                          radius: 20,
+                          backgroundColor: AppColors.white.withAlpha(140),
+                          backgroundImage: (userData?.image != null &&
+                                  (userData?.image ?? '').isNotEmpty)
+                              ? NetworkImage(userData?.image ?? '')
+                              : const AssetImage(Images.imageDefalutPlayer)
+                                  as ImageProvider,
                         ),
                       ),
                     ],
                   ),
                 ),
-                Image(
+                const Image(
                   image: AssetImage(Images.nameLogo),
                   color: AppColors.white,
                   height: 45,
@@ -90,9 +91,10 @@ class MainAppbar extends StatelessWidget implements PreferredSizeWidget {
                       const SizedBox(width: 15),
                       GestureDetector(
                         onTap: () {
-                          Get.to(
-                            () => const MyBalancePage(),
-                            transition: Transition.cupertino,
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) => const MyBalancePage()),
                           );
                         },
                         child: Image.asset(

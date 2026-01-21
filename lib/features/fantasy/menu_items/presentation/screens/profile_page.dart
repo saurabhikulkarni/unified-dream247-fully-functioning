@@ -1,4 +1,3 @@
-import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -36,7 +35,7 @@ class _ProfilePageState extends State<ProfilePage> {
     levelData();
   }
 
-  levelData() async {
+  Future<void> levelData() async {
     data = await userUsecases.loadLevelRewards(context);
     setState(() {});
   }
@@ -78,7 +77,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       radius: 42,
                       child: ClipOval(
                         child: CachedImage(
-                          imageUrl: userData?.image ?? "",
+                          imageUrl: userData?.image ?? '',
                           errorWidget: Image.asset(
                             Images.imageDefalutPlayer,
                             height: 35,
@@ -93,7 +92,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        userData?.team ?? "",
+                        userData?.team ?? '',
                         style: const TextStyle(
                           fontWeight: FontWeight.w600,
                           fontSize: 16,
@@ -101,8 +100,8 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                       ),
                       Text(
-                        ((userData?.name ?? "").isNotEmpty)
-                            ? userData?.name ?? "---"
+                        ((userData?.name ?? '').isNotEmpty)
+                            ? userData?.name ?? '---'
                             : '---',
                         style: const TextStyle(
                           fontWeight: FontWeight.w300,
@@ -122,7 +121,11 @@ class _ProfilePageState extends State<ProfilePage> {
                     Expanded(
                       child: MainButton(
                         onTap: () {
-                          Get.to(() => EditProfile());
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) => const EditProfile()),
+                          );
                         },
                         height: 36,
                         text: 'Edit Profile',
@@ -183,7 +186,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                           ),
                                           Text(
                                             data?.currentLevel.toString() ??
-                                                "0",
+                                                '0',
                                             style: const TextStyle(
                                               color: AppColors.letterColor,
                                               fontWeight: FontWeight.bold,
@@ -205,7 +208,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                             ),
                                           ),
                                           Text(
-                                            data?.nextLevel.toString() ?? "0",
+                                            data?.nextLevel.toString() ?? '0',
                                             style: const TextStyle(
                                               color: AppColors.letterColor,
                                               fontWeight: FontWeight.bold,
@@ -249,7 +252,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                         ),
                                         Text(
                                           data?.totalPlayContest.toString() ??
-                                              "0",
+                                              '0',
                                           style: const TextStyle(
                                             color: AppColors.letterColor,
                                             fontWeight: FontWeight.w600,
@@ -287,7 +290,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                         Text(
                                           data?.numberOfWinningContest
                                                   .toString() ??
-                                              "0",
+                                              '0',
                                           style: const TextStyle(
                                             color: AppColors.letterColor,
                                             fontWeight: FontWeight.w600,

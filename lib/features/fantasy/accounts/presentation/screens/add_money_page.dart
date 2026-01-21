@@ -15,7 +15,6 @@ import 'package:confetti/confetti.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:unified_dream247/features/fantasy/core/api_server_constants/api_server_impl/api_impl.dart';
@@ -37,7 +36,8 @@ import 'package:unified_dream247/features/fantasy/menu_items/data/models/offers_
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:unified_dream247/core/services/wallet_service.dart';
 import 'package:unified_dream247/features/fantasy/accounts/data/services/game_tokens_service.dart';
-import 'package:unified_dream247/features/shop/services/auth_service.dart' as shop_auth;
+import 'package:unified_dream247/features/shop/services/auth_service.dart'
+    as shop_auth;
 import 'package:get_it/get_it.dart';
 
 class AddMoneyPage extends StatefulWidget {
@@ -100,15 +100,15 @@ class _AddMoneyPage extends State<AddMoneyPage> {
   Future<void> _ensureDataLoaded() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      
+
       // 1️⃣ First, ensure we have a valid Fantasy token
       String? token = prefs.getString('token');
       if (token == null || token.isEmpty) {
         debugPrint('⚠️ [ADD_MONEY] No fantasy token found, fetching...');
-        
+
         final phone = prefs.getString('user_phone') ?? '';
         final name = prefs.getString('user_name') ?? '';
-        
+
         if (phone.isNotEmpty) {
           final authService = shop_auth.AuthService();
           token = await authService.fetchFantasyToken(
@@ -116,7 +116,7 @@ class _AddMoneyPage extends State<AddMoneyPage> {
             name: name,
             userId: prefs.getString('user_id') ?? '',
           );
-          
+
           if (token != null && token.isNotEmpty) {
             await prefs.setString('token', token);
             debugPrint('✅ [ADD_MONEY] Fantasy token refreshed');
@@ -124,15 +124,17 @@ class _AddMoneyPage extends State<AddMoneyPage> {
             debugPrint('❌ [ADD_MONEY] Could not obtain fantasy token');
           }
         } else {
-          debugPrint('❌ [ADD_MONEY] No phone number available for token refresh');
+          debugPrint(
+              '❌ [ADD_MONEY] No phone number available for token refresh');
         }
       } else {
         debugPrint('✅ [ADD_MONEY] Fantasy token exists');
       }
-      
+
       // 2️⃣ Check if app data is already loaded (has payment gateway config)
-      final hasAppData = AppSingleton.singleton.appData.androidpaymentgateway != null;
-      
+      final hasAppData =
+          AppSingleton.singleton.appData.androidpaymentgateway != null;
+
       if (!hasAppData) {
         debugPrint('📥 [ADD_MONEY] Loading app data...');
         final homeUsecases = HomeUsecases(
@@ -141,20 +143,23 @@ class _AddMoneyPage extends State<AddMoneyPage> {
         await homeUsecases.getAppDataWithHeader(context);
         debugPrint('✅ [ADD_MONEY] App data loaded');
       }
-      
+
       // 3️⃣ Check if user data is loaded
       if (userData == null) {
         debugPrint('📥 [ADD_MONEY] Loading user data...');
-        final userUsecases = UserUsecases(UserDatasource(ApiImplWithAccessToken()));
+        final userUsecases =
+            UserUsecases(UserDatasource(ApiImplWithAccessToken()));
         await userUsecases.getUserDetails(context);
-        
+
         // Update local reference
         if (mounted) {
           setState(() {
-            userData = Provider.of<UserDataProvider>(context, listen: false).userData;
+            userData =
+                Provider.of<UserDataProvider>(context, listen: false).userData;
           });
         }
-        debugPrint('✅ [ADD_MONEY] User data loaded: ${userData?.name ?? "Unknown"}');
+        debugPrint(
+            '✅ [ADD_MONEY] User data loaded: ${userData?.name ?? "Unknown"}');
       }
     } catch (e) {
       debugPrint('⚠️ [ADD_MONEY] Error loading data: $e');
@@ -171,7 +176,8 @@ class _AddMoneyPage extends State<AddMoneyPage> {
     // If user data is not loaded yet, allow proceeding (backend will verify)
     // This prevents blocking users when data is still loading
     if (userData == null) {
-      debugPrint('⚠️ [ADD_MONEY] User data not loaded, allowing payment (backend will verify)');
+      debugPrint(
+          '⚠️ [ADD_MONEY] User data not loaded, allowing payment (backend will verify)');
       return true;
     }
     return userData?.verified == 1;
@@ -188,8 +194,9 @@ class _AddMoneyPage extends State<AddMoneyPage> {
 
   Future<void> _createRazorpayOrder() async {
     debugPrint('🔄 [ADD_CASH] Creating Razorpay order...');
-    debugPrint('💰 [ADD_CASH] Amount: ${_amountController.text}, PromoId: $promoId');
-    
+    debugPrint(
+        '💰 [ADD_CASH] Amount: ${_amountController.text}, PromoId: $promoId');
+
     final res = await accountsUsecases.requestAddCash(
       context,
       'RazorPay',
@@ -200,11 +207,14 @@ class _AddMoneyPage extends State<AddMoneyPage> {
     debugPrint('📥 [ADD_CASH] Response: $res');
 
     if (res == null) {
-      debugPrint('❌ [ADD_CASH] Response is null - likely auth issue or network error');
-      appToast('Unable to create order. Please check your connection and try again.', context);
+      debugPrint(
+          '❌ [ADD_CASH] Response is null - likely auth issue or network error');
+      appToast(
+          'Unable to create order. Please check your connection and try again.',
+          context);
       return;
     }
-    
+
     if (res['data'] == null ||
         res['data']['order_id'] == null ||
         res['data']['order_id'].toString().isEmpty) {
@@ -213,7 +223,7 @@ class _AddMoneyPage extends State<AddMoneyPage> {
       appToast(errorMsg, context);
       return;
     }
-    
+
     debugPrint('✅ [ADD_CASH] Order created successfully');
     _lastTxnId = res['data']['txnid'];
     _razorpayOrderId = res['data']['order_id'];
@@ -272,18 +282,20 @@ class _AddMoneyPage extends State<AddMoneyPage> {
         return;
       }
 
-      final response = await http.post(
-        Uri.parse(ApiConfig.fantasySyncShopTokensEndpoint),
-        headers: {
-          'Authorization': 'Bearer $authToken',
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode({
-          'amount': amount,
-          'paymentId': paymentId,
-          'orderId': orderId,
-        }),
-      ).timeout(const Duration(seconds: 10));
+      final response = await http
+          .post(
+            Uri.parse(ApiConfig.fantasySyncShopTokensEndpoint),
+            headers: {
+              'Authorization': 'Bearer $authToken',
+              'Content-Type': 'application/json',
+            },
+            body: jsonEncode({
+              'amount': amount,
+              'paymentId': paymentId,
+              'orderId': orderId,
+            }),
+          )
+          .timeout(const Duration(seconds: 10));
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = jsonDecode(response.body);
@@ -304,9 +316,9 @@ class _AddMoneyPage extends State<AddMoneyPage> {
     try {
       final prefs = await SharedPreferences.getInstance();
       // Try multiple possible token keys
-      return prefs.getString('token') ?? 
-             prefs.getString('auth_token') ?? 
-             prefs.getString('fantasy_token');
+      return prefs.getString('token') ??
+          prefs.getString('auth_token') ??
+          prefs.getString('fantasy_token');
     } catch (e) {
       debugPrint('⚠️ [SHOP_SYNC] Error getting auth token: $e');
       return null;
@@ -315,6 +327,17 @@ class _AddMoneyPage extends State<AddMoneyPage> {
 
   void _handlePaymentSuccess(PaymentSuccessResponse response) async {
     setState(() => _isPaymentFlowLocked = true);
+
+    // Null safety checks for Razorpay response
+    if (response.paymentId == null ||
+        response.orderId == null ||
+        response.signature == null) {
+      debugPrint('❌ [ADD_MONEY] Payment response missing required fields');
+      appToast('Payment verification failed - missing data', context);
+      setState(() => _isPaymentFlowLocked = false);
+      return;
+    }
+
     final res = await accountsUsecases.verifyRazorpayPayment(
       context,
       response.paymentId!,
@@ -328,27 +351,28 @@ class _AddMoneyPage extends State<AddMoneyPage> {
       if (res != null && res['success'] == true) {
         // Payment successful - sync tokens from backend
         final amount = double.parse(_amountController.text);
-        
+
         // Initialize wallet service
         await walletService.initialize();
-        
+
         // 1️⃣ Add shop tokens to Hygraph (1 RS = 1 shop token)
         await walletService.addShopTokens(amount);
         debugPrint('✅ [ADD_MONEY] Added $amount shop tokens to Hygraph');
-        
+
         // 2️⃣ Fetch and sync game tokens from Fantasy backend
         try {
           final gameTokensService = GetIt.instance<GameTokensService>();
           await gameTokensService.refreshGameTokens();
-          debugPrint('✅ [ADD_MONEY] Game tokens synced from Fantasy after topup');
+          debugPrint(
+              '✅ [ADD_MONEY] Game tokens synced from Fantasy after topup');
         } catch (e) {
           debugPrint('❌ [ADD_MONEY] Error syncing game tokens: $e');
           // Fallback: Add to local cache
           await walletService.setGameTokens(
-            (await walletService.getGameTokens()) + amount
+            (await walletService.getGameTokens()) + amount,
           );
         }
-        
+
         // 3️⃣ NEW: Sync shop tokens to Shop backend
         await _syncShopTokensToShopBackend(
           amount: amount,
@@ -356,7 +380,7 @@ class _AddMoneyPage extends State<AddMoneyPage> {
           orderId: response.orderId ?? '',
         );
         debugPrint('✅ [ADD_MONEY] Shop backend synced with new tokens');
-        
+
         appToast(res['message'] ?? 'Payment Successful', context);
         setState(() => _showMysteryBox = true);
       } else {
@@ -373,7 +397,8 @@ class _AddMoneyPage extends State<AddMoneyPage> {
   void _handlePaymentError(PaymentFailureResponse response) {
     setState(() => _isPaymentFlowLocked = false); // Reset lock on error
     appToast('Payment Failed: ${response.message}', context);
-    debugPrint('❌ [RAZORPAY] Payment Error: ${response.message} (Code: ${response.code})');
+    debugPrint(
+        '❌ [RAZORPAY] Payment Error: ${response.message} (Code: ${response.code})');
   }
 
   void _handleExternalWallet(ExternalWalletResponse response) {}
@@ -420,7 +445,8 @@ class _AddMoneyPage extends State<AddMoneyPage> {
         ) ??
         100000;
 
-    debugPrint('💰 [ADD_MONEY] Validating: amount=$amount, min=$minAdd, max=$maxAdd');
+    debugPrint(
+        '💰 [ADD_MONEY] Validating: amount=$amount, min=$minAdd, max=$maxAdd');
 
     if (amount < minAdd) {
       setState(() {
@@ -588,7 +614,8 @@ class _AddMoneyPage extends State<AddMoneyPage> {
                                           ),
                                         ),
                                         padding: const EdgeInsets.symmetric(
-                                            horizontal: 8),
+                                          horizontal: 8,
+                                        ),
                                         child: TextFormField(
                                           controller: _amountController,
                                           keyboardType: TextInputType.number,
@@ -640,7 +667,7 @@ class _AddMoneyPage extends State<AddMoneyPage> {
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       children: [
-                                        Text('Get '),
+                                        const Text('Get '),
                                         Image.asset(
                                           Images.tokenImage,
                                           height: 20,
@@ -865,17 +892,20 @@ class _AddMoneyPage extends State<AddMoneyPage> {
   }
 
   Widget _offersSection(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
     return Center(
       child: Column(
         children: [
           Container(
-            padding: EdgeInsets.all(5),
-            width: Get.width * 0.9,
-            decoration: BoxDecoration(
-                color: AppColors.black,
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                    topRight: Radius.circular(20))),
+            padding: const EdgeInsets.all(5),
+            width: screenWidth * 0.9,
+            decoration: const BoxDecoration(
+              color: AppColors.black,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20),
+                topRight: Radius.circular(20),
+              ),
+            ),
             child: Text(
               textAlign: TextAlign.center,
               'Free Rewards',
@@ -883,14 +913,16 @@ class _AddMoneyPage extends State<AddMoneyPage> {
             ),
           ),
           Container(
-            width: Get.width * 0.9,
+            width: screenWidth * 0.9,
             height: 200,
-            padding: EdgeInsets.all(10),
-            decoration: BoxDecoration(
-                color: AppColors.white,
-                borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(20),
-                    bottomRight: Radius.circular(20))),
+            padding: const EdgeInsets.all(10),
+            decoration: const BoxDecoration(
+              color: AppColors.white,
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(20),
+                bottomRight: Radius.circular(20),
+              ),
+            ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -916,7 +948,7 @@ class _AddMoneyPage extends State<AddMoneyPage> {
                           color: AppColors.letterColor,
                           fontSize: 15,
                         ),
-                      )
+                      ),
                     ],
                   ),
                 ),
@@ -926,7 +958,9 @@ class _AddMoneyPage extends State<AddMoneyPage> {
                     textAlign: TextAlign.center,
                     '+',
                     style: GoogleFonts.poppins(
-                        color: AppColors.blackColor, fontSize: 20),
+                      color: AppColors.blackColor,
+                      fontSize: 20,
+                    ),
                   ),
                 ),
                 Column(
@@ -945,13 +979,15 @@ class _AddMoneyPage extends State<AddMoneyPage> {
                     Text(
                       'Mystery Box',
                       style: GoogleFonts.poppins(
-                          color: AppColors.letterColor, fontSize: 15),
-                    )
+                        color: AppColors.letterColor,
+                        fontSize: 15,
+                      ),
+                    ),
                   ],
                 ),
               ],
             ),
-          )
+          ),
         ],
       ),
     );
@@ -1091,22 +1127,23 @@ class _AddMoneyPage extends State<AddMoneyPage> {
                       appToast('Please verify your account first', context);
                       return;
                     }
-                    
+
                     // Use sensible defaults if app data not loaded
                     final minLimit = num.parse(
-                      AppSingleton.singleton.appData
-                              .androidpaymentgateway?.isRazorPay?.min ??
+                      AppSingleton.singleton.appData.androidpaymentgateway
+                              ?.isRazorPay?.min ??
                           '10', // Default ₹10
                     );
                     final maxLimit = num.parse(
-                      AppSingleton.singleton.appData
-                              .androidpaymentgateway?.isRazorPay?.max ??
+                      AppSingleton.singleton.appData.androidpaymentgateway
+                              ?.isRazorPay?.max ??
                           '100000', // Default ₹1,00,000
                     );
                     final amount = num.parse(_amountController.text);
-                    
-                    debugPrint('💳 [ADD_CASH] Initiating payment: amount=$amount, min=$minLimit, max=$maxLimit');
-                    
+
+                    debugPrint(
+                        '💳 [ADD_CASH] Initiating payment: amount=$amount, min=$minLimit, max=$maxLimit');
+
                     if (amount >= minLimit && amount <= maxLimit) {
                       await _createRazorpayOrder();
                       // await accountsUsecases
@@ -1394,7 +1431,7 @@ class _AddMoneyPage extends State<AddMoneyPage> {
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                   ),
-                )
+                ),
               ],
             ),
           ),
@@ -1423,7 +1460,7 @@ class _AddMoneyPage extends State<AddMoneyPage> {
     } else {
       appToast(res?['message'] ?? 'Failed to open mystery box', context);
     }
-    
+
     // ✅ Reset payment flow lock after mystery box is done
     setState(() => _isPaymentFlowLocked = false);
   }
@@ -1438,7 +1475,8 @@ class _AddMoneyPage extends State<AddMoneyPage> {
           children: [
             Dialog(
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20)),
+                borderRadius: BorderRadius.circular(20),
+              ),
               child: Padding(
                 padding: const EdgeInsets.all(24),
                 child: Column(
@@ -1476,7 +1514,7 @@ class _AddMoneyPage extends State<AddMoneyPage> {
                         Navigator.pop(context);
                         _confettiController.stop();
                       },
-                    )
+                    ),
                   ],
                 ),
               ),

@@ -8,6 +8,7 @@ import 'firebase_options.dart';
 import 'app.dart';
 import 'core/di/injection_container.dart';
 import 'core/services/auth_service.dart' as core_auth;
+import 'core/services/app_config_service.dart';
 import 'core/providers/app_provider.dart';
 import 'features/fantasy/accounts/data/services/game_tokens_service.dart';
 
@@ -42,9 +43,8 @@ void main() async {
 
     // Load fantasy environment variables
     try {
-      String envFile = kReleaseMode 
-          ? 'assets/config/.env.prod' 
-          : 'assets/config/.env.dev';
+      String envFile =
+          kReleaseMode ? 'assets/config/.env.prod' : 'assets/config/.env.dev';
       await dotenv.load(fileName: envFile);
     } catch (e) {
       debugPrint('⚠️ Environment file not loaded: $e');
@@ -71,12 +71,15 @@ void main() async {
 
     // Initialize shared authentication service
     await core_auth.authService.initialize();
-    
+
+    // Initialize unified app config service (for getVersion data)
+    await AppConfigService().initialize();
+
     // Initialize app provider for periodic balance refresh
     appProvider = AppProvider(refreshInterval: 30);
-    
+
     final shopAuthService = shop_auth.AuthService();
-    
+
     // Initialize ecommerce services
     await UserService.initialize(); // Initialize user service first
     await wishlistService.initialize();
@@ -90,10 +93,13 @@ void main() async {
       debugPrint('✅ User logged in - syncing...');
       final userId = await shopAuthService.getUnifiedUserId();
       debugPrint('   User ID: $userId');
-      
+
       await wishlistService.syncWithBackend();
       await cartService.syncWithBackend();
-      
+
+      // Fetch version data for logged-in users (includes payment gateway config)
+      await AppConfigService().fetchVersionData();
+
       // Trigger initial refresh for logged-in users
       await appProvider.forceRefresh();
     }
@@ -113,16 +119,17 @@ void main() async {
 Future<void> _initializeGameTokens() async {
   try {
     debugPrint('🔄 [APP_INIT] Initializing game tokens...');
-    
+
     final gameTokensService = getIt<GameTokensService>();
     final tokens = await gameTokensService.fetchGameTokensOnStartup();
-    
+
     if (tokens != null) {
       debugPrint(
         '✅ [APP_INIT] Game tokens loaded: ${tokens.balance} tokens',
       );
     } else {
-      debugPrint('⚠️ [APP_INIT] Game tokens not available, using empty balance');
+      debugPrint(
+          '⚠️ [APP_INIT] Game tokens not available, using empty balance');
     }
   } catch (e) {
     debugPrint('❌ [APP_INIT] Game tokens initialization error: $e');

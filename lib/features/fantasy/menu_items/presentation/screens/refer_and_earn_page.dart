@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/app_colors.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/images.dart';
@@ -61,9 +60,9 @@ class _ReferAndEarnPage extends State<ReferAndEarnPage> {
               ),
               child: Column(
                 children: [
-                  Center(
+                  const Center(
                     child: Text(
-                      "Refer your Friends with referral code",
+                      'Refer your Friends with referral code',
                       style: TextStyle(
                         color: AppColors.white,
                         fontWeight: FontWeight.w700,
@@ -73,9 +72,9 @@ class _ReferAndEarnPage extends State<ReferAndEarnPage> {
                       textAlign: TextAlign.center,
                     ),
                   ),
-                  SizedBox(height: 15),
-                  Text(
-                    "Share this referral code with your friends and start creating your fantasy teams to compete in exciting matches!",
+                  const SizedBox(height: 15),
+                  const Text(
+                    'Share this referral code with your friends and start creating your fantasy teams to compete in exciting matches!',
                     style: TextStyle(
                       color: AppColors.whiteFade1,
                       fontWeight: FontWeight.w500,
@@ -84,7 +83,7 @@ class _ReferAndEarnPage extends State<ReferAndEarnPage> {
                     textAlign: TextAlign.center,
                   ),
                   Text(
-                    " Earn ${Strings.indianRupee}${AppSingleton.singleton.appData.referBonus} on each referral.",
+                    ' Earn ${Strings.indianRupee}${AppSingleton.singleton.appData.referBonus} on each referral.',
                     style: GoogleFonts.exo2(
                       color: AppColors.whiteFade1,
                       fontWeight: FontWeight.bold,
@@ -129,7 +128,7 @@ class _ReferAndEarnPage extends State<ReferAndEarnPage> {
                         const SizedBox(width: 8),
                         Flexible(
                           child: Text(
-                            userData?.referCode ?? "Dream247AO12",
+                            userData?.referCode ?? 'Dream247AO12',
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
                               color: AppColors.blackColor,
@@ -145,14 +144,14 @@ class _ReferAndEarnPage extends State<ReferAndEarnPage> {
                   InkWell(
                     onTap: () {
                       Clipboard.setData(
-                        ClipboardData(text: userData?.referCode ?? ""),
+                        ClipboardData(text: userData?.referCode ?? ''),
                       );
-                      Get.snackbar(
-                        "Code Copied!!",
-                        "Code Copied to Clipboard",
-                        backgroundGradient: AppColors.appBarGradient,
-                        backgroundColor: AppColors.mainColor,
-                        colorText: AppColors.white,
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: const Text('Code Copied to Clipboard'),
+                          backgroundColor: AppColors.mainColor,
+                          duration: const Duration(seconds: 2),
+                        ),
                       );
                     },
                     child: Container(
@@ -161,12 +160,17 @@ class _ReferAndEarnPage extends State<ReferAndEarnPage> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 5),
+                        horizontal: 10,
+                        vertical: 5,
+                      ),
                       child: const Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.copy,
-                              color: AppColors.blackColor, size: 14),
+                          Icon(
+                            Icons.copy,
+                            color: AppColors.blackColor,
+                            size: 14,
+                          ),
                           SizedBox(width: 5),
                           Text(
                             'Copy',
@@ -183,13 +187,13 @@ class _ReferAndEarnPage extends State<ReferAndEarnPage> {
                 ],
               ),
             ),
-            SizedBox(height: 15),
+            const SizedBox(height: 15),
 
             /// Refer and Earn button
             InkWell(
               onTap: () {
                 String text = AppSingleton.singleton.appData.refermessage!
-                    .replaceAll('%REFERCODE%', userData?.referCode ?? "");
+                    .replaceAll('%REFERCODE%', userData?.referCode ?? '');
                 SharePlus.instance.share(ShareParams(text: text));
               },
               child: Container(
@@ -219,7 +223,7 @@ class _ReferAndEarnPage extends State<ReferAndEarnPage> {
                 ),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 15,
             ),
 
@@ -227,10 +231,13 @@ class _ReferAndEarnPage extends State<ReferAndEarnPage> {
             InkWell(
               onTap: () {
                 // AppNavigation.gotoReferUserListScreen(context);
-                Get.to(() => ReferUsersList(), transition: Transition.downToUp);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const ReferUsersList()),
+                );
               },
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10.0),
+              child: const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 10.0),
                 child: Text(
                   'View All Referred Users',
                   style: TextStyle(
