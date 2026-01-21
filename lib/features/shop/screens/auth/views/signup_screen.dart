@@ -114,18 +114,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       );
 
                       try {
-                        // Check if user already exists with this phone number
+                        // Check if user already exists with this phone number (including DRAFT users)
                         final UserService userService = UserService();
-                        final existingUser = await userService.getUserByMobileNumber(phone);
+                        final mobileExists = await userService.checkMobileNumberExists(phone);
                         
-                        if (existingUser != null) {
+                        if (mobileExists) {
                           if (mounted) {
                             Navigator.of(context).pop(); // Hide loading dialog
                             showDialog(
                               context: context,
                               builder: (context) => AlertDialog(
                                 title: const Text('Account Already Exists'),
-                                content: const Text('User with this mobile number already exists. Please try logging in or create an account with a different number.'),
+                                content: const Text('This mobile number is already registered. Please try logging in or use a different number.'),
                                 actions: [
                                   TextButton(
                                     onPressed: () {

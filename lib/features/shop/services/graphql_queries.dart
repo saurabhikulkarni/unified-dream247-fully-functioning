@@ -130,7 +130,7 @@ class GraphQLQueries {
     }
   ''';
 
-  // Query to fetch user by mobile number (for login)
+  // Query to fetch user by mobile number (for login - PUBLISHED only)
   static const String getUserByMobileNumber = '''
     query GetUserByMobileNumber(\$mobileNumber: String!) {
       userDetails(where: {mobileNumber: \$mobileNumber}) {
@@ -140,6 +140,21 @@ class GraphQLQueries {
         username
         mobileNumber
         walletBalance
+      }
+    }
+  ''';
+  
+  // Query to check if mobile number exists in ANY stage (DRAFT or PUBLISHED)
+  // Used during signup to prevent duplicate registrations
+  static const String checkMobileNumberExists = '''
+    query CheckMobileNumberExists(\$mobileNumber: String!) {
+      userDetails(where: {mobileNumber: \$mobileNumber}, stage: DRAFT) {
+        id
+        mobileNumber
+      }
+      publishedUsers: userDetails(where: {mobileNumber: \$mobileNumber}, stage: PUBLISHED) {
+        id
+        mobileNumber
       }
     }
   ''';

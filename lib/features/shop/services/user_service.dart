@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:unified_dream247/features/shop/models/product_model.dart';
@@ -72,7 +73,7 @@ class UserService {
     }
   }
 
-  // Fetch user by mobile number (for login with OTP)
+  // Fetch user by mobile number (for login with OTP - PUBLISHED only)
   Future<UserDetailModel?> getUserByMobileNumber(String mobileNumber) async {
     try {
       // Clean phone number (remove non-digit characters)
@@ -102,6 +103,46 @@ class UserService {
       return UserDetailModel.fromJson(users[0] as Map<String, dynamic>);
     } catch (e) {
       throw Exception('Error fetching user: $e');
+    }
+  }
+
+  /// Check if mobile number exists in ANY stage (DRAFT or PUBLISHED)
+  /// Used during signup to prevent duplicate registrations
+  /// Returns true if mobile number already exists, false otherwise
+  Future<bool> checkMobileNumberExists(String mobileNumber) async {
+    try {
+      // Clean phone number (remove non-digit characters)
+      final cleanPhone = mobileNumber.replaceAll(RegExp(r'[^\d]'), '');
+      
+      debugPrint('🔍 [USER_SERVICE] Checking if mobile exists (all stages): $cleanPhone');
+      
+      final QueryResult result = await _client.query(
+        QueryOptions(
+          document: gql(GraphQLQueries.checkMobileNumberExists),
+          variables: {'mobileNumber': cleanPhone},
+          fetchPolicy: FetchPolicy.networkOnly,
+        ),
+      );
+
+      if (result.hasException) {
+        debugPrint('❌ [USER_SERVICE] Error checking mobile: ${result.exception}');
+        throw Exception(result.exception.toString());
+      }
+
+      // Check both DRAFT and PUBLISHED stages
+      final draftUsers = result.data?['userDetails'] as List? ?? [];
+      final publishedUsers = result.data?['publishedUsers'] as List? ?? [];
+      
+      final exists = draftUsers.isNotEmpty || publishedUsers.isNotEmpty;
+      
+      debugPrint('📊 [USER_SERVICE] Mobile check result - Draft: ${draftUsers.length}, Published: ${publishedUsers.length}, Exists: $exists');
+      
+      return exists;
+    } catch (e) {
+      debugPrint('❌ [USER_SERVICE] Error checking mobile existence: $e');
+      // In case of error, return false to allow signup attempt
+      // The actual creation will fail if duplicate exists
+      return false;
     }
   }
 
