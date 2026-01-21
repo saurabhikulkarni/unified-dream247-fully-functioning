@@ -25,6 +25,20 @@ class UnifiedWalletService {
   static const Duration _cacheExpiry = Duration(minutes: 5);
   Map<String, dynamic>? _cachedWalletData;
 
+  /// Safely get a double from SharedPreferences (handles int stored values)
+  double _safeGetDouble(String key) {
+    try {
+      final value = _prefs?.get(key);
+      if (value == null) return 0.0;
+      if (value is double) return value;
+      if (value is int) return value.toDouble();
+      if (value is String) return double.tryParse(value) ?? 0.0;
+      return 0.0;
+    } catch (_) {
+      return 0.0;
+    }
+  }
+
   /// Initialize service
   Future<void> initialize() async {
     _prefs = await SharedPreferences.getInstance();
@@ -42,7 +56,7 @@ class UnifiedWalletService {
       final userId = UserService.getCurrentUserId();
       if (userId == null) {
         debugPrint('⚠️ [UNIFIED_WALLET] User not logged in, using local storage');
-        return _prefs?.getDouble(StorageConstants.shopTokens) ?? 0.0;
+        return _safeGetDouble(StorageConstants.shopTokens);
       }
 
       // Try to fetch from backend
@@ -56,8 +70,15 @@ class UnifiedWalletService {
     } catch (e) {
       // Fallback to local storage
       debugPrint('⚠️ [UNIFIED_WALLET] Backend fetch failed, using local: $e');
-      final tokens = _prefs?.getDouble(StorageConstants.shopTokens) ?? 0.0;
-      return tokens;
+      try {
+        final value = _prefs?.get(StorageConstants.shopTokens);
+        if (value == null) return 0.0;
+        if (value is double) return value;
+        if (value is int) return value.toDouble();
+        return 0.0;
+      } catch (_) {
+        return 0.0;
+      }
     }
   }
 
@@ -201,7 +222,7 @@ class UnifiedWalletService {
     }
     
     // Return cached value
-    final cached = _prefs?.getDouble(StorageConstants.gameTokens) ?? 0.0;
+    final cached = _safeGetDouble(StorageConstants.gameTokens);
     debugPrint('💾 [UNIFIED_WALLET] Game tokens (from local cache): $cached');
     return cached;
   }
@@ -385,7 +406,7 @@ class UnifiedWalletService {
       final userId = UserService.getCurrentUserId();
       if (userId == null) {
         return {
-          'shopTokens': _prefs?.getDouble(StorageConstants.shopTokens) ?? 0.0,
+          'shopTokens': _safeGetDouble(StorageConstants.shopTokens),
           'totalSpent': await ShopTransactionManager.getTotalSpent(),
           'totalAdded': await ShopTransactionManager.getTotalAdded(),
         };
@@ -407,7 +428,7 @@ class UnifiedWalletService {
       debugPrint('⚠️ [UNIFIED_WALLET] Wallet sync failed: $e');
       // Return local data
       return {
-        'shopTokens': _prefs?.getDouble(StorageConstants.shopTokens) ?? 0.0,
+        'shopTokens': _safeGetDouble(StorageConstants.shopTokens),
         'totalSpent': await ShopTransactionManager.getTotalSpent(),
         'totalAdded': await ShopTransactionManager.getTotalAdded(),
       };
