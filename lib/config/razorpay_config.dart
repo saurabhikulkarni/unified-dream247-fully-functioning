@@ -4,10 +4,11 @@ import 'package:unified_dream247/config/api_config.dart';
 class RazorpayConfig {
   /// Razorpay API Key ID
   /// Test key for development, Live key for production
-  static const String _testKeyId = 'rzp_test_RqEBl9COpBTyyz';
-  static const String _prodKeyId = 'rzp_live_RzKEI3xUwyf7Tu';
+  static const String _testKeyId = 'rzp_test_S0bjTVUZm4brLR'; // Current test key
+  static const String _prodKeyId = 'rzp_live_RzKEI3xUwyf7Tu'; // Live key - for production
   
-  static String get keyId => ApiConfig.isProduction ? _prodKeyId : _testKeyId;
+  // Force test key for now - change to: ApiConfig.isProduction ? _prodKeyId : _testKeyId for production
+  static String get keyId => _testKeyId;
 
   /// Backend base URL for payment processing (now uses centralized ApiConfig)
   static String get backendBaseUrl => ApiConfig.shopApiUrl;
