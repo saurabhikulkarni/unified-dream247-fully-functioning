@@ -191,7 +191,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                     }
                   },
                   icon: SvgPicture.asset(
-                    "assets/icons/Wishlist.svg",
+                    'assets/icons/Wishlist.svg',
                     color: _isInWishlist
                         ? Colors.red
                         : Theme.of(context).textTheme.bodyLarge!.color,
@@ -211,7 +211,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
               title: _product!.title,
               isAvailable: isAvailable,
               description: _product!.description ?? 
-                  "A premium quality product with excellent durability. Made from sustainable materials with attention to detail.",
+                  'A premium quality product with excellent durability. Made from sustainable materials with attention to detail.',
               rating: 4.4,
               numOfReviews: 126,
             ),
@@ -235,15 +235,15 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                 ),
               ),
             ProductListTile(
-              svgSrc: "assets/icons/Product.svg",
-              title: "Product Details",
+              svgSrc: 'assets/icons/Product.svg',
+              title: 'Product Details',
               press: () {
                 customModalBottomSheet(
                   context,
                   height: MediaQuery.of(context).size.height * 0.92,
                   child: Scaffold(
                     appBar: AppBar(
-                      title: const Text("Product Details"),
+                      title: const Text('Product Details'),
                     ),
                     body: SingleChildScrollView(
                       padding: const EdgeInsets.all(defaultPadding),
@@ -251,17 +251,17 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "Description",
+                            'Description',
                             style: Theme.of(context).textTheme.titleMedium,
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            _product!.description ?? "Premium quality product with excellent durability.",
+                            _product!.description ?? 'Premium quality product with excellent durability.',
                           ),
                           const SizedBox(height: defaultPadding),
                           if (_sizes.isNotEmpty) ...[
                             Text(
-                              "Available Sizes",
+                              'Available Sizes',
                               style: Theme.of(context).textTheme.titleMedium,
                             ),
                             const SizedBox(height: 8),
@@ -269,16 +269,16 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               spacing: 8,
                               children: _sizes.map((size) => Chip(
                                 label: Text(size.sizeName),
-                              )).toList(),
+                              ),).toList(),
                             ),
                             const SizedBox(height: defaultPadding),
                           ],
                           Text(
-                            "Features",
+                            'Features',
                             style: Theme.of(context).textTheme.titleMedium,
                           ),
                           const SizedBox(height: 8),
-                          const Text("• High quality materials\n• Comfortable design\n• Durable construction\n• Easy to maintain"),
+                          const Text('• High quality materials\n• Comfortable design\n• Durable construction\n• Easy to maintain'),
                         ],
                       ),
                     ),
@@ -287,15 +287,15 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
               },
             ),
             ProductListTile(
-              svgSrc: "assets/icons/Delivery.svg",
-              title: "Shipping Information",
+              svgSrc: 'assets/icons/Delivery.svg',
+              title: 'Shipping Information',
               press: () {
                 customModalBottomSheet(
                   context,
                   height: MediaQuery.of(context).size.height * 0.92,
                   child: Scaffold(
                     appBar: AppBar(
-                      title: const Text("Shipping Information"),
+                      title: const Text('Shipping Information'),
                     ),
                     body: SingleChildScrollView(
                       padding: const EdgeInsets.all(defaultPadding),
@@ -303,14 +303,14 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "Shipping Methods",
+                            'Shipping Methods',
                             style: Theme.of(context).textTheme.titleMedium,
                           ),
                           const SizedBox(height: 12),
                           Card(
                             child: ListTile(
-                              title: const Text("Standard Shipping"),
-                              subtitle: const Text("15-20 business days"),
+                              title: const Text('Standard Shipping'),
+                              subtitle: const Text('15-20 business days'),
                               trailing: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
@@ -320,7 +320,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                     height: 14,
                                   ),
                                   const SizedBox(width: 2),
-                                  const Text("0"),
+                                  const Text('0'),
                                 ],
                               ),
                             ),
@@ -347,8 +347,8 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
               ),
             ),
             ProductListTile(
-              svgSrc: "assets/icons/Chat.svg",
-              title: "Reviews",
+              svgSrc: 'assets/icons/Chat.svg',
+              title: 'Reviews',
               isShowBottomBorder: true,
               press: () {
                 Navigator.pushNamed(context, productReviewsScreenRoute);
@@ -358,7 +358,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
               padding: const EdgeInsets.all(defaultPadding),
               sliver: SliverToBoxAdapter(
                 child: Text(
-                  "You may also like",
+                  'You may also like',
                   style: Theme.of(context).textTheme.titleSmall!,
                 ),
               ),
@@ -367,7 +367,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
               child: SizedBox(
                 height: 220,
                 child: _relatedProducts.isEmpty
-                    ? const Center(child: Text("No related products"))
+                    ? const Center(child: Text('No related products'))
                     : ListView.builder(
                         scrollDirection: Axis.horizontal,
                         itemCount: _relatedProducts.length,
@@ -376,7 +376,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               left: defaultPadding,
                               right: index == _relatedProducts.length - 1
                                   ? defaultPadding
-                                  : 0),
+                                  : 0,),
                           child: ProductCard(
                             image: _relatedProducts[index].image,
                             title: _relatedProducts[index].title,
@@ -400,7 +400,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
             ),
             const SliverToBoxAdapter(
               child: SizedBox(height: defaultPadding),
-            )
+            ),
           ],
         ),
       ),

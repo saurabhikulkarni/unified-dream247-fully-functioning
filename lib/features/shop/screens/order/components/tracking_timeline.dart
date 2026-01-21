@@ -26,7 +26,7 @@ class TrackingTimeline extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: defaultPadding),
           child: Text(
-            "Tracking History",
+            'Tracking History',
             style: Theme.of(context).textTheme.titleSmall,
           ),
         ),

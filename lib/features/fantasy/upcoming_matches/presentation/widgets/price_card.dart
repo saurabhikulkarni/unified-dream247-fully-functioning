@@ -145,7 +145,7 @@ class _PriceCardState extends State<PriceCard> {
                     ),
                     child: Center(
                       child: Text(
-                        widget.textNote ?? "",
+                        widget.textNote ?? '',
                         textAlign: TextAlign.center,
                         style: const TextStyle(
                           fontWeight: FontWeight.w500,
@@ -158,7 +158,7 @@ class _PriceCardState extends State<PriceCard> {
             ),
           ),
         ),
-        if ((widget.flexible ?? "0") == "1")
+        if ((widget.flexible ?? '0') == '1')
           const Padding(
             padding: EdgeInsets.all(8.0),
             child: Text(
@@ -247,8 +247,8 @@ class _PriceCardState extends State<PriceCard> {
 
   TableRow _buildRangeRow(int start, int end, int basePrize) {
     String rankText = (start == end)
-        ? (start <= 3 ? "" : "#${AppUtils.stringifyNumber(start)}")
-        : "#${AppUtils.stringifyNumber(start)} - ${AppUtils.stringifyNumber(end)}";
+        ? (start <= 3 ? '' : '#${AppUtils.stringifyNumber(start)}')
+        : '#${AppUtils.stringifyNumber(start)} - ${AppUtils.stringifyNumber(end)}';
 
     return TableRow(
       children: [
@@ -301,7 +301,7 @@ class _PriceCardState extends State<PriceCard> {
     return TableRow(
       decoration: const BoxDecoration(
         image: DecorationImage(
-          image: AssetImage("assets/upcoming_matches/rect_box.png"),
+          image: AssetImage('assets/upcoming_matches/rect_box.png'),
           fit: BoxFit.fill,
         ),
       ),

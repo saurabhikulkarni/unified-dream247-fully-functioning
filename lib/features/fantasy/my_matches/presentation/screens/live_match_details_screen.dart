@@ -77,11 +77,11 @@ class _LiveMatchDetailsState extends State<LiveMatchDetails>
 
   void getMatchLiveScore() async {
     var provider = Provider.of<LiveScoreProvider>(context, listen: false);
-    String matchKey = AppSingleton.singleton.matchData.id ?? "";
+    String matchKey = AppSingleton.singleton.matchData.id ?? '';
 
-    if (widget.mode == "Completed" ||
-        widget.mode == "Abandoned" ||
-        widget.mode == "Cancelled") {
+    if (widget.mode == 'Completed' ||
+        widget.mode == 'Abandoned' ||
+        widget.mode == 'Cancelled') {
       if ((provider.liveScore[matchKey]?.isNotEmpty ?? false)) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           setState(() {
@@ -98,7 +98,7 @@ class _LiveMatchDetailsState extends State<LiveMatchDetails>
       }
     }
 
-    if (widget.mode == "Live") {
+    if (widget.mode == 'Live') {
       final data = await myMatchesUsecases.getMatchLiveScore(context);
       setState(() {
         list = data;
@@ -108,7 +108,7 @@ class _LiveMatchDetailsState extends State<LiveMatchDetails>
   }
 
   void startApiPolling() {
-    if (widget.mode == "Live") {
+    if (widget.mode == 'Live') {
       timer = Timer.periodic(const Duration(seconds: 60), (timer) {
         getMatchLiveScore();
       });
@@ -132,10 +132,10 @@ class _LiveMatchDetailsState extends State<LiveMatchDetails>
           Column(
             children: [
               Container(
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   image: DecorationImage(
-                      image: AssetImage("assets/upcoming_matches/live_bg.png"),
-                      fit: BoxFit.cover),
+                      image: AssetImage('assets/upcoming_matches/live_bg.png'),
+                      fit: BoxFit.cover,),
                   // gradient: LinearGradient(
                   //     colors: [
                   //       AppColors.mainColor,
@@ -212,7 +212,7 @@ class _LiveMatchDetailsState extends State<LiveMatchDetails>
                             },
                           ),
                         ),
-                        if (widget.gameType == "Cricket")
+                        if (widget.gameType == 'Cricket')
                           Tab(
                             child: ValueListenableBuilder<int>(
                               valueListenable: AppUtils.teamsCount,
@@ -309,7 +309,7 @@ class _LiveMatchDetailsState extends State<LiveMatchDetails>
                           // ),
 
                           LiveMyContests(
-                            totalContestCount: widget.totalContestCount ?? "0",
+                            totalContestCount: widget.totalContestCount ?? '0',
                             mode: widget.mode,
                             updateScoreboard: getMatchLiveScore,
                           ),
@@ -330,7 +330,7 @@ class _LiveMatchDetailsState extends State<LiveMatchDetails>
               ),
             ],
           ),
-          if (widget.mode == 'Completed' && widget.gameType == "Cricket")
+          if (widget.mode == 'Completed' && widget.gameType == 'Cricket')
             Positioned(
               bottom: 16,
               left: 0,
@@ -349,7 +349,7 @@ class _LiveMatchDetailsState extends State<LiveMatchDetails>
                       await myMatchesUsecases
                           .dreamTeam(
                         context,
-                        AppSingleton.singleton.matchData.id ?? "",
+                        AppSingleton.singleton.matchData.id ?? '',
                       )
                           ?.then((value) {
                         List<UserTeamsModel> finalPlayers = [];
@@ -372,14 +372,14 @@ class _LiveMatchDetailsState extends State<LiveMatchDetails>
                         }
                         AppNavigation.gotoPreviewScreen(
                           context,
-                          "",
+                          '',
                           false,
                           finalPlayers,
-                          "${APIServerUrl.appName} Team",
-                          "completed",
+                          '${APIServerUrl.appName} Team',
+                          'completed',
                           0,
                           false,
-                          "",
+                          '',
                         );
                       });
                     },
@@ -501,7 +501,7 @@ class ContestWinningsCard extends StatelessWidget {
           const SizedBox(height: 10),
 
           /// ---------- RANK LIST ----------
-          ...ranks.map((e) => _rankRow(e)).toList(),
+          ...ranks.map((e) => _rankRow(e)),
 
           const SizedBox(height: 8),
           Divider(height: 1, color: Colors.grey.shade200),

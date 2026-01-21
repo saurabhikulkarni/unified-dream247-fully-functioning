@@ -18,7 +18,7 @@ class MoreDatasource extends MoreRepositories {
 
   @override
   Future<List<FantasyPointsSystemData>?>? pointsSystem(
-      BuildContext context) async {
+      BuildContext context,) async {
     final url =
         APIServerUrl.completedMatchServerUrl + APIServerUrl.getFantasyPoints;
 
@@ -41,12 +41,12 @@ class MoreDatasource extends MoreRepositories {
 
   @override
   Future<Map<String, dynamic>?> requestForPromoter(
-      BuildContext context, var bodyData) async {
+      BuildContext context, var bodyData,) async {
     final url = APIServerUrl.otherApiServerUrl + APIServerUrl.requestPromoter;
 
     final response = await client.post(url,
         headers: {ApiServerKeys.contentType: ApiServerKeys.applicationJson},
-        body: bodyData);
+        body: bodyData,);
 
     final res = response.data;
     if (ApiServerUtil.validateStatusCode(response.statusCode ?? 200)) {
@@ -54,7 +54,7 @@ class MoreDatasource extends MoreRepositories {
         return response.data;
       } else {
         ApiServerUtil.showAppToastforApi(
-            res[ApiResponseString.message], context);
+            res[ApiResponseString.message], context,);
       }
     } else {
       if (context.mounted) {
@@ -66,7 +66,7 @@ class MoreDatasource extends MoreRepositories {
 
   @override
   Future<Map<String, dynamic>?> getAffiliateData(
-      BuildContext context, String startDate, String endDate) async {
+      BuildContext context, String startDate, String endDate,) async {
     final url =
         '${APIServerUrl.otherApiServerUrl}${APIServerUrl.getAffiliateData}$startDate&enddate=$endDate&id=${await AppStorage.getStorageValueString(AppStorageKeys.userId)}';
     final response = await clientwithToken.get(url);
@@ -78,7 +78,7 @@ class MoreDatasource extends MoreRepositories {
         return response.data;
       } else {
         ApiServerUtil.showAppToastforApi(
-            res[ApiResponseString.message], context);
+            res[ApiResponseString.message], context,);
       }
     } else {
       if (context.mounted) {

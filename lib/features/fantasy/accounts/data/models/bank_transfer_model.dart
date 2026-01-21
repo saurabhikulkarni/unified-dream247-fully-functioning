@@ -31,17 +31,17 @@ class BankTransferModel {
 
   factory BankTransferModel.fromJson(Map<String, dynamic> json) =>
       BankTransferModel(
-        remainingBalance: ModelParsers.toStringParser(json["remainingBalance"]),
-        remainingWinning: ModelParsers.toStringParser(json["remainingWinning"]),
-        paymentstatus: ModelParsers.toStringParser(json["paymentstatus"]),
-        username: ModelParsers.toStringParser(json["username"]),
-        mobile: ModelParsers.toNumParser(json["mobile"]),
-        amount: ModelParsers.toStringParser(json["amount"]),
-        transactionId: ModelParsers.toStringParser(json["transaction_id"]),
-        tdsAmount: ModelParsers.toStringParser(json["tds_amount"]),
-        receiverAmount: ModelParsers.toStringParser(json["receiverAmount"]),
-        dateTime: ModelParsers.toStringParser(json["dateTime"]),
-        note: ModelParsers.toBoolParser(json["note"]),
-        noteText: ModelParsers.toStringParser(json["noteValue"]),
+        remainingBalance: ModelParsers.toStringParser(json['remainingBalance']),
+        remainingWinning: ModelParsers.toStringParser(json['remainingWinning']),
+        paymentstatus: ModelParsers.toStringParser(json['paymentstatus']),
+        username: ModelParsers.toStringParser(json['username']),
+        mobile: ModelParsers.toNumParser(json['mobile']),
+        amount: ModelParsers.toStringParser(json['amount']),
+        transactionId: ModelParsers.toStringParser(json['transaction_id']),
+        tdsAmount: ModelParsers.toStringParser(json['tds_amount']),
+        receiverAmount: ModelParsers.toStringParser(json['receiverAmount']),
+        dateTime: ModelParsers.toStringParser(json['dateTime']),
+        note: ModelParsers.toBoolParser(json['note']),
+        noteText: ModelParsers.toStringParser(json['noteValue']),
       );
 }

@@ -31,7 +31,7 @@ class LandingPage extends StatefulWidget {
 
 class _LandingPageState extends State<LandingPage> {
   int _selectedIndex = 0;
-  String popUpBannerImage = "";
+  String popUpBannerImage = '';
   bool _isFirstLaunch = false;
   bool _isInitializing = true;
   String? _initError;
@@ -126,7 +126,7 @@ class _LandingPageState extends State<LandingPage> {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs.setBool('hasShownPopup', true);
       } else {
-        debugPrint("Pop-up banner image is null, empty, or already shown.");
+        debugPrint('Pop-up banner image is null, empty, or already shown.');
       }
     });
   }
@@ -143,21 +143,21 @@ class _LandingPageState extends State<LandingPage> {
     if (_isInitializing) {
       return Scaffold(
         body: Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             gradient: LinearGradient(
               colors: [AppColors.mainColor, AppColors.secondMainColor],
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
             ),
           ),
-          child: Center(
+          child: const Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const CircularProgressIndicator(
+                CircularProgressIndicator(
                   valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                 ),
-                const SizedBox(height: 20),
+                SizedBox(height: 20),
                 Text(
                   'Loading Game Zone...',
                   style: TextStyle(
@@ -177,7 +177,7 @@ class _LandingPageState extends State<LandingPage> {
     if (_initError != null) {
       return Scaffold(
         body: Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             gradient: LinearGradient(
               colors: [AppColors.mainColor, AppColors.secondMainColor],
               begin: Alignment.topCenter,
@@ -192,7 +192,7 @@ class _LandingPageState extends State<LandingPage> {
                 children: [
                   const Icon(Icons.error_outline, color: Colors.white, size: 64),
                   const SizedBox(height: 20),
-                  Text(
+                  const Text(
                     'Unable to load Game Zone',
                     style: TextStyle(
                       color: Colors.white,
@@ -204,7 +204,7 @@ class _LandingPageState extends State<LandingPage> {
                   Text(
                     _initError!,
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Colors.white70,
                       fontSize: 14,
                     ),
@@ -248,7 +248,7 @@ class _LandingPageState extends State<LandingPage> {
         appBar: MainAppbar(
           title: _getAppBarTitle(),
         ),
-        drawer: AppDrawer(),
+        drawer: const AppDrawer(),
         body: screens[_selectedIndex],
         bottomNavigationBar: _buildPremiumBottomBar(),
       ),

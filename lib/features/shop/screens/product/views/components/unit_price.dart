@@ -19,7 +19,7 @@ class UnitPrice extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "Shopping tokens",
+          'Shopping tokens',
           style: Theme.of(context).textTheme.titleSmall,
         ),
         const SizedBox(height: defaultPadding / 1),

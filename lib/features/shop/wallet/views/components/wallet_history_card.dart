@@ -35,25 +35,25 @@ class WalletHistoryCard extends StatelessWidget {
           ListTile(
             minLeadingWidth: iconSize,
             leading: SvgPicture.asset(
-              isReturn ? "assets/icons/Return.svg" : "assets/icons/Product.svg",
+              isReturn ? 'assets/icons/Return.svg' : 'assets/icons/Product.svg',
               color: Theme.of(context).iconTheme.color,
               height: iconSize,
               width: iconSize,
             ),
-            title: Text(isReturn ? "Return" : "Purchase"),
+            title: Text(isReturn ? 'Return' : 'Purchase'),
             subtitle: Padding(
               padding: const EdgeInsets.only(top: defaultPadding / 4),
               child: Text(
                 date,
                 style: TextStyle(
                     fontSize: subtitleFontSize,
-                    color: Theme.of(context).textTheme.bodyMedium!.color),
+                    color: Theme.of(context).textTheme.bodyMedium!.color,),
               ),
             ),
             trailing: Text(
               isReturn
-                  ? "+ \$${amount.toStringAsFixed(2)}"
-                  : "- \$${amount.toStringAsFixed(2)}",
+                  ? '+ \$${amount.toStringAsFixed(2)}'
+                  : '- \$${amount.toStringAsFixed(2)}',
               style: Theme.of(context)
                   .textTheme
                   .titleSmall!
@@ -68,7 +68,7 @@ class WalletHistoryCard extends StatelessWidget {
               padding: const EdgeInsets.only(
                   bottom: defaultPadding,
                   left: defaultPadding,
-                  right: defaultPadding),
+                  right: defaultPadding,),
               child: SecondaryProductCard(
                 image: products[index].image,
                 brandName: products[index].brandName,

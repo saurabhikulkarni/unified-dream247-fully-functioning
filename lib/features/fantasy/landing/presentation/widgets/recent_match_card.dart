@@ -15,18 +15,18 @@ class RecentMatchCard extends StatelessWidget {
   Widget build(BuildContext context) {
     String mode;
     switch (data.finalStatus) {
-      case "pending":
-      case "IsReviewed":
-        mode = "Live";
+      case 'pending':
+      case 'IsReviewed':
+        mode = 'Live';
         break;
-      case "IsCanceled":
-        mode = "Cancelled";
+      case 'IsCanceled':
+        mode = 'Cancelled';
         break;
-      case "IsAbandoned":
-        mode = "Abandoned";
+      case 'IsAbandoned':
+        mode = 'Abandoned';
         break;
       default:
-        mode = "Completed";
+        mode = 'Completed';
     }
 
     return InkWell(
@@ -36,13 +36,13 @@ class RecentMatchCard extends StatelessWidget {
           team2Name: data.team2ShortName,
           team1Logo: data.team1Logo ?? '',
           team2Logo: data.team2Logo ?? '',
-          team1Color: "#ffffff",
-          team2Color: "#000000",
+          team1Color: '#ffffff',
+          team2Color: '#000000',
           fantasyType: data.fantasyType,
           timeStart: data.startDate,
           id: data.matchkey,
           playing11Status: data.playing11Status,
-          format: "",
+          format: '',
           teamfullname1: data.team1,
           teamfullname2: data.team2,
           series: data.series,
@@ -52,7 +52,7 @@ class RecentMatchCard extends StatelessWidget {
 
         AppSingleton().matchData = matchData;
 
-        if (data.status == "notstarted") {
+        if (data.status == 'notstarted') {
           AppNavigation.gotoUpcomingContestScreen(context, mode);
         } else {
           AppUtils.teamsCount.value = data.totalJoinTeam ?? 0;
@@ -62,7 +62,7 @@ class RecentMatchCard extends StatelessWidget {
             mode,
             false,
             data.totalJoinedContest.toString(),
-            "Cricket",
+            'Cricket',
           );
         }
       },
@@ -73,7 +73,7 @@ class RecentMatchCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(12.r),
           border: Border.all(color: AppColors.greyColor, width: 0.3.w),
           gradient:
-              LinearGradient(colors: [AppColors.mainLightColor, AppColors.mainColor]),
+              const LinearGradient(colors: [AppColors.mainLightColor, AppColors.mainColor]),
         ),
         child: Padding(
           padding: EdgeInsets.fromLTRB(14.w, 10.h, 14.w, 0),
@@ -89,10 +89,10 @@ class RecentMatchCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         _buildTeamRow(
-                            data.team1Logo, data.team1ShortName, data.team1),
+                            data.team1Logo, data.team1ShortName, data.team1,),
                         SizedBox(height: 10.h),
                         _buildTeamRow(
-                            data.team2Logo, data.team2ShortName, data.team2),
+                            data.team2Logo, data.team2ShortName, data.team2,),
                       ],
                     ),
                   ),
@@ -102,7 +102,7 @@ class RecentMatchCard extends StatelessWidget {
                     color: AppColors.white,
                   ),
                   SizedBox(width: 10.w),
-                  (data.status == "notstarted")
+                  (data.status == 'notstarted')
                       ? _buildUpcomingInfo(data)
                       : _buildCompletedInfo(data, mode),
                 ],
@@ -167,7 +167,7 @@ class RecentMatchCard extends StatelessWidget {
       children: [
         ClipOval(
           child: Image.network(
-            logo ?? "",
+            logo ?? '',
             height: 26.h,
             width: 26.w,
             fit: BoxFit.cover,
@@ -177,7 +177,7 @@ class RecentMatchCard extends StatelessWidget {
         ),
         SizedBox(width: 6.w),
         Text(
-          shortName ?? "",
+          shortName ?? '',
           style: TextStyle(
             fontSize: 14.sp,
             color: AppColors.white,
@@ -187,7 +187,7 @@ class RecentMatchCard extends StatelessWidget {
         SizedBox(width: 6.w),
         Flexible(
           child: Text(
-            fullName ?? "",
+            fullName ?? '',
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
               fontSize: 10.sp,
@@ -207,7 +207,7 @@ class RecentMatchCard extends StatelessWidget {
       child: Column(
         children: [
           Text(
-            "Upcoming",
+            'Upcoming',
             style: TextStyle(
               color: AppColors.white,
               fontSize: 12.sp,

@@ -20,12 +20,12 @@ class ReferUserModel {
   });
 
   ReferUserModel.fromJson(Map<String, dynamic> json) {
-    id = ModelParsers.toStringParser(json["_id"]);
-    referCode = ModelParsers.toStringParser(json["refer_code"]);
-    username = ModelParsers.toStringParser(json["username"]);
-    image = ModelParsers.toStringParser(json["image"]);
-    team = ModelParsers.toStringParser(json["team"]);
-    totalrefercount = ModelParsers.toIntParser(json["totalrefercount"]);
-    totalreferAmount = ModelParsers.toNumParser(json["totalreferAmount"]);
+    id = ModelParsers.toStringParser(json['_id']);
+    referCode = ModelParsers.toStringParser(json['refer_code']);
+    username = ModelParsers.toStringParser(json['username']);
+    image = ModelParsers.toStringParser(json['image']);
+    team = ModelParsers.toStringParser(json['team']);
+    totalrefercount = ModelParsers.toIntParser(json['totalrefercount']);
+    totalreferAmount = ModelParsers.toNumParser(json['totalreferAmount']);
   }
 }

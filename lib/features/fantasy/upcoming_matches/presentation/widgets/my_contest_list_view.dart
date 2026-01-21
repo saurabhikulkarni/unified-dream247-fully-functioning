@@ -79,7 +79,7 @@ class _MyContestListViewState extends State<MyContestListView> {
         }
       }
       appToast(
-        "You need to join another contest of 💎$entryFee to join this contest",
+        'You need to join another contest of 💎$entryFee to join this contest',
         context,
       );
     }
@@ -87,7 +87,7 @@ class _MyContestListViewState extends State<MyContestListView> {
 
   void joinContest(BuildContext context) {
     upcomingMatchUsecase
-        .getTeamswithChallengeId(context, widget.data.id ?? "")
+        .getTeamswithChallengeId(context, widget.data.id ?? '')
         .then((value) async {
       int count = 0;
       for (var i in value) {
@@ -103,12 +103,12 @@ class _MyContestListViewState extends State<MyContestListView> {
           (value.length + 1),
           false,
           AppSingleton.singleton.matchData.id!,
-          widget.data.id ?? "",
+          widget.data.id ?? '',
           0,
-          "",
-          "",
-          "",
-          "",
+          '',
+          '',
+          '',
+          '',
           widget.data.discountFee ?? 0,
           false,
           widget.teamType,
@@ -124,7 +124,7 @@ class _MyContestListViewState extends State<MyContestListView> {
             listen: false,
           ).updateMyTeams(
             updatedTeams,
-            AppSingleton.singleton.matchData.id ?? "",
+            AppSingleton.singleton.matchData.id ?? '',
           );
         }
       } else if (count == 1) {
@@ -136,10 +136,10 @@ class _MyContestListViewState extends State<MyContestListView> {
           ),
           builder: (BuildContext context) {
             return JoinContestBottomsheet(
-              fantasyType: "Cricket",
+              fantasyType: 'Cricket',
               isClosedContestNew: false,
               previousJoined: previousJoined,
-              challengeId: widget.data.id ?? "",
+              challengeId: widget.data.id ?? '',
               discount: widget.data.discountFee ?? 0,
               isContestDetail: false,
               selectedTeam: value
@@ -155,7 +155,7 @@ class _MyContestListViewState extends State<MyContestListView> {
         await AppNavigation.gotoMyTeamsChallenges(
           context,
           widget.teamType,
-          widget.data.id ?? "",
+          widget.data.id ?? '',
           Provider.of<MyTeamsProvider>(
                 context,
                 listen: false,
@@ -166,9 +166,9 @@ class _MyContestListViewState extends State<MyContestListView> {
                   ? 1
                   : widget.data.teamLimit ?? 0
               : 1,
-          "Join Team",
-          "",
-          "",
+          'Join Team',
+          '',
+          '',
           false,
           widget.data.discountFee ?? 0,
           widget.data.entryfee ?? 0,
@@ -182,8 +182,8 @@ class _MyContestListViewState extends State<MyContestListView> {
   @override
   Widget build(BuildContext context) {
     debugPrint(
-        "myJoinedContest: ${AppSingleton.singleton.appData.myJoinedContest}");
-    debugPrint("userTeams: ${widget.data.userTeams}");
+        'myJoinedContest: ${AppSingleton.singleton.appData.myJoinedContest}',);
+    debugPrint('userTeams: ${widget.data.userTeams}');
     int percent =
         (widget.data.joinedusers ?? 0) * 100 ~/ (widget.data.maximumUser ?? 1);
 
@@ -221,8 +221,8 @@ class _MyContestListViewState extends State<MyContestListView> {
                     horizontal: 14,
                     vertical: 10,
                   ),
-                  decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.vertical(
+                  decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.vertical(
                       top: Radius.circular(16),
                     ),
                   ),
@@ -234,12 +234,12 @@ class _MyContestListViewState extends State<MyContestListView> {
                         children: [
                           Row(
                             children: [
-                              ((widget.data.flexibleContest ?? "0") == "1" ||
+                              ((widget.data.flexibleContest ?? '0') == '1' ||
                                       widget.data.compress == true)
                                   ? Row(
                                       children: [
                                         const Icon(Icons.trending_up_rounded,
-                                            size: 16, color: AppColors.black),
+                                            size: 16, color: AppColors.black,),
                                         const SizedBox(width: 4),
                                         Text(
                                           Strings.flexiblePrizePool,
@@ -257,7 +257,7 @@ class _MyContestListViewState extends State<MyContestListView> {
                                             Image.asset(Images.verified,
                                                 height: 16,
                                                 width: 16,
-                                                color: AppColors.black),
+                                                color: AppColors.black,),
                                             const SizedBox(width: 4),
                                             Text(
                                               Strings.guaranteePrizePool,
@@ -280,7 +280,7 @@ class _MyContestListViewState extends State<MyContestListView> {
                             ],
                           ),
                           Text(
-                            "${Strings.indianRupee}${AppUtils.changeNumberToValue(widget.data.winAmount?.toInt() ?? 0)}",
+                            '${Strings.indianRupee}${AppUtils.changeNumberToValue(widget.data.winAmount?.toInt() ?? 0)}',
                             style: GoogleFonts.tomorrow(
                               color: AppColors.blackColor,
                               fontSize: 20,
@@ -303,7 +303,7 @@ class _MyContestListViewState extends State<MyContestListView> {
                                     height: 12,
                                   ),
                                   Text(
-                                    "${widget.data.entryfee}",
+                                    '${widget.data.entryfee}',
                                     style: GoogleFonts.tomorrow(
                                       decoration: TextDecoration.lineThrough,
                                       decorationColor: AppColors.black,
@@ -315,9 +315,9 @@ class _MyContestListViewState extends State<MyContestListView> {
                                 ],
                               ),
                             ),
-                          _joinButton(context)
+                          _joinButton(context),
                         ],
-                      )
+                      ),
                     ],
                   ),
                 ),
@@ -341,7 +341,7 @@ class _MyContestListViewState extends State<MyContestListView> {
                           Text(
                             ((widget.data.maximumUser ?? 0) ==
                                     (widget.data.joinedusers ?? 0))
-                                ? "Contest Full"
+                                ? 'Contest Full'
                                 : '${(widget.data.maximumUser ?? 0).toInt() - (widget.data.joinedusers ?? 0)} Spots Left',
                             style: GoogleFonts.roboto(
                               color: Colors.red,
@@ -369,9 +369,9 @@ class _MyContestListViewState extends State<MyContestListView> {
                     horizontal: 14,
                     vertical: 5,
                   ),
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     color: AppColors.lightCard,
-                    borderRadius: const BorderRadius.vertical(
+                    borderRadius: BorderRadius.vertical(
                       bottom: Radius.circular(16),
                     ),
                   ),
@@ -384,7 +384,7 @@ class _MyContestListViewState extends State<MyContestListView> {
                             _infoChip(
                               icon: Icons.emoji_events_outlined,
                               label:
-                                  "${(((widget.data.totalwinners ?? 1) / (widget.data.maximumUser ?? 1)) * 100).round()}%",
+                                  '${(((widget.data.totalwinners ?? 1) / (widget.data.maximumUser ?? 1)) * 100).round()}%',
                             ),
                             const SizedBox(width: 8),
                             _infoChip(
@@ -392,15 +392,15 @@ class _MyContestListViewState extends State<MyContestListView> {
                                   ? Icons.group
                                   : Icons.person_outline,
                               label: widget.data.multiEntry == 1
-                                  ? "${widget.data.teamLimit}"
-                                  : "S",
+                                  ? '${widget.data.teamLimit}'
+                                  : 'S',
                             ),
                           ],
                         ),
                       ),
                       Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 4),
+                            horizontal: 8, vertical: 4,),
                         decoration: BoxDecoration(
                           gradient: const LinearGradient(
                             colors: [
@@ -416,7 +416,7 @@ class _MyContestListViewState extends State<MyContestListView> {
                         child: Row(
                           children: [
                             Icon(Icons.looks_one_outlined,
-                                size: 14.sp, color: Colors.red.shade900),
+                                size: 14.sp, color: Colors.red.shade900,),
                             3.horizontalSpace,
                             Text(
                               '${Strings.indianRupee}${AppUtils.changeNumberToValue(widget.data.winAmount?.toInt() ?? 0)}',
@@ -466,7 +466,7 @@ class _MyContestListViewState extends State<MyContestListView> {
                     ),
                   ],
                 ),
-                child: (widget.data.bonusType == "flat")
+                child: (widget.data.bonusType == 'flat')
                     ? Row(
                         children: [
                           Text(
@@ -499,7 +499,7 @@ class _MyContestListViewState extends State<MyContestListView> {
                           fontSize: 11.sp,
                         ),
                       ),
-              )),
+              ),),
       ],
     );
   }
@@ -542,24 +542,24 @@ class _MyContestListViewState extends State<MyContestListView> {
         if (widget.data.isselected!) {
           String text = AppSingleton.singleton.appData.contestsharemessage!
               .replaceFirst(
-                "%TeamName%",
+                '%TeamName%',
                 Provider.of<UserDataProvider>(
                       context,
                       listen: false,
                     ).userData?.team ??
-                    "",
+                    '',
               )
               .replaceFirst(
-                "%Team1%",
-                AppSingleton.singleton.matchData.team1Name ?? "",
+                '%Team1%',
+                AppSingleton.singleton.matchData.team1Name ?? '',
               )
               .replaceFirst(
-                "%Team2%",
-                AppSingleton.singleton.matchData.team2Name ?? "",
+                '%Team2%',
+                AppSingleton.singleton.matchData.team2Name ?? '',
               )
-              .replaceFirst("%AppName%", APIServerUrl.appName)
-              .replaceFirst("%url_share%", '')
-              .replaceFirst("%inviteCode%", widget.data.refercode ?? "");
+              .replaceFirst('%AppName%', APIServerUrl.appName)
+              .replaceFirst('%url_share%', '')
+              .replaceFirst('%inviteCode%', widget.data.refercode ?? '');
           SharePlus.instance.share(ShareParams(text: text));
         } else {
           if (widget.data.isPromoCodeContest ?? false) {
@@ -603,7 +603,7 @@ class _MyContestListViewState extends State<MyContestListView> {
                           const SizedBox(height: 20),
                           customTextField(
                             codeController,
-                            "Enter Contest code",
+                            'Enter Contest code',
                             TextInputType.emailAddress,
                             0,
                             1,
@@ -614,7 +614,7 @@ class _MyContestListViewState extends State<MyContestListView> {
                               onTap: () {
                                 if (codeController.text.isEmpty) {
                                   appToast(
-                                    "Please enter your contest code first",
+                                    'Please enter your contest code first',
                                     context,
                                   );
                                 } else {
@@ -670,11 +670,11 @@ class _MyContestListViewState extends State<MyContestListView> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               (widget.data.isselected == true)
-                  ? Text('')
+                  ? const Text('')
                   : ((widget.data.entryfee ?? 0) -
                               (widget.data.discountFee ?? 0) ==
                           0)
-                      ? Text('')
+                      ? const Text('')
                       : Image.asset(
                           Images.matchToken,
                           height: 15,
@@ -748,7 +748,7 @@ class _MyContestListViewState extends State<MyContestListView> {
                   const SizedBox(height: 5),
                   customTextField(
                     codeController,
-                    "Enter Contest code",
+                    'Enter Contest code',
                     TextInputType.emailAddress,
                     0,
                     1,
@@ -759,7 +759,7 @@ class _MyContestListViewState extends State<MyContestListView> {
                       onTap: () {
                         if (codeController.text.isEmpty) {
                           appToast(
-                            "Please enter your contest code first",
+                            'Please enter your contest code first',
                             context,
                           );
                         } else {
@@ -815,12 +815,12 @@ class _MyContestListViewState extends State<MyContestListView> {
                 (value.length + 1),
                 false,
                 AppSingleton.singleton.matchData.id!,
-                widget.data.id ?? "",
+                widget.data.id ?? '',
                 0,
-                "",
-                "",
-                "",
-                "",
+                '',
+                '',
+                '',
+                '',
                 widget.data.discountFee ?? 0,
                 false,
                 widget.teamType,
@@ -836,7 +836,7 @@ class _MyContestListViewState extends State<MyContestListView> {
                   listen: false,
                 ).updateMyTeams(
                   updatedTeams,
-                  AppSingleton.singleton.matchData.id ?? "",
+                  AppSingleton.singleton.matchData.id ?? '',
                 );
               }
             } else if (count == 1) {
@@ -851,9 +851,9 @@ class _MyContestListViewState extends State<MyContestListView> {
                 builder: (BuildContext context) {
                   return JoinContestBottomsheet(
                     isClosedContestNew: false,
-                    fantasyType: "Cricket",
+                    fantasyType: 'Cricket',
                     previousJoined: previousJoined,
-                    challengeId: widget.data.id ?? "",
+                    challengeId: widget.data.id ?? '',
                     selectedTeam: value
                         .firstWhere((element) => !element.isSelected!)
                         .jointeamid!,
@@ -869,16 +869,16 @@ class _MyContestListViewState extends State<MyContestListView> {
               await AppNavigation.gotoMyTeamsChallenges(
                 context,
                 widget.teamType,
-                widget.data.matchChallengeId ?? "",
+                widget.data.matchChallengeId ?? '',
                 Provider.of<MyTeamsProvider>(
                       context,
                       listen: false,
                     ).myTeams[AppSingleton.singleton.matchData.id] ??
                     [],
                 1,
-                "Join Team",
-                "",
-                "",
+                'Join Team',
+                '',
+                '',
                 false,
                 widget.data.discountFee ?? 0,
                 widget.data.entryfee ?? 0,
@@ -897,7 +897,7 @@ class SingleJoinedContest extends StatefulWidget {
   final AllContestResponseModel data;
   final String challengeID;
   const SingleJoinedContest(
-      {super.key, required this.data, required this.challengeID});
+      {super.key, required this.data, required this.challengeID,});
 
   @override
   State<SingleJoinedContest> createState() => _SingleJoinedContestState();
@@ -935,9 +935,9 @@ class _SingleJoinedContestState extends State<SingleJoinedContest> {
     printX(selfTeams);
     return Container(
       margin: const EdgeInsets.only(top: 4),
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: AppColors.white,
-        borderRadius: const BorderRadius.vertical(
+        borderRadius: BorderRadius.vertical(
           bottom: Radius.circular(16),
         ),
         border: Border(
@@ -1067,12 +1067,12 @@ class _SingleJoinedContestState extends State<SingleJoinedContest> {
                       const SizedBox(width: 10),
 
                       /// Player Info
-                      Expanded(
+                      const Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: const [
+                          children: [
                             Text(
-                              "Star Performer",
+                              'Star Performer',
                               style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,

@@ -79,7 +79,7 @@ class _AddressesScreenState extends State<AddressesScreen> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text("Default address updated"),
+              content: Text('Default address updated'),
               backgroundColor: Colors.green,
             ),
           );
@@ -91,7 +91,7 @@ class _AddressesScreenState extends State<AddressesScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text("Failed to update default address: ${e.toString()}"),
+            content: Text('Failed to update default address: ${e.toString()}'),
             backgroundColor: Colors.red,
           ),
         );
@@ -129,7 +129,7 @@ class _AddressesScreenState extends State<AddressesScreen> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text("Address deleted"),
+              content: Text('Address deleted'),
               backgroundColor: Colors.green,
             ),
           );
@@ -141,7 +141,7 @@ class _AddressesScreenState extends State<AddressesScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text("Failed to delete address: ${e.toString()}"),
+            content: Text('Failed to delete address: ${e.toString()}'),
             backgroundColor: Colors.red,
           ),
         );
@@ -153,7 +153,7 @@ class _AddressesScreenState extends State<AddressesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("My Addresses"),
+        title: const Text('My Addresses'),
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
@@ -208,12 +208,12 @@ class _AddressesScreenState extends State<AddressesScreen> {
                       ),
                       const SizedBox(height: defaultPadding),
                       Text(
-                        "No addresses saved",
+                        'No addresses saved',
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
                       const SizedBox(height: defaultPadding / 2),
                       Text(
-                        "Tap the + button to add a new address",
+                        'Tap the + button to add a new address',
                         style: Theme.of(context).textTheme.bodySmall,
                         textAlign: TextAlign.center,
                       ),
@@ -255,7 +255,7 @@ class _AddressesScreenState extends State<AddressesScreen> {
                                       borderRadius: BorderRadius.circular(4),
                                     ),
                                     child: const Text(
-                                      "Default",
+                                      'Default',
                                       style: TextStyle(
                                         fontSize: 12,
                                         color: primaryColor,
@@ -325,7 +325,7 @@ class _AddressesScreenState extends State<AddressesScreen> {
                             child: TextButton.icon(
                               onPressed: () => _setDefaultAddress(address.id!),
                               icon: const Icon(Icons.check_circle_outline, size: 16),
-                              label: const Text("Set as Default"),
+                              label: const Text('Set as Default'),
                               style: TextButton.styleFrom(
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 12,

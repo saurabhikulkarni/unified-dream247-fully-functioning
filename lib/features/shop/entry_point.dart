@@ -70,8 +70,8 @@ class _EntryPointState extends State<EntryPoint> with WidgetsBindingObserver {
         colorFilter: ColorFilter.mode(
             color ??
                 Theme.of(context).iconTheme.color!.withOpacity(
-                    Theme.of(context).brightness == Brightness.dark ? 0.3 : 1),
-            BlendMode.srcIn),
+                    Theme.of(context).brightness == Brightness.dark ? 0.3 : 1,),
+            BlendMode.srcIn,),
       );
     }
 
@@ -138,7 +138,7 @@ class _EntryPointState extends State<EntryPoint> with WidgetsBindingObserver {
               height: iconSize,
               colorFilter: const ColorFilter.mode(
                   Colors.white,
-                  BlendMode.srcIn),
+                  BlendMode.srcIn,),
             ),
           ),
           Stack(
@@ -203,7 +203,7 @@ class _EntryPointState extends State<EntryPoint> with WidgetsBindingObserver {
               height: iconSize,
               colorFilter: const ColorFilter.mode(
                   Colors.white,
-                  BlendMode.srcIn),
+                  BlendMode.srcIn,),
             ),
           ),
           Padding(
@@ -285,7 +285,7 @@ class _EntryPointState extends State<EntryPoint> with WidgetsBindingObserver {
                   ),
                 ),
               );
-            }),
+            },),
             // Navigation bar on top
             BottomNavigationBar(
               currentIndex: _currentIndex,

@@ -66,7 +66,7 @@ class UserService {
       }
 
       return UserDetailModel.fromJson(
-          result.data!['userDetail'] as Map<String, dynamic>);
+          result.data!['userDetail'] as Map<String, dynamic>,);
     } catch (e) {
       throw Exception('Error fetching user: $e');
     }

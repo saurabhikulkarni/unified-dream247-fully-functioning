@@ -134,12 +134,12 @@ class _AddressSelectionScreenState extends State<AddressSelectionScreen> {
                           ),
                           const SizedBox(height: defaultPadding),
                           Text(
-                            "No addresses saved",
+                            'No addresses saved',
                             style: Theme.of(context).textTheme.titleMedium,
                           ),
                           const SizedBox(height: defaultPadding / 2),
                           Text(
-                            "Add an address to continue",
+                            'Add an address to continue',
                             style: Theme.of(context).textTheme.bodySmall,
                             textAlign: TextAlign.center,
                           ),
@@ -225,7 +225,7 @@ class _AddressSelectionScreenState extends State<AddressSelectionScreen> {
                                                         borderRadius: BorderRadius.circular(4),
                                                       ),
                                                       child: const Text(
-                                                        "Default",
+                                                        'Default',
                                                         style: TextStyle(
                                                           fontSize: 12,
                                                           color: primaryColor,

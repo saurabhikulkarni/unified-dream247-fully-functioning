@@ -40,8 +40,8 @@ class _AllContests extends State<AllContests> {
   List<AllNewContestResponseModel>? contestListData;
   List<TeamTypeModel>? teamTypeList;
   bool isInitialLoading = true;
-  String sortedBy = "";
-  String teamTypeBy = "";
+  String sortedBy = '';
+  String teamTypeBy = '';
   Set<String> appliedFilters = {};
   bool isEntryFee = true;
   bool isSpots = false;
@@ -61,7 +61,7 @@ class _AllContests extends State<AllContests> {
         setState(() {
           teamTypeList = value;
           teamTypeBy =
-              value.first.name ?? ""; // Select first teamType by default
+              value.first.name ?? ''; // Select first teamType by default
         });
 
         // Load contests filtered by the default selected teamType
@@ -79,8 +79,8 @@ class _AllContests extends State<AllContests> {
     upcomingMatchUsecase.userContestTeamCount(context).then((value) {
       if (value != null) {
         Timer(const Duration(milliseconds: 300), () {
-          AppUtils.teamsCount.value = value["data"]["total_teams"];
-          AppUtils.contestCount.value = value["data"]["total_joinedcontest"];
+          AppUtils.teamsCount.value = value['data']['total_teams'];
+          AppUtils.contestCount.value = value['data']['total_joinedcontest'];
         });
       }
     });
@@ -109,9 +109,9 @@ class _AllContests extends State<AllContests> {
       // When a team type is selected, filter contests accordingly
       if (selectedTeamType != null &&
           selectedTeamType.isNotEmpty &&
-          selectedTeamType != "10-1") {
+          selectedTeamType != '10-1') {
         // Step 1: Separate categories & contests
-        final allContests = data.where((e) => e.type == "contest").toList();
+        final allContests = data.where((e) => e.type == 'contest').toList();
 
         // Step 2: Filter contests by selected team type name
         final filteredContests = allContests
@@ -131,9 +131,9 @@ class _AllContests extends State<AllContests> {
         contestListData = [];
 
         for (var item in data) {
-          if (item.type == "category" && filteredCatIds.contains(item.catid)) {
+          if (item.type == 'category' && filteredCatIds.contains(item.catid)) {
             contestListData!.add(item);
-          } else if (item.type == "contest" &&
+          } else if (item.type == 'contest' &&
               filteredContests
                   .any((c) => c.matchchallengeid == item.matchchallengeid)) {
             contestListData!.add(item);
@@ -152,9 +152,9 @@ class _AllContests extends State<AllContests> {
         upcomingMatchUsecase.userContestTeamCount(context).then((value) {
           if (value != null) {
             Timer(const Duration(milliseconds: 300), () {
-              AppUtils.teamsCount.value = value["data"]["total_teams"];
+              AppUtils.teamsCount.value = value['data']['total_teams'];
               AppUtils.contestCount.value =
-                  value["data"]["total_joinedcontest"];
+                  value['data']['total_joinedcontest'];
             });
           }
         });
@@ -311,8 +311,8 @@ class _AllContests extends State<AllContests> {
       upcomingMatchUsecase.userContestTeamCount(context).then((value) {
         if (value != null) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            AppUtils.teamsCount.value = value["data"]["total_teams"];
-            AppUtils.contestCount.value = value["data"]["total_joinedcontest"];
+            AppUtils.teamsCount.value = value['data']['total_teams'];
+            AppUtils.contestCount.value = value['data']['total_joinedcontest'];
           });
         }
       });
@@ -320,7 +320,7 @@ class _AllContests extends State<AllContests> {
 
     if ((contestListData ?? []).isNotEmpty) {
       contestListSorted =
-          contestListData?.where((data) => data.type != "category").toList() ??
+          contestListData?.where((data) => data.type != 'category').toList() ??
               [];
     }
 
@@ -329,25 +329,25 @@ class _AllContests extends State<AllContests> {
     bool isSortingOrFiltering =
         sortedBy.isNotEmpty || appliedFilters.isNotEmpty;
 
-    if (sortedBy == "entry") {
+    if (sortedBy == 'entry') {
       contestListSorted.sort(
         (a, b) => isEntryFee
             ? a.entryfee!.compareTo(b.entryfee!)
             : b.entryfee!.compareTo(a.entryfee!),
       );
-    } else if (sortedBy == "spots") {
+    } else if (sortedBy == 'spots') {
       contestListSorted.sort(
         (a, b) => isSpots
             ? a.maximumUser!.compareTo(b.maximumUser!)
             : b.maximumUser!.compareTo(a.maximumUser!),
       );
-    } else if (sortedBy == "prize") {
+    } else if (sortedBy == 'prize') {
       contestListSorted.sort(
         (a, b) => isPrizePool
             ? a.winAmount!.compareTo(b.winAmount!)
             : b.winAmount!.compareTo(a.winAmount!),
       );
-    } else if (sortedBy == "winners") {
+    } else if (sortedBy == 'winners') {
       contestListSorted.sort(
         (a, b) => isWinner
             ? a.totalwinners!.compareTo(b.totalwinners!)
@@ -375,12 +375,12 @@ class _AllContests extends State<AllContests> {
                 teamNumber,
                 false,
                 AppSingleton.singleton.matchData.id!,
-                "",
+                '',
                 0,
-                "",
-                "",
-                "",
-                "",
+                '',
+                '',
+                '',
+                '',
                 0,
                 false,
                 teamTypeBy,
@@ -390,7 +390,7 @@ class _AllContests extends State<AllContests> {
                     await upcomingMatchUsecase.getMyTeams(context);
                 Provider.of<MyTeamsProvider>(context, listen: false)
                     .updateMyTeams(updatedTeams,
-                        AppSingleton.singleton.matchData.id ?? "");
+                        AppSingleton.singleton.matchData.id ?? '',);
               }
             },
           ),
@@ -410,9 +410,9 @@ class _AllContests extends State<AllContests> {
                       child: Row(
                         children: [
                           Padding(
-                            padding: EdgeInsets.only(right: 10),
+                            padding: const EdgeInsets.only(right: 10),
                             child: Text(
-                              "Sort By:",
+                              'Sort By:',
                               style: TextStyle(
                                 color: AppColors.greyColor,
                                 fontSize: 12.sp,
@@ -422,52 +422,52 @@ class _AllContests extends State<AllContests> {
                           ),
                           _buildSortChip(
                             context,
-                            title: "Entry",
-                            isActive: sortedBy == "entry",
+                            title: 'Entry',
+                            isActive: sortedBy == 'entry',
                             isAscending: isEntryFee,
                             onTap: () {
                               setState(() {
                                 isEntryFee =
-                                    sortedBy == "entry" ? !isEntryFee : true;
-                                sortedBy = "entry";
+                                    sortedBy == 'entry' ? !isEntryFee : true;
+                                sortedBy = 'entry';
                               });
                             },
                           ),
                           _buildSortChip(
                             context,
-                            title: "Spots",
-                            isActive: sortedBy == "spots",
+                            title: 'Spots',
+                            isActive: sortedBy == 'spots',
                             isAscending: isSpots,
                             onTap: () {
                               setState(() {
-                                isSpots = sortedBy == "spots" ? !isSpots : true;
-                                sortedBy = "spots";
+                                isSpots = sortedBy == 'spots' ? !isSpots : true;
+                                sortedBy = 'spots';
                               });
                             },
                           ),
                           _buildSortChip(
                             context,
-                            title: "Prize Pool",
-                            isActive: sortedBy == "prize",
+                            title: 'Prize Pool',
+                            isActive: sortedBy == 'prize',
                             isAscending: isPrizePool,
                             onTap: () {
                               setState(() {
                                 isPrizePool =
-                                    sortedBy == "prize" ? !isPrizePool : true;
-                                sortedBy = "prize";
+                                    sortedBy == 'prize' ? !isPrizePool : true;
+                                sortedBy = 'prize';
                               });
                             },
                           ),
                           _buildSortChip(
                             context,
-                            title: "% Winners",
-                            isActive: sortedBy == "winners",
+                            title: '% Winners',
+                            isActive: sortedBy == 'winners',
                             isAscending: isWinner,
                             onTap: () {
                               setState(() {
                                 isWinner =
-                                    sortedBy == "winners" ? !isWinner : true;
-                                sortedBy = "winners";
+                                    sortedBy == 'winners' ? !isWinner : true;
+                                sortedBy = 'winners';
                               });
                             },
                           ),
@@ -547,11 +547,11 @@ class _AllContests extends State<AllContests> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: (teamTypeList ?? []).map((type) {
                   return TeamTypeWidget(
-                    title: type.name ?? "10-1",
+                    title: type.name ?? '10-1',
                     isActive: teamTypeBy == type.name,
                     onTap: () {
                       setState(() {
-                        teamTypeBy = type.name ?? "10-1";
+                        teamTypeBy = type.name ?? '10-1';
                       });
                       loadData(
                         showShimmer: true,
@@ -583,12 +583,12 @@ class _AllContests extends State<AllContests> {
                           children: [
                             if (!isSortingOrFiltering)
                               for (var item in contestListData ?? []) ...[
-                                if (item.type == "category")
+                                if (item.type == 'category')
                                   ContestCategory(
                                     name: item.name,
                                     subTitle: item.subTitle,
                                   ),
-                                if (item.type == "contest" || item.type == "")
+                                if (item.type == 'contest' || item.type == '')
                                   ContestListView(
                                     teamType: teamTypeBy,
                                     mode: widget.mode,
@@ -614,7 +614,7 @@ class _AllContests extends State<AllContests> {
                                 child: const NoDataWidget(
                                   image: Images.noContestImage,
                                   showButton: false,
-                                  title: "No Contests Available",
+                                  title: 'No Contests Available',
                                 ),
                               ),
                           ],

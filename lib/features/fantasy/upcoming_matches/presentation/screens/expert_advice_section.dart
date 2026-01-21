@@ -18,7 +18,7 @@ class ExpertAdviceScreen extends StatefulWidget {
 class _ExpertAdviceScreenState extends State<ExpertAdviceScreen> {
   Future<List<ExpertAdviceModel>?>? adviceList;
   UpcomingMatchUsecase upcomingMatchUsecase = UpcomingMatchUsecase(
-      UpcomingMatchDatsource(ApiImpl(), ApiImplWithAccessToken()));
+      UpcomingMatchDatsource(ApiImpl(), ApiImplWithAccessToken()),);
 
   @override
   void initState() {
@@ -26,13 +26,13 @@ class _ExpertAdviceScreenState extends State<ExpertAdviceScreen> {
     getExpertAdvice();
   }
 
-  getExpertAdvice() {
+  void getExpertAdvice() {
     adviceList = upcomingMatchUsecase.getExpertAdvice(context);
     setState(() {});
   }
 
   void _showAdviceDetails(
-      BuildContext context, ExpertAdviceModel advice, int index) {
+      BuildContext context, ExpertAdviceModel advice, int index,) {
     showModalBottomSheet(
       context: context,
       backgroundColor: AppColors.transparent,
@@ -77,7 +77,7 @@ class _ExpertAdviceScreenState extends State<ExpertAdviceScreen> {
                     ),
                   ),
                   const Text(
-                    "Expert Insight",
+                    'Expert Insight',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -86,7 +86,7 @@ class _ExpertAdviceScreenState extends State<ExpertAdviceScreen> {
                   ),
                   const SizedBox(height: 18),
                   Text(
-                    advice.content ?? "",
+                    advice.content ?? '',
                     style: const TextStyle(
                       fontSize: 16,
                       height: 1.5,
@@ -102,7 +102,7 @@ class _ExpertAdviceScreenState extends State<ExpertAdviceScreen> {
                       color: AppColors.white,
                     ),
                     label: const Text(
-                      "Got it!",
+                      'Got it!',
                       style: TextStyle(color: AppColors.white),
                     ),
                     style: ElevatedButton.styleFrom(
@@ -129,11 +129,11 @@ class _ExpertAdviceScreenState extends State<ExpertAdviceScreen> {
       backgroundColor: AppColors.bgColor,
       appBar: AppBar(
         title: Text(
-          "Expert Advice",
+          'Expert Advice',
           style: GoogleFonts.exo2(
               color: AppColors.black,
               fontSize: 16.0,
-              fontWeight: FontWeight.w600),
+              fontWeight: FontWeight.w600,),
         ),
         centerTitle: true,
       ),
@@ -144,7 +144,7 @@ class _ExpertAdviceScreenState extends State<ExpertAdviceScreen> {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return Center(
-              child: Text("Error: ${snapshot.error}"),
+              child: Text('Error: ${snapshot.error}'),
             );
           } else if (snapshot.hasData) {
             final adviceList = snapshot.data!;
@@ -156,20 +156,20 @@ class _ExpertAdviceScreenState extends State<ExpertAdviceScreen> {
                 return GestureDetector(
                   onTap: () => _showAdviceDetails(context, advice, index),
                   child: Container(
-                    margin: EdgeInsets.symmetric(vertical: 5.0, horizontal: 8),
+                    margin: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 8),
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20.0),
-                        color: AppColors.lightCard),
+                        color: AppColors.lightCard,),
                     child: ListTile(
                       leading: CircleAvatar(
                         backgroundColor: AppColors.black,
                         child: Text(
-                          "${index + 1}",
+                          '${index + 1}',
                           style: const TextStyle(color: AppColors.white),
                         ),
                       ),
                       title: Text(
-                        advice.title ?? "",
+                        advice.title ?? '',
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
@@ -178,14 +178,14 @@ class _ExpertAdviceScreenState extends State<ExpertAdviceScreen> {
                         ),
                       ),
                       trailing: const Icon(Icons.arrow_forward_ios_rounded,
-                          size: 18, color: AppColors.blackColor),
+                          size: 18, color: AppColors.blackColor,),
                     ),
                   ),
                 );
               },
             );
           } else {
-            return const Center(child: Text("No advice available."));
+            return const Center(child: Text('No advice available.'));
           }
         },
       ),

@@ -141,7 +141,7 @@ class AppUtils {
   }
 
   static String getShortPlayerName(String fullName) {
-    if (fullName.trim().isEmpty) return "";
+    if (fullName.trim().isEmpty) return '';
 
     final parts = fullName.trim().split(RegExp(r'\s+'));
 
@@ -149,7 +149,7 @@ class AppUtils {
 
     // All initials except the last name
     final initials =
-        parts.sublist(0, parts.length - 1).map((e) => "${e[0].toUpperCase()}.");
+        parts.sublist(0, parts.length - 1).map((e) => '${e[0].toUpperCase()}.');
     final lastName = parts.last;
 
     return "${initials.join(' ')} $lastName";
@@ -218,7 +218,7 @@ class AppUtils {
           return Padding(
             padding: const EdgeInsets.only(top: 8),
             child: Text(
-              "Time Over",
+              'Time Over',
               style: GoogleFonts.tomorrow(
                 fontSize: 11.0,
                 fontWeight: FontWeight.bold,
@@ -343,7 +343,7 @@ class AppUtils {
         Duration duration = endDate.difference(DateTime.now());
         if (duration.isNegative) {
           return Text(
-            "Time Over",
+            'Time Over',
             style: GoogleFonts.tomorrow(
               fontSize: 12.0,
               fontWeight: FontWeight.bold,
@@ -467,7 +467,7 @@ class AppUtils {
       double value = double.parse(amount);
       return value.toStringAsFixed(2);
     } catch (e) {
-      return "0.00";
+      return '0.00';
     }
   }
 
@@ -503,10 +503,10 @@ class AppUtils {
   }
 
   static String changeRole(String? role) {
-    if (role == "keeper") return "WK";
-    if (role == "batsman") return "BAT";
-    if (role == "allrounder") return "AR";
-    if (role == "bowler") return "BOWL";
+    if (role == 'keeper') return 'WK';
+    if (role == 'batsman') return 'BAT';
+    if (role == 'allrounder') return 'AR';
+    if (role == 'bowler') return 'BOWL';
     return role!;
   }
 
@@ -529,7 +529,7 @@ class AppUtils {
   }
 
   static String formatDateToDays(String dateString) {
-    DateFormat format = DateFormat("dd MMM yyyy HH:mm");
+    DateFormat format = DateFormat('dd MMM yyyy HH:mm');
 
     DateTime givenDate = format.parse(dateString);
 
@@ -537,7 +537,7 @@ class AppUtils {
 
     int daysDifference = givenDate.difference(today).inDays;
 
-    return "$daysDifference days";
+    return '$daysDifference days';
   }
 
   // static final DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
@@ -559,7 +559,7 @@ class AppUtils {
       String downloadPath = '${downloadDirectory.path}/Download';
       return downloadPath;
     } else {
-      throw Exception("Failed to get download directory path.");
+      throw Exception('Failed to get download directory path.');
     }
   }
 
@@ -567,11 +567,11 @@ class AppUtils {
     try {
       if (Platform.isAndroid) {
         // await ApkInstaller.installApk(filePath: apkPath);
-        appToast("APK installation not implemented", context);
+        appToast('APK installation not implemented', context);
       }
     } catch (e) {
       debugPrint('Error: $e');
-      appToast("Failed to Install the App!", context);
+      appToast('Failed to Install the App!', context);
     }
   }
 

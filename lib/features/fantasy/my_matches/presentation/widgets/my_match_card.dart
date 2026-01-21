@@ -39,13 +39,13 @@ class _MyMatchCardState extends State<MyMatchCard> {
   @override
   Widget build(BuildContext context) {
     // Preserve original mode logic
-    if (widget.data.finalStatus == "pending" ||
-        widget.data.finalStatus == "IsReviewed") {
-      mode = "Live";
-    } else if (widget.data.finalStatus == "IsCanceled") {
-      mode = "Cancelled";
-    } else if (widget.data.finalStatus == "IsAbandoned") {
-      mode = "Abandoned";
+    if (widget.data.finalStatus == 'pending' ||
+        widget.data.finalStatus == 'IsReviewed') {
+      mode = 'Live';
+    } else if (widget.data.finalStatus == 'IsCanceled') {
+      mode = 'Cancelled';
+    } else if (widget.data.finalStatus == 'IsAbandoned') {
+      mode = 'Abandoned';
     } else {
       mode = widget.mode;
     }
@@ -80,16 +80,16 @@ class _MyMatchCardState extends State<MyMatchCard> {
           if (widget.mode == 'Upcoming') {
             AppNavigation.gotoUpcomingContestScreen(
               context,
-              mode ?? "upcoming",
+              mode ?? 'upcoming',
             );
           } else {
-            if (widget.data.finalStatus == "pending" ||
-                widget.data.finalStatus == "IsReviewed") {
-              mode = "Live";
-            } else if (widget.data.finalStatus == "IsCanceled") {
-              mode = "Cancelled";
-            } else if (widget.data.finalStatus == "IsAbandoned") {
-              mode = "Abandoned";
+            if (widget.data.finalStatus == 'pending' ||
+                widget.data.finalStatus == 'IsReviewed') {
+              mode = 'Live';
+            } else if (widget.data.finalStatus == 'IsCanceled') {
+              mode = 'Cancelled';
+            } else if (widget.data.finalStatus == 'IsAbandoned') {
+              mode = 'Abandoned';
             } else {
               mode = widget.mode;
             }
@@ -109,8 +109,8 @@ class _MyMatchCardState extends State<MyMatchCard> {
           decoration: BoxDecoration(
               border: Border.all(color: AppColors.greyColor, width: 0.2),
               borderRadius: BorderRadius.circular(8),
-              gradient: LinearGradient(
-                  colors: [AppColors.white, AppColors.whiteFade1])),
+              gradient: const LinearGradient(
+                  colors: [AppColors.white, AppColors.whiteFade1],),),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -131,15 +131,15 @@ class _MyMatchCardState extends State<MyMatchCard> {
                             children: [
                               ClipOval(
                                 child: Image.network(
-                                  widget.data.team1Logo ?? "",
+                                  widget.data.team1Logo ?? '',
                                   height: 28,
                                   width: 28,
                                 ),
                               ),
                               const SizedBox(width: 6),
                               Text(
-                                "${widget.data.team1ShortName}",
-                                style: TextStyle(
+                                '${widget.data.team1ShortName}',
+                                style: const TextStyle(
                                   fontSize: 16,
                                   color: AppColors.black,
                                   fontWeight: FontWeight.bold,
@@ -148,10 +148,10 @@ class _MyMatchCardState extends State<MyMatchCard> {
                               const SizedBox(width: 8.0),
                               Flexible(
                                 child: Text(
-                                  "${widget.data.team1Fullname}",
+                                  '${widget.data.team1Fullname}',
                                   overflow: TextOverflow.ellipsis,
                                   textAlign: TextAlign.center,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     fontSize: 12,
                                     color: AppColors.black,
                                     fontWeight: FontWeight.w500,
@@ -165,15 +165,15 @@ class _MyMatchCardState extends State<MyMatchCard> {
                             children: [
                               ClipOval(
                                 child: Image.network(
-                                  widget.data.team2Logo ?? "",
+                                  widget.data.team2Logo ?? '',
                                   height: 28,
                                   width: 28,
                                 ),
                               ),
                               const SizedBox(width: 6),
                               Text(
-                                "${widget.data.team2ShortName}",
-                                style: TextStyle(
+                                '${widget.data.team2ShortName}',
+                                style: const TextStyle(
                                   fontSize: 16,
                                   color: AppColors.black,
                                   fontWeight: FontWeight.bold,
@@ -182,10 +182,10 @@ class _MyMatchCardState extends State<MyMatchCard> {
                               const SizedBox(width: 8.0),
                               Flexible(
                                 child: Text(
-                                  "${widget.data.team2Fullname}",
+                                  '${widget.data.team2Fullname}',
                                   textAlign: TextAlign.center,
                                   overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     fontSize: 12,
                                     color: AppColors.black,
                                     fontWeight: FontWeight.w500,
@@ -199,13 +199,13 @@ class _MyMatchCardState extends State<MyMatchCard> {
                     ),
                     Container(height: 40, width: 2, color: AppColors.black),
                     const SizedBox(width: 10),
-                    (widget.data.status == "notstarted")
+                    (widget.data.status == 'notstarted')
                         ? SizedBox(
                             width: 80,
                             child: Column(
                               children: [
-                                Text(
-                                  "Live",
+                                const Text(
+                                  'Live',
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
                                     color: AppColors.black,
@@ -221,7 +221,7 @@ class _MyMatchCardState extends State<MyMatchCard> {
                                 Text(
                                   AppUtils.formatTime(widget.data.startDate!),
                                   overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     color: AppColors.black,
                                     fontSize: 10,
                                   ),
@@ -232,9 +232,9 @@ class _MyMatchCardState extends State<MyMatchCard> {
                         : Column(
                             children: [
                               Text(
-                                mode ?? "Live",
+                                mode ?? 'Live',
                                 style: TextStyle(
-                                  color: mode == "Live"
+                                  color: mode == 'Live'
                                       ? Colors.red
                                       : AppColors.black,
                                   fontSize: 13,
@@ -243,7 +243,7 @@ class _MyMatchCardState extends State<MyMatchCard> {
                               ),
                               Text(
                                 AppUtils.formatTime(widget.data.startDate!),
-                                style: TextStyle(
+                                style: const TextStyle(
                                   color: AppColors.black,
                                   fontSize: 9,
                                 ),
@@ -260,7 +260,7 @@ class _MyMatchCardState extends State<MyMatchCard> {
                 height: 0.15,
               ),
               Container(
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   // color: AppColors.lightGrey,
                   borderRadius: BorderRadius.only(
                     bottomLeft: Radius.circular(8),
@@ -285,8 +285,8 @@ class _MyMatchCardState extends State<MyMatchCard> {
                             ),
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 2),
+                        const Padding(
+                          padding: EdgeInsets.only(left: 2),
                           child: Text(
                             'Contests ',
                             style: TextStyle(
@@ -315,8 +315,8 @@ class _MyMatchCardState extends State<MyMatchCard> {
                             ),
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 2),
+                        const Padding(
+                          padding: EdgeInsets.only(left: 2),
                           child: Text(
                             'Teams ',
                             style: TextStyle(

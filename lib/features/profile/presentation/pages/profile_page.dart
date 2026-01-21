@@ -28,9 +28,9 @@ class ProfilePage extends StatelessWidget {
               ),
               child: Column(
                 children: [
-                  Stack(
+                  const Stack(
                     children: [
-                      const CircleAvatar(
+                      CircleAvatar(
                         radius: 50,
                         backgroundColor: AppColors.primary,
                         child: Icon(
@@ -70,7 +70,7 @@ class ProfilePage extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  Text('User Name', style: TextStyles.h4),
+                  const Text('User Name', style: TextStyles.h4),
                   const SizedBox(height: 4),
                   Text(
                     'user@example.com',
@@ -90,8 +90,8 @@ class ProfilePage extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             // Stats cards
-            Padding(
-              padding: const EdgeInsets.all(16),
+            const Padding(
+              padding: EdgeInsets.all(16),
               child: Row(
                 children: [
                   Expanded(
@@ -102,7 +102,7 @@ class ProfilePage extends StatelessWidget {
                       color: AppColors.ecommerceAccent,
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  SizedBox(width: 12),
                   Expanded(
                     child: _StatCard(
                       icon: Icons.sports_cricket,
@@ -111,7 +111,7 @@ class ProfilePage extends StatelessWidget {
                       color: AppColors.gamingAccent,
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  SizedBox(width: 12),
                   Expanded(
                     child: _StatCard(
                       icon: Icons.emoji_events,
@@ -274,7 +274,7 @@ class _ProfileMenuItem extends StatelessWidget {
         title,
         style: TextStyles.bodyMedium.copyWith(color: textColor),
       ),
-      trailing: Icon(
+      trailing: const Icon(
         Icons.chevron_right,
         color: AppColors.textSecondary,
       ),

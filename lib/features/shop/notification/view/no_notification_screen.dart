@@ -8,7 +8,7 @@ class NoNotificationScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Notifications"),
+        title: const Text('Notifications'),
       ),
       body: Center(
         child: Column(
@@ -21,7 +21,7 @@ class NoNotificationScreen extends StatelessWidget {
             ),
             const SizedBox(height: defaultPadding),
             Text(
-              "No notifications",
+              'No notifications',
               style: Theme.of(context).textTheme.titleMedium,
             ),
             const SizedBox(height: 8),

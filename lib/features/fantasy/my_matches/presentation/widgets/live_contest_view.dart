@@ -725,7 +725,7 @@ class _LiveContestViewState extends State<LiveContestView> {
         gradient: LinearGradient(
           colors: [
             AppColors.white,
-            AppColors.whiteFade1.withValues(alpha: 0.9)
+            AppColors.whiteFade1.withValues(alpha: 0.9),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -865,7 +865,7 @@ class _LiveContestViewState extends State<LiveContestView> {
   // --- Widget Extracts ---
 
   Widget _buildPrizeType() {
-    if ((widget.data.flexibleContest ?? "0") == "1") {
+    if ((widget.data.flexibleContest ?? '0') == '1') {
       return Row(
         children: [
           const Icon(
@@ -931,7 +931,7 @@ class _LiveContestViewState extends State<LiveContestView> {
               label:
                   '${(((widget.data.totalwinners ?? 1) / (widget.data.maximumUser ?? 1)) * 100).round()}%',
               message:
-                  "${(widget.data.totalwinners ?? 1)} Teams win the contest",
+                  '${(widget.data.totalwinners ?? 1)} Teams win the contest',
             ),
             const SizedBox(width: 10),
             _tooltipItem(
@@ -940,8 +940,8 @@ class _LiveContestViewState extends State<LiveContestView> {
                   ? 'M${widget.data.teamLimit}'
                   : 'S',
               message: widget.data.multiEntry == 1
-                  ? "Max ${widget.data.teamLimit} entries"
-                  : "Single entry only",
+                  ? 'Max ${widget.data.teamLimit} entries'
+                  : 'Single entry only',
             ),
           ],
         ),
@@ -950,7 +950,7 @@ class _LiveContestViewState extends State<LiveContestView> {
         Row(
           children: [
             Text(
-              "${AppUtils.changeNumberToValue(widget.data.maximumUser ?? 1)} Spots",
+              '${AppUtils.changeNumberToValue(widget.data.maximumUser ?? 1)} Spots',
               style: GoogleFonts.exo2(
                 color: AppColors.letterColor,
                 fontWeight: FontWeight.w600,

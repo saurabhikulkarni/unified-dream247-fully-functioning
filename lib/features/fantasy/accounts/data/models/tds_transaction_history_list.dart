@@ -8,14 +8,14 @@ class TdsTransactionHistoryList {
 
   factory TdsTransactionHistoryList.fromJson(Map<String, dynamic> json) =>
       TdsTransactionHistoryList(
-        transactions: json["transactions"] == null
+        transactions: json['transactions'] == null
             ? []
             : List<TdsTransactionData>.from(
-                json["transactions"]!.map(
+                json['transactions']!.map(
                   (x) => TdsTransactionData.fromJson(x),
                 ),
               ),
-        totalCount: ModelParsers.toIntParser(json["totalCount"]),
+        totalCount: ModelParsers.toIntParser(json['totalCount']),
       );
 }
 
@@ -36,10 +36,10 @@ class TdsTransactionData {
 
   factory TdsTransactionData.fromJson(Map<String, dynamic> json) =>
       TdsTransactionData(
-        id: ModelParsers.toStringParser(json["_id"]),
-        type: ModelParsers.toStringParser(json["type"]),
-        transactionId: ModelParsers.toStringParser(json["id"]),
-        amount: ModelParsers.toStringParser(json["amount"]),
-        dateTime: ModelParsers.toStringParser(json["date_time"]),
+        id: ModelParsers.toStringParser(json['_id']),
+        type: ModelParsers.toStringParser(json['type']),
+        transactionId: ModelParsers.toStringParser(json['id']),
+        amount: ModelParsers.toStringParser(json['amount']),
+        dateTime: ModelParsers.toStringParser(json['date_time']),
       );
 }

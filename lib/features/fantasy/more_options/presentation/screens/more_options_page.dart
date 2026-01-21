@@ -20,7 +20,7 @@ class _MoreOptionsPageState extends State<MoreOptionsPage> {
         gradient: LinearGradient(
           colors: [
             AppColors.white,
-            AppColors.lightBlue.withValues(alpha: 0.05)
+            AppColors.lightBlue.withValues(alpha: 0.05),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -69,7 +69,7 @@ class _MoreOptionsPageState extends State<MoreOptionsPage> {
               Images.howToPlay,
               height: 24,
               width: 24,
-              colorFilter: ColorFilter.mode(
+              colorFilter: const ColorFilter.mode(
                 AppColors.letterColor,
                 BlendMode.srcIn,
               ),
@@ -156,7 +156,7 @@ class _MoreOptionsPageState extends State<MoreOptionsPage> {
               Images.respplay,
               height: 24,
               width: 24,
-              colorFilter: ColorFilter.mode(
+              colorFilter: const ColorFilter.mode(
                 AppColors.letterColor,
                 BlendMode.srcIn,
               ),
@@ -167,7 +167,7 @@ class _MoreOptionsPageState extends State<MoreOptionsPage> {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 20),
             child: Text(
-              "App Version : 1.0.0",
+              'App Version : 1.0.0',
               style: TextStyle(
                 color: AppColors.letterColor.withValues(alpha: 0.6),
                 fontSize: 12,

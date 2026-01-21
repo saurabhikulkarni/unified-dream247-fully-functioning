@@ -1,4 +1,5 @@
 /// API Server URLs for fantasy gaming backend
+library;
 
 class ApiServerUrls {
   // Base URLs

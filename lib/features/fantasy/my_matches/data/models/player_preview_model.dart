@@ -28,21 +28,21 @@ class PlayerPreviewModel {
       this.captain,
       this.vicecaptain,
       this.points,
-      this.isSelected});
+      this.isSelected,});
 
   PlayerPreviewModel.fromJson(Map<String, dynamic> json) {
-    id = ModelParsers.toStringParser(json["id"]);
-    playerid = ModelParsers.toStringParser(json["playerid"]);
-    name = ModelParsers.toStringParser(json["name"]);
-    role = ModelParsers.toStringParser(json["role"]);
-    credit = ModelParsers.toNumParser(json["credit"]);
-    playingstatus = ModelParsers.toIntParser(json["playingstatus"]);
-    team = ModelParsers.toStringParser(json["team"]);
-    image = ModelParsers.toStringParser(json["image"]);
-    image1 = ModelParsers.toStringParser(json["image1"]);
-    captain = ModelParsers.toIntParser(json["captain"]);
-    vicecaptain = ModelParsers.toIntParser(json["vicecaptain"]);
-    points = ModelParsers.toNumParser(json["points"]);
-    isSelected = ModelParsers.toBoolParser(json["isSelected"]);
+    id = ModelParsers.toStringParser(json['id']);
+    playerid = ModelParsers.toStringParser(json['playerid']);
+    name = ModelParsers.toStringParser(json['name']);
+    role = ModelParsers.toStringParser(json['role']);
+    credit = ModelParsers.toNumParser(json['credit']);
+    playingstatus = ModelParsers.toIntParser(json['playingstatus']);
+    team = ModelParsers.toStringParser(json['team']);
+    image = ModelParsers.toStringParser(json['image']);
+    image1 = ModelParsers.toStringParser(json['image1']);
+    captain = ModelParsers.toIntParser(json['captain']);
+    vicecaptain = ModelParsers.toIntParser(json['vicecaptain']);
+    points = ModelParsers.toNumParser(json['points']);
+    isSelected = ModelParsers.toBoolParser(json['isSelected']);
   }
 }

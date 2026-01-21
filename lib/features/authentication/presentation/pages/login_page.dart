@@ -90,10 +90,10 @@ class _LoginViewState extends State<_LoginView> {
                       height: 100,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                        gradient: LinearGradient(
+                        gradient: const LinearGradient(
                           colors: [
-                            const Color(0xFF6441A5),
-                            const Color(0xFF472575),
+                            Color(0xFF6441A5),
+                            Color(0xFF472575),
                           ],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
@@ -187,7 +187,7 @@ class _LoginViewState extends State<_LoginView> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
+                        const Text(
                           'New user? ',
                           style: TextStyles.bodyMedium,
                         ),

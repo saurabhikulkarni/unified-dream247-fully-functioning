@@ -158,7 +158,7 @@ class PaymentHistoryCard extends StatelessWidget {
                     color: Color(int.parse(
                       'FF${RazorpayService().getStatusColor(payment.paymentStatus).replaceFirst('#', '')}',
                       radix: 16,
-                    )).withOpacity(0.1),
+                    ),).withOpacity(0.1),
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: Text(
@@ -169,7 +169,7 @@ class PaymentHistoryCard extends StatelessWidget {
                       color: Color(int.parse(
                         'FF${RazorpayService().getStatusColor(payment.paymentStatus).replaceFirst('#', '')}',
                         radix: 16,
-                      )),
+                      ),),
                     ),
                   ),
                 ),

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/app_colors.dart';
 
-appToast(String msg, BuildContext context) {
+ToastFuture appToast(String msg, BuildContext context) {
   return showToast(
     position: ToastPosition.bottom,
     duration: const Duration(seconds: 2),

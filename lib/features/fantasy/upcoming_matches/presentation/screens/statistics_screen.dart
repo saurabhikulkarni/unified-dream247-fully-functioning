@@ -22,11 +22,11 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
             dividerContainer(Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                probabilityContainer(Images.batImage, "Pitch", "Batting"),
-                probabilityContainer(Images.weather, "Weather", "Cloudy"),
-                probabilityContainer(Images.bowlImage, "Good For", "Spinners"),
+                probabilityContainer(Images.batImage, 'Pitch', 'Batting'),
+                probabilityContainer(Images.weather, 'Weather', 'Cloudy'),
+                probabilityContainer(Images.bowlImage, 'Good For', 'Spinners'),
               ],
-            )),
+            ),),
 
             //============================== Venue ===================================
             dividerContainer(Row(
@@ -37,52 +37,52 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                   height: 30.h,
                 ),
                 10.horizontalSpace,
-                Column(
+                const Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Venue",
+                      'Venue',
                       style: TextStyle(
                           color: AppColors.blackColor,
-                          fontWeight: FontWeight.bold),
+                          fontWeight: FontWeight.bold,),
                     ),
                     Text(
-                      "The County Ground, New Road Worcester",
+                      'The County Ground, New Road Worcester',
                       style: TextStyle(
-                          color: AppColors.black, fontWeight: FontWeight.bold),
+                          color: AppColors.black, fontWeight: FontWeight.bold,),
                     ),
                     Text(
-                      "(New Road, England)",
+                      '(New Road, England)',
                       style: TextStyle(
-                          color: AppColors.black, fontWeight: FontWeight.bold),
+                          color: AppColors.black, fontWeight: FontWeight.bold,),
                     ),
                   ],
-                )
+                ),
               ],
-            )),
+            ),),
 
             //====================== Recent 5 Matches =============================
             dividerContainer(Column(
               children: [
                 Row(
                   children: [
-                    Icon(Icons.refresh_outlined, color: Colors.blue),
+                    const Icon(Icons.refresh_outlined, color: Colors.blue),
                     5.horizontalSpace,
-                    Text(
-                      "Recent Performances - Recent 5 Matches",
+                    const Text(
+                      'Recent Performances - Recent 5 Matches',
                       style: TextStyle(
                           color: AppColors.blackColor,
-                          fontWeight: FontWeight.w600),
+                          fontWeight: FontWeight.w600,),
                     ),
                   ],
                 ),
                 5.verticalSpace,
                 innerContainer(
-                  last5MatchRow("https://flagsapi.com/GB/flat/64.png", "EN-W"),
-                  last5MatchRow("https://flagsapi.com/IN/flat/64.png", "IN-W"),
-                )
+                  last5MatchRow('https://flagsapi.com/GB/flat/64.png', 'EN-W'),
+                  last5MatchRow('https://flagsapi.com/IN/flat/64.png', 'IN-W'),
+                ),
               ],
-            )),
+            ),),
 
             //====================== One vs One - Recent 10 Matches =================
             dividerContainer(Padding(
@@ -93,15 +93,15 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                   Row(
                     children: [
                       Image.asset(
-                        "assets/others/1V1.png",
+                        'assets/others/1V1.png',
                         height: 20,
                       ),
                       10.horizontalSpace,
-                      Text(
-                        "One vs One - Recent 10 matches",
+                      const Text(
+                        'One vs One - Recent 10 matches',
                         style: TextStyle(
                             color: AppColors.blackColor,
-                            fontWeight: FontWeight.w600),
+                            fontWeight: FontWeight.w600,),
                       ),
                     ],
                   ),
@@ -109,16 +109,16 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
 
                   // EN-W
                   oneVsOneRow(
-                      "https://flagsapi.com/GB/flat/64.png", "EN-W", 6, 10),
+                      'https://flagsapi.com/GB/flat/64.png', 'EN-W', 6, 10,),
 
                   10.verticalSpace,
 
                   // IN-W
                   oneVsOneRow(
-                      "https://flagsapi.com/IN/flat/64.png", "IN-W", 4, 10),
+                      'https://flagsapi.com/IN/flat/64.png', 'IN-W', 4, 10,),
                 ],
               ),
-            )),
+            ),),
 
             //=========================== Venue Scoring ==============================
             dividerContainer(Padding(
@@ -129,32 +129,32 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                   Row(
                     children: [
                       Image.asset(
-                        "assets/others/venue.png",
+                        'assets/others/venue.png',
                         height: 20,
                       ),
                       10.horizontalSpace,
-                      Text(
-                        "Venue Scoring",
+                      const Text(
+                        'Venue Scoring',
                         style: TextStyle(
                             color: AppColors.blackColor,
-                            fontWeight: FontWeight.w600),
+                            fontWeight: FontWeight.w600,),
                       ),
                     ],
                   ),
                   5.verticalSpace,
-                  Text(
-                    "The County Ground, New Road Worcester\n(New Road, England)",
+                  const Text(
+                    'The County Ground, New Road Worcester\n(New Road, England)',
                     style: TextStyle(
-                        color: AppColors.black, fontWeight: FontWeight.bold),
+                        color: AppColors.black, fontWeight: FontWeight.bold,),
                   ),
                   15.verticalSpace,
                   // 1st row stats
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      venueStatBox("231", "1st Batting\nAvg Score"),
-                      venueStatBox("180", "2nd Batting\nAvg Score"),
-                      venueStatBox("240", "Highest\nBatting Score"),
+                      venueStatBox('231', '1st Batting\nAvg Score'),
+                      venueStatBox('180', '2nd Batting\nAvg Score'),
+                      venueStatBox('240', 'Highest\nBatting Score'),
                     ],
                   ),
                   20.verticalSpace,
@@ -164,21 +164,21 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                     children: [
                       avgWinBox(
                         percent: 0.5,
-                        score: "38",
-                        label: "1st Batting",
+                        score: '38',
+                        label: '1st Batting',
                         progressColor: Colors.green,
                       ),
                       avgWinBox(
                         percent: 0.5,
-                        score: "47",
-                        label: "2nd Batting",
+                        score: '47',
+                        label: '2nd Batting',
                         progressColor: Colors.red,
                       ),
                     ],
                   ),
                 ],
               ),
-            )),
+            ),),
           ],
         ),
       ),
@@ -192,7 +192,7 @@ Widget dividerContainer(Widget child) {
     child: Material(
       elevation: 3,
       child: Container(
-        padding: EdgeInsets.all(10),
+        padding: const EdgeInsets.all(10),
         color: AppColors.white,
         child: child,
       ),
@@ -203,7 +203,7 @@ Widget dividerContainer(Widget child) {
 Widget probabilityContainer(String image, String type, String typeName) {
   return Container(
     padding:
-        EdgeInsets.symmetric(horizontal: 10, vertical: 5).copyWith(right: 15),
+        const EdgeInsets.symmetric(horizontal: 10, vertical: 5).copyWith(right: 15),
     decoration: BoxDecoration(
       borderRadius: BorderRadius.circular(10),
       border:
@@ -217,14 +217,14 @@ Widget probabilityContainer(String image, String type, String typeName) {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(type,
-                style: TextStyle(color: AppColors.greyColor, fontSize: 12.sp)),
+                style: TextStyle(color: AppColors.greyColor, fontSize: 12.sp),),
             Text(typeName,
                 style: TextStyle(
                     color: AppColors.blackColor,
                     fontWeight: FontWeight.bold,
-                    fontSize: 14.sp)),
+                    fontSize: 14.sp,),),
           ],
-        )
+        ),
       ],
     ),
   );
@@ -249,30 +249,30 @@ Widget innerContainer(Widget child1, Widget child2) {
 
 Widget last5MatchRow(String url, String teamName) {
   return Padding(
-    padding: EdgeInsets.all(10),
+    padding: const EdgeInsets.all(10),
     child: Row(
       children: [
         CircleAvatar(backgroundImage: NetworkImage(url)),
         5.horizontalSpace,
-        Text(teamName, style: TextStyle(color: AppColors.blackColor)),
+        Text(teamName, style: const TextStyle(color: AppColors.blackColor)),
         35.horizontalSpace,
-        ...["W", "L", "W", "L", "W"].map(
+        ...['W', 'L', 'W', 'L', 'W'].map(
           (result) => Padding(
-            padding: EdgeInsets.symmetric(horizontal: 5),
+            padding: const EdgeInsets.symmetric(horizontal: 5),
             child: Container(
-              padding: EdgeInsets.all(5),
+              padding: const EdgeInsets.all(5),
               height: 30,
               width: 30,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: result == "W" ? AppColors.green : Colors.red,
+                color: result == 'W' ? AppColors.green : Colors.red,
               ),
               child: Center(
                   child:
-                      Text(result, style: TextStyle(color: AppColors.white))),
+                      Text(result, style: const TextStyle(color: AppColors.white)),),
             ),
           ),
-        )
+        ),
       ],
     ),
   );
@@ -285,7 +285,7 @@ Widget oneVsOneRow(String url, String teamName, int won, int total) {
     children: [
       CircleAvatar(backgroundImage: NetworkImage(url)),
       10.horizontalSpace,
-      Text(teamName, style: TextStyle(color: AppColors.blackColor)),
+      Text(teamName, style: const TextStyle(color: AppColors.blackColor)),
       20.horizontalSpace,
       Expanded(
         child: Stack(
@@ -304,34 +304,34 @@ Widget oneVsOneRow(String url, String teamName, int won, int total) {
                 color: Colors.red,
                 borderRadius: BorderRadius.circular(10),
               ),
-            )
+            ),
           ],
         ),
       ),
       10.horizontalSpace,
-      Text("Won $won", style: TextStyle(color: AppColors.blackColor))
+      Text('Won $won', style: const TextStyle(color: AppColors.blackColor)),
     ],
   );
 }
 
 Widget venueStatBox(String value, String label) {
   return Container(
-    padding: EdgeInsets.all(8),
+    padding: const EdgeInsets.all(8),
     decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
         border: Border.all(
-            color: AppColors.black.withValues(alpha: 0.3), width: 1)),
+            color: AppColors.black.withValues(alpha: 0.3), width: 1,),),
     child: Column(
       children: [
         Text(value,
-            style: TextStyle(
+            style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 22,
-                color: Colors.black)),
-        SizedBox(height: 5),
+                color: Colors.black,),),
+        const SizedBox(height: 5),
         Text(label,
             textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.black87, fontSize: 12)),
+            style: const TextStyle(color: Colors.black87, fontSize: 12),),
       ],
     ),
   );
@@ -368,7 +368,7 @@ Widget avgWinBox({
               ),
             ),
             Text(
-              "${(percent * 100).toInt()}%",
+              '${(percent * 100).toInt()}%',
               style: const TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.bold,
@@ -414,7 +414,7 @@ class AvgWinPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final strokeWidth = 6.0;
+    const strokeWidth = 6.0;
     final center = size.center(Offset.zero);
     final radius = (size.width / 2) - strokeWidth;
 
@@ -434,7 +434,7 @@ class AvgWinPainter extends CustomPainter {
     canvas.drawCircle(center, radius, backgroundPaint);
 
     // Progress arc
-    final startAngle = -90 * 3.1416 / 180;
+    const startAngle = -90 * 3.1416 / 180;
     final sweepAngle = 2 * 3.1416 * percent;
 
     canvas.drawArc(

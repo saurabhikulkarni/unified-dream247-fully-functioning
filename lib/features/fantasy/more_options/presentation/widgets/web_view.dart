@@ -57,12 +57,12 @@ class _CustomWebViewState extends State<CustomWebView> {
 
   // 👇 Watch for success or failure URLs
   void _handleNavigation(String url) {
-    if (url.contains("success") ||
-        url.contains("paid") ||
-        url.contains("completed")) {
-      Navigator.pop(context, "success"); // return result
-    } else if (url.contains("failed") || url.contains("cancel")) {
-      Navigator.pop(context, "failed");
+    if (url.contains('success') ||
+        url.contains('paid') ||
+        url.contains('completed')) {
+      Navigator.pop(context, 'success'); // return result
+    } else if (url.contains('failed') || url.contains('cancel')) {
+      Navigator.pop(context, 'failed');
     }
   }
 }

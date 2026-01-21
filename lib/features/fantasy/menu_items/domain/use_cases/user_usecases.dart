@@ -14,7 +14,7 @@ class UserUsecases {
     if (res != null) {
       return res;
     }
-    return "";
+    return '';
   }
 
   // Future<void> uploadImageToS3(
@@ -76,9 +76,9 @@ class UserUsecases {
   }
 
   Future<void> submitSupportRequest(BuildContext context, String email,
-      String mobile, String reason, String message, File supportImage) async {
+      String mobile, String reason, String message, File supportImage,) async {
     var res = await userRepositories.submitSupportRequest(
-        context, email, mobile, reason, message, supportImage);
+        context, email, mobile, reason, message, supportImage,);
     if (res ?? false) {
       return;
     }

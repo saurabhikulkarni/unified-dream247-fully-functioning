@@ -284,7 +284,7 @@ class OrderService {
         estimatedDeliveryDate: now.subtract(const Duration(days: 1)).toString(),
         currentLocation: 'Delivered to customer',
       ),
-    ));
+    ),);
 
     // Sample order 2 - In Transit
     addOrder(Order(
@@ -317,7 +317,7 @@ class OrderService {
           longitude: 72.8777,
         ),
       ),
-    ));
+    ),);
 
     // Sample order 3 - Confirmed
     addOrder(Order(
@@ -338,7 +338,7 @@ class OrderService {
         orderStatus: 'Processing',
         estimatedDeliveryDate: now.add(const Duration(days: 3)).toString(),
       ),
-    ));
+    ),);
   }
 }
 

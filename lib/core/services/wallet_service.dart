@@ -339,7 +339,7 @@ class UnifiedWalletService {
               ? txn['timestamp'] as DateTime
               : DateTime.tryParse(txn['timestamp'] as String? ?? '') ?? DateTime.now(),
           status: txn['status'] as String? ?? 'completed',
-        ));
+        ),);
       }
 
       debugPrint('✅ [UNIFIED_WALLET] Fetched ${transactions.length} transactions from backend');

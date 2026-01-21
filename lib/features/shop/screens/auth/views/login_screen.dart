@@ -24,7 +24,7 @@ class _LoginScreenState extends State<LoginScreen> {
     // Preload the welcome image to avoid loading delay
     WidgetsBinding.instance.addPostFrameCallback((_) {
       precacheImage(
-        const AssetImage("assets/images/welcome-min.jpg"),
+        const AssetImage('assets/images/welcome-min.jpg'),
         context,
       );
     });
@@ -41,7 +41,7 @@ class _LoginScreenState extends State<LoginScreen> {
               height: MediaQuery.of(context).size.height * 0.45,
               width: double.infinity,
               child: Image.asset(
-                "assets/images/welcome-min.jpg",
+                'assets/images/welcome-min.jpg',
                 fit: BoxFit.cover,
                 alignment: Alignment.center,
               ),
@@ -52,7 +52,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Welcome",
+                    'Welcome',
                     style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                           fontSize: context.fontSize(36, minSize: 28, maxSize: 44),
                           fontWeight: FontWeight.bold,
@@ -60,7 +60,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: defaultPadding / 2),
                   const Text(
-                    "Log in with your mobile number and OTP.",
+                    'Log in with your mobile number and OTP.',
                   ),
                   const SizedBox(height: defaultPadding),
                   LogInForm(
@@ -87,7 +87,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       }
                     },
                     padding: const EdgeInsets.symmetric(vertical: defaultPadding / 1.5),
-                    child: const Text("Log in"),
+                    child: const Text('Log in'),
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -97,13 +97,13 @@ class _LoginScreenState extends State<LoginScreen> {
                         onPressed: () {
                           context.go(RouteNames.register);
                         },
-                        child: const Text("Sign up"),
-                      )
+                        child: const Text('Sign up'),
+                      ),
                     ],
                   ),
                 ],
               ),
-            )
+            ),
           ],
         ),
       ),

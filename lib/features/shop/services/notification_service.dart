@@ -84,7 +84,7 @@ class NotificationService {
     final exists = _stockAlerts.any((alert) =>
         alert['productId'] == productId &&
         alert['sizeId'] == sizeId &&
-        alert['userId'] == userId);
+        alert['userId'] == userId,);
 
     if (!exists) {
       _stockAlerts.add({
@@ -111,7 +111,7 @@ class NotificationService {
     _stockAlerts.removeWhere((alert) =>
         alert['productId'] == productId &&
         alert['sizeId'] == sizeId &&
-        alert['userId'] == userId);
+        alert['userId'] == userId,);
     
     await _saveToPreferences();
   }
@@ -125,7 +125,7 @@ class NotificationService {
     return _stockAlerts.any((alert) =>
         alert['productId'] == productId &&
         alert['sizeId'] == sizeId &&
-        alert['userId'] == userId);
+        alert['userId'] == userId,);
   }
 
   /// Get all stock alerts for a user
@@ -184,7 +184,7 @@ class NotificationService {
     if (newQuantity > 0) {
       final alertsToNotify = _stockAlerts.where((alert) =>
           alert['productId'] == productId &&
-          alert['sizeId'] == sizeId).toList();
+          alert['sizeId'] == sizeId,).toList();
 
       for (var alert in alertsToNotify) {
         await notifyStockAvailable(
@@ -206,7 +206,7 @@ class NotificationService {
   /// Get unread notification count
   int getUnreadCount(String userId) {
     return _notifications.where((notif) => 
-        notif['userId'] == userId && notif['isRead'] == false).length;
+        notif['userId'] == userId && notif['isRead'] == false,).length;
   }
 
   /// Mark notification as read

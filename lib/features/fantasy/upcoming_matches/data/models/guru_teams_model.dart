@@ -70,47 +70,47 @@ class GuruTeamsModel {
       this.guruTeamNumber,
       this.team,
       this.userImage,
-      this.player});
+      this.player,});
 
   GuruTeamsModel.fromJson(Map<String, dynamic> json) {
-    status = ModelParsers.toNumParser(json["status"]);
-    userid = ModelParsers.toStringParser(json["userid"]);
-    teamnumber = ModelParsers.toNumParser(json["teamnumber"]);
-    jointeamid = ModelParsers.toStringParser(json["jointeamid"]);
-    countCopied = ModelParsers.toNumParser(json["count_copied"]);
-    team1Name = ModelParsers.toStringParser(json["team1_name"]);
-    team2Name = ModelParsers.toStringParser(json["team2_name"]);
-    playerType = ModelParsers.toStringParser(json["player_type"]);
-    captain = ModelParsers.toStringParser(json["captain"]);
-    vicecaptain = ModelParsers.toStringParser(json["vicecaptain"]);
-    captainimage = ModelParsers.toStringParser(json["captainimage"]);
-    vicecaptainimage = ModelParsers.toStringParser(json["vicecaptainimage"]);
-    captainimage1 = ModelParsers.toStringParser(json["captainimage1"]);
-    vicecaptainimage1 = ModelParsers.toStringParser(json["vicecaptainimage1"]);
-    isSelected = ModelParsers.toBoolParser(json["isSelected"]);
-    captinName = ModelParsers.toStringParser(json["captin_name"]);
-    viceCaptainName = ModelParsers.toStringParser(json["viceCaptain_name"]);
-    team1Count = ModelParsers.toNumParser(json["team1count"]);
-    captainId = ModelParsers.toStringParser(json["captain_id"]);
-    vicecaptainId = ModelParsers.toStringParser(json["vicecaptain_id"]);
-    team2Count = ModelParsers.toNumParser(json["team2count"]);
-    batsmancount = ModelParsers.toNumParser(json["batsmancount"]);
-    bowlercount = ModelParsers.toNumParser(json["bowlercount"]);
-    wicketKeeperCount = ModelParsers.toNumParser(json["wicketKeeperCount"]);
-    allroundercount = ModelParsers.toNumParser(json["allroundercount"]);
-    totalTeams = ModelParsers.toNumParser(json["total_teams"]);
-    totalJoinedcontest = ModelParsers.toNumParser(json["total_joinedcontest"]);
-    totalpoints = ModelParsers.toNumParser(json["totalpoints"]);
-    team1Id = ModelParsers.toStringParser(json["team1Id"]);
-    team2Id = ModelParsers.toStringParser(json["team2Id"]);
-    guruTeamNumber = json["guruTeamNumber"] == null
+    status = ModelParsers.toNumParser(json['status']);
+    userid = ModelParsers.toStringParser(json['userid']);
+    teamnumber = ModelParsers.toNumParser(json['teamnumber']);
+    jointeamid = ModelParsers.toStringParser(json['jointeamid']);
+    countCopied = ModelParsers.toNumParser(json['count_copied']);
+    team1Name = ModelParsers.toStringParser(json['team1_name']);
+    team2Name = ModelParsers.toStringParser(json['team2_name']);
+    playerType = ModelParsers.toStringParser(json['player_type']);
+    captain = ModelParsers.toStringParser(json['captain']);
+    vicecaptain = ModelParsers.toStringParser(json['vicecaptain']);
+    captainimage = ModelParsers.toStringParser(json['captainimage']);
+    vicecaptainimage = ModelParsers.toStringParser(json['vicecaptainimage']);
+    captainimage1 = ModelParsers.toStringParser(json['captainimage1']);
+    vicecaptainimage1 = ModelParsers.toStringParser(json['vicecaptainimage1']);
+    isSelected = ModelParsers.toBoolParser(json['isSelected']);
+    captinName = ModelParsers.toStringParser(json['captin_name']);
+    viceCaptainName = ModelParsers.toStringParser(json['viceCaptain_name']);
+    team1Count = ModelParsers.toNumParser(json['team1count']);
+    captainId = ModelParsers.toStringParser(json['captain_id']);
+    vicecaptainId = ModelParsers.toStringParser(json['vicecaptain_id']);
+    team2Count = ModelParsers.toNumParser(json['team2count']);
+    batsmancount = ModelParsers.toNumParser(json['batsmancount']);
+    bowlercount = ModelParsers.toNumParser(json['bowlercount']);
+    wicketKeeperCount = ModelParsers.toNumParser(json['wicketKeeperCount']);
+    allroundercount = ModelParsers.toNumParser(json['allroundercount']);
+    totalTeams = ModelParsers.toNumParser(json['total_teams']);
+    totalJoinedcontest = ModelParsers.toNumParser(json['total_joinedcontest']);
+    totalpoints = ModelParsers.toNumParser(json['totalpoints']);
+    team1Id = ModelParsers.toStringParser(json['team1Id']);
+    team2Id = ModelParsers.toStringParser(json['team2Id']);
+    guruTeamNumber = json['guruTeamNumber'] == null
         ? null
-        : List<int>.from(json["guruTeamNumber"]);
-    team = ModelParsers.toStringParser(json["team"]);
-    userImage = ModelParsers.toStringParser(json["userImage"]);
-    player = json["player"] == null
+        : List<int>.from(json['guruTeamNumber']);
+    team = ModelParsers.toStringParser(json['team']);
+    userImage = ModelParsers.toStringParser(json['userImage']);
+    player = json['player'] == null
         ? null
-        : (json["player"] as List).map((e) => Player.fromJson(e)).toList();
+        : (json['player'] as List).map((e) => Player.fromJson(e)).toList();
   }
 }
 
@@ -136,18 +136,18 @@ class Player {
       this.playingstatus,
       this.image1,
       this.captain,
-      this.vicecaptain});
+      this.vicecaptain,});
 
   Player.fromJson(Map<String, dynamic> json) {
-    id = ModelParsers.toStringParser(json["id"]);
-    playerimg = ModelParsers.toStringParser(json["playerimg"]);
-    team = ModelParsers.toStringParser(json["team"]);
-    name = ModelParsers.toStringParser(json["name"]);
-    role = ModelParsers.toStringParser(json["role"]);
-    credit = ModelParsers.toNumParser(json["credit"]);
-    playingstatus = ModelParsers.toNumParser(json["playingstatus"]);
-    image1 = ModelParsers.toStringParser(json["image1"]);
-    captain = ModelParsers.toNumParser(json["captain"]);
-    vicecaptain = ModelParsers.toNumParser(json["vicecaptain"]);
+    id = ModelParsers.toStringParser(json['id']);
+    playerimg = ModelParsers.toStringParser(json['playerimg']);
+    team = ModelParsers.toStringParser(json['team']);
+    name = ModelParsers.toStringParser(json['name']);
+    role = ModelParsers.toStringParser(json['role']);
+    credit = ModelParsers.toNumParser(json['credit']);
+    playingstatus = ModelParsers.toNumParser(json['playingstatus']);
+    image1 = ModelParsers.toStringParser(json['image1']);
+    captain = ModelParsers.toNumParser(json['captain']);
+    vicecaptain = ModelParsers.toNumParser(json['vicecaptain']);
   }
 }

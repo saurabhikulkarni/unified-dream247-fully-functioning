@@ -49,7 +49,7 @@ class _MyTeams extends State<MyTeams> {
   Future<List<TeamsModel>?>? teamsList;
   List<TeamTypeModel>? teamTypeList;
   bool hasFetched = false;
-  String teamTypeBy = "";
+  String teamTypeBy = '';
   bool hasEdited = true;
   bool isRefreshing = false;
   bool hasFetchedCompleted = false;
@@ -68,14 +68,14 @@ class _MyTeams extends State<MyTeams> {
       if (value != null && value.isNotEmpty) {
         setState(() {
           teamTypeList = value;
-          teamTypeBy = value.first.name ?? ""; // default from API
+          teamTypeBy = value.first.name ?? ''; // default from API
         });
       }
     });
     loadData();
     // Auto refresh only for live mode
-    if (widget.mode == "Live") {
-      liveTimer = Timer.periodic(Duration(seconds: 20), (timer) {
+    if (widget.mode == 'Live') {
+      liveTimer = Timer.periodic(const Duration(seconds: 20), (timer) {
         loadData(silent: true); // silently refresh data
       });
     }
@@ -99,7 +99,7 @@ class _MyTeams extends State<MyTeams> {
     if (teams == null) return [];
 
     // Default type "10-1" par filtering skip karo
-    if (type == "10-1" || type.isEmpty) {
+    if (type == '10-1' || type.isEmpty) {
       return teams;
     }
 
@@ -114,18 +114,18 @@ class _MyTeams extends State<MyTeams> {
     }
 
     var provider = Provider.of<MyTeamsProvider>(context, listen: false);
-    String matchKey = AppSingleton.singleton.matchData.id ?? "";
+    String matchKey = AppSingleton.singleton.matchData.id ?? '';
 
-    if (widget.mode == "Upcoming" &&
+    if (widget.mode == 'Upcoming' &&
         !(widget.hasChanges ?? false) &&
         provider.matchKey == matchKey &&
         provider.myTeams.containsKey(matchKey) &&
         (provider.myTeams[matchKey]?.isNotEmpty ?? false) &&
         AppUtils.teamsCount.value == provider.myTeams[matchKey]?.length) {
       teamsList = Future.value(provider.myTeams[matchKey]);
-    } else if (widget.mode == "Upcoming" && AppUtils.teamsCount.value == 0) {
+    } else if (widget.mode == 'Upcoming' && AppUtils.teamsCount.value == 0) {
       teamsList = Future.value(provider.myTeams[matchKey]);
-    } else if (widget.mode == "Live" && silent) {
+    } else if (widget.mode == 'Live' && silent) {
       teamsList = myMatchesUsecases.liveGetMyTeams(context);
       teamsList!.then((value) {
         setState(() {
@@ -133,9 +133,9 @@ class _MyTeams extends State<MyTeams> {
         });
       });
       return;
-    } else if (widget.mode == "Completed" ||
-        widget.mode == "Abandoned" ||
-        widget.mode == "Cancelled") {
+    } else if (widget.mode == 'Completed' ||
+        widget.mode == 'Abandoned' ||
+        widget.mode == 'Cancelled') {
       if ((provider.myTeams[matchKey]?.isNotEmpty ?? false)) {
         teamsList = Future.value(provider.myTeams[matchKey]);
       } else if (!hasFetchedCompleted) {
@@ -152,22 +152,22 @@ class _MyTeams extends State<MyTeams> {
         if (!silent) setState(() {});
         return;
       }
-    } else if (widget.mode == "Upcoming" && widget.hasChanges == true) {
+    } else if (widget.mode == 'Upcoming' && widget.hasChanges == true) {
       teamsList = upcomingMatchUsecase.getMyTeams(context);
       widget.updateHasChanges!(false);
-    } else if (widget.mode == "Upcoming" &&
+    } else if (widget.mode == 'Upcoming' &&
         provider.matchKey == matchKey &&
         AppUtils.teamsCount.value == 1) {
       teamsList = upcomingMatchUsecase.getMyTeams(context);
       widget.updateHasChanges!(false);
-    } else if (widget.mode == "Upcoming" &&
+    } else if (widget.mode == 'Upcoming' &&
             (!(widget.hasChanges ?? false) || widget.hasChanges == null) &&
             provider.matchKey == matchKey &&
             provider.myTeams.containsKey(matchKey) == false &&
             (provider.myTeams[matchKey]?.isEmpty ?? false) == false ||
         AppUtils.teamsCount.value != provider.myTeams[matchKey]?.length) {
       teamsList = upcomingMatchUsecase.getMyTeams(context);
-    } else if (widget.mode == "Upcoming" &&
+    } else if (widget.mode == 'Upcoming' &&
             (!(widget.hasChanges ?? false) || widget.hasChanges == null) &&
             provider.matchKey != matchKey &&
             provider.myTeams.containsKey(matchKey) == false &&
@@ -188,24 +188,24 @@ class _MyTeams extends State<MyTeams> {
 
   @override
   Widget build(BuildContext context) {
-    bool disableRefresh = widget.mode == "Completed" && hasFetchedCompleted;
+    bool disableRefresh = widget.mode == 'Completed' && hasFetchedCompleted;
 
     return Scaffold(
       body: Column(
         children: [
-          SizedBox(height: 15),
+          const SizedBox(height: 15),
           //Team-Type
           if ((teamTypeList ?? []).length > 1) ...[
-            SizedBox(height: 15),
+            const SizedBox(height: 15),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: (teamTypeList ?? []).map((type) {
                 return TeamTypeWidget(
-                  title: type.name ?? "",
+                  title: type.name ?? '',
                   isActive: teamTypeBy == type.name,
                   onTap: () {
                     setState(() {
-                      teamTypeBy = type.name ?? "10-1";
+                      teamTypeBy = type.name ?? '10-1';
                     });
                   },
                 );
@@ -223,7 +223,7 @@ class _MyTeams extends State<MyTeams> {
                       return Future.value();
                     }
                   : () async {
-                      if (widget.mode == "Live") {
+                      if (widget.mode == 'Live') {
                         // Silent refresh for live mode
                         await loadData(silent: true);
                       }
@@ -303,7 +303,7 @@ class _MyTeams extends State<MyTeams> {
                                         decoration: BoxDecoration(
                                           color: AppColors.lightCard,
                                           border: Border.all(
-                                              color: AppColors.black),
+                                              color: AppColors.black,),
                                           borderRadius:
                                               BorderRadius.circular(12.0),
                                           boxShadow: [
@@ -320,14 +320,14 @@ class _MyTeams extends State<MyTeams> {
                                             showModalBottomSheet(
                                               context: context,
                                               builder: (context) =>
-                                                  ExpertAdviceScreen(),
+                                                  const ExpertAdviceScreen(),
                                             );
                                           },
                                           child: Row(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.center,
                                             children: [
-                                              Icon(
+                                              const Icon(
                                                 Icons.person_3,
                                                 color: AppColors.black,
                                                 size: 24,
@@ -361,7 +361,7 @@ class _MyTeams extends State<MyTeams> {
                                         decoration: BoxDecoration(
                                           color: AppColors.lightCard,
                                           border: Border.all(
-                                              color: AppColors.black),
+                                              color: AppColors.black,),
                                           borderRadius:
                                               BorderRadius.circular(12.0),
                                           boxShadow: [
@@ -386,12 +386,12 @@ class _MyTeams extends State<MyTeams> {
                                               false,
                                               AppSingleton
                                                   .singleton.matchData.id!,
-                                              "",
+                                              '',
                                               0,
-                                              "",
-                                              "",
-                                              "",
-                                              "",
+                                              '',
+                                              '',
+                                              '',
+                                              '',
                                               0,
                                               false,
                                               teamTypeBy,
@@ -458,25 +458,25 @@ class _MyTeams extends State<MyTeams> {
                                         physics:
                                             const NeverScrollableScrollPhysics(),
                                         itemBuilder: (context, index) {
-                                          return widget.mode == "Live"
+                                          return widget.mode == 'Live'
                                               ? MyLiveMatchTeam(
-                                                  data: filteredList[index])
+                                                  data: filteredList[index],)
                                               : TeamView(
                                                   teamType:
                                                       widget.mode == 'Upcoming'
                                                           ? teamTypeBy
-                                                          : "",
+                                                          : '',
                                                   data: filteredList[index],
                                                   // data: snapshot.data![index],
                                                   chooseTeam: false,
-                                                  mode: widget.mode ?? "",
+                                                  mode: widget.mode ?? '',
                                                   length: filteredList.length,
                                                   // length: snapshot.data?.length ?? 0,
                                                   updateTeams: (pList) {
                                                     setState(() {
                                                       hasFetched = true;
                                                       widget.updateHasChanges!(
-                                                          true);
+                                                          true,);
                                                       teamsList =
                                                           Future.value(pList);
                                                       hasEdited == true;
@@ -605,7 +605,7 @@ class _MyTeams extends State<MyTeams> {
                                         decoration: BoxDecoration(
                                           color: AppColors.mainColor,
                                           border: Border.all(
-                                              color: AppColors.black),
+                                              color: AppColors.black,),
                                           borderRadius:
                                               BorderRadius.circular(12.0),
                                           boxShadow: [
@@ -631,12 +631,12 @@ class _MyTeams extends State<MyTeams> {
                                               false,
                                               AppSingleton
                                                   .singleton.matchData.id!,
-                                              "",
+                                              '',
                                               0,
-                                              "",
-                                              "",
-                                              "",
-                                              "",
+                                              '',
+                                              '',
+                                              '',
+                                              '',
                                               0,
                                               false,
                                               teamTypeBy,

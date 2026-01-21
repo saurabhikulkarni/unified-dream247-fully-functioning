@@ -57,7 +57,7 @@ class _VerifyDetailsPageState extends State<VerifyDetailsPage> {
   bool _isLoading = true;
   bool _isSendingOtp = false;
   bool _isVerifyingOtp = false;
-  String _otpMessage = "";
+  String _otpMessage = '';
 
   Future<void> googlelogin() async {
     try {
@@ -82,12 +82,12 @@ class _VerifyDetailsPageState extends State<VerifyDetailsPage> {
 
       email = userCredential.user?.email;
 
-      final String token = googleAuth.accessToken ?? "";
+      final String token = googleAuth.accessToken ?? '';
 
       validateEmail(token);
     } catch (e) {
-      debugPrint("GOOGLE LOGIN ERROR => $e");
-      appToast("Google Sign-In failed", context);
+      debugPrint('GOOGLE LOGIN ERROR => $e');
+      appToast('Google Sign-In failed', context);
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -119,7 +119,7 @@ class _VerifyDetailsPageState extends State<VerifyDetailsPage> {
   void validateEmail(String token) async {
     // String deviceId = await AppUtils.getDeviceId(context);
 
-    verificationUsecases.socialLogin(context, token, "").then((value) {
+    verificationUsecases.socialLogin(context, token, '').then((value) {
       if (value == true) {
         Provider.of<KycDetailsProvider>(context, listen: false)
             .kycData
@@ -183,10 +183,10 @@ class _VerifyDetailsPageState extends State<VerifyDetailsPage> {
       if (refId != null && refId.isNotEmpty) {
         _showAadhaarOtpDialog(refId);
       } else {
-        appToast("Reference Id missing from server", context);
+        appToast('Reference Id missing from server', context);
       }
     } else {
-      appToast(res?['message'] ?? "Failed to send Aadhaar OTP", context);
+      appToast(res?['message'] ?? 'Failed to send Aadhaar OTP', context);
     }
   }
 
@@ -212,7 +212,7 @@ class _VerifyDetailsPageState extends State<VerifyDetailsPage> {
   void _showAadhaarOtpDialog(String refId) {
     TextEditingController otpCtrl = TextEditingController();
     _isVerifyingOtp = false;
-    _otpMessage = "";
+    _otpMessage = '';
 
     showDialog(
       context: context,
@@ -222,29 +222,29 @@ class _VerifyDetailsPageState extends State<VerifyDetailsPage> {
           builder: (context, setDialogState) {
             return AlertDialog(
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12)),
-              title: const Text("Verify Aadhaar OTP"),
+                  borderRadius: BorderRadius.circular(12),),
+              title: const Text('Verify Aadhaar OTP'),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Text("Enter OTP sent to registered mobile number"),
+                  const Text('Enter OTP sent to registered mobile number'),
                   const SizedBox(height: 10),
                   TextField(
                     controller: otpCtrl,
                     maxLength: 6,
                     keyboardType: TextInputType.number,
                     decoration: const InputDecoration(
-                        hintText: "Enter OTP",
+                        hintText: 'Enter OTP',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(10)),
-                        )),
+                        ),),
                   ),
                   if (_otpMessage.isNotEmpty) ...[
                     const SizedBox(height: 8),
                     Text(
                       _otpMessage,
                       style: TextStyle(
-                        color: _otpMessage.contains("success")
+                        color: _otpMessage.contains('success')
                             ? Colors.green
                             : Colors.red,
                         fontSize: 12,
@@ -254,14 +254,14 @@ class _VerifyDetailsPageState extends State<VerifyDetailsPage> {
                   if (_isVerifyingOtp) ...[
                     const SizedBox(height: 10),
                     const CircularProgressIndicator(),
-                  ]
+                  ],
                 ],
               ),
               actions: [
                 TextButton(
                   onPressed:
                       _isVerifyingOtp ? null : () => Navigator.pop(context),
-                  child: const Text("Cancel"),
+                  child: const Text('Cancel'),
                 ),
                 ElevatedButton(
                   onPressed: _isVerifyingOtp
@@ -271,7 +271,7 @@ class _VerifyDetailsPageState extends State<VerifyDetailsPage> {
 
                           setDialogState(() {
                             _isVerifyingOtp = true;
-                            _otpMessage = "Verifying OTP...";
+                            _otpMessage = 'Verifying OTP...';
                           });
 
                           final success =
@@ -280,17 +280,17 @@ class _VerifyDetailsPageState extends State<VerifyDetailsPage> {
                           setDialogState(() {
                             _isVerifyingOtp = false;
                             _otpMessage = success
-                                ? "Aadhaar verified successfully"
-                                : "Invalid OTP. Please try again.";
+                                ? 'Aadhaar verified successfully'
+                                : 'Invalid OTP. Please try again.';
                           });
 
                           if (success) {
                             await Future.delayed(
-                                const Duration(milliseconds: 700));
+                                const Duration(milliseconds: 700),);
                             if (mounted) Navigator.pop(context);
                           }
                         },
-                  child: const Text("Verify"),
+                  child: const Text('Verify'),
                 ),
               ],
             );
@@ -350,7 +350,7 @@ class _VerifyDetailsPageState extends State<VerifyDetailsPage> {
             context,
             listen: false,
           ).userData?.name ??
-          "",
+          '',
     )
         .then((value) {
       if (value == true) {
@@ -435,14 +435,14 @@ class _VerifyDetailsPageState extends State<VerifyDetailsPage> {
       valid = false;
       appToast('Please enter valid ifsc code', context);
     }
-    if (cityNameController.text.isEmpty || cityNameController.text == "") {
+    if (cityNameController.text.isEmpty || cityNameController.text == '') {
       valid = false;
-      appToast("Please enter city name", context);
+      appToast('Please enter city name', context);
     }
 
-    if (bankNameController.text.isEmpty || bankNameController.text == "") {
+    if (bankNameController.text.isEmpty || bankNameController.text == '') {
       valid = false;
-      appToast("Please enter Bank name", context);
+      appToast('Please enter Bank name', context);
     }
 
     return valid;
@@ -474,7 +474,7 @@ class _VerifyDetailsPageState extends State<VerifyDetailsPage> {
         Images.aadhaarCard,
         Strings.aadharVerified,
         AppUtils.maskDigits(
-          kycDetailsModel?.aadharcard?.aadharNumber ?? "---",
+          kycDetailsModel?.aadharcard?.aadharNumber ?? '---',
           4,
         ),
         true,
@@ -499,7 +499,7 @@ class _VerifyDetailsPageState extends State<VerifyDetailsPage> {
         Images.panCard,
         Strings.panVerified,
         AppUtils.maskDigits(
-          kycDetailsModel?.pancard?.panNumber ?? "---",
+          kycDetailsModel?.pancard?.panNumber ?? '---',
           2,
         ),
         true,
@@ -524,7 +524,7 @@ class _VerifyDetailsPageState extends State<VerifyDetailsPage> {
         Images.icBank,
         Strings.bankVerified,
         AppUtils.maskDigits(
-          kycDetailsModel?.bank?.accno ?? "---",
+          kycDetailsModel?.bank?.accno ?? '---',
           4,
         ),
         true,
@@ -561,7 +561,7 @@ class _VerifyDetailsPageState extends State<VerifyDetailsPage> {
   Widget build(BuildContext context) {
     final kycData =
         Provider.of<KycDetailsProvider>(context, listen: true).kycData;
-    _nameController.text = kycDetailsModel?.aadharcard?.aadharName ?? "";
+    _nameController.text = kycDetailsModel?.aadharcard?.aadharName ?? '';
     return SubContainer(
       showAppBar: true,
       showWalletIcon: false,
@@ -595,7 +595,7 @@ class _VerifyDetailsPageState extends State<VerifyDetailsPage> {
                           : detailsVerified(
                               Images.icGoogle,
                               Strings.emailVerified,
-                              kycData?.email ?? "",
+                              kycData?.email ?? '',
                               false,
                             ),
                       // Visibility(
@@ -696,7 +696,7 @@ class _VerifyDetailsPageState extends State<VerifyDetailsPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Note: ",
+                    'Note: ',
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
@@ -707,7 +707,7 @@ class _VerifyDetailsPageState extends State<VerifyDetailsPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "• ",
+                        '• ',
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w400,
@@ -732,7 +732,7 @@ class _VerifyDetailsPageState extends State<VerifyDetailsPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "• ",
+                        '• ',
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w400,
@@ -741,7 +741,7 @@ class _VerifyDetailsPageState extends State<VerifyDetailsPage> {
                       ),
                       Flexible(
                         child: Text(
-                          "It can take 5 minutes to verify your details, so wait.",
+                          'It can take 5 minutes to verify your details, so wait.',
                           overflow: TextOverflow.clip,
                           maxLines: 2,
                           style: TextStyle(
@@ -757,7 +757,7 @@ class _VerifyDetailsPageState extends State<VerifyDetailsPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "• ",
+                        '• ',
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w400,
@@ -766,7 +766,7 @@ class _VerifyDetailsPageState extends State<VerifyDetailsPage> {
                       ),
                       Flexible(
                         child: Text(
-                          "Your name mentioned on Bank, should match all for complete verification.",
+                          'Your name mentioned on Bank, should match all for complete verification.',
                           overflow: TextOverflow.clip,
                           maxLines: 2,
                           style: TextStyle(
@@ -782,7 +782,7 @@ class _VerifyDetailsPageState extends State<VerifyDetailsPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "• ",
+                        '• ',
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w400,
@@ -791,7 +791,7 @@ class _VerifyDetailsPageState extends State<VerifyDetailsPage> {
                       ),
                       Flexible(
                         child: Text(
-                          "You will get 3 chances in a day with frequency of 5 minutes each for completing KYC, so use right details and carefully.",
+                          'You will get 3 chances in a day with frequency of 5 minutes each for completing KYC, so use right details and carefully.',
                           overflow: TextOverflow.clip,
                           maxLines: 2,
                           style: TextStyle(
@@ -975,7 +975,7 @@ class _VerifyDetailsPageState extends State<VerifyDetailsPage> {
                 : AppColors.whiteFade1,
             textColor: AppColors.white,
             text: _isSendingOtp
-                ? "SENDING OTP..."
+                ? 'SENDING OTP...'
                 : Strings.verifyAadhaarCard.toUpperCase(),
           ),
         ],
@@ -1089,7 +1089,7 @@ class _VerifyDetailsPageState extends State<VerifyDetailsPage> {
             showPrefix: true,
             keyboardType: TextInputType.name,
             controller: accountHolderController,
-            labelText: "Enter AccountHolder Name",
+            labelText: 'Enter AccountHolder Name',
             readOnly: false,
             enabled: true,
           ),
@@ -1101,8 +1101,8 @@ class _VerifyDetailsPageState extends State<VerifyDetailsPage> {
             labelText: Strings.enterAccountNumber,
             hintText: Strings.enterAccountNumber,
             onChanged: (p0) {
-              if (_accountNumberController.text != "" &&
-                  _ifscController.text != "") {
+              if (_accountNumberController.text != '' &&
+                  _ifscController.text != '') {
                 setState(() {
                   isBankEnabled = true;
                 });
@@ -1142,11 +1142,11 @@ class _VerifyDetailsPageState extends State<VerifyDetailsPage> {
             showPrefix: true,
             controller: bankNameController,
             maxLength: 20,
-            labelText: "Enter Bank Name",
-            hintText: "Enter Bank Name",
+            labelText: 'Enter Bank Name',
+            hintText: 'Enter Bank Name',
             onChanged: (p0) {
-              if (_accountNumberController.text != "" &&
-                  _ifscController.text != "") {
+              if (_accountNumberController.text != '' &&
+                  _ifscController.text != '') {
                 setState(() {
                   isBankEnabled = true;
                 });
@@ -1157,11 +1157,11 @@ class _VerifyDetailsPageState extends State<VerifyDetailsPage> {
             showPrefix: true,
             controller: cityNameController,
             maxLength: 20,
-            labelText: "Enter City",
-            hintText: "Enter City Name",
+            labelText: 'Enter City',
+            hintText: 'Enter City Name',
             onChanged: (p0) {
-              if (_accountNumberController.text != "" &&
-                  _ifscController.text != "") {
+              if (_accountNumberController.text != '' &&
+                  _ifscController.text != '') {
                 setState(() {
                   isBankEnabled = true;
                 });
@@ -1443,7 +1443,7 @@ class _VerifyDetailsPageState extends State<VerifyDetailsPage> {
                       right: 10,
                     ),
                     child: Text(
-                      kycDetailsModel?.pancard?.panName ?? "",
+                      kycDetailsModel?.pancard?.panName ?? '',
                       style: GoogleFonts.exo2(
                         fontWeight: FontWeight.w500,
                         fontSize: 12,
@@ -1474,7 +1474,7 @@ class _VerifyDetailsPageState extends State<VerifyDetailsPage> {
                       right: 10,
                     ),
                     child: Text(
-                      kycDetailsModel?.pancard?.panNumber ?? "",
+                      kycDetailsModel?.pancard?.panNumber ?? '',
                       style: GoogleFonts.exo2(
                         fontWeight: FontWeight.w500,
                         fontSize: 12,
@@ -1514,7 +1514,7 @@ class _VerifyDetailsPageState extends State<VerifyDetailsPage> {
               Padding(
                 padding: const EdgeInsets.only(bottom: 3, left: 10, right: 10),
                 child: Text(
-                  kycDetailsModel?.bank?.accountholder ?? "",
+                  kycDetailsModel?.bank?.accountholder ?? '',
                   style: GoogleFonts.exo2(
                     fontWeight: FontWeight.w500,
                     fontSize: 12,
@@ -1544,7 +1544,7 @@ class _VerifyDetailsPageState extends State<VerifyDetailsPage> {
               Padding(
                 padding: const EdgeInsets.only(bottom: 3, left: 10, right: 10),
                 child: Text(
-                  kycDetailsModel?.bank?.accno ?? "",
+                  kycDetailsModel?.bank?.accno ?? '',
                   style: GoogleFonts.exo2(
                     fontWeight: FontWeight.w500,
                     fontSize: 12,
@@ -1574,7 +1574,7 @@ class _VerifyDetailsPageState extends State<VerifyDetailsPage> {
               Padding(
                 padding: const EdgeInsets.only(bottom: 3, left: 10, right: 10),
                 child: Text(
-                  kycDetailsModel?.bank?.ifsc ?? "",
+                  kycDetailsModel?.bank?.ifsc ?? '',
                   style: GoogleFonts.exo2(
                     fontWeight: FontWeight.w500,
                     fontSize: 12,
@@ -1604,7 +1604,7 @@ class _VerifyDetailsPageState extends State<VerifyDetailsPage> {
               Padding(
                 padding: const EdgeInsets.only(bottom: 3, left: 10, right: 10),
                 child: Text(
-                  kycDetailsModel?.bank?.city ?? "",
+                  kycDetailsModel?.bank?.city ?? '',
                   style: GoogleFonts.exo2(
                     fontWeight: FontWeight.w500,
                     fontSize: 12,
@@ -1634,7 +1634,7 @@ class _VerifyDetailsPageState extends State<VerifyDetailsPage> {
               Padding(
                 padding: const EdgeInsets.only(bottom: 3, left: 10, right: 10),
                 child: Text(
-                  kycDetailsModel?.bank?.bankname ?? "",
+                  kycDetailsModel?.bank?.bankname ?? '',
                   style: GoogleFonts.exo2(
                     fontWeight: FontWeight.w500,
                     fontSize: 12,
@@ -1664,7 +1664,7 @@ class _VerifyDetailsPageState extends State<VerifyDetailsPage> {
               Padding(
                 padding: const EdgeInsets.only(bottom: 3, left: 10, right: 10),
                 child: Text(
-                  kycDetailsModel?.bank?.bankbranch ?? "",
+                  kycDetailsModel?.bank?.bankbranch ?? '',
                   style: GoogleFonts.exo2(
                     fontWeight: FontWeight.w500,
                     fontSize: 12,

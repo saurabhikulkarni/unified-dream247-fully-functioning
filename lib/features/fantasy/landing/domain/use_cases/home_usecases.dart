@@ -21,7 +21,7 @@ class HomeUsecases {
     if (res != null) {
       return res;
     }
-    return "";
+    return '';
   }
 
   Future<List<MatchListModel>?>? getMatchList(

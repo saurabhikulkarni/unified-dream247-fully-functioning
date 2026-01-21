@@ -42,35 +42,35 @@ class WinnersModel {
   });
 
   WinnersModel.fromJson(Map<String, dynamic> json) {
-    id = ModelParsers.toStringParser(json["_id"]);
-    totalWin = ModelParsers.toIntParser(json["totalWin"]);
-    matchkey = ModelParsers.toStringParser(json["matchkey"]);
-    fantasyType = ModelParsers.toStringParser(json["fantasyType"]);
-    seriesName = ModelParsers.toStringParser(json["seriesName"]);
-    matchchallengeid = ModelParsers.toStringParser(json["matchchallengeid"]);
-    startDate = ModelParsers.toStringParser(json["startDate"]);
-    teamAName = ModelParsers.toStringParser(json["teamAName"]);
-    teamAShortName = ModelParsers.toStringParser(json["teamAShortName"]);
-    teamAImage = ModelParsers.toStringParser(json["teamAImage"]);
-    teamBName = ModelParsers.toStringParser(json["teamBName"]);
-    teamBShortName = ModelParsers.toStringParser(json["teamBShortName"]);
-    teamBImage = ModelParsers.toStringParser(json["teamBImage"]);
-    matchchallenges = json["matchchallenges"] == null
+    id = ModelParsers.toStringParser(json['_id']);
+    totalWin = ModelParsers.toIntParser(json['totalWin']);
+    matchkey = ModelParsers.toStringParser(json['matchkey']);
+    fantasyType = ModelParsers.toStringParser(json['fantasyType']);
+    seriesName = ModelParsers.toStringParser(json['seriesName']);
+    matchchallengeid = ModelParsers.toStringParser(json['matchchallengeid']);
+    startDate = ModelParsers.toStringParser(json['startDate']);
+    teamAName = ModelParsers.toStringParser(json['teamAName']);
+    teamAShortName = ModelParsers.toStringParser(json['teamAShortName']);
+    teamAImage = ModelParsers.toStringParser(json['teamAImage']);
+    teamBName = ModelParsers.toStringParser(json['teamBName']);
+    teamBShortName = ModelParsers.toStringParser(json['teamBShortName']);
+    teamBImage = ModelParsers.toStringParser(json['teamBImage']);
+    matchchallenges = json['matchchallenges'] == null
         ? null
-        : (json["matchchallenges"] as List)
+        : (json['matchchallenges'] as List)
             .map((e) => WinnersMatchchallenges.fromJson(e))
             .toList();
-    joinId = ModelParsers.toStringParser(json["joinId"]);
-    winContestData = json["firstcontestData"] == null
+    joinId = ModelParsers.toStringParser(json['joinId']);
+    winContestData = json['firstcontestData'] == null
         ? null
-        : (json["firstcontestData"] as List)
+        : (json['firstcontestData'] as List)
             .map((e) => WinContestData.fromJson(e))
             .toList();
     firstContesWinAmount = ModelParsers.toIntParser(
-      json["firstContesWinAmount"],
+      json['firstContesWinAmount'],
     );
     convertedStartDate = ModelParsers.toStringParser(
-      json["convertedStartDate"],
+      json['convertedStartDate'],
     );
   }
 }
@@ -103,17 +103,17 @@ class WinContestData {
   });
 
   WinContestData.fromJson(Map<String, dynamic> json) {
-    id = ModelParsers.toStringParser(json["_id"]);
-    joinId = ModelParsers.toStringParser(json["joinId"]);
-    userId = ModelParsers.toStringParser(json["userId"]);
-    points = ModelParsers.toNumParser(json["points"]);
-    rank = ModelParsers.toIntParser(json["rank"]);
-    userImage = ModelParsers.toStringParser(json["userImage"]);
-    userTeamName = ModelParsers.toStringParser(json["userTeamName"]);
-    username = ModelParsers.toStringParser(json["username"]);
-    state = ModelParsers.toStringParser(json["state"]);
-    amount = ModelParsers.toNumParser(json["amount"]);
-    prize = ModelParsers.toStringParser(json["prize"]);
+    id = ModelParsers.toStringParser(json['_id']);
+    joinId = ModelParsers.toStringParser(json['joinId']);
+    userId = ModelParsers.toStringParser(json['userId']);
+    points = ModelParsers.toNumParser(json['points']);
+    rank = ModelParsers.toIntParser(json['rank']);
+    userImage = ModelParsers.toStringParser(json['userImage']);
+    userTeamName = ModelParsers.toStringParser(json['userTeamName']);
+    username = ModelParsers.toStringParser(json['username']);
+    state = ModelParsers.toStringParser(json['state']);
+    amount = ModelParsers.toNumParser(json['amount']);
+    prize = ModelParsers.toStringParser(json['prize']);
   }
 }
 
@@ -139,13 +139,13 @@ class WinnersMatchchallenges {
   });
 
   WinnersMatchchallenges.fromJson(Map<String, dynamic> json) {
-    id = ModelParsers.toStringParser(json["_id"]);
-    challengeId = ModelParsers.toStringParser(json["challenge_id"]);
-    matchkey = ModelParsers.toStringParser(json["matchkey"]);
-    fantasyType = ModelParsers.toStringParser(json["fantasy_type"]);
-    winAmount = ModelParsers.toIntParser(json["win_amount"]);
-    contestName = ModelParsers.toStringParser(json["contest_name"]);
-    isRecent = ModelParsers.toStringParser(json["is_recent"]);
-    joinedusers = ModelParsers.toIntParser(json["joinedusers"]);
+    id = ModelParsers.toStringParser(json['_id']);
+    challengeId = ModelParsers.toStringParser(json['challenge_id']);
+    matchkey = ModelParsers.toStringParser(json['matchkey']);
+    fantasyType = ModelParsers.toStringParser(json['fantasy_type']);
+    winAmount = ModelParsers.toIntParser(json['win_amount']);
+    contestName = ModelParsers.toStringParser(json['contest_name']);
+    isRecent = ModelParsers.toStringParser(json['is_recent']);
+    joinedusers = ModelParsers.toIntParser(json['joinedusers']);
   }
 }

@@ -74,7 +74,7 @@ class _WinnersDetail extends State<WinnersDetail> {
                             alignment: Alignment.centerLeft,
                             child: Text(
                               textAlign: TextAlign.center,
-                              widget.data?.seriesName ?? "",
+                              widget.data?.seriesName ?? '',
                               overflow: TextOverflow.ellipsis,
                               style: GoogleFonts.exo2(
                                 color: AppColors.letterColor,
@@ -89,7 +89,7 @@ class _WinnersDetail extends State<WinnersDetail> {
                         padding: const EdgeInsets.all(10),
                         child: Text(
                           AppUtils.formatDate(
-                            widget.data?.startDate.toString() ?? "",
+                            widget.data?.startDate.toString() ?? '',
                           ),
                           style: GoogleFonts.exo2(
                             color: AppColors.letterColor,
@@ -117,14 +117,14 @@ class _WinnersDetail extends State<WinnersDetail> {
                                 children: [
                                   ClipOval(
                                     child: Image.network(
-                                      widget.data?.teamAImage ?? "",
+                                      widget.data?.teamAImage ?? '',
                                       height: 35,
                                       width: 35,
                                     ),
                                   ),
                                   const SizedBox(width: 5),
                                   Text(
-                                    "${widget.data?.teamAShortName}",
+                                    '${widget.data?.teamAShortName}',
                                     style: GoogleFonts.exo2(
                                       fontSize: 16,
                                       color: AppColors.letterColor,
@@ -135,7 +135,7 @@ class _WinnersDetail extends State<WinnersDetail> {
                               ),
                               const SizedBox(height: 3.0),
                               Text(
-                                "${widget.data?.teamAName}",
+                                '${widget.data?.teamAName}',
                                 overflow: TextOverflow.ellipsis,
                                 style: GoogleFonts.exo2(
                                   fontSize: 12,
@@ -157,7 +157,7 @@ class _WinnersDetail extends State<WinnersDetail> {
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
                                   Text(
-                                    "${widget.data?.teamBShortName}",
+                                    '${widget.data?.teamBShortName}',
                                     style: GoogleFonts.exo2(
                                       fontSize: 15,
                                       color: AppColors.letterColor,
@@ -167,7 +167,7 @@ class _WinnersDetail extends State<WinnersDetail> {
                                   const SizedBox(width: 5),
                                   ClipOval(
                                     child: Image.network(
-                                      widget.data?.teamBImage ?? "",
+                                      widget.data?.teamBImage ?? '',
                                       height: 35,
                                       width: 35,
                                     ),
@@ -176,7 +176,7 @@ class _WinnersDetail extends State<WinnersDetail> {
                               ),
                               const SizedBox(height: 3.0),
                               Text(
-                                "${widget.data?.teamBName}",
+                                '${widget.data?.teamBName}',
                                 overflow: TextOverflow.ellipsis,
                                 style: GoogleFonts.exo2(
                                   fontSize: 12,
@@ -201,7 +201,7 @@ class _WinnersDetail extends State<WinnersDetail> {
                     child: InkWell(
                       onTap: () async {
                         await myMatchesUsecases
-                            .dreamTeam(context, widget.data?.matchkey ?? "")
+                            .dreamTeam(context, widget.data?.matchkey ?? '')
                             ?.then((value) {
                           List<UserTeamsModel> finalPlayers = [];
                           for (var zz in value ?? []) {
@@ -223,14 +223,14 @@ class _WinnersDetail extends State<WinnersDetail> {
                           }
                           AppNavigation.gotoPreviewScreen(
                             context,
-                            "",
+                            '',
                             false,
                             finalPlayers,
-                            "${APIServerUrl.appName} Team",
-                            "completed",
+                            '${APIServerUrl.appName} Team',
+                            'completed',
                             0,
                             false,
-                            "",
+                            '',
                           );
                         });
                       },
@@ -267,7 +267,7 @@ class _WinnersDetail extends State<WinnersDetail> {
                     return singleContest(
                       challenges[index],
                       index,
-                      widget.data?.fantasyType ?? "",
+                      widget.data?.fantasyType ?? '',
                     );
                   },
                 ),
@@ -458,11 +458,11 @@ class _WinnersDetail extends State<WinnersDetail> {
         winContestData = widget.winContestData;
         winContestData = await winnersUsecases.loadContestWinners(
           context,
-          data.id ?? "",
+          data.id ?? '',
           0,
           10,
           fantasyType,
-          data.matchkey ?? "",
+          data.matchkey ?? '',
         );
         setState(() {});
       },

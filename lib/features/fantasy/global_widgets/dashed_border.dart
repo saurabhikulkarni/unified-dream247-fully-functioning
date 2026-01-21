@@ -11,7 +11,7 @@ class DashedBorder extends CustomPainter {
       {this.color = AppColors.blackColor,
       this.dashWidth = 5.0,
       this.dashSpace = 3.0,
-      this.strokeWidth = 1.0});
+      this.strokeWidth = 1.0,});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -80,7 +80,7 @@ class DashedBorderContainer extends StatelessWidget {
     return ClipRRect(
       borderRadius: BorderRadius.only(
           bottomLeft: Radius.circular(borderRadius),
-          bottomRight: Radius.circular(borderRadius)),
+          bottomRight: Radius.circular(borderRadius),),
       child: CustomPaint(
         painter: DashedBorder(
           color: color,

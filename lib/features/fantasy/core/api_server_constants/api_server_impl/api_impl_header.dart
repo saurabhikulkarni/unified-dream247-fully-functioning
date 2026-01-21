@@ -161,7 +161,7 @@ class ApiImplWithAccessToken {
       attempt++;
     }
 
-    throw Exception("Request failed after $retryCount attempts.");
+    throw Exception('Request failed after $retryCount attempts.');
   }
 
   // Public Methods:

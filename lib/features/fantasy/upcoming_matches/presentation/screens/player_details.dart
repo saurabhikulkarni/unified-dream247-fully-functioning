@@ -32,10 +32,10 @@ class _PlayerDetailsState extends State<PlayerDetails> {
     loadData();
   }
 
-  loadData() {
+  void loadData() {
     playerData = myMatchesUsecases.getPlayerDetails(
       context,
-      widget.data.playerid ?? "",
+      widget.data.playerid ?? '',
     );
     setState(() {});
   }
@@ -174,7 +174,7 @@ class _PlayerDetailsState extends State<PlayerDetails> {
                                           fontWeight: FontWeight.w400,
                                         ),
                                       ),
-                                      (data.country != "")
+                                      (data.country != '')
                                           ? Text(
                                               '${data.country}',
                                               style: const TextStyle(
@@ -184,8 +184,8 @@ class _PlayerDetailsState extends State<PlayerDetails> {
                                               ),
                                             )
                                           : const SizedBox.shrink(),
-                                      (data.battingstyle != "" &&
-                                              data.bowlingstyle != "")
+                                      (data.battingstyle != '' &&
+                                              data.bowlingstyle != '')
                                           ? Text(
                                               '${data.battingstyle} - ${data.bowlingstyle}',
                                               style: const TextStyle(
@@ -194,7 +194,7 @@ class _PlayerDetailsState extends State<PlayerDetails> {
                                                 fontWeight: FontWeight.w400,
                                               ),
                                             )
-                                          : (data.battingstyle != "")
+                                          : (data.battingstyle != '')
                                               ? Text(
                                                   '${data.battingstyle}',
                                                   style: const TextStyle(
@@ -203,7 +203,7 @@ class _PlayerDetailsState extends State<PlayerDetails> {
                                                     fontWeight: FontWeight.w400,
                                                   ),
                                                 )
-                                              : (data.bowlingstyle != "")
+                                              : (data.bowlingstyle != '')
                                                   ? Text(
                                                       '${data.bowlingstyle}',
                                                       style: const TextStyle(
@@ -231,7 +231,7 @@ class _PlayerDetailsState extends State<PlayerDetails> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Text(
-                                "Total Points: ".toUpperCase(),
+                                'Total Points: '.toUpperCase(),
                                 style: const TextStyle(
                                   color: AppColors.white,
                                   fontSize: 12,
@@ -256,7 +256,7 @@ class _PlayerDetailsState extends State<PlayerDetails> {
                           Row(
                             children: [
                               Text(
-                                "Credits: ".toUpperCase(),
+                                'Credits: '.toUpperCase(),
                                 style: const TextStyle(
                                   color: AppColors.white,
                                   fontSize: 12,

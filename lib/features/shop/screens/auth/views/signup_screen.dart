@@ -79,7 +79,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                             content: Text(
-                                'Please agree to the terms and privacy policy'),
+                                'Please agree to the terms and privacy policy',),
                           ),
                         );
                         return;
@@ -164,7 +164,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             'lastName': lastName,
                             'username': phone, // Use phone as username
                             'mobileNumber': cleanPhone, // Use cleaned phone as String
-                            'modules': ['shop', 'fantasy'], // Enable both modules by default
+                            'modules': const ['shop', 'fantasy'], // Enable both modules by default
                             'shopEnabled': true, // Enable shop module
                             'fantasyEnabled': true, // Enable fantasy module
                           },
@@ -203,7 +203,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           // Save login session with userId from Hygraph (no fantasy token)
                           final authService = AuthService();
                           final prefs = await SharedPreferences.getInstance();
-                          final initialShopTokens = 0; // New users start with 0 tokens
+                          const initialShopTokens = 0; // New users start with 0 tokens
                           await prefs.setInt('shop_tokens', initialShopTokens);
                           debugPrint('💰 [SIGNUP] Stored initial shopTokens: $initialShopTokens');
                           await authService.saveLoginSession(
@@ -280,12 +280,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           context.go(RouteNames.login);
                         },
                         child: const Text('Log in'),
-                      )
+                      ),
                     ],
                   ),
                 ],
               ),
-            )
+            ),
           ],
         ),
       ),

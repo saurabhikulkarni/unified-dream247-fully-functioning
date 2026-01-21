@@ -44,9 +44,9 @@ class TdsBottomsheet extends StatefulWidget {
 class _TdsBottomsheetState extends State<TdsBottomsheet> {
   bool? validationDone = false;
   int step = 0;
-  String otp = "";
-  String receiverId = "";
-  String receiverName = "";
+  String otp = '';
+  String receiverId = '';
+  String receiverName = '';
   bool isMobileValidLength = false;
   Timer? _debounce;
   bool? isLoading;
@@ -74,8 +74,8 @@ class _TdsBottomsheetState extends State<TdsBottomsheet> {
       final cashbackAmount = (withdrawal * cashbackRate) / 100;
       return AppUtils.formatAmount(cashbackAmount.toString());
     } catch (e) {
-      debugPrint("Error in calculating cashback: $e");
-      return "0";
+      debugPrint('Error in calculating cashback: $e');
+      return '0';
     }
   }
 
@@ -128,7 +128,7 @@ class _TdsBottomsheetState extends State<TdsBottomsheet> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Text(
-          "${Strings.indianRupee}${widget.netAmount}",
+          '${Strings.indianRupee}${widget.netAmount}',
           style: GoogleFonts.tomorrow(
             fontWeight: FontWeight.w700,
             fontSize: 26,
@@ -136,7 +136,7 @@ class _TdsBottomsheetState extends State<TdsBottomsheet> {
           ),
         ),
         const Text(
-          "Withdrawal Amount",
+          'Withdrawal Amount',
           style: TextStyle(
             fontWeight: FontWeight.w700,
             fontSize: 16,
@@ -169,7 +169,7 @@ class _TdsBottomsheetState extends State<TdsBottomsheet> {
             text: TextSpan(
               style: TextStyle(fontSize: 14, color: Colors.grey[700]),
               children: [
-                TextSpan(
+                const TextSpan(
                   text: 'Note: ',
                   style: TextStyle(
                     fontSize: 14,
@@ -177,7 +177,7 @@ class _TdsBottomsheetState extends State<TdsBottomsheet> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                TextSpan(
+                const TextSpan(
                   text:
                       '${APIServerUrl.appName} follows the new TDS law set for the Online Gaming Industry by the Income Tax Act of India (Section 194BA) ',
                 ),
@@ -301,7 +301,7 @@ class _TdsBottomsheetState extends State<TdsBottomsheet> {
         const SizedBox(height: 15),
         Image.asset(Images.icWonCashback, height: 80, width: 80),
         Text(
-          "Hurrah!",
+          'Hurrah!',
           style: GoogleFonts.exo2(
             fontWeight: FontWeight.w700,
             fontSize: 16,
@@ -310,7 +310,7 @@ class _TdsBottomsheetState extends State<TdsBottomsheet> {
         ),
         const SizedBox(height: 5),
         const Text(
-          "You will get Cashback",
+          'You will get Cashback',
           style: TextStyle(
             fontWeight: FontWeight.w700,
             fontSize: 16,
@@ -319,7 +319,7 @@ class _TdsBottomsheetState extends State<TdsBottomsheet> {
         ),
         const SizedBox(height: 5),
         Text(
-          "${Strings.indianRupee}${calculateCashbackAmount()}",
+          '${Strings.indianRupee}${calculateCashbackAmount()}',
           style: GoogleFonts.tomorrow(
             fontWeight: FontWeight.w700,
             fontSize: 20,
@@ -328,7 +328,7 @@ class _TdsBottomsheetState extends State<TdsBottomsheet> {
         ),
         const SizedBox(height: 5),
         const Text(
-          "while successfully doing P2P Withdrawal",
+          'while successfully doing P2P Withdrawal',
           style: TextStyle(
             fontWeight: FontWeight.w700,
             fontSize: 16,
@@ -408,7 +408,7 @@ class _TdsBottomsheetState extends State<TdsBottomsheet> {
           showPrefix: true,
           keyboardType: TextInputType.number,
           controller: _mobileController,
-          hintText: "10 digit mobile number",
+          hintText: '10 digit mobile number',
           onChanged: (value) {
             if (_debounce?.isActive ?? false) _debounce?.cancel();
 
@@ -429,13 +429,13 @@ class _TdsBottomsheetState extends State<TdsBottomsheet> {
                 );
                 if (result != null) {
                   setState(() {
-                    receiverId = result["data"]["receiverId"];
-                    receiverName = result["data"]["name"];
+                    receiverId = result['data']['receiverId'];
+                    receiverName = result['data']['name'];
                     validationDone = true;
                     isMobileValidLength = true;
                   });
                 } else {
-                  appToast("Validation failed", context);
+                  appToast('Validation failed', context);
                 }
               });
             } else {
@@ -476,7 +476,7 @@ class _TdsBottomsheetState extends State<TdsBottomsheet> {
                 ),
                 const SizedBox(height: 25),
                 const Text(
-                  "Review Details before money transfer",
+                  'Review Details before money transfer',
                   style: TextStyle(
                     fontWeight: FontWeight.w500,
                     fontSize: 12,
@@ -502,7 +502,7 @@ class _TdsBottomsheetState extends State<TdsBottomsheet> {
                         step = 3;
                       });
                     } else {
-                      appToast("Failed to send OTP", context);
+                      appToast('Failed to send OTP', context);
                     }
                   },
                   text: Strings.next,
@@ -556,7 +556,7 @@ class _TdsBottomsheetState extends State<TdsBottomsheet> {
       children: [
         const SizedBox(height: 10),
         const Text(
-          "Enter 6 digit OTP we have sent on your registered mobile number",
+          'Enter 6 digit OTP we have sent on your registered mobile number',
           style: TextStyle(
             fontWeight: FontWeight.w500,
             fontSize: 16,
@@ -588,7 +588,7 @@ class _TdsBottomsheetState extends State<TdsBottomsheet> {
           ),
           textStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
           onChanged: (value) {
-            otp = "";
+            otp = '';
           },
           onCompleted: (value) {
             otp = value;
@@ -610,7 +610,7 @@ class _TdsBottomsheetState extends State<TdsBottomsheet> {
               ),
               children: [
                 TextSpan(
-                  text: "Send Again",
+                  text: 'Send Again',
                   style: TextStyle(
                     color: AppColors.green,
                     fontWeight: FontWeight.w600,
@@ -629,7 +629,7 @@ class _TdsBottomsheetState extends State<TdsBottomsheet> {
                 text: Strings.next,
                 onTap: () async {
                   FocusScope.of(context).unfocus();
-                  if (otp != "") {
+                  if (otp != '') {
                     await accountsUsecases.verifyp2pOtp(
                       context,
                       widget.netAmount,
@@ -642,8 +642,8 @@ class _TdsBottomsheetState extends State<TdsBottomsheet> {
                   }
                 },
                 height: 45,
-                color: otp != "" ? AppColors.green : AppColors.whiteFade1,
-                textColor: otp != "" ? Colors.white : const Color(0xffafafaf),
+                color: otp != '' ? AppColors.green : AppColors.whiteFade1,
+                textColor: otp != '' ? Colors.white : const Color(0xffafafaf),
                 isLoading: isLoading ?? false,
               ),
             ),

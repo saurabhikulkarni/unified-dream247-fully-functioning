@@ -42,10 +42,10 @@ class ApiServerUtil {
       if (response != null) {
         await manageException(response, context);
       } else {
-        appToast("Connection failed. Please try again later.", context);
+        appToast('Connection failed. Please try again later.', context);
       }
     } else {
-      appToast("Unexpected error occurred.", context);
+      appToast('Unexpected error occurred.', context);
     }
   }
 

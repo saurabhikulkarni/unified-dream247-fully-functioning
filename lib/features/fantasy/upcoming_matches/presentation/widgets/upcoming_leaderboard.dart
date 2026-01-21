@@ -286,19 +286,19 @@ class UpcomingLeaderboardState extends State<UpcomingLeaderboard> {
                 }
                 AppNavigation.gotoPreviewScreen(
                   context,
-                  "",
+                  '',
                   false,
                   finalPlayers,
                   data.team,
-                  "Upcoming",
+                  'Upcoming',
                   0,
                   false,
-                  "",
+                  '',
                 );
               });
             } else {
               appToast(
-                "You can view other players team only after match is live",
+                'You can view other players team only after match is live',
                 context,
               );
             }
@@ -384,9 +384,9 @@ class UpcomingLeaderboardState extends State<UpcomingLeaderboard> {
                           widget.challengeId,
                           value,
                           1,
-                          "Switch Team",
+                          'Switch Team',
                           leagueId,
-                          data.id ?? "",
+                          data.id ?? '',
                           true,
                           0,
                           0,

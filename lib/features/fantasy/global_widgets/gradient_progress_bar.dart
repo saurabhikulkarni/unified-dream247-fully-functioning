@@ -9,7 +9,7 @@ class GradientProgressBar extends StatelessWidget {
       {required this.percent,
       required this.gradient,
       required this.backgroundColor,
-      super.key});
+      super.key,});
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +25,7 @@ class GradientProgressBar extends StatelessWidget {
                   ? const BorderRadius.all(Radius.circular(4))
                   : const BorderRadius.only(
                       bottomLeft: Radius.circular(4),
-                      topLeft: Radius.circular(4)),
+                      topLeft: Radius.circular(4),),
             ),
             child: const SizedBox(height: 5.0),
           ),
@@ -40,7 +40,7 @@ class GradientProgressBar extends StatelessWidget {
                   ? const BorderRadius.all(Radius.circular(4))
                   : const BorderRadius.only(
                       bottomRight: Radius.circular(4),
-                      topRight: Radius.circular(4)),
+                      topRight: Radius.circular(4),),
             ),
             child: const SizedBox(height: 5.0),
           ),

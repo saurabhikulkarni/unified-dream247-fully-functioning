@@ -298,7 +298,7 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
         SnackBar(
           content: Text(widget.addressId == null 
               ? 'Address saved and published successfully' 
-              : 'Address updated successfully'),
+              : 'Address updated successfully',),
           backgroundColor: Colors.green,
           duration: const Duration(seconds: 2),
         ),

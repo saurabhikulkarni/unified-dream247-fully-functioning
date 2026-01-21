@@ -70,7 +70,7 @@ class ContestListView extends StatelessWidget {
         }
       }
       appToast(
-        "You need to join another contest of 💎$entryFee to join this contest",
+        'You need to join another contest of 💎$entryFee to join this contest',
         context,
       );
     }
@@ -78,7 +78,7 @@ class ContestListView extends StatelessWidget {
 
   void joinContest(BuildContext context) {
     upcomingMatchUsecase
-        .getTeamswithChallengeId(context, data?.matchchallengeid ?? "")
+        .getTeamswithChallengeId(context, data?.matchchallengeid ?? '')
         .then((value) async {
       int count = 0;
       for (var i in value) {
@@ -96,10 +96,10 @@ class ContestListView extends StatelessWidget {
           AppSingleton.singleton.matchData.id!,
           data?.id,
           0,
-          "",
-          "",
-          "",
-          "",
+          '',
+          '',
+          '',
+          '',
           data?.discountFee ?? 0,
           false,
           teamType,
@@ -108,7 +108,7 @@ class ContestListView extends StatelessWidget {
           return null;
         });
         if (hasChanges == true) {
-          debugPrint("Updating team list after creating new team...");
+          debugPrint('Updating team list after creating new team...');
           List<TeamsModel> updatedTeams =
               await upcomingMatchUsecase.getMyTeams(context);
           Provider.of<MyTeamsProvider>(
@@ -116,7 +116,7 @@ class ContestListView extends StatelessWidget {
             listen: false,
           ).updateMyTeams(
             updatedTeams,
-            AppSingleton.singleton.matchData.id ?? "",
+            AppSingleton.singleton.matchData.id ?? '',
           );
         }
       } else if (count == 1) {
@@ -128,11 +128,11 @@ class ContestListView extends StatelessWidget {
           ),
           builder: (BuildContext context) {
             return JoinContestBottomsheet(
-              fantasyType: "Cricket",
+              fantasyType: 'Cricket',
               isClosedContestNew: false,
-              totalWinners: data?.totalwinners.toString() ?? "",
+              totalWinners: data?.totalwinners.toString() ?? '',
               previousJoined: previousJoined,
-              challengeId: data?.id ?? "",
+              challengeId: data?.id ?? '',
               discount: data?.discountFee ?? 0,
               selectedTeam: value
                   .firstWhere((element) => !element.isSelected!)
@@ -148,7 +148,7 @@ class ContestListView extends StatelessWidget {
         await AppNavigation.gotoMyTeamsChallenges(
           context,
           teamType,
-          data?.matchchallengeid ?? "",
+          data?.matchchallengeid ?? '',
           Provider.of<MyTeamsProvider>(
                 context,
                 listen: false,
@@ -159,9 +159,9 @@ class ContestListView extends StatelessWidget {
                   ? 1
                   : data?.teamLimit ?? 0
               : 1,
-          "Join Team",
-          "",
-          "",
+          'Join Team',
+          '',
+          '',
           false,
           data?.discountFee ?? 0,
           data?.entryfee ?? 0,
@@ -184,7 +184,7 @@ class ContestListView extends StatelessWidget {
             await AppNavigation.gotoUpcomingContestDetails(
               context,
               data?.id,
-              mode ?? "",
+              mode ?? '',
               teamType,
             );
             onDismiss();
@@ -206,9 +206,9 @@ class ContestListView extends StatelessWidget {
                     horizontal: 14,
                     vertical: 10,
                   ),
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     // gradient: AppColors.mainGradient,
-                    borderRadius: const BorderRadius.vertical(
+                    borderRadius: BorderRadius.vertical(
                       top: Radius.circular(16),
                     ),
                   ),
@@ -221,7 +221,7 @@ class ContestListView extends StatelessWidget {
                         children: [
                           Row(
                             children: [
-                              if ((data?.flexibleContest ?? "0") == "1" ||
+                              if ((data?.flexibleContest ?? '0') == '1' ||
                                   data?.compress == true)
                                 Row(
                                   children: [
@@ -294,7 +294,7 @@ class ContestListView extends StatelessWidget {
                                   height: 10,
                                 ),
                                 Text(
-                                  "${data?.entryfee}",
+                                  '${data?.entryfee}',
                                   style: GoogleFonts.tomorrow(
                                     decoration: TextDecoration.lineThrough,
                                     decorationColor: AppColors.black,
@@ -329,7 +329,7 @@ class ContestListView extends StatelessWidget {
                           Text(
                             ((data?.maximumUser ?? 0) ==
                                     (data?.joinedusers ?? 0))
-                                ? "Contest Full"
+                                ? 'Contest Full'
                                 : '${(data?.maximumUser ?? 0).toInt() - (data?.joinedusers ?? 0)} Spots Left',
                             style: GoogleFonts.roboto(
                               color: AppColors.mainColor,
@@ -357,9 +357,9 @@ class ContestListView extends StatelessWidget {
                     horizontal: 14,
                     vertical: 5,
                   ),
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     color: AppColors.white,
-                    borderRadius: const BorderRadius.vertical(
+                    borderRadius: BorderRadius.vertical(
                       bottom: Radius.circular(16),
                     ),
                   ),
@@ -376,14 +376,14 @@ class ContestListView extends StatelessWidget {
                                   Icons.groups_2,
                               // : Icons.person_outline,
                               label: data?.multiEntry == 1
-                                  ? "Upto ${data?.maximumUser}"
-                                  : "Upto 5",
+                                  ? 'Upto ${data?.maximumUser}'
+                                  : 'Upto 5',
                             ),
                             8.horizontalSpace,
                             _infoChip(
                               icon: Icons.emoji_events_outlined,
                               label:
-                                  "${(((data?.totalwinners ?? 1) / (data?.maximumUser ?? 1)) * 100).round()}%",
+                                  '${(((data?.totalwinners ?? 1) / (data?.maximumUser ?? 1)) * 100).round()}%',
                             ),
                           ],
                         ),
@@ -433,7 +433,7 @@ class ContestListView extends StatelessWidget {
                       // ),
                       Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 4),
+                            horizontal: 8, vertical: 4,),
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
                             colors: [
@@ -449,7 +449,7 @@ class ContestListView extends StatelessWidget {
                         child: Row(
                           children: [
                             Icon(Icons.looks_one_outlined,
-                                size: 14.sp, color: Colors.orange.shade900),
+                                size: 14.sp, color: Colors.orange.shade900,),
                             3.horizontalSpace,
                             Text(
                               '${Strings.indianRupee}${AppUtils.changeNumberToValue(data?.winAmount?.toInt() ?? 0)}',
@@ -489,7 +489,7 @@ class ContestListView extends StatelessWidget {
                 ],
               ),
               child:
-              (data?.bonusType == "flat")?
+              (data?.bonusType == 'flat')?
               Row(
                 children: [
                   Text('Flat ',
@@ -562,24 +562,24 @@ class ContestListView extends StatelessWidget {
         if (data!.isselected!) {
           String text = AppSingleton.singleton.appData.contestsharemessage!
               .replaceFirst(
-                "%TeamName%",
+                '%TeamName%',
                 Provider.of<UserDataProvider>(
                       context,
                       listen: false,
                     ).userData?.team ??
-                    "",
+                    '',
               )
               .replaceFirst(
-                "%Team1%",
+                '%Team1%',
                 AppSingleton.singleton.matchData.team1Name!,
               )
               .replaceFirst(
-                "%Team2%",
+                '%Team2%',
                 AppSingleton.singleton.matchData.team2Name!,
               )
-              .replaceFirst("%AppName%", APIServerUrl.appName)
-              .replaceFirst("%url_share%", '')
-              .replaceFirst("%inviteCode%", data?.refercode ?? "");
+              .replaceFirst('%AppName%', APIServerUrl.appName)
+              .replaceFirst('%url_share%', '')
+              .replaceFirst('%inviteCode%', data?.refercode ?? '');
           SharePlus.instance.share(ShareParams(text: text));
         } else {
           if (data?.isPromoCodeContest ?? false) {
@@ -617,9 +617,9 @@ class ContestListView extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               (data?.isselected == true)
-                  ? Text('')
+                  ? const Text('')
                   : ((data?.entryfee ?? 0) - (data?.discountFee ?? 0) == 0)
-                      ? Text('')
+                      ? const Text('')
                       : Image.asset(
                           Images.matchToken,
                           height: 18,

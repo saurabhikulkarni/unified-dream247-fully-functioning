@@ -39,5 +39,5 @@ extension ResponsiveContext on BuildContext {
   /// Get responsive font size
   double fontSize(double baseSize, {double minSize = 10, double maxSize = 40}) =>
       ResponsiveHelper.getResponsiveFontSize(this,
-          baseSize: baseSize, minSize: minSize, maxSize: maxSize);
+          baseSize: baseSize, minSize: minSize, maxSize: maxSize,);
 }

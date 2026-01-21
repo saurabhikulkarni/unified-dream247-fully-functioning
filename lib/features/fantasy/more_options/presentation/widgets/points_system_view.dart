@@ -120,7 +120,7 @@ class _PointsSystemView extends State<PointsSystemView> {
                       for (var item in list)
                         item.format != null && item.format!.isNotEmpty
                             ? _buildSingleFormat(item.format!)
-                            : const Center(child: Text("No data available")),
+                            : const Center(child: Text('No data available')),
                     ],
                   ),
                 ),

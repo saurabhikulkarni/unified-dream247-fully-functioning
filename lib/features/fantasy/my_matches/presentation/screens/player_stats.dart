@@ -43,15 +43,15 @@ class _PlayerStats extends State<PlayerStats> {
 
   Future<void> fetchPlayers() async {
     var provider = Provider.of<PlayerStatsProvider>(context, listen: false);
-    String matchKey = AppSingleton.singleton.matchData.id ?? "";
+    String matchKey = AppSingleton.singleton.matchData.id ?? '';
 
     setState(() {
       isLoading = true;
     });
 
-    if (widget.mode == "Completed" ||
-        widget.mode == "Abandoned" ||
-        widget.mode == "Cancelled") {
+    if (widget.mode == 'Completed' ||
+        widget.mode == 'Abandoned' ||
+        widget.mode == 'Cancelled') {
       if ((provider.matchPlayer[matchKey]?.isNotEmpty ?? false)) {
         setState(() {
           players = provider.matchPlayer[matchKey];
@@ -70,7 +70,7 @@ class _PlayerStats extends State<PlayerStats> {
       }
     }
 
-    if (widget.mode == "Live") {
+    if (widget.mode == 'Live') {
       final data = await myMatchesUsecases.matchplayerfantasyscorecards(
         context,
       );
@@ -104,7 +104,7 @@ class _PlayerStats extends State<PlayerStats> {
       return const Center(child: Text(Strings.somethingWentWrong));
     } else if (players!.isEmpty) {
       return const Center(
-        child: NoDataWidget(title: "No Player Data Found", showButton: false),
+        child: NoDataWidget(title: 'No Player Data Found', showButton: false),
       );
     }
     List<MatchPlayerTeamsModel> sortedList = [...players!];
@@ -158,7 +158,7 @@ class _PlayerStats extends State<PlayerStats> {
                   ),
                 ],
                 border: Border.all(
-                    color: AppColors.lightGrey.withValues(alpha: 0.3)),
+                    color: AppColors.lightGrey.withValues(alpha: 0.3),),
               ),
               child: Row(
                 children: [
@@ -169,7 +169,7 @@ class _PlayerStats extends State<PlayerStats> {
                       borderRadius: BorderRadius.circular(8),
                       onTap: () {
                         setState(() {
-                          sortBy = "player";
+                          sortBy = 'player';
                           isPlayerEnable = !isPlayerEnable;
                         });
                       },
@@ -188,7 +188,7 @@ class _PlayerStats extends State<PlayerStats> {
                               ),
                             ),
                           ),
-                          if (sortBy == "player") ...[
+                          if (sortBy == 'player') ...[
                             const SizedBox(width: 3),
                             Icon(
                               isPlayerEnable
@@ -218,7 +218,7 @@ class _PlayerStats extends State<PlayerStats> {
                       borderRadius: BorderRadius.circular(8),
                       onTap: () {
                         setState(() {
-                          sortBy = "points";
+                          sortBy = 'points';
                           isPointsEnable = !isPointsEnable;
                         });
                       },
@@ -237,7 +237,7 @@ class _PlayerStats extends State<PlayerStats> {
                               ),
                             ),
                           ),
-                          if (sortBy == "points") ...[
+                          if (sortBy == 'points') ...[
                             const SizedBox(width: 3),
                             Icon(
                               isPointsEnable
@@ -267,7 +267,7 @@ class _PlayerStats extends State<PlayerStats> {
                       borderRadius: BorderRadius.circular(8),
                       onTap: () {
                         setState(() {
-                          sortBy = "selection";
+                          sortBy = 'selection';
                           isSelectByEnable = !isSelectByEnable;
                         });
                       },
@@ -286,7 +286,7 @@ class _PlayerStats extends State<PlayerStats> {
                               ),
                             ),
                           ),
-                          if (sortBy == "selection") ...[
+                          if (sortBy == 'selection') ...[
                             const SizedBox(width: 3),
                             Icon(
                               isSelectByEnable
@@ -333,7 +333,7 @@ class _PlayerStats extends State<PlayerStats> {
             opaque: false,
             pageBuilder: (context, animation, secondaryAnimation) =>
                 PlayerStatsDetails(
-              fantasyType: "Cricket",
+              fantasyType: 'Cricket',
               playerId: data[index].id,
               list: data,
             ),
@@ -396,7 +396,7 @@ class _PlayerStats extends State<PlayerStats> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    data[index].name ?? "",
+                    data[index].name ?? '',
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: GoogleFonts.exo2(

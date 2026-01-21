@@ -59,7 +59,7 @@ class _BestSellersState extends State<BestSellers> {
         Padding(
           padding: const EdgeInsets.all(defaultPadding),
           child: Text(
-            "Best sellers",
+            'Best sellers',
             style: Theme.of(context).textTheme.titleSmall,
           ),
         ),
@@ -95,12 +95,12 @@ class _BestSellersState extends State<BestSellers> {
                   product: _products[index],
                   press: () {
                     context.push('/shop/product/${_products[index].id}',
-                        extra: {'product': _products[index]});
+                        extra: {'product': _products[index]},);
                   },
                 ),
               ),
             ),
-          )
+          ),
       ],
     );
   }

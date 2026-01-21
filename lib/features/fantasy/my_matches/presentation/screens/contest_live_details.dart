@@ -48,11 +48,11 @@ class _ContestLiveDetails extends State<ContestLiveDetails> {
 
   void getMatchLiveScore() async {
     var provider = Provider.of<LiveScoreProvider>(context, listen: false);
-    String matchKey = AppSingleton.singleton.matchData.id ?? "";
+    String matchKey = AppSingleton.singleton.matchData.id ?? '';
 
-    if (widget.mode == "Completed" ||
-        widget.mode == "Abandoned" ||
-        widget.mode == "Cancelled") {
+    if (widget.mode == 'Completed' ||
+        widget.mode == 'Abandoned' ||
+        widget.mode == 'Cancelled') {
       if ((provider.liveScore[matchKey]?.isNotEmpty ?? false)) {
         setState(() {
           list = provider.liveScore[matchKey];
@@ -67,7 +67,7 @@ class _ContestLiveDetails extends State<ContestLiveDetails> {
       }
     }
 
-    if (widget.mode == "Live") {
+    if (widget.mode == 'Live') {
       final data = await myMatchesUsecases.getMatchLiveScore(context);
       setState(() {
         list = data;
@@ -77,7 +77,7 @@ class _ContestLiveDetails extends State<ContestLiveDetails> {
   }
 
   void startApiPolling() {
-    if (widget.mode == "Live") {
+    if (widget.mode == 'Live') {
       timer = Timer.periodic(const Duration(seconds: 60), (timer) {
         getMatchLiveScore();
       });
@@ -104,15 +104,15 @@ class _ContestLiveDetails extends State<ContestLiveDetails> {
       child: Column(
         children: [
           Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
                 gradient: LinearGradient(
                     colors: [
                   AppColors.mainColor,
                   AppColors.mainLightColor,
-                  AppColors.blackColor
+                  AppColors.blackColor,
                 ],
                     begin: AlignmentGeometry.topCenter,
-                    end: AlignmentGeometry.bottomCenter)),
+                    end: AlignmentGeometry.bottomCenter,),),
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
             child: Scoreboard(list: list, mode: widget.mode),
           ),
@@ -206,16 +206,16 @@ class _ContestLiveDetails extends State<ContestLiveDetails> {
                     PriceCard(
                       mode: widget.mode,
                       list: widget.data.matchpricecards ?? [],
-                      flexible: widget.data.flexibleContest ?? "0",
+                      flexible: widget.data.flexibleContest ?? '0',
                       extraPriceList: widget.data.extrapricecard,
                     ),
                     LiveLeaderboard(
                       extraPriceCard: widget.data.extrapricecard ?? [],
                       totalCount: widget.data.joinedusers.toString(),
-                      matchKey: widget.data.matchkey ?? "",
-                      challengeId: widget.data.matchchallengeid ?? "",
+                      matchKey: widget.data.matchkey ?? '',
+                      challengeId: widget.data.matchchallengeid ?? '',
                       totalwinners: widget.data.totalwinners ?? 1,
-                      finalStatus: widget.data.matchFinalstatus ?? "",
+                      finalStatus: widget.data.matchFinalstatus ?? '',
                     ),
                     PlayerStats(mode: widget.mode),
                     Scorecard(

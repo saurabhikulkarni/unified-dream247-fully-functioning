@@ -11,7 +11,7 @@ class FantasyPointsSystem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SubContainer(
+    return const SubContainer(
       showAppBar: true,
       showWalletIcon: false,
       headerText: Strings.fantasyPointSystem,
@@ -42,11 +42,11 @@ class FantasyPointsSystem extends StatelessWidget {
                   //   // )
                   // ),
                   Padding(
-                    padding: const EdgeInsets.all(5),
+                    padding: EdgeInsets.all(5),
                     child: Text(
-                      "Cricket",
+                      'Cricket',
                       //item.fantasyName!,
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: AppColors.white,
                         fontWeight: FontWeight.w600,
                         fontSize: 12,
@@ -57,7 +57,7 @@ class FantasyPointsSystem extends StatelessWidget {
               ),
             ],
           ),
-          body: TabBarView(children: [PointsSystemView(gameType: "Cricket")]),
+          body: TabBarView(children: [PointsSystemView(gameType: 'Cricket')]),
         ),
       ),
     );

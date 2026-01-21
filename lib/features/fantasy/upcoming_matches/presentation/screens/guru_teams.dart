@@ -34,7 +34,7 @@ class _GuruTeams extends State<GuruTeams> {
     loadData();
   }
 
-  loadData() {
+  void loadData() {
     guruTeamsList = upcomingMatchUsecase.getGuruTeams(context);
     setState(() {});
   }
@@ -267,7 +267,7 @@ class _GuruTeams extends State<GuruTeams> {
                                       borderRadius: BorderRadius.circular(5),
                                     ),
                                     child: Text(
-                                      data.captinName ?? "",
+                                      data.captinName ?? '',
                                       overflow: TextOverflow.ellipsis,
                                       textAlign: TextAlign.center,
                                       style: const TextStyle(
@@ -379,7 +379,7 @@ class _GuruTeams extends State<GuruTeams> {
                                       borderRadius: BorderRadius.circular(5),
                                     ),
                                     child: Text(
-                                      data.viceCaptainName ?? "",
+                                      data.viceCaptainName ?? '',
                                       overflow: TextOverflow.ellipsis,
                                       textAlign: TextAlign.center,
                                       style: const TextStyle(
@@ -420,7 +420,7 @@ class _GuruTeams extends State<GuruTeams> {
                         onTap: () async {
                           int teamNumber = (AppUtils.teamsCount.value) + 1;
 
-                          String selectedPlayers = "";
+                          String selectedPlayers = '';
                           for (var i in data.player ?? []) {
                             selectedPlayers += ',${i.id}';
                           }
@@ -429,8 +429,8 @@ class _GuruTeams extends State<GuruTeams> {
                                   context,
                                   teamNumber,
                                   true,
-                                  AppSingleton.singleton.matchData.id ?? "",
-                                  "",
+                                  AppSingleton.singleton.matchData.id ?? '',
+                                  '',
                                   1,
                                   data.jointeamid,
                                   selectedPlayers,
@@ -438,7 +438,7 @@ class _GuruTeams extends State<GuruTeams> {
                                   data.vicecaptainId,
                                   0,
                                   false,
-                                  "");
+                                  '',);
                           if (hasChanges == true) {
                             List<TeamsModel> updatedTeams =
                                 await upcomingMatchUsecase.getMyTeams(context);
@@ -447,7 +447,7 @@ class _GuruTeams extends State<GuruTeams> {
                               listen: false,
                             ).updateMyTeams(
                               updatedTeams,
-                              AppSingleton.singleton.matchData.id ?? "",
+                              AppSingleton.singleton.matchData.id ?? '',
                             );
                           }
                         },

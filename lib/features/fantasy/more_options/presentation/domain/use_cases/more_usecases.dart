@@ -7,7 +7,7 @@ class MoreUsecases {
   MoreUsecases(this.moreRepositories);
 
   Future<List<FantasyPointsSystemData>?>? pointsSystem(
-      BuildContext context) async {
+      BuildContext context,) async {
     var res = await moreRepositories.pointsSystem(context);
     if (res != null) {
       return res;
@@ -16,7 +16,7 @@ class MoreUsecases {
   }
 
   Future<Map<String, dynamic>?> requestForPromoter(
-      BuildContext context, var bodyData) async {
+      BuildContext context, var bodyData,) async {
     var res = await moreRepositories.requestForPromoter(context, bodyData);
     if (res != null) {
       return res;
@@ -25,7 +25,7 @@ class MoreUsecases {
   }
 
   Future<Map<String, dynamic>?> getAffiliateData(
-      BuildContext context, String startDate, String endDate) async {
+      BuildContext context, String startDate, String endDate,) async {
     var res =
         await moreRepositories.getAffiliateData(context, startDate, endDate);
     if (res != null) {

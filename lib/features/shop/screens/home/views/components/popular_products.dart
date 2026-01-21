@@ -59,7 +59,7 @@ class _PopularProductsState extends State<PopularProducts> {
         Padding(
           padding: const EdgeInsets.all(defaultPadding),
           child: Text(
-            "Popular products",
+            'Popular products',
             style: Theme.of(context).textTheme.titleSmall,
           ),
         ),
@@ -95,12 +95,12 @@ class _PopularProductsState extends State<PopularProducts> {
                   product: _products[index],
                   press: () {
                     context.push('/shop/product/${_products[index].id}',
-                        extra: {'product': _products[index]});
+                        extra: {'product': _products[index]},);
                   },
                 ),
               ),
             ),
-          )
+          ),
       ],
     );
   }

@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 
 // Just for demo
-const productDemoImg1 = "https://i.imgur.com/CGCyp1d.png";
-const productDemoImg2 = "https://i.imgur.com/AkzWQuJ.png";
-const productDemoImg3 = "https://i.imgur.com/J7mGZ12.png";
-const productDemoImg4 = "https://i.imgur.com/q9oF9Yq.png";
-const productDemoImg5 = "https://i.imgur.com/MsppAcx.png";
-const productDemoImg6 = "https://i.imgur.com/JfyZlnO.png";
+const productDemoImg1 = 'https://i.imgur.com/CGCyp1d.png';
+const productDemoImg2 = 'https://i.imgur.com/AkzWQuJ.png';
+const productDemoImg3 = 'https://i.imgur.com/J7mGZ12.png';
+const productDemoImg4 = 'https://i.imgur.com/q9oF9Yq.png';
+const productDemoImg5 = 'https://i.imgur.com/MsppAcx.png';
+const productDemoImg6 = 'https://i.imgur.com/JfyZlnO.png';
 
 // End For demo
 
-const grandisExtendedFont = "Grandis Extended";
+const grandisExtendedFont = 'Grandis Extended';
 
 // On color 80, 60.... those means opacity
 
@@ -51,9 +51,9 @@ const Color blackColor20 = Color(0xFFD0D0D2);
 
 // Test User Configuration (for development/testing only)
 const bool enableTestUser = false; // DISABLED FOR PRODUCTION - Set to true for testing
-const String testUserPhone = "9876543210";
-const String testUserId = "cmjjx4dyn255i07o92vexv4jl";
-const String testUserName = "Test User";
+const String testUserPhone = '9876543210';
+const String testUserId = 'cmjjx4dyn255i07o92vexv4jl';
+const String testUserName = 'Test User';
 const double testUserWalletBalance = 10000.0;
 const Color blackColor10 = Color(0xFFE8E8E9);
 const Color blackColor5 = Color(0xFFF3F3F4);
@@ -105,12 +105,12 @@ final passwordValidator = MultiValidator([
   RequiredValidator(errorText: 'Password is required'),
   MinLengthValidator(8, errorText: 'password must be at least 8 digits long'),
   PatternValidator(r'(?=.*?[#?!@$%^&*-])',
-      errorText: 'passwords must have at least one special character')
+      errorText: 'passwords must have at least one special character',),
 ]);
 
 final emaildValidator = MultiValidator([
   RequiredValidator(errorText: 'Email is required'),
-  EmailValidator(errorText: "Enter a valid email address"),
+  EmailValidator(errorText: 'Enter a valid email address'),
 ]);
 
-const pasNotMatchErrorText = "passwords do not match";
+const pasNotMatchErrorText = 'passwords do not match';

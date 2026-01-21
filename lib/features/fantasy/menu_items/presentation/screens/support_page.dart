@@ -47,7 +47,7 @@ class _SupportPage extends State<SupportPage> {
           context,
           listen: false,
         ).userData?.mobile?.toString() ??
-        "";
+        '';
   }
 
   void submitData() {
@@ -58,7 +58,7 @@ class _SupportPage extends State<SupportPage> {
           _mobileController.text,
           selectedReason,
           _messagingController.text,
-          _selectedImage!);
+          _selectedImage!,);
       setState(() {
         Navigator.of(context).pop();
       });
@@ -190,7 +190,7 @@ class _SupportPage extends State<SupportPage> {
                         color: AppColors.white,
                       ),
                       text: AppSingleton.singleton.appData.supportemail ??
-                          "support@Dream247.com",
+                          'support@Dream247.com',
                     ),
                     const SizedBox(height: 12),
                     _supportRow(
@@ -200,7 +200,7 @@ class _SupportPage extends State<SupportPage> {
                         size: 28,
                       ),
                       text: AppSingleton.singleton.appData.supportmobile ??
-                          "9876543210",
+                          '9876543210',
                     ),
                   ],
                 ),
@@ -226,27 +226,27 @@ class _SupportPage extends State<SupportPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _label("Email"),
+                    _label('Email'),
                     const SizedBox(height: 8),
                     customTextField(
                       _emailController,
-                      "Enter Email",
+                      'Enter Email',
                       TextInputType.emailAddress,
                       0,
                       1,
                     ),
                     const SizedBox(height: 20),
-                    _label("Mobile Number"),
+                    _label('Mobile Number'),
                     const SizedBox(height: 8),
                     customTextField(
                       _mobileController,
-                      "Enter Mobile Number",
+                      'Enter Mobile Number',
                       TextInputType.number,
                       10,
                       1,
                     ),
                     const SizedBox(height: 20),
-                    _label("Reason for Support"),
+                    _label('Reason for Support'),
                     const SizedBox(height: 8),
                     DropdownMenu<String>(
                       inputDecorationTheme: InputDecorationTheme(
@@ -275,17 +275,17 @@ class _SupportPage extends State<SupportPage> {
                       }).toList(),
                     ),
                     const SizedBox(height: 20),
-                    _label("Message"),
+                    _label('Message'),
                     const SizedBox(height: 8),
                     customTextField(
                       _messagingController,
-                      "Enter Message",
+                      'Enter Message',
                       TextInputType.text,
                       999,
                       3,
                     ),
                     const SizedBox(height: 20),
-                    _label("Add Image"),
+                    _label('Add Image'),
                     const SizedBox(height: 8),
                     GestureDetector(
                       onTap: () {
@@ -300,14 +300,14 @@ class _SupportPage extends State<SupportPage> {
                           border: Border.all(color: AppColors.lightCard),
                         ),
                         child: _selectedImage == null
-                            ? Column(
+                            ? const Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
-                                children: const [
+                                children: [
                                   Icon(Icons.add_a_photo_outlined,
-                                      size: 32, color: AppColors.lightGrey),
+                                      size: 32, color: AppColors.lightGrey,),
                                   SizedBox(height: 6),
                                   Text(
-                                    "Tap to upload image",
+                                    'Tap to upload image',
                                     style: TextStyle(
                                       color: AppColors.lightGrey,
                                       fontSize: 13,
@@ -370,7 +370,7 @@ class _SupportPage extends State<SupportPage> {
   Widget _label(String text) {
     return Text(
       text,
-      style: TextStyle(
+      style: const TextStyle(
         fontWeight: FontWeight.w600,
         fontSize: 14,
         color: AppColors.greyColor,

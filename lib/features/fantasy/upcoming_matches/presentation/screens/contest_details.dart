@@ -45,10 +45,10 @@ class _ContestDetails extends State<ContestDetails> with RouteAware {
     getContestDetails();
   }
 
-  getContestDetails() async {
+  Future<void> getContestDetails() async {
     contestDetails = await upcomingMatchUsecase.getContestDetails(
       context,
-      widget.matchChallengeId ?? "",
+      widget.matchChallengeId ?? '',
     );
     if (mounted) {
       setState(() {
@@ -187,8 +187,8 @@ class _ContestDetails extends State<ContestDetails> with RouteAware {
                     ),
                   ],
                 ),
-          ((contestDetails?.textNote ?? "").isEmpty ||
-                  AppSingleton.singleton.matchData.textNote == "" ||
+          ((contestDetails?.textNote ?? '').isEmpty ||
+                  AppSingleton.singleton.matchData.textNote == '' ||
                   AppSingleton.singleton.matchData.textNote == null)
               ? const SizedBox.shrink()
               : Container(
@@ -196,7 +196,7 @@ class _ContestDetails extends State<ContestDetails> with RouteAware {
                   height: 50,
                   child: Center(
                     child: Marquee(
-                      text: contestDetails?.textNote ?? "",
+                      text: contestDetails?.textNote ?? '',
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         color: AppColors.letterColor,
@@ -271,7 +271,7 @@ class _ContestDetails extends State<ContestDetails> with RouteAware {
                           AppUtils.isSelected.value = true;
                         }
                       },
-                      challengeId: contestDetails?.id ?? "",
+                      challengeId: contestDetails?.id ?? '',
                     ),
                   ],
                 ),

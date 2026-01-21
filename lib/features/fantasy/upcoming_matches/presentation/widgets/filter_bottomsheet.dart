@@ -365,26 +365,26 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                           children: [
                             _sectionTitle(Strings.entryFee),
                             _filterGroup([
-                              "${Strings.indianRupee}0 - ${Strings.indianRupee}50",
-                              "${Strings.indianRupee}51 - ${Strings.indianRupee}100",
-                              "${Strings.indianRupee}101 - ${Strings.indianRupee}1,000",
-                              "${Strings.indianRupee}1001 & above",
-                            ], isGameToken: true),
+                              '${Strings.indianRupee}0 - ${Strings.indianRupee}50',
+                              '${Strings.indianRupee}51 - ${Strings.indianRupee}100',
+                              '${Strings.indianRupee}101 - ${Strings.indianRupee}1,000',
+                              '${Strings.indianRupee}1001 & above',
+                            ], isGameToken: true,),
                             _sectionTitle(Strings.spots),
                             _filterGroup([
-                              "2",
-                              "3 - 10",
-                              "11 - 100",
-                              "101 - 1,000",
-                              "1,001 & above",
+                              '2',
+                              '3 - 10',
+                              '11 - 100',
+                              '101 - 1,000',
+                              '1,001 & above',
                             ]),
                             _sectionTitle(Strings.prizePool),
                             _filterGroup([
-                              "${Strings.indianRupee}1 - ${Strings.indianRupee}10,000",
-                              "${Strings.indianRupee}10,000 - ${Strings.indianRupee}1 Lakh",
-                              "${Strings.indianRupee}1 Lakh - ${Strings.indianRupee}10 Lakh",
-                              "${Strings.indianRupee}10 Lakh - ${Strings.indianRupee}25 Lakh",
-                              "${Strings.indianRupee}25 Lakh or more",
+                              '${Strings.indianRupee}1 - ${Strings.indianRupee}10,000',
+                              '${Strings.indianRupee}10,000 - ${Strings.indianRupee}1 Lakh',
+                              '${Strings.indianRupee}1 Lakh - ${Strings.indianRupee}10 Lakh',
+                              '${Strings.indianRupee}10 Lakh - ${Strings.indianRupee}25 Lakh',
+                              '${Strings.indianRupee}25 Lakh or more',
                             ]),
                             _sectionTitle(Strings.contestType),
                             _filterGroup([
@@ -484,7 +484,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
     bool isSelected = selectedFilters.contains(textValue);
 
     final displayText = isGameToken
-        ? textValue.replaceAll(Strings.indianRupee, "").trim()
+        ? textValue.replaceAll(Strings.indianRupee, '').trim()
         : textValue;
 
     return GestureDetector(

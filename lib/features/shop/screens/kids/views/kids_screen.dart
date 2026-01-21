@@ -48,7 +48,7 @@ class _KidsScreenState extends State<KidsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Kids Collection"),
+        title: const Text('Kids Collection'),
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -58,7 +58,7 @@ class _KidsScreenState extends State<KidsScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       const Icon(Icons.error_outline,
-                          size: 64, color: Colors.grey),
+                          size: 64, color: Colors.grey,),
                       const SizedBox(height: defaultPadding),
                       Text(
                         'Error loading products',
@@ -84,7 +84,7 @@ class _KidsScreenState extends State<KidsScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           const Icon(Icons.child_care,
-                              size: 64, color: Colors.grey),
+                              size: 64, color: Colors.grey,),
                           const SizedBox(height: defaultPadding),
                           Text(
                             'No kids products available',
@@ -115,7 +115,7 @@ class _KidsScreenState extends State<KidsScreen> {
                           press: () {
                             Navigator.pushNamed(
                                 context, productDetailsScreenRoute,
-                                arguments: {'product': _products[index]});
+                                arguments: {'product': _products[index]},);
                           },
                         );
                       },

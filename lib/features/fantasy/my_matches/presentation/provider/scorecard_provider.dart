@@ -4,7 +4,7 @@ import 'package:unified_dream247/features/fantasy/my_matches/data/models/scoreca
 
 class ScorecardProvider extends ChangeNotifier {
   final Map<String, List<ScorecardModel>> _scorecard = {};
-  String? _matchKey = "";
+  String? _matchKey = '';
 
   Map<String, List<ScorecardModel>> get scoreCard => _scorecard;
   String? get matchKey => _matchKey;

@@ -18,7 +18,7 @@ class VerificationTopContainer extends StatelessWidget {
                 radius: 42,
                 child: Image.asset(
                   Images.verificationIcon,
-                ))),
+                ),),),
         const SizedBox(
           height: 8,
         ),
@@ -28,7 +28,7 @@ class VerificationTopContainer extends StatelessWidget {
             style: TextStyle(
                 fontWeight: FontWeight.w700,
                 fontSize: 20,
-                color: AppColors.letterColor),
+                color: AppColors.letterColor,),
           ),
         ),
         const SizedBox(
@@ -39,18 +39,18 @@ class VerificationTopContainer extends StatelessWidget {
           children: [
             RichText(
                 text: const TextSpan(
-                    text: "Let’s ensure you’re ",
+                    text: 'Let’s ensure you’re ',
                     style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w400,
-                        color: AppColors.letterColor),
+                        color: AppColors.letterColor,),
                     children: [
                   TextSpan(
-                    text: "18+ ",
+                    text: '18+ ',
                     style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w700,
-                        color: AppColors.letterColor),
+                        color: AppColors.letterColor,),
                   ),
                   // TextSpan(
                   //   text: "& not from a ",
@@ -66,7 +66,7 @@ class VerificationTopContainer extends StatelessWidget {
                   //       fontWeight: FontWeight.w700,
                   //       color: AppColors.letterColor),
                   // )
-                ])),
+                ],),),
             // const SizedBox(
             //   width: 12,
             // ),
@@ -74,7 +74,7 @@ class VerificationTopContainer extends StatelessWidget {
               Icons.info_outline,
               size: 16,
               color: AppColors.letterColor,
-            )
+            ),
           ],
         ),
         const SizedBox(
@@ -87,7 +87,7 @@ class VerificationTopContainer extends StatelessWidget {
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(18),
-              color: AppColors.mainColor.withAlpha(70)),
+              color: AppColors.mainColor.withAlpha(70),),
           child: const Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -103,17 +103,17 @@ class VerificationTopContainer extends StatelessWidget {
                   style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
-                      color: AppColors.mainColor),
+                      color: AppColors.mainColor,),
                 ),
               ),
               Icon(
                 Icons.star,
                 size: 12,
                 color: AppColors.mainColor,
-              )
+              ),
             ],
           ),
-        )
+        ),
       ],
     );
   }

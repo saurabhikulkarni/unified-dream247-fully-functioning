@@ -1,4 +1,5 @@
 /// GraphQL queries for categories from Hygraph backend
+library;
 
 /// Query to fetch all categories
 const String getAllCategoriesQuery = '''

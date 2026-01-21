@@ -1,4 +1,5 @@
 /// API Server Keys for fantasy gaming backend
+library;
 
 class ApiServerKeys {
   // Request Headers

@@ -21,7 +21,7 @@ class MatchesPage extends StatelessWidget {
               margin: const EdgeInsets.all(16),
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                gradient: LinearGradient(
+                gradient: const LinearGradient(
                   colors: [AppColors.gamingAccent, AppColors.gamingAccentLight],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
@@ -57,14 +57,14 @@ class MatchesPage extends StatelessWidget {
               ),
             ),
             // Match tabs
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16),
               child: Row(
                 children: [
                   _TabButton(label: 'Upcoming', isSelected: true),
-                  const SizedBox(width: 8),
+                  SizedBox(width: 8),
                   _TabButton(label: 'Live'),
-                  const SizedBox(width: 8),
+                  SizedBox(width: 8),
                   _TabButton(label: 'Completed'),
                 ],
               ),
@@ -160,7 +160,7 @@ class _MatchCard extends StatelessWidget {
                   ),
                 ),
                 const Spacer(),
-                Icon(
+                const Icon(
                   Icons.access_time,
                   size: 16,
                   color: AppColors.textSecondary,
@@ -185,7 +185,7 @@ class _MatchCard extends StatelessWidget {
                       Container(
                         width: 48,
                         height: 48,
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           color: AppColors.surfaceVariant,
                           shape: BoxShape.circle,
                         ),
@@ -218,7 +218,7 @@ class _MatchCard extends StatelessWidget {
                       Container(
                         width: 48,
                         height: 48,
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           color: AppColors.surfaceVariant,
                           shape: BoxShape.circle,
                         ),

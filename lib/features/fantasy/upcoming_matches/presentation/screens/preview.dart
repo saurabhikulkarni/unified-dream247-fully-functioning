@@ -62,10 +62,10 @@ class _PreviewState extends State<Preview> {
     getUserTeams();
   }
 
-  getUserTeams() async {
+  Future<void> getUserTeams() async {
     final provider = Provider.of<TeamPreviewProvider>(context, listen: false);
 
-    if ((widget.joinTeamId ?? "").isNotEmpty && widget.mode == "Upcoming") {
+    if ((widget.joinTeamId ?? '').isNotEmpty && widget.mode == 'Upcoming') {
       List<UserTeamsModel>? existingTeams = provider.getUserTeam(
         widget.joinTeamId!,
       );
@@ -88,13 +88,13 @@ class _PreviewState extends State<Preview> {
           userTeamsModel = existingTeams;
         });
       }
-    } else if (widget.mode == "Live" &&
-        widget.title != "${APIServerUrl.appName} Team") {
+    } else if (widget.mode == 'Live' &&
+        widget.title != '${APIServerUrl.appName} Team') {
       var response = await myMatchesUsecases.liveViewTeam(
         context,
-        widget.joinTeamId ?? "",
+        widget.joinTeamId ?? '',
         widget.teamnumber ?? 0,
-        widget.userId ?? "",
+        widget.userId ?? '',
       );
 
       if (response != null) {
@@ -118,15 +118,15 @@ class _PreviewState extends State<Preview> {
           userTeamsModel = finalPlayers;
         });
       } else {
-        debugPrint("View team API returned no data.");
+        debugPrint('View team API returned no data.');
       }
-    } else if (widget.mode == "Completed" &&
-        widget.title != "${APIServerUrl.appName} Team") {
+    } else if (widget.mode == 'Completed' &&
+        widget.title != '${APIServerUrl.appName} Team') {
       var response = await myMatchesUsecases.liveViewTeam(
         context,
-        widget.joinTeamId ?? "",
+        widget.joinTeamId ?? '',
         widget.teamnumber ?? 0,
-        widget.userId ?? "",
+        widget.userId ?? '',
       );
 
       if (response != null) {
@@ -150,7 +150,7 @@ class _PreviewState extends State<Preview> {
           userTeamsModel = finalPlayers;
         });
       } else {
-        debugPrint("View team API returned no data.");
+        debugPrint('View team API returned no data.');
       }
     } else {
       userTeamsModel = widget.data;
@@ -279,7 +279,7 @@ class _PreviewState extends State<Preview> {
                   ),
                 ),
                 Container(
-                  decoration: BoxDecoration(gradient: AppColors.appBarGradient),
+                  decoration: const BoxDecoration(gradient: AppColors.appBarGradient),
                   padding: const EdgeInsets.all(12),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -331,7 +331,7 @@ class _PreviewState extends State<Preview> {
                               vertical: 2,
                             ),
                             child: Text(
-                              AppSingleton.singleton.matchData.team1Name ?? "",
+                              AppSingleton.singleton.matchData.team1Name ?? '',
                               style: GoogleFonts.exo2(
                                 color: AppColors.letterColor,
                                 fontSize: 11,
@@ -377,7 +377,7 @@ class _PreviewState extends State<Preview> {
                               vertical: 2,
                             ),
                             child: Text(
-                              AppSingleton.singleton.matchData.team2Name ?? "",
+                              AppSingleton.singleton.matchData.team2Name ?? '',
                               style: GoogleFonts.exo2(
                                 color: AppColors.white,
                                 fontSize: 11,
@@ -481,7 +481,7 @@ class _PreviewState extends State<Preview> {
           Padding(
             padding: const EdgeInsets.only(bottom: 20, top: 20),
             child: Text(
-              data.fullName ?? "",
+              data.fullName ?? '',
               style: const TextStyle(
                 color: AppColors.white,
                 fontWeight: FontWeight.w400,
@@ -503,8 +503,8 @@ class _PreviewState extends State<Preview> {
                           pageBuilder:
                               (context, animation, secondaryAnimation) =>
                                   PreviewPlayerinfoScreen(
-                            joinTeamId: widget.joinTeamId ?? "",
-                            playerId: player.playerid ?? "",
+                            joinTeamId: widget.joinTeamId ?? '',
+                            playerId: player.playerid ?? '',
                           ),
                           transitionsBuilder: (
                             context,
@@ -530,7 +530,7 @@ class _PreviewState extends State<Preview> {
                             radius: 22.0,
                             child: ClipOval(
                               child: CachedImage(
-                                imageUrl: player.playerimg ?? "",
+                                imageUrl: player.playerimg ?? '',
                                 errorWidget: Image.asset(
                                   Images.imageDefalutPlayer,
                                 ),
@@ -557,7 +557,7 @@ class _PreviewState extends State<Preview> {
                               height: 16,
                               alignment: Alignment.center,
                               decoration: BoxDecoration(
-                                color: (player.team == "team1")
+                                color: (player.team == 'team1')
                                     ? AppColors.letterColor
                                     : AppColors.white,
                                 borderRadius: BorderRadius.circular(8),
@@ -565,7 +565,7 @@ class _PreviewState extends State<Preview> {
                               child: Text(
                                 'C',
                                 style: TextStyle(
-                                  color: (player.team == "team1")
+                                  color: (player.team == 'team1')
                                       ? AppColors.white
                                       : AppColors.letterColor,
                                   fontSize: 8,
@@ -582,7 +582,7 @@ class _PreviewState extends State<Preview> {
                               height: 16,
                               alignment: Alignment.center,
                               decoration: BoxDecoration(
-                                color: (player.team == "team1")
+                                color: (player.team == 'team1')
                                     ? AppColors.letterColor
                                     : AppColors.white,
                                 borderRadius: BorderRadius.circular(8),
@@ -590,7 +590,7 @@ class _PreviewState extends State<Preview> {
                               child: Text(
                                 'VC',
                                 style: TextStyle(
-                                  color: (player.team! == "team1")
+                                  color: (player.team! == 'team1')
                                       ? AppColors.white
                                       : AppColors.letterColor,
                                   fontSize: 8,
@@ -610,7 +610,7 @@ class _PreviewState extends State<Preview> {
                           horizontal: 10,
                         ),
                         decoration: BoxDecoration(
-                          color: (player.team! == "team1")
+                          color: (player.team! == 'team1')
                               ? AppColors.white
                               : AppColors.letterColor,
                           borderRadius: BorderRadius.circular(5),
@@ -622,7 +622,7 @@ class _PreviewState extends State<Preview> {
                           style: GoogleFonts.exo2(
                             fontWeight: FontWeight.w400,
                             fontSize: 10,
-                            color: (player.team! == "team1")
+                            color: (player.team! == 'team1')
                                 ? AppColors.letterColor
                                 : AppColors.white,
                           ),
@@ -631,7 +631,7 @@ class _PreviewState extends State<Preview> {
                       Text(
                         (widget.mode == 'Upcoming')
                             ? '${player.credit} Cr'
-                            : "${player.points} pts",
+                            : '${player.points} pts',
                         overflow: TextOverflow.ellipsis,
                         textAlign: TextAlign.center,
                         style: GoogleFonts.tomorrow(
@@ -662,7 +662,7 @@ class _PreviewState extends State<Preview> {
                               pageBuilder:
                                   (context, animation, secondaryAnimation) =>
                                       PreviewPlayerinfoScreen(
-                                joinTeamId: widget.joinTeamId ?? "",
+                                joinTeamId: widget.joinTeamId ?? '',
                               ),
                               transitionsBuilder: (
                                 context,
@@ -703,7 +703,7 @@ class _PreviewState extends State<Preview> {
                                   height: 16,
                                   alignment: Alignment.center,
                                   decoration: BoxDecoration(
-                                    color: (player.team! == "team1")
+                                    color: (player.team! == 'team1')
                                         ? AppColors.letterColor
                                         : AppColors.white,
                                     borderRadius: BorderRadius.circular(8),
@@ -711,7 +711,7 @@ class _PreviewState extends State<Preview> {
                                   child: Text(
                                     'C',
                                     style: TextStyle(
-                                      color: (player.team! == "team1")
+                                      color: (player.team! == 'team1')
                                           ? AppColors.white
                                           : AppColors.letterColor,
                                       fontSize: 8,
@@ -728,7 +728,7 @@ class _PreviewState extends State<Preview> {
                                   height: 16,
                                   alignment: Alignment.center,
                                   decoration: BoxDecoration(
-                                    color: (player.team! == "team1")
+                                    color: (player.team! == 'team1')
                                         ? AppColors.letterColor
                                         : AppColors.white,
                                     borderRadius: BorderRadius.circular(8),
@@ -736,7 +736,7 @@ class _PreviewState extends State<Preview> {
                                   child: Text(
                                     'VC',
                                     style: TextStyle(
-                                      color: (player.team! == "team1")
+                                      color: (player.team! == 'team1')
                                           ? AppColors.white
                                           : AppColors.letterColor,
                                       fontSize: 8,
@@ -756,7 +756,7 @@ class _PreviewState extends State<Preview> {
                               horizontal: 10,
                             ),
                             decoration: BoxDecoration(
-                              color: (player.team! == "team1")
+                              color: (player.team! == 'team1')
                                   ? AppColors.white
                                   : AppColors.letterColor,
                               borderRadius: BorderRadius.circular(5),
@@ -768,7 +768,7 @@ class _PreviewState extends State<Preview> {
                               style: GoogleFonts.exo2(
                                 fontWeight: FontWeight.w400,
                                 fontSize: 10,
-                                color: (player.team! == "team1")
+                                color: (player.team! == 'team1')
                                     ? AppColors.letterColor
                                     : AppColors.white,
                               ),
@@ -777,7 +777,7 @@ class _PreviewState extends State<Preview> {
                           Text(
                             (widget.mode == 'Upcoming')
                                 ? '${player.credit} Cr'
-                                : "${player.points} pts",
+                                : '${player.points} pts',
                             overflow: TextOverflow.ellipsis,
                             textAlign: TextAlign.center,
                             style: GoogleFonts.tomorrow(

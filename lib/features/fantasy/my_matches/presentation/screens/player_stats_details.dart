@@ -53,11 +53,11 @@ class _PlayerStatsDetailsState extends State<PlayerStatsDetails> {
                     enlargeCenterPage: true,
                     autoPlay: false,
                     enableInfiniteScroll:
-                        (widget.fantasyType == "Cricket") ? true : false,
+                        (widget.fantasyType == 'Cricket') ? true : false,
                     viewportFraction: 0.83,
                     scrollPhysics: const AlwaysScrollableScrollPhysics(),
                   ),
-                  itemCount: (widget.fantasyType == "Cricket")
+                  itemCount: (widget.fantasyType == 'Cricket')
                       ? widget.list?.length
                       : 1,
                   itemBuilder: (context, index, realIndex) {
@@ -355,8 +355,8 @@ class _PlayerStatsDetailsState extends State<PlayerStatsDetails> {
                                                               .list?[index]
                                                               .card?[cardIndex]
                                                               .type ==
-                                                          "Ball Faced")
-                                                      ? "NA"
+                                                          'Ball Faced')
+                                                      ? 'NA'
                                                       : '${widget.list?[index].card?[cardIndex].points ?? "0"}',
                                                   style: GoogleFonts.tomorrow(
                                                     fontWeight: FontWeight.w600,
@@ -390,11 +390,11 @@ class _PlayerStatsDetailsState extends State<PlayerStatsDetails> {
                     enlargeCenterPage: true,
                     autoPlay: false,
                     enableInfiniteScroll:
-                        (widget.fantasyType == "Cricket") ? true : false,
+                        (widget.fantasyType == 'Cricket') ? true : false,
                     viewportFraction: 0.83,
                     scrollPhysics: const AlwaysScrollableScrollPhysics(),
                   ),
-                  itemCount: (widget.fantasyType == "Cricket") ? 11 : 1,
+                  itemCount: (widget.fantasyType == 'Cricket') ? 11 : 1,
                   itemBuilder: (context, index, realIndex) {
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -456,7 +456,7 @@ class _PlayerStatsDetailsState extends State<PlayerStatsDetails> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          "---",
+                                          '---',
                                           style: GoogleFonts.exo2(
                                             color: AppColors.white,
                                             fontSize: 15,
@@ -465,7 +465,7 @@ class _PlayerStatsDetailsState extends State<PlayerStatsDetails> {
                                           overflow: TextOverflow.ellipsis,
                                         ),
                                         Text(
-                                          "---",
+                                          '---',
                                           style: GoogleFonts.exo2(
                                             color: AppColors.white,
                                             fontSize: 14,

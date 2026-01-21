@@ -1,4 +1,5 @@
 /// GraphQL mutations for cart operations
+library;
 
 /// Mutation to add item to cart
 const String addToCartMutation = '''

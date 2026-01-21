@@ -84,12 +84,12 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
         : (paymentOption == MoneyTransfer.p2pTransfer)
             ? double.tryParse(
                   AppSingleton.singleton.appData.ptoptransfer?.min.toString() ??
-                      "0",
+                      '0',
                 ) ??
                 0.0
             : double.tryParse(
                   AppSingleton.singleton.appData.selftransfer?.min.toString() ??
-                      "0",
+                      '0',
                 ) ??
                 0.0;
     double maxWithdraw = (paymentOption == MoneyTransfer.bankTransfer)
@@ -100,12 +100,12 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
         : (paymentOption == MoneyTransfer.p2pTransfer)
             ? double.tryParse(
                   AppSingleton.singleton.appData.ptoptransfer?.max.toString() ??
-                      "0",
+                      '0',
                 ) ??
                 0.0
             : double.tryParse(
                   AppSingleton.singleton.appData.selftransfer?.max.toString() ??
-                      "0",
+                      '0',
                 ) ??
                 0.0;
     double availableBalance = double.parse(
@@ -113,7 +113,7 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
             context,
             listen: false,
           ).walletData?.winning ??
-          "0",
+          '0',
     );
 
     if (amount < minWithdraw) {
@@ -153,15 +153,15 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
             .then((value) {
           if (value != null) {
             String netAmount =
-                ModelParsers.toStringParser(value["data"]["netAmount"]) ??
-                    "0.00";
+                ModelParsers.toStringParser(value['data']['netAmount']) ??
+                    '0.00';
             String tdsAmount =
-                ModelParsers.toStringParser(value["data"]["tdsAmount"]) ??
-                    "0.00";
+                ModelParsers.toStringParser(value['data']['tdsAmount']) ??
+                    '0.00';
             String withdrawalAmount = ModelParsers.toStringParser(
-                  value["data"]["withdrawalAmount"],
+                  value['data']['withdrawalAmount'],
                 ) ??
-                "0.00";
+                '0.00';
 
             showModalBottomSheet(
               isDismissible: false,
@@ -179,8 +179,8 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                     tdsAmount: tdsAmount,
                     netAmount: netAmount,
                     withdrawalAmount: withdrawalAmount,
-                    bankName: kycDetailsModel?.bank?.bankname ?? "",
-                    accNo: kycDetailsModel?.bank?.accno ?? "",
+                    bankName: kycDetailsModel?.bank?.bankname ?? '',
+                    accNo: kycDetailsModel?.bank?.accno ?? '',
                   ),
                 );
               },
@@ -196,13 +196,13 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
           .then((value) {
         if (value != null) {
           String netAmount =
-              ModelParsers.toStringParser(value["data"]["netAmount"]) ?? "0.00";
+              ModelParsers.toStringParser(value['data']['netAmount']) ?? '0.00';
           String tdsAmount =
-              ModelParsers.toStringParser(value["data"]["tdsAmount"]) ?? "0.00";
+              ModelParsers.toStringParser(value['data']['tdsAmount']) ?? '0.00';
           String withdrawalAmount = ModelParsers.toStringParser(
-                value["data"]["withdrawalAmount"],
+                value['data']['withdrawalAmount'],
               ) ??
-              "0.00";
+              '0.00';
 
           showModalBottomSheet(
             isDismissible: false,
@@ -220,8 +220,8 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                   tdsAmount: tdsAmount,
                   netAmount: netAmount,
                   withdrawalAmount: withdrawalAmount,
-                  bankName: kycDetailsModel?.bank?.bankname ?? "",
-                  accNo: kycDetailsModel?.bank?.accno ?? "",
+                  bankName: kycDetailsModel?.bank?.bankname ?? '',
+                  accNo: kycDetailsModel?.bank?.accno ?? '',
                 ),
               );
             },
@@ -255,9 +255,9 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
               ),
               child: Text(
                 (paymentOption == MoneyTransfer.walletTransfer)
-                    ? "*Winning Amount Instantly Transfer to your Deposit Wallet"
+                    ? '*Winning Amount Instantly Transfer to your Deposit Wallet'
                     : (paymentOption == MoneyTransfer.bankTransfer)
-                        ? "*Winning Amount Instantly Transfer to your Bank Account"
+                        ? '*Winning Amount Instantly Transfer to your Bank Account'
                         : "*Winning Amount Instantly Transfer to your Friend's Wallet",
                 textAlign: TextAlign.center,
                 style: const TextStyle(
@@ -371,7 +371,7 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                             controller: _amountController,
                             decoration: InputDecoration(
                               counterText: '',
-                              hintText: "0",
+                              hintText: '0',
                               prefix: const Text(
                                 Strings.indianRupee,
                                 style: TextStyle(
@@ -482,14 +482,14 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                 const SizedBox(height: 30),
                 MainButton(
                   text: 'Withdraw Now',
-                  onTap: (_errorText == null && _amountController.text != "")
+                  onTap: (_errorText == null && _amountController.text != '')
                       ? requestWithdraw
                       : null,
-                  color: (_errorText == null && _amountController.text != "")
+                  color: (_errorText == null && _amountController.text != '')
                       ? AppColors.green
                       : AppColors.whiteFade1,
                   textColor:
-                      (_errorText == null && _amountController.text != "")
+                      (_errorText == null && _amountController.text != '')
                           ? AppColors.white
                           : const Color(0xffbcc5d3),
                 ),
@@ -516,7 +516,7 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
               });
             }
           : () {
-              appToast("$title is temporarily unavailable for now.", context);
+              appToast('$title is temporarily unavailable for now.', context);
             },
       child: Stack(
         children: [
@@ -583,11 +583,11 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
                     child: Transform.rotate(
                       angle: -pi / 4,
                       child: Text(
-                        (title == "Wallet Transfer")
+                        (title == 'Wallet Transfer')
                             ? "${AppSingleton.singleton.appData.winningDepositCashback ?? "10"}% Cashback"
-                            : (title == "P2P Transfer")
+                            : (title == 'P2P Transfer')
                                 ? "${AppSingleton.singleton.appData.p2pCashback ?? "8"}% Cashback"
-                                : "",
+                                : '',
                         style: const TextStyle(
                           color: AppColors.white,
                           fontSize: 7,
@@ -610,7 +610,7 @@ class _WithdrawScreenState extends State<WithdrawScreen> {
     switch (paymentOption) {
       case MoneyTransfer.bankTransfer:
         return BankTransferWidget(
-          bankAccNo: kycDetailsModel?.bank?.accno ?? "",
+          bankAccNo: kycDetailsModel?.bank?.accno ?? '',
         );
       case MoneyTransfer.walletTransfer:
         return WalletTransferWidget(amount: _amountController.text);

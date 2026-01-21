@@ -66,8 +66,8 @@ class _ContestPageState extends State<ContestPage>
           title: Row(
             children: [
               Icon(Icons.sports_esports,
-                  color: AppColors.lightGreen.withAlpha(200)),
-              SizedBox(width: 8),
+                  color: AppColors.lightGreen.withAlpha(200),),
+              const SizedBox(width: 8),
               Text(
                 'Time Over!',
                 style: TextStyle(
@@ -233,7 +233,7 @@ class _ContestPageState extends State<ContestPage>
                       listen: false,
                     ).updateMyTeams(
                       updatedTeams,
-                      AppSingleton.singleton.matchData.id ?? "",
+                      AppSingleton.singleton.matchData.id ?? '',
                     );
                   }
                 },

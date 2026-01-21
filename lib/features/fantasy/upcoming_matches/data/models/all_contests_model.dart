@@ -100,71 +100,71 @@ class AllNewContestResponseModel {
   });
 
   AllNewContestResponseModel.fromJson(Map<String, dynamic> json) {
-    id = ModelParsers.toStringParser(json["_id"]);
-    name = ModelParsers.toStringParser(json["name"]);
-    subTitle = ModelParsers.toStringParser(json["sub_title"]);
-    image = ModelParsers.toStringParser(json["image"]);
-    type = ModelParsers.toStringParser(json["type"]);
-    catid = ModelParsers.toStringParser(json["catid"]);
+    id = ModelParsers.toStringParser(json['_id']);
+    name = ModelParsers.toStringParser(json['name']);
+    subTitle = ModelParsers.toStringParser(json['sub_title']);
+    image = ModelParsers.toStringParser(json['image']);
+    type = ModelParsers.toStringParser(json['type']);
+    catid = ModelParsers.toStringParser(json['catid']);
     isPromoCodeContest = ModelParsers.toBoolParser(
-      json["is_PromoCode_Contest"],
+      json['is_PromoCode_Contest'],
     );
-    contestCat = ModelParsers.toStringParser(json["contest_cat"]);
-    challengeId = ModelParsers.toStringParser(json["challenge_id"]);
-    entryfee = ModelParsers.toIntParser(json["entryfee"]);
-    winAmount = ModelParsers.toNumParser(json["win_amount"]);
-    maximumUser = ModelParsers.toNumParser(json["maximum_user"]);
-    joinedusers = ModelParsers.toIntParser(json["joinedusers"]);
-    contestType = ModelParsers.toStringParser(json["contest_type"]);
-    amountType = ModelParsers.toStringParser(json["amount_type"]);
-    winningPercentage = ModelParsers.toNumParser(json["winning_percentage"]);
-    isBonus = ModelParsers.toIntParser(json["is_bonus"]);
-    bonusPercentage = ModelParsers.toIntParser(json["bonus_percentage"]);
-    pricecardType = ModelParsers.toStringParser(json["pricecard_type"]);
-    minimumUser = ModelParsers.toIntParser(json["minimum_user"]);
-    confirmedChallenge = ModelParsers.toIntParser(json["confirmed_challenge"]);
-    multiEntry = ModelParsers.toIntParser(json["multi_entry"]);
-    teamLimit = ModelParsers.toIntParser(json["team_limit"]);
-    cType = ModelParsers.toStringParser(json["c_type"]);
-    isPrivate = ModelParsers.toIntParser(json["is_private"]);
+    contestCat = ModelParsers.toStringParser(json['contest_cat']);
+    challengeId = ModelParsers.toStringParser(json['challenge_id']);
+    entryfee = ModelParsers.toIntParser(json['entryfee']);
+    winAmount = ModelParsers.toNumParser(json['win_amount']);
+    maximumUser = ModelParsers.toNumParser(json['maximum_user']);
+    joinedusers = ModelParsers.toIntParser(json['joinedusers']);
+    contestType = ModelParsers.toStringParser(json['contest_type']);
+    amountType = ModelParsers.toStringParser(json['amount_type']);
+    winningPercentage = ModelParsers.toNumParser(json['winning_percentage']);
+    isBonus = ModelParsers.toIntParser(json['is_bonus']);
+    bonusPercentage = ModelParsers.toIntParser(json['bonus_percentage']);
+    pricecardType = ModelParsers.toStringParser(json['pricecard_type']);
+    minimumUser = ModelParsers.toIntParser(json['minimum_user']);
+    confirmedChallenge = ModelParsers.toIntParser(json['confirmed_challenge']);
+    multiEntry = ModelParsers.toIntParser(json['multi_entry']);
+    teamLimit = ModelParsers.toIntParser(json['team_limit']);
+    cType = ModelParsers.toStringParser(json['c_type']);
+    isPrivate = ModelParsers.toIntParser(json['is_private']);
     winningpriceAndPrize = ModelParsers.toStringParser(
-      json["WinningpriceAndPrize"],
+      json['WinningpriceAndPrize'],
     );
-    discountFee = ModelParsers.toIntParser(json["discount_fee"]);
-    matchpricecards = json["matchpricecard"] == null
+    discountFee = ModelParsers.toIntParser(json['discount_fee']);
+    matchpricecards = json['matchpricecard'] == null
         ? []
         : List<Matchpricecards>.from(
-            json["matchpricecard"]!.map((x) => Matchpricecards.fromJson(x)),
+            json['matchpricecard']!.map((x) => Matchpricecards.fromJson(x)),
           );
-    userTeams = json["userTeams"] == null
+    userTeams = json['userTeams'] == null
         ? null
-        : (json["userTeams"] as List)
+        : (json['userTeams'] as List)
             .map((e) => UserTeams.fromJson(e))
             .toList();
-    isselected = ModelParsers.toBoolParser(json["isselected"]);
-    refercode = ModelParsers.toStringParser(json["refercode"]);
-    matchchallengeid = ModelParsers.toStringParser(json["matchchallengeid"]);
-    totalJoinedcontest = ModelParsers.toIntParser(json["total_joinedcontest"]);
-    totalTeams = ModelParsers.toIntParser(json["total_teams"]);
-    totalwinners = ModelParsers.toNumParser(json["totalwinners"]);
-    flexibleContest = ModelParsers.toStringParser(json["flexible_contest"]);
-    conditionalContest = ModelParsers.toIntParser(json["conditional_contest"]);
-    mandatoryContest = ModelParsers.toStringParser(json["mandatoryContest"]);
-    textNote = ModelParsers.toStringParser(json["textNote"]);
-    pricesCards = json["price_card"] == null
+    isselected = ModelParsers.toBoolParser(json['isselected']);
+    refercode = ModelParsers.toStringParser(json['refercode']);
+    matchchallengeid = ModelParsers.toStringParser(json['matchchallengeid']);
+    totalJoinedcontest = ModelParsers.toIntParser(json['total_joinedcontest']);
+    totalTeams = ModelParsers.toIntParser(json['total_teams']);
+    totalwinners = ModelParsers.toNumParser(json['totalwinners']);
+    flexibleContest = ModelParsers.toStringParser(json['flexible_contest']);
+    conditionalContest = ModelParsers.toIntParser(json['conditional_contest']);
+    mandatoryContest = ModelParsers.toStringParser(json['mandatoryContest']);
+    textNote = ModelParsers.toStringParser(json['textNote']);
+    pricesCards = json['price_card'] == null
         ? null
-        : PriceCards.fromJson(json["price_card"]);
-    bonusType = ModelParsers.toStringParser(json["bonus_type"]);
-    pdfDownloadStatus = ModelParsers.toIntParser(json["pdfDownloadStatus"]);
-    status = ModelParsers.toStringParser(json["status"]);
-    megaStatus = ModelParsers.toStringParser(json["mega_status"]);
-    compress = ModelParsers.toBoolParser(json["compress"]);
+        : PriceCards.fromJson(json['price_card']);
+    bonusType = ModelParsers.toStringParser(json['bonus_type']);
+    pdfDownloadStatus = ModelParsers.toIntParser(json['pdfDownloadStatus']);
+    status = ModelParsers.toStringParser(json['status']);
+    megaStatus = ModelParsers.toStringParser(json['mega_status']);
+    compress = ModelParsers.toBoolParser(json['compress']);
     extrapricecard = json['extrapricecard'] == null
         ? null
         : List<Extrapricecard>.from(
-            json["extrapricecard"]!.map((x) => Extrapricecard.fromJson(x)),
+            json['extrapricecard']!.map((x) => Extrapricecard.fromJson(x)),
           );
-    teamType = ModelParsers.toStringParser(json["team_type_name"]);
+    teamType = ModelParsers.toStringParser(json['team_type_name']);
   }
 }
 
@@ -190,14 +190,14 @@ class UserTeams {
   });
 
   UserTeams.fromJson(Map<String, dynamic> json) {
-    id = ModelParsers.toStringParser(json["_id"]);
-    teamId = ModelParsers.toStringParser(json["teamId"]);
-    captain = ModelParsers.toStringParser(json["captain"]);
-    vicecaptain = ModelParsers.toStringParser(json["vicecaptain"]);
-    points = ModelParsers.toNumParser(json["points"]);
-    teamnumber = ModelParsers.toIntParser(json["teamnumber"]);
-    rank = ModelParsers.toIntParser(json["rank"]);
-    amount = ModelParsers.toIntParser(json["amount"]);
+    id = ModelParsers.toStringParser(json['_id']);
+    teamId = ModelParsers.toStringParser(json['teamId']);
+    captain = ModelParsers.toStringParser(json['captain']);
+    vicecaptain = ModelParsers.toStringParser(json['vicecaptain']);
+    points = ModelParsers.toNumParser(json['points']);
+    teamnumber = ModelParsers.toIntParser(json['teamnumber']);
+    rank = ModelParsers.toIntParser(json['rank']);
+    amount = ModelParsers.toIntParser(json['amount']);
   }
 }
 
@@ -228,16 +228,16 @@ class Matchpricecards {
 
   factory Matchpricecards.fromJson(Map<String, dynamic> json) =>
       Matchpricecards(
-        id: ModelParsers.toStringParser(json["id"]),
-        winners: ModelParsers.toStringParser(json["winners"]),
-        total: ModelParsers.toNumParser(json["total"]),
-        price: ModelParsers.toNumParser(json["price"]),
-        giftType: ModelParsers.toStringParser(json["gift_type"]),
-        image: ModelParsers.toStringParser(json["image"]),
-        startPosition: ModelParsers.toStringParser(json["start_position"]),
-        amountType: ModelParsers.toStringParser(json["amount_type"]),
-        minPosition: ModelParsers.toIntParser(json["min_position"]),
-        maxPosition: ModelParsers.toIntParser(json["max_position"]),
+        id: ModelParsers.toStringParser(json['id']),
+        winners: ModelParsers.toStringParser(json['winners']),
+        total: ModelParsers.toNumParser(json['total']),
+        price: ModelParsers.toNumParser(json['price']),
+        giftType: ModelParsers.toStringParser(json['gift_type']),
+        image: ModelParsers.toStringParser(json['image']),
+        startPosition: ModelParsers.toStringParser(json['start_position']),
+        amountType: ModelParsers.toStringParser(json['amount_type']),
+        minPosition: ModelParsers.toIntParser(json['min_position']),
+        maxPosition: ModelParsers.toIntParser(json['max_position']),
       );
 }
 
@@ -278,10 +278,10 @@ class PriceCards {
   PriceCards({this.total, this.giftType, this.price, this.image});
 
   factory PriceCards.fromJson(Map<String, dynamic> json) => PriceCards(
-        total: ModelParsers.toStringParser(json["total"]),
-        giftType: ModelParsers.toStringParser(json["gift_type"]),
-        price: ModelParsers.toStringParser(json["price"]),
-        image: ModelParsers.toStringParser(json["image"]),
+        total: ModelParsers.toStringParser(json['total']),
+        giftType: ModelParsers.toStringParser(json['gift_type']),
+        price: ModelParsers.toStringParser(json['price']),
+        image: ModelParsers.toStringParser(json['image']),
       );
 }
 
@@ -429,88 +429,88 @@ class AllContestResponseModel {
     Map<String, dynamic> json,
   ) =>
       AllContestResponseModel(
-        id: ModelParsers.toStringParser(json["_id"]),
-        datumFantasyType: ModelParsers.toStringParser(json["fantasy_type"]),
-        name: ModelParsers.toStringParser(json["name"]),
-        subTitle: ModelParsers.toStringParser(json["sub_title"]),
-        order: ModelParsers.toIntParser(json["Order"]),
-        image: ModelParsers.toStringParser(json["image"]),
-        tblOrder: ModelParsers.toIntParser(json["tbl_order"]),
-        hasLeaderBoard: ModelParsers.toStringParser(json["has_leaderBoard"]),
-        megaStatus: ModelParsers.toBoolParser(json["megaStatus"]),
-        createdAt: json["createdAt"] == null
+        id: ModelParsers.toStringParser(json['_id']),
+        datumFantasyType: ModelParsers.toStringParser(json['fantasy_type']),
+        name: ModelParsers.toStringParser(json['name']),
+        subTitle: ModelParsers.toStringParser(json['sub_title']),
+        order: ModelParsers.toIntParser(json['Order']),
+        image: ModelParsers.toStringParser(json['image']),
+        tblOrder: ModelParsers.toIntParser(json['tbl_order']),
+        hasLeaderBoard: ModelParsers.toStringParser(json['has_leaderBoard']),
+        megaStatus: ModelParsers.toBoolParser(json['megaStatus']),
+        createdAt: json['createdAt'] == null
             ? null
-            : DateTime.parse(json["createdAt"]),
-        updatedAt: json["updatedAt"] == null
+            : DateTime.parse(json['createdAt']),
+        updatedAt: json['updatedAt'] == null
             ? null
-            : DateTime.parse(json["updatedAt"]),
-        contestCat: ModelParsers.toStringParser(json["contest_cat"]),
-        matchChallengeId: ModelParsers.toStringParser(json["id"]),
-        fantasyType: ModelParsers.toStringParser(json["fantasyType"]),
-        type: ModelParsers.toStringParser(json["type"]),
+            : DateTime.parse(json['updatedAt']),
+        contestCat: ModelParsers.toStringParser(json['contest_cat']),
+        matchChallengeId: ModelParsers.toStringParser(json['id']),
+        fantasyType: ModelParsers.toStringParser(json['fantasyType']),
+        type: ModelParsers.toStringParser(json['type']),
         isPromoCodeContest:
-            ModelParsers.toBoolParser(json["isPromoCodeContest"]),
-        challengeId: ModelParsers.toStringParser(json["challengeId"]),
-        matchkey: ModelParsers.toStringParser(json["matchkey"]),
-        entryfee: ModelParsers.toIntParser(json["entryfee"]),
-        winAmount: ModelParsers.toNumParser(json["winAmount"]),
-        maximumUser: ModelParsers.toNumParser(json["maximumUser"]),
-        joinedusers: ModelParsers.toNumParser(json["joinedusers"]),
-        contestType: ModelParsers.toStringParser(json["contestType"]),
-        winningPercentage: ModelParsers.toNumParser(json["winningPercentage"]),
-        isBonus: ModelParsers.toIntParser(json["isBonus"]),
-        bonusPercentage: ModelParsers.toIntParser(json["bonusPercentage"]),
-        bonusType: ModelParsers.toStringParser(json["bonus_type"]),
+            ModelParsers.toBoolParser(json['isPromoCodeContest']),
+        challengeId: ModelParsers.toStringParser(json['challengeId']),
+        matchkey: ModelParsers.toStringParser(json['matchkey']),
+        entryfee: ModelParsers.toIntParser(json['entryfee']),
+        winAmount: ModelParsers.toNumParser(json['winAmount']),
+        maximumUser: ModelParsers.toNumParser(json['maximumUser']),
+        joinedusers: ModelParsers.toNumParser(json['joinedusers']),
+        contestType: ModelParsers.toStringParser(json['contestType']),
+        winningPercentage: ModelParsers.toNumParser(json['winningPercentage']),
+        isBonus: ModelParsers.toIntParser(json['isBonus']),
+        bonusPercentage: ModelParsers.toIntParser(json['bonusPercentage']),
+        bonusType: ModelParsers.toStringParser(json['bonus_type']),
         confirmedChallenge:
-            ModelParsers.toIntParser(json["confirmedChallenge"]),
-        multiEntry: ModelParsers.toIntParser(json["multiEntry"]),
-        teamLimit: ModelParsers.toIntParser(json["teamLimit"]),
-        isPrivate: ModelParsers.toIntParser(json["isPrivate"]),
-        discountFee: ModelParsers.toIntParser(json["discountFee"]),
-        priceCard: json["price_card"] != null
-            ? PriceCards.fromJson(json["price_card"])
-            : (json["matchpricecards"] != null &&
-                    json["matchpricecards"] is List &&
-                    json["matchpricecards"].isNotEmpty)
-                ? PriceCards.fromJson(json["matchpricecards"][0])
+            ModelParsers.toIntParser(json['confirmedChallenge']),
+        multiEntry: ModelParsers.toIntParser(json['multiEntry']),
+        teamLimit: ModelParsers.toIntParser(json['teamLimit']),
+        isPrivate: ModelParsers.toIntParser(json['isPrivate']),
+        discountFee: ModelParsers.toIntParser(json['discountFee']),
+        priceCard: json['price_card'] != null
+            ? PriceCards.fromJson(json['price_card'])
+            : (json['matchpricecards'] != null &&
+                    json['matchpricecards'] is List &&
+                    json['matchpricecards'].isNotEmpty)
+                ? PriceCards.fromJson(json['matchpricecards'][0])
                 : null,
-        totalwinners: ModelParsers.toNumParser(json["totalwinners"]),
-        flexibleContest: ModelParsers.toStringParser(json["flexibleContest"]),
+        totalwinners: ModelParsers.toNumParser(json['totalwinners']),
+        flexibleContest: ModelParsers.toStringParser(json['flexibleContest']),
         conditionalContest:
-            ModelParsers.toIntParser(json["conditionalContest"]),
-        mandatoryContest: ModelParsers.toStringParser(json["mandatoryContest"]),
-        textNote: ModelParsers.toStringParser(json["textNote"]),
-        isselected: ModelParsers.toBoolParser(json["isselected"]),
-        refercode: ModelParsers.toStringParser(json["refercode"]),
+            ModelParsers.toIntParser(json['conditionalContest']),
+        mandatoryContest: ModelParsers.toStringParser(json['mandatoryContest']),
+        textNote: ModelParsers.toStringParser(json['textNote']),
+        isselected: ModelParsers.toBoolParser(json['isselected']),
+        refercode: ModelParsers.toStringParser(json['refercode']),
         totalJoinedcontest:
-            ModelParsers.toIntParser(json["totalJoinedcontest"]),
-        totalTeams: ModelParsers.toIntParser(json["totalTeams"]),
-        compress: ModelParsers.toBoolParser(json["compress"]),
-        matchpricecards: json["matchpricecards"] == null
+            ModelParsers.toIntParser(json['totalJoinedcontest']),
+        totalTeams: ModelParsers.toIntParser(json['totalTeams']),
+        compress: ModelParsers.toBoolParser(json['compress']),
+        matchpricecards: json['matchpricecards'] == null
             ? []
-            : (json["matchpricecards"] is List)
+            : (json['matchpricecards'] is List)
                 ? List<PriceCards>.from(
-                    json["matchpricecards"].map((x) => PriceCards.fromJson(x)),
+                    json['matchpricecards'].map((x) => PriceCards.fromJson(x)),
                   )
-                : [PriceCards.fromJson(json["matchpricecards"])],
-        matchpricecard: json["matchpricecard"] == null
+                : [PriceCards.fromJson(json['matchpricecards'])],
+        matchpricecard: json['matchpricecard'] == null
             ? []
-            : (json["matchpricecard"] is List)
+            : (json['matchpricecard'] is List)
                 ? List<Matchpricecards>.from(
-                    json["matchpricecard"]
+                    json['matchpricecard']
                         .map((x) => Matchpricecards.fromJson(x)),
                   )
-                : [Matchpricecards.fromJson(json["matchpricecard"])],
-        userTeams: json["userTeams"] == null
+                : [Matchpricecards.fromJson(json['matchpricecard'])],
+        userTeams: json['userTeams'] == null
             ? null
-            : (json["userTeams"] as List)
+            : (json['userTeams'] as List)
                 .map((e) => UserTeams.fromJson(e))
                 .toList(),
         extrapricecard: json['extrapricecard'] == null
             ? null
             : List<Extrapricecard>.from(
-                json["extrapricecard"]!.map((x) => Extrapricecard.fromJson(x)),
+                json['extrapricecard']!.map((x) => Extrapricecard.fromJson(x)),
               ),
-        teamType: ModelParsers.toStringParser(json["team_type_name"]),
+        teamType: ModelParsers.toStringParser(json['team_type_name']),
       );
 }

@@ -172,10 +172,10 @@ class _OtpVerificationViewState extends State<_OtpVerificationView> {
                       height: 100,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                        gradient: LinearGradient(
+                        gradient: const LinearGradient(
                           colors: [
-                            const Color(0xFF6441A5),
-                            const Color(0xFF472575),
+                            Color(0xFF6441A5),
+                            Color(0xFF472575),
                           ],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,

@@ -4,7 +4,7 @@ import 'package:unified_dream247/features/fantasy/my_matches/data/models/live_ch
 
 class JoinedLiveContestProvider extends ChangeNotifier {
   final Map<String, LiveChallengesModel> _joinedContest = {};
-  String? _matchKey = "";
+  String? _matchKey = '';
 
   Map<String, LiveChallengesModel> get joinedContest => _joinedContest;
   String? get matchKey => _matchKey;

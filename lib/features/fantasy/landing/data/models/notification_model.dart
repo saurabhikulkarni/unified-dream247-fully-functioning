@@ -20,12 +20,12 @@ class NotificationModel {
   });
 
   NotificationModel.fromJson(Map<String, dynamic> json) {
-    id = ModelParsers.toStringParser(json["_id"]);
-    userid = ModelParsers.toStringParser(json["userid"]);
-    title = ModelParsers.toStringParser(json["title"]);
-    seen = ModelParsers.toIntParser(json["seen"]);
-    module = ModelParsers.toStringParser(json["module"]);
-    createdAt = ModelParsers.toStringParser(json["createdAt"]);
-    updatedAt = ModelParsers.toStringParser(json["updatedAt"]);
+    id = ModelParsers.toStringParser(json['_id']);
+    userid = ModelParsers.toStringParser(json['userid']);
+    title = ModelParsers.toStringParser(json['title']);
+    seen = ModelParsers.toIntParser(json['seen']);
+    module = ModelParsers.toStringParser(json['module']);
+    createdAt = ModelParsers.toStringParser(json['createdAt']);
+    updatedAt = ModelParsers.toStringParser(json['updatedAt']);
   }
 }

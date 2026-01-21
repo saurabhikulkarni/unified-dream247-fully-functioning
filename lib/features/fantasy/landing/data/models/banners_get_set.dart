@@ -14,10 +14,10 @@ class BannersGetSet {
   });
 
   factory BannersGetSet.fromJson(Map<String, dynamic> json) => BannersGetSet(
-        type: json["type"],
-        bannerType: json["bannerType"],
-        image: json["image"],
-        url: json["url"],
-        sliderid: json["sliderid"],
+        type: json['type'],
+        bannerType: json['bannerType'],
+        image: json['image'],
+        url: json['url'],
+        sliderid: json['sliderid'],
       );
 }

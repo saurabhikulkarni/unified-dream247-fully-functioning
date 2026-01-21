@@ -17,20 +17,20 @@ class ReferralDashboardModel {
   });
 
   ReferralDashboardModel.fromJson(Map<String, dynamic> json) {
-    totalBalance = ModelParsers.toNumParser(json["totalBalance"]);
-    totalReferrals = ModelParsers.toIntParser(json["totalReferrals"]);
-    totalCommission = ModelParsers.toNumParser(json["totalCommission"]);
+    totalBalance = ModelParsers.toNumParser(json['totalBalance']);
+    totalReferrals = ModelParsers.toIntParser(json['totalReferrals']);
+    totalCommission = ModelParsers.toNumParser(json['totalCommission']);
     
-    if (json["referredUsers"] != null) {
+    if (json['referredUsers'] != null) {
       referredUsers = <ReferredUser>[];
-      json["referredUsers"].forEach((v) {
+      json['referredUsers'].forEach((v) {
         referredUsers!.add(ReferredUser.fromJson(v));
       });
     }
     
-    if (json["commissionHistory"] != null) {
+    if (json['commissionHistory'] != null) {
       commissionHistory = <CommissionTransaction>[];
-      json["commissionHistory"].forEach((v) {
+      json['commissionHistory'].forEach((v) {
         commissionHistory!.add(CommissionTransaction.fromJson(v));
       });
     }
@@ -38,14 +38,14 @@ class ReferralDashboardModel {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data["totalBalance"] = totalBalance;
-    data["totalReferrals"] = totalReferrals;
-    data["totalCommission"] = totalCommission;
+    data['totalBalance'] = totalBalance;
+    data['totalReferrals'] = totalReferrals;
+    data['totalCommission'] = totalCommission;
     if (referredUsers != null) {
-      data["referredUsers"] = referredUsers!.map((v) => v.toJson()).toList();
+      data['referredUsers'] = referredUsers!.map((v) => v.toJson()).toList();
     }
     if (commissionHistory != null) {
-      data["commissionHistory"] = commissionHistory!.map((v) => v.toJson()).toList();
+      data['commissionHistory'] = commissionHistory!.map((v) => v.toJson()).toList();
     }
     return data;
   }
@@ -78,30 +78,30 @@ class ReferredUser {
   });
 
   ReferredUser.fromJson(Map<String, dynamic> json) {
-    id = ModelParsers.toStringParser(json["_id"] ?? json["id"]);
-    username = ModelParsers.toStringParser(json["username"]);
-    mobile = ModelParsers.toStringParser(json["mobile"]);
-    image = ModelParsers.toStringParser(json["image"]);
-    team = ModelParsers.toStringParser(json["team"]);
-    referCode = ModelParsers.toStringParser(json["referCode"] ?? json["refer_code"]);
-    depositAmount = ModelParsers.toNumParser(json["depositAmount"]);
-    commissionEarned = ModelParsers.toNumParser(json["commissionEarned"]);
-    joinedDate = ModelParsers.toStringParser(json["joinedDate"] ?? json["createdAt"]);
-    status = ModelParsers.toIntParser(json["status"]);
+    id = ModelParsers.toStringParser(json['_id'] ?? json['id']);
+    username = ModelParsers.toStringParser(json['username']);
+    mobile = ModelParsers.toStringParser(json['mobile']);
+    image = ModelParsers.toStringParser(json['image']);
+    team = ModelParsers.toStringParser(json['team']);
+    referCode = ModelParsers.toStringParser(json['referCode'] ?? json['refer_code']);
+    depositAmount = ModelParsers.toNumParser(json['depositAmount']);
+    commissionEarned = ModelParsers.toNumParser(json['commissionEarned']);
+    joinedDate = ModelParsers.toStringParser(json['joinedDate'] ?? json['createdAt']);
+    status = ModelParsers.toIntParser(json['status']);
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data["id"] = id;
-    data["username"] = username;
-    data["mobile"] = mobile;
-    data["image"] = image;
-    data["team"] = team;
-    data["referCode"] = referCode;
-    data["depositAmount"] = depositAmount;
-    data["commissionEarned"] = commissionEarned;
-    data["joinedDate"] = joinedDate;
-    data["status"] = status;
+    data['id'] = id;
+    data['username'] = username;
+    data['mobile'] = mobile;
+    data['image'] = image;
+    data['team'] = team;
+    data['referCode'] = referCode;
+    data['depositAmount'] = depositAmount;
+    data['commissionEarned'] = commissionEarned;
+    data['joinedDate'] = joinedDate;
+    data['status'] = status;
     return data;
   }
 }
@@ -133,30 +133,30 @@ class CommissionTransaction {
   });
 
   CommissionTransaction.fromJson(Map<String, dynamic> json) {
-    id = ModelParsers.toStringParser(json["_id"] ?? json["id"]);
-    transactionId = ModelParsers.toStringParser(json["transactionId"]);
-    referredUserId = ModelParsers.toStringParser(json["referredUserId"]);
-    referredUsername = ModelParsers.toStringParser(json["referredUsername"]);
-    amount = ModelParsers.toNumParser(json["amount"]);
-    commissionAmount = ModelParsers.toNumParser(json["commissionAmount"]);
-    transactionType = ModelParsers.toStringParser(json["transactionType"] ?? json["type"]);
-    transactionDate = ModelParsers.toStringParser(json["transactionDate"] ?? json["createdAt"]);
-    description = ModelParsers.toStringParser(json["description"]);
-    status = ModelParsers.toIntParser(json["status"]);
+    id = ModelParsers.toStringParser(json['_id'] ?? json['id']);
+    transactionId = ModelParsers.toStringParser(json['transactionId']);
+    referredUserId = ModelParsers.toStringParser(json['referredUserId']);
+    referredUsername = ModelParsers.toStringParser(json['referredUsername']);
+    amount = ModelParsers.toNumParser(json['amount']);
+    commissionAmount = ModelParsers.toNumParser(json['commissionAmount']);
+    transactionType = ModelParsers.toStringParser(json['transactionType'] ?? json['type']);
+    transactionDate = ModelParsers.toStringParser(json['transactionDate'] ?? json['createdAt']);
+    description = ModelParsers.toStringParser(json['description']);
+    status = ModelParsers.toIntParser(json['status']);
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data["id"] = id;
-    data["transactionId"] = transactionId;
-    data["referredUserId"] = referredUserId;
-    data["referredUsername"] = referredUsername;
-    data["amount"] = amount;
-    data["commissionAmount"] = commissionAmount;
-    data["transactionType"] = transactionType;
-    data["transactionDate"] = transactionDate;
-    data["description"] = description;
-    data["status"] = status;
+    data['id'] = id;
+    data['transactionId'] = transactionId;
+    data['referredUserId'] = referredUserId;
+    data['referredUsername'] = referredUsername;
+    data['amount'] = amount;
+    data['commissionAmount'] = commissionAmount;
+    data['transactionType'] = transactionType;
+    data['transactionDate'] = transactionDate;
+    data['description'] = description;
+    data['status'] = status;
     return data;
   }
 }

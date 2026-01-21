@@ -117,7 +117,7 @@ class _JoinContestBottomsheetState extends State<JoinContestBottomsheet> {
             num.tryParse(data['deductFromWinning']?.toString() ?? '0') ?? 0;
 
         payableAmount = num.tryParse(
-                data['requiredAdditionalBalance']?.toString() ?? '0') ??
+                data['requiredAdditionalBalance']?.toString() ?? '0',) ??
             0;
       });
 

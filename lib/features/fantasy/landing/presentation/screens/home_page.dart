@@ -378,7 +378,7 @@ class _HomePageState extends State<HomePage> {
                                 : filterOptions[index].toLowerCase();
 
                             final filtered = await homeUsecases.getMatchList(
-                                context, filterKey);
+                                context, filterKey,);
 
                             setState(() {
                               selectedFilterIndex = index;

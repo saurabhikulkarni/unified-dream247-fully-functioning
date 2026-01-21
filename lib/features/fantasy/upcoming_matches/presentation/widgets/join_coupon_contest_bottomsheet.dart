@@ -77,14 +77,14 @@ class _JoinCouponContestBottomsheet
                   CustomTextfield(
                     keyboardType: TextInputType.text,
                     controller: codeController,
-                    labelText: "Contest Code",
-                    hintText: "Enter Contest Code",
+                    labelText: 'Contest Code',
+                    hintText: 'Enter Contest Code',
                   ),
                   InkWell(
                     onTap: () {
                       if (codeController.text.isEmpty) {
                         appToast(
-                          "Please enter your contest code first",
+                          'Please enter your contest code first',
                           context,
                         );
                       } else {
@@ -142,13 +142,13 @@ class _JoinCouponContestBottomsheet
                       AppSingleton.singleton.matchData.id!,
                       widget.data?.id,
                       0,
-                      "",
-                      "",
-                      "",
-                      "",
+                      '',
+                      '',
+                      '',
+                      '',
                       widget.data?.discountFee ?? 0,
                       false,
-                      "")
+                      '',)
                   .then((value) {
                 widget.onDismiss();
                 return null;
@@ -161,7 +161,7 @@ class _JoinCouponContestBottomsheet
                   listen: false,
                 ).updateMyTeams(
                   updatedTeams,
-                  AppSingleton.singleton.matchData.id ?? "",
+                  AppSingleton.singleton.matchData.id ?? '',
                 );
               }
             } else if (count == 1) {
@@ -175,10 +175,10 @@ class _JoinCouponContestBottomsheet
                 ),
                 builder: (BuildContext context) {
                   return JoinContestBottomsheet(
-                    fantasyType: "Cricket",
+                    fantasyType: 'Cricket',
                     isClosedContestNew: false,
                     previousJoined: widget.previousJoined ?? false,
-                    challengeId: widget.data?.id ?? "",
+                    challengeId: widget.data?.id ?? '',
                     selectedTeam: value
                         .firstWhere((element) => !element.isSelected!)
                         .jointeamid!,
@@ -195,9 +195,9 @@ class _JoinCouponContestBottomsheet
                   .push(
                 MaterialPageRoute(
                   builder: (context) => MyTeamsChallenges(
-                    teamType: widget.data?.teamType ?? "",
+                    teamType: widget.data?.teamType ?? '',
                     entryfee: widget.data?.entryfee ?? 0,
-                    challengeId: widget.data?.matchchallengeid ?? "",
+                    challengeId: widget.data?.matchchallengeid ?? '',
                     discount: widget.data?.discountFee ?? 0,
                     list: Provider.of<MyTeamsProvider>(
                           context,
@@ -205,7 +205,7 @@ class _JoinCouponContestBottomsheet
                         ).myTeams[AppSingleton.singleton.matchData.id] ??
                         [],
                     maxTeams: 1,
-                    mode: "Join Team",
+                    mode: 'Join Team',
                   ),
                 ),
               )

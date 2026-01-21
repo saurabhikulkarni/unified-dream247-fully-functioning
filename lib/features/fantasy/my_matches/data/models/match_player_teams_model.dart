@@ -20,22 +20,22 @@ class MatchPlayerTeamsModel {
       this.total,
       this.role,
       this.name,
-      this.teamName});
+      this.teamName,});
 
   factory MatchPlayerTeamsModel.fromJson(Map<String, dynamic> json) =>
       MatchPlayerTeamsModel(
-          id: ModelParsers.toStringParser(json["_id"]),
-          image: ModelParsers.toStringParser(json["image"]),
-          credit: ModelParsers.toNumParser(json["credit"]),
-          totalSelected: ModelParsers.toNumParser(json["totalSelected"]),
-          card: json["card"] == null
+          id: ModelParsers.toStringParser(json['_id']),
+          image: ModelParsers.toStringParser(json['image']),
+          credit: ModelParsers.toNumParser(json['credit']),
+          totalSelected: ModelParsers.toNumParser(json['totalSelected']),
+          card: json['card'] == null
               ? []
               : List<MatchPlayerTeamsCard>.from(
-                  json["card"]!.map((x) => MatchPlayerTeamsCard.fromJson(x))),
-          total: ModelParsers.toNumParser(json["total"]),
-          role: ModelParsers.toStringParser(json["role"]),
-          name: ModelParsers.toStringParser(json["name"]),
-          teamName: ModelParsers.toStringParser(json["teamShortName"]));
+                  json['card']!.map((x) => MatchPlayerTeamsCard.fromJson(x)),),
+          total: ModelParsers.toNumParser(json['total']),
+          role: ModelParsers.toStringParser(json['role']),
+          name: ModelParsers.toStringParser(json['name']),
+          teamName: ModelParsers.toStringParser(json['teamShortName']),);
 }
 
 class MatchPlayerTeamsCard {
@@ -51,8 +51,8 @@ class MatchPlayerTeamsCard {
 
   factory MatchPlayerTeamsCard.fromJson(Map<String, dynamic> json) =>
       MatchPlayerTeamsCard(
-        type: ModelParsers.toStringParser(json["type"]),
-        actual: json["actual"],
-        points: ModelParsers.toNumParser(json["points"]),
+        type: ModelParsers.toStringParser(json['type']),
+        actual: json['actual'],
+        points: ModelParsers.toNumParser(json['points']),
       );
 }

@@ -35,7 +35,7 @@ class _ProductReviewsScreenState extends State<ProductReviewsScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Reviews"),
+        title: const Text('Reviews'),
       ),
       body: Column(
         children: [
@@ -44,7 +44,7 @@ class _ProductReviewsScreenState extends State<ProductReviewsScreen> {
             child: Column(
               children: [
                 Text(
-                  "4.3",
+                  '4.3',
                   style: Theme.of(context).textTheme.headlineSmall,
                 ),
                 RatingBar.builder(
@@ -62,7 +62,7 @@ class _ProductReviewsScreenState extends State<ProductReviewsScreen> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  "${reviews.length} reviews",
+                  '${reviews.length} reviews',
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
               ],
@@ -120,7 +120,7 @@ class _ProductReviewsScreenState extends State<ProductReviewsScreen> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {},
-                child: const Text("Write a Review"),
+                child: const Text('Write a Review'),
               ),
             ),
           ),

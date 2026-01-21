@@ -17,15 +17,15 @@ class ExpertAdviceModel {
 
   factory ExpertAdviceModel.fromJson(Map<String, dynamic> json) =>
       ExpertAdviceModel(
-        id: json["_id"],
-        title: json["title"],
-        content: json["content"],
-        status: json["status"],
-        createdAt: json["createdAt"] == null
+        id: json['_id'],
+        title: json['title'],
+        content: json['content'],
+        status: json['status'],
+        createdAt: json['createdAt'] == null
             ? null
-            : DateTime.parse(json["createdAt"]),
-        updatedAt: json["updatedAt"] == null
+            : DateTime.parse(json['createdAt']),
+        updatedAt: json['updatedAt'] == null
             ? null
-            : DateTime.parse(json["updatedAt"]),
+            : DateTime.parse(json['updatedAt']),
       );
 }

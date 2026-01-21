@@ -22,14 +22,14 @@ class _ImagePopupDialogState extends State<ImagePopupDialog> {
         mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
-          if ((widget.image ?? "").isNotEmpty)
+          if ((widget.image ?? '').isNotEmpty)
             ClipRRect(
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(12.0),
                 topRight: Radius.circular(12.0),
               ),
               child: CachedNetworkImage(
-                imageUrl: widget.image ?? "",
+                imageUrl: widget.image ?? '',
                 fit: BoxFit.contain,
                 placeholder: (context, url) => Container(
                   height: 200,

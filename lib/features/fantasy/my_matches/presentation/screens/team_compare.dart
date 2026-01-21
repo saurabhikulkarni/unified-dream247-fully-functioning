@@ -58,7 +58,7 @@ class _TeamCompareState extends State<TeamCompare> {
     compareTeams();
   }
 
-  compareTeams() async {
+  Future<void> compareTeams() async {
     teamCompareModel = myMatchesUsecases.teamCompare(
       context,
       widget.team1Id,
@@ -99,7 +99,7 @@ class _TeamCompareState extends State<TeamCompare> {
         });
       }
     }).catchError((error) {
-      debugPrint("Error fetching team comparison: $error");
+      debugPrint('Error fetching team comparison: $error');
     });
   }
 
@@ -285,12 +285,12 @@ class _TeamCompareState extends State<TeamCompare> {
             CircleAvatar(
               radius: 20,
               child: ClipOval(
-                child: CachedImage(imageUrl: userTeam1?[0].image ?? ""),
+                child: CachedImage(imageUrl: userTeam1?[0].image ?? ''),
               ),
             ),
             const SizedBox(width: 5),
             Text(
-              userTeam1?[0].teamName ?? "",
+              userTeam1?[0].teamName ?? '',
               style: const TextStyle(
                 color: AppColors.letterColor,
                 fontWeight: FontWeight.w400,
@@ -304,7 +304,7 @@ class _TeamCompareState extends State<TeamCompare> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text(
-              userTeam2?[0].teamName ?? "",
+              userTeam2?[0].teamName ?? '',
               style: const TextStyle(
                 color: AppColors.letterColor,
                 fontWeight: FontWeight.w400,
@@ -315,7 +315,7 @@ class _TeamCompareState extends State<TeamCompare> {
             CircleAvatar(
               radius: 20,
               child: ClipOval(
-                child: CachedImage(imageUrl: userTeam2?[0].image ?? ""),
+                child: CachedImage(imageUrl: userTeam2?[0].image ?? ''),
               ),
             ),
           ],
@@ -413,7 +413,7 @@ class _TeamCompareState extends State<TeamCompare> {
                 CircleAvatar(
                   radius: 20,
                   child: ClipOval(
-                    child: CachedImage(imageUrl: commonTeam1?.image ?? ""),
+                    child: CachedImage(imageUrl: commonTeam1?.image ?? ''),
                   ),
                 ),
                 const SizedBox(width: 4),
@@ -507,7 +507,7 @@ class _TeamCompareState extends State<TeamCompare> {
                 CircleAvatar(
                   radius: 20,
                   child: ClipOval(
-                    child: CachedImage(imageUrl: commonTeam1?.image ?? ""),
+                    child: CachedImage(imageUrl: commonTeam1?.image ?? ''),
                   ),
                 ),
               ],
@@ -534,7 +534,7 @@ class _TeamCompareState extends State<TeamCompare> {
                 CircleAvatar(
                   radius: 20,
                   child: ClipOval(
-                    child: CachedImage(imageUrl: unmatched1.image ?? ""),
+                    child: CachedImage(imageUrl: unmatched1.image ?? ''),
                   ),
                 ),
                 const SizedBox(width: 4),
@@ -637,7 +637,7 @@ class _TeamCompareState extends State<TeamCompare> {
                 CircleAvatar(
                   radius: 20,
                   child: ClipOval(
-                    child: CachedImage(imageUrl: unmatched2.image ?? ""),
+                    child: CachedImage(imageUrl: unmatched2.image ?? ''),
                   ),
                 ),
               ],
@@ -720,7 +720,7 @@ class _TeamCompareState extends State<TeamCompare> {
                             radius: 20,
                             child: ClipOval(
                               child: CachedImage(
-                                imageUrl: captainTeam1?[0].image ?? "",
+                                imageUrl: captainTeam1?[0].image ?? '',
                               ),
                             ),
                           ),
@@ -847,7 +847,7 @@ class _TeamCompareState extends State<TeamCompare> {
                             radius: 20,
                             child: ClipOval(
                               child: CachedImage(
-                                imageUrl: captainTeam2?[0].image ?? "",
+                                imageUrl: captainTeam2?[0].image ?? '',
                               ),
                             ),
                           ),
@@ -895,7 +895,7 @@ class _TeamCompareState extends State<TeamCompare> {
                             radius: 20,
                             child: ClipOval(
                               child: CachedImage(
-                                imageUrl: viceCaptainTeam1?[0].image ?? "",
+                                imageUrl: viceCaptainTeam1?[0].image ?? '',
                               ),
                             ),
                           ),
@@ -1022,7 +1022,7 @@ class _TeamCompareState extends State<TeamCompare> {
                             radius: 20,
                             child: ClipOval(
                               child: CachedImage(
-                                imageUrl: viceCaptainTeam2?[0].image ?? "",
+                                imageUrl: viceCaptainTeam2?[0].image ?? '',
                               ),
                             ),
                           ),

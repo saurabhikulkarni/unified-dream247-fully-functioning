@@ -29,9 +29,9 @@ class DiscoverScreen extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.symmetric(
-                  horizontal: defaultPadding, vertical: defaultPadding / 2),
+                  horizontal: defaultPadding, vertical: defaultPadding / 2,),
               child: Text(
-                "Categories",
+                'Categories',
                 style: Theme.of(context).textTheme.titleSmall,
               ),
             ),
@@ -78,7 +78,7 @@ class DiscoverScreen extends StatelessWidget {
                   );
                 },
               ),
-            )
+            ),
           ],
         ),
       ),

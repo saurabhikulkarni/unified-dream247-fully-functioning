@@ -134,7 +134,7 @@ class UpcomingMatchDatsource extends UpcomingMatchRepositories {
     int limit,
   ) async {
     final url =
-        "${APIServerUrl.myJoinContestServerUrl}${APIServerUrl.getJoinedContests}${AppSingleton.singleton.matchData.id!}&skip=$skip&limit=$limit";
+        '${APIServerUrl.myJoinContestServerUrl}${APIServerUrl.getJoinedContests}${AppSingleton.singleton.matchData.id!}&skip=$skip&limit=$limit';
     final response = await clientwithToken.get(url);
     final json = response.data;
 
@@ -160,13 +160,13 @@ class UpcomingMatchDatsource extends UpcomingMatchRepositories {
     String matchChallengeId,
   ) async {
     final url =
-        "${APIServerUrl.contestServerUrl}${APIServerUrl.getContestDetails}$matchChallengeId&matchkey=${AppSingleton.singleton.matchData.id}";
+        '${APIServerUrl.contestServerUrl}${APIServerUrl.getContestDetails}$matchChallengeId&matchkey=${AppSingleton.singleton.matchData.id}';
     final response = await clientwithToken.get(url);
     final json = response.data;
 
     if (ApiServerUtil.validateStatusCode(response.statusCode ?? 200)) {
       if (json[ApiResponseString.status] == true) {
-        final contestDetails = AllContestResponseModel.fromJson(json["data"]);
+        final contestDetails = AllContestResponseModel.fromJson(json['data']);
         return contestDetails;
       }
     } else {
@@ -180,7 +180,7 @@ class UpcomingMatchDatsource extends UpcomingMatchRepositories {
   @override
   Future<List<TeamsModel>> getMyTeams(BuildContext context) async {
     var provider = Provider.of<MyTeamsProvider>(context, listen: false);
-    String matchKey = AppSingleton.singleton.matchData.id ?? "";
+    String matchKey = AppSingleton.singleton.matchData.id ?? '';
 
     final url =
         APIServerUrl.getMyTeamsServerUrl + APIServerUrl.getMyTeams + matchKey;
@@ -212,7 +212,7 @@ class UpcomingMatchDatsource extends UpcomingMatchRepositories {
     String matchChallengeId,
   ) async {
     var provider = Provider.of<MyTeamsProvider>(context, listen: false);
-    String matchKey = AppSingleton.singleton.matchData.id ?? "";
+    String matchKey = AppSingleton.singleton.matchData.id ?? '';
 
     final url =
         '${APIServerUrl.getMyTeamsServerUrl}${APIServerUrl.getMyTeams}${AppSingleton.singleton.matchData.id}&matchchallengeid=$matchChallengeId';
@@ -242,7 +242,7 @@ class UpcomingMatchDatsource extends UpcomingMatchRepositories {
     String joinTeamId,
   ) async {
     final url =
-        "${APIServerUrl.getMyTeamsServerUrl}${APIServerUrl.getUserTeam}${AppSingleton.singleton.matchData.id!}&joinTeamId=$joinTeamId";
+        '${APIServerUrl.getMyTeamsServerUrl}${APIServerUrl.getUserTeam}${AppSingleton.singleton.matchData.id!}&joinTeamId=$joinTeamId';
 
     final response = await clientwithToken.get(url);
     final res = response.data;
@@ -300,7 +300,7 @@ class UpcomingMatchDatsource extends UpcomingMatchRepositories {
     BuildContext context,
   ) async {
     final url =
-        "${AppSingleton.singleton.appData.playerJsonUrl}playerList-${AppSingleton.singleton.matchData.realMatchkey}.json";
+        '${AppSingleton.singleton.appData.playerJsonUrl}playerList-${AppSingleton.singleton.matchData.realMatchkey}.json';
 
     final response = await client.get(url);
 
@@ -401,9 +401,9 @@ class UpcomingMatchDatsource extends UpcomingMatchRepositories {
     final url =
         APIServerUrl.joinContestServerUrl + APIServerUrl.closedContestJoin;
     final body = {
-      "entryfee": entryFee,
-      "win_amount": winAmount,
-      "maximum_user": maximumUser,
+      'entryfee': entryFee,
+      'win_amount': winAmount,
+      'maximum_user': maximumUser,
       ApiServerKeys.joinTeamId: selectedTeams,
       ApiServerKeys.discountFee: discount.toString(),
       ApiServerKeys.matchKey: AppSingleton.singleton.matchData.id!,
@@ -494,8 +494,8 @@ class UpcomingMatchDatsource extends UpcomingMatchRepositories {
 
     final body = {
       ApiServerKeys.matchKey: AppSingleton.singleton.matchData.id!,
-      "challengeId": challengeId,
-      "leaderBoardId": leaderboardId,
+      'challengeId': challengeId,
+      'leaderBoardId': leaderboardId,
       ApiServerKeys.switchTeam: [
         {
           ApiServerKeys.joinLeaugeId: leagueId,
@@ -728,7 +728,7 @@ class UpcomingMatchDatsource extends UpcomingMatchRepositories {
 
   @override
   Future<List<ExpertAdviceModel>?>? getExpertAdvice(
-      BuildContext context) async {
+      BuildContext context,) async {
     final url = APIServerUrl.otherApiServerUrl + APIServerUrl.getExpertAdvice;
 
     final response = await clientwithToken.get(url);

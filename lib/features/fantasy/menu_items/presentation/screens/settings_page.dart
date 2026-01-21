@@ -89,7 +89,7 @@ class _SettingsPageState extends State<SettingsPage> {
           gradient: LinearGradient(
             colors: [
               AppColors.white,
-              AppColors.lightBlue.withValues(alpha: 0.05)
+              AppColors.lightBlue.withValues(alpha: 0.05),
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -128,10 +128,10 @@ class _SettingsPageState extends State<SettingsPage> {
                   onTap: () {
                     showDialog(
                       context: context,
-                      builder: (context) => LogoutDialog(),
+                      builder: (context) => const LogoutDialog(),
                     );
                   },
-                  titleColor: AppColors.black),
+                  titleColor: AppColors.black,),
             ],
           ),
         ),

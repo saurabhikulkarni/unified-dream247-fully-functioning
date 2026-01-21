@@ -11,7 +11,7 @@ class ProfileCard extends StatelessWidget {
     required this.name,
     required this.email,
     this.imageSrc,
-    this.proLableText = "Pro",
+    this.proLableText = 'Pro',
     this.isPro = false,
     this.press,
     this.isShowHi = true,
@@ -40,7 +40,7 @@ class ProfileCard extends StatelessWidget {
       title: Row(
         children: [
           Text(
-            isShowHi ? "Hi, $name" : name,
+            isShowHi ? 'Hi, $name' : name,
             style: const TextStyle(fontWeight: FontWeight.w500),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
@@ -49,7 +49,7 @@ class ProfileCard extends StatelessWidget {
           if (isPro)
             Container(
               padding: const EdgeInsets.symmetric(
-                  horizontal: defaultPadding / 2, vertical: defaultPadding / 4),
+                  horizontal: defaultPadding / 2, vertical: defaultPadding / 4,),
               decoration: const BoxDecoration(
                 color: primaryColor,
                 borderRadius:
@@ -72,7 +72,7 @@ class ProfileCard extends StatelessWidget {
       subtitle: Text(email),
       trailing: isShowArrow
           ? SvgPicture.asset(
-              "assets/icons/miniRight.svg",
+              'assets/icons/miniRight.svg',
               color: Theme.of(context).iconTheme.color!.withOpacity(0.4),
             )
           : null,

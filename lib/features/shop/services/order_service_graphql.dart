@@ -103,7 +103,7 @@ class OrderServiceGraphQL {
         pricePerUnit: item.pricePerUnit,
         totalPrice: item.totalPrice,
         product: item.product,
-      )).toList();
+      ),).toList();
       
       return OrderModel(
         id: orderId,
@@ -134,7 +134,7 @@ class OrderServiceGraphQL {
     final MutationOptions options = MutationOptions(
       document: gql(hasAddress 
         ? GraphQLQueries.createOrderWithAddress 
-        : GraphQLQueries.createOrderWithoutAddress),
+        : GraphQLQueries.createOrderWithoutAddress,),
       variables: {
         'userId': userId,
         'orderNumber': orderNumber,
@@ -206,7 +206,7 @@ class OrderServiceGraphQL {
         .map((item) => stockService.reduceStock(
               sizeId: item.sizeId!,
               quantityToReduce: item.quantity,
-            ))
+            ),)
         .toList();
     
     if (futures.isNotEmpty) {
@@ -403,7 +403,7 @@ class OrderServiceGraphQL {
       final MutationOptions options = MutationOptions(
         document: gql(hasAddress 
           ? GraphQLQueries.createOrderWithAddress 
-          : GraphQLQueries.createOrderWithoutAddress),
+          : GraphQLQueries.createOrderWithoutAddress,),
         variables: {
           'userId': userId,
           'orderNumber': orderNumber,

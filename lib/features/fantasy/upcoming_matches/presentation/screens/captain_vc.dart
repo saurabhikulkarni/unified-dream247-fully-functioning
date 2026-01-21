@@ -274,7 +274,7 @@ class _CaptainViceCaptain extends State<CaptainViceCaptain> {
                       currentPlayer ??
                           CreateTeamPlayersData(
                               isSelectedPlayer:
-                                  currentPlayer?.isSelectedPlayer ?? false),
+                                  currentPlayer?.isSelectedPlayer ?? false,),
                       index,
                       sortedPlayersList?.length ?? 0,
                     ),
@@ -443,7 +443,7 @@ class _CaptainViceCaptain extends State<CaptainViceCaptain> {
               fontWeight: FontWeight.w500,
             ),
           ),
-        ])
+        ],),
       ],
     );
   }
@@ -525,7 +525,7 @@ class _CaptainViceCaptain extends State<CaptainViceCaptain> {
                     bottom: -6,
                     child: Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 6, vertical: 2),
+                          horizontal: 6, vertical: 2,),
                       decoration: BoxDecoration(
                         color: data.team == 'team1'
                             ? AppColors.green
@@ -627,7 +627,7 @@ class _CaptainViceCaptain extends State<CaptainViceCaptain> {
               ),
             ),
           ),
-          Spacer(),
+          const Spacer(),
 
           // Captain
           SizedBox(

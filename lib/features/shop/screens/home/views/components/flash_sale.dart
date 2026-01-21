@@ -56,14 +56,14 @@ class _FlashSaleState extends State<FlashSale> {
       children: [
         BannerMWithCounter(
           duration: const Duration(hours: 8),
-          text: "New Arrivals",
+          text: 'New Arrivals',
           press: () {},
         ),
         const SizedBox(height: defaultPadding / 2),
         Padding(
           padding: const EdgeInsets.all(defaultPadding),
           child: Text(
-            "Latest products",
+            'Latest products',
             style: Theme.of(context).textTheme.titleSmall,
           ),
         ),
@@ -99,7 +99,7 @@ class _FlashSaleState extends State<FlashSale> {
                   product: _products[index],
                   press: () {
                     context.push('/shop/product/${_products[index].id}',
-                        extra: {'product': _products[index]});
+                        extra: {'product': _products[index]},);
                   },
                 ),
               ),

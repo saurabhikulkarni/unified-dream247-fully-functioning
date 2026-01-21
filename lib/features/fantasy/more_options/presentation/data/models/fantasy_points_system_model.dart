@@ -7,15 +7,15 @@ class FantasyPointsSystemModel {
   List<FantasyPointsSystemData>? data;
 
   FantasyPointsSystemModel(
-      {this.success, this.message, this.status, this.data});
+      {this.success, this.message, this.status, this.data,});
 
   FantasyPointsSystemModel.fromJson(Map<String, dynamic> json) {
-    success = ModelParsers.toBoolParser(json["success"]);
-    message = ModelParsers.toStringParser(json["message"]);
-    status = ModelParsers.toBoolParser(json["status"]);
-    data = json["data"] == null
+    success = ModelParsers.toBoolParser(json['success']);
+    message = ModelParsers.toStringParser(json['message']);
+    status = ModelParsers.toBoolParser(json['status']);
+    data = json['data'] == null
         ? null
-        : (json["data"] as List)
+        : (json['data'] as List)
             .map((e) => FantasyPointsSystemData.fromJson(e))
             .toList();
   }
@@ -28,10 +28,10 @@ class FantasyPointsSystemData {
   FantasyPointsSystemData({this.formatName, this.format});
 
   FantasyPointsSystemData.fromJson(Map<String, dynamic> json) {
-    formatName = ModelParsers.toStringParser(json["format_name"]);
-    format = json["Format"] == null
+    formatName = ModelParsers.toStringParser(json['format_name']);
+    format = json['Format'] == null
         ? null
-        : (json["Format"] as List).map((e) => Format.fromJson(e)).toList();
+        : (json['Format'] as List).map((e) => Format.fromJson(e)).toList();
   }
 }
 
@@ -46,17 +46,17 @@ class Format {
   Format({this.id, this.formatName, this.roleName, this.actions, this.rules});
 
   Format.fromJson(Map<String, dynamic> json) {
-    id = ModelParsers.toStringParser(json["_id"]);
-    formatName = ModelParsers.toStringParser(json["format_name"]);
-    roleName = ModelParsers.toStringParser(json["role_name"]);
-    actions = json["actions"] == null
+    id = ModelParsers.toStringParser(json['_id']);
+    formatName = ModelParsers.toStringParser(json['format_name']);
+    roleName = ModelParsers.toStringParser(json['role_name']);
+    actions = json['actions'] == null
         ? null
-        : (json["actions"] as List)
+        : (json['actions'] as List)
             .map((e) => PointsSystemActions.fromJson(e))
             .toList();
-    rules = json["rules"] == null
+    rules = json['rules'] == null
         ? null
-        : (json["rules"] as List).map((e) => Rules.fromJson(e)).toList();
+        : (json['rules'] as List).map((e) => Rules.fromJson(e)).toList();
   }
 }
 
@@ -67,8 +67,8 @@ class Rules {
   Rules({this.point, this.id});
 
   Rules.fromJson(Map<String, dynamic> json) {
-    point = ModelParsers.toStringParser(json["point"]);
-    id = ModelParsers.toStringParser(json["_id"]);
+    point = ModelParsers.toStringParser(json['point']);
+    id = ModelParsers.toStringParser(json['_id']);
   }
 }
 
@@ -80,8 +80,8 @@ class PointsSystemActions {
   PointsSystemActions({this.type, this.value, this.id});
 
   PointsSystemActions.fromJson(Map<String, dynamic> json) {
-    type = ModelParsers.toStringParser(json["type"]);
-    value = ModelParsers.toIntParser(json["value"]);
-    id = ModelParsers.toStringParser(json["_id"]);
+    type = ModelParsers.toStringParser(json['type']);
+    value = ModelParsers.toIntParser(json['value']);
+    id = ModelParsers.toStringParser(json['_id']);
   }
 }

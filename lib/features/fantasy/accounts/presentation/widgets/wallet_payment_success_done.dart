@@ -43,7 +43,7 @@ class _WalletPaymentSuccessDoneState extends State<WalletPaymentSuccessDone> {
                         color: AppColors.white,
                       ),
                       Text(
-                        "Payment Successful",
+                        'Payment Successful',
                         style: TextStyle(
                           color: AppColors.white,
                           fontSize: 20,
@@ -52,7 +52,7 @@ class _WalletPaymentSuccessDoneState extends State<WalletPaymentSuccessDone> {
                       ),
                       SizedBox(height: 20),
                       Text(
-                        "Your transaction was processed securely. We appreciate your trust in us.",
+                        'Your transaction was processed securely. We appreciate your trust in us.',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: AppColors.white,
@@ -73,7 +73,7 @@ class _WalletPaymentSuccessDoneState extends State<WalletPaymentSuccessDone> {
                       Row(
                         children: [
                           const Text(
-                            "Transaction Details",
+                            'Transaction Details',
                             style: TextStyle(
                               color: AppColors.letterColor,
                               fontSize: 14,
@@ -84,7 +84,7 @@ class _WalletPaymentSuccessDoneState extends State<WalletPaymentSuccessDone> {
                           Image.asset(Images.verified, height: 20, width: 20),
                           const Spacer(),
                           Text(
-                            "${Strings.indianRupee}${widget.data?.transferredAmount}",
+                            '${Strings.indianRupee}${widget.data?.transferredAmount}',
                             style: GoogleFonts.tomorrow(
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
@@ -95,34 +95,34 @@ class _WalletPaymentSuccessDoneState extends State<WalletPaymentSuccessDone> {
                       ),
                       const SizedBox(height: 30),
                       AccountGlobalWidget.detailRow(
-                        "Transaction ID",
+                        'Transaction ID',
                         widget.data?.winningTransactionId?.toUpperCase() ??
-                            "---",
+                            '---',
                         context,
                       ),
                       AccountGlobalWidget.detailRow(
-                        "Total Amount for Withdraw",
-                        "${Strings.indianRupee}${widget.data?.transferredAmount}",
+                        'Total Amount for Withdraw',
+                        '${Strings.indianRupee}${widget.data?.transferredAmount}',
                         context,
                       ),
                       AccountGlobalWidget.detailRow(
-                        "TDS Deduction",
-                        "${Strings.indianRupee}${widget.data?.tds}",
+                        'TDS Deduction',
+                        '${Strings.indianRupee}${widget.data?.tds}',
                         context,
                       ),
                       AccountGlobalWidget.detailRow(
-                        "Receiver Received",
-                        "${Strings.indianRupee}${widget.data?.receivedAmount}",
+                        'Receiver Received',
+                        '${Strings.indianRupee}${widget.data?.receivedAmount}',
                         context,
                       ),
                       AccountGlobalWidget.detailRow(
-                        "Cashback You Won",
-                        "${Strings.indianRupee}${widget.data?.cashback}",
+                        'Cashback You Won',
+                        '${Strings.indianRupee}${widget.data?.cashback}',
                         context,
                       ),
                       AccountGlobalWidget.detailRow(
-                        "Date & Time",
-                        "${widget.data?.dateTime}",
+                        'Date & Time',
+                        '${widget.data?.dateTime}',
                         context,
                       ),
                       const SizedBox(height: 30),

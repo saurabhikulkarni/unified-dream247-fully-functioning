@@ -36,7 +36,7 @@ class _EditProfile extends State<EditProfile> {
   final TextEditingController _cityController = TextEditingController();
   final TextEditingController _stateController = TextEditingController();
   File? userImage;
-  String profileImageName = "";
+  String profileImageName = '';
   Gender selectedGender = Gender.Male;
   UserUsecases userUsecases = UserUsecases(
     UserDatasource(ApiImplWithAccessToken()),
@@ -92,15 +92,15 @@ class _EditProfile extends State<EditProfile> {
   Widget build(BuildContext context) {
     final userData =
         Provider.of<UserDataProvider>(context, listen: false).userData;
-    _teamNameController.text = userData?.team ?? "";
-    _userNameController.text = userData?.name ?? "";
-    _emailController.text = userData?.email ?? "";
-    _mobileController.text = userData?.mobile.toString() ?? "";
-    _dobController.text = userData?.dob ?? "";
-    _pincodeController.text = userData?.pincode.toString() ?? "";
-    _addressController.text = userData?.address ?? "";
-    _cityController.text = userData?.city ?? "";
-    _stateController.text = userData?.state ?? "";
+    _teamNameController.text = userData?.team ?? '';
+    _userNameController.text = userData?.name ?? '';
+    _emailController.text = userData?.email ?? '';
+    _mobileController.text = userData?.mobile.toString() ?? '';
+    _dobController.text = userData?.dob ?? '';
+    _pincodeController.text = userData?.pincode.toString() ?? '';
+    _addressController.text = userData?.address ?? '';
+    _cityController.text = userData?.city ?? '';
+    _stateController.text = userData?.state ?? '';
     selectedGender = userData?.gender == 'Male' ? Gender.Male : Gender.Female;
 
     return SubContainer(
@@ -152,10 +152,10 @@ class _EditProfile extends State<EditProfile> {
                             backgroundImage: userImage != null
                                 ? FileImage(userImage!)
                                 : (userData?.image != null &&
-                                            (userData?.image ?? "").isNotEmpty
-                                        ? NetworkImage(userData?.image ?? "")
+                                            (userData?.image ?? '').isNotEmpty
+                                        ? NetworkImage(userData?.image ?? '')
                                         : const AssetImage(
-                                            Images.imageDefalutPlayer))
+                                            Images.imageDefalutPlayer,))
                                     as ImageProvider,
                           ),
                         ),
@@ -204,7 +204,7 @@ class _EditProfile extends State<EditProfile> {
                     children: [
                       customTextFieldReadOnly(
                         _teamNameController,
-                        "Enter Team Name",
+                        'Enter Team Name',
                         TextInputType.name,
                         10,
                         false,
@@ -213,7 +213,7 @@ class _EditProfile extends State<EditProfile> {
                       const SizedBox(height: 18),
                       customTextFieldReadOnly(
                         _userNameController,
-                        "Enter User Name",
+                        'Enter User Name',
                         TextInputType.name,
                         0,
                         false,
@@ -222,7 +222,7 @@ class _EditProfile extends State<EditProfile> {
                       const SizedBox(height: 18),
                       customTextFieldReadOnly(
                         _emailController,
-                        "Enter Email Address",
+                        'Enter Email Address',
                         TextInputType.emailAddress,
                         0,
                         false,
@@ -231,7 +231,7 @@ class _EditProfile extends State<EditProfile> {
                       const SizedBox(height: 18),
                       customTextFieldReadOnly(
                         _mobileController,
-                        "Enter Mobile Number",
+                        'Enter Mobile Number',
                         TextInputType.number,
                         10,
                         false,
@@ -240,7 +240,7 @@ class _EditProfile extends State<EditProfile> {
                       const SizedBox(height: 18),
                       customTextFieldReadOnly(
                         _dobController,
-                        "Enter DOB",
+                        'Enter DOB',
                         TextInputType.name,
                         0,
                         false,
@@ -249,7 +249,7 @@ class _EditProfile extends State<EditProfile> {
                       const SizedBox(height: 18),
                       customTextFieldReadOnly(
                         _stateController,
-                        "Enter State",
+                        'Enter State',
                         TextInputType.name,
                         0,
                         false,
@@ -258,7 +258,7 @@ class _EditProfile extends State<EditProfile> {
                       const SizedBox(height: 18),
                       customTextFieldReadOnly(
                         _pincodeController,
-                        "Enter Pincode",
+                        'Enter Pincode',
                         TextInputType.number,
                         6,
                         false,
@@ -327,7 +327,7 @@ class _EditProfile extends State<EditProfile> {
                       const SizedBox(height: 18),
                       customTextFieldReadOnly(
                         _addressController,
-                        "Enter address",
+                        'Enter address',
                         TextInputType.name,
                         0,
                         false,
@@ -336,7 +336,7 @@ class _EditProfile extends State<EditProfile> {
                       const SizedBox(height: 18),
                       customTextFieldReadOnly(
                         _cityController,
-                        "Enter City",
+                        'Enter City',
                         TextInputType.name,
                         0,
                         false,
@@ -444,8 +444,8 @@ class _EditProfile extends State<EditProfile> {
         ).updateUser(userData);
       }
     } catch (e) {
-      debugPrint("Error uploading image: $e");
-      appToast("Failed to upload image", context);
+      debugPrint('Error uploading image: $e');
+      appToast('Failed to upload image', context);
     }
   }
 

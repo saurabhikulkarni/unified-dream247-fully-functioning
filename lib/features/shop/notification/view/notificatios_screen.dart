@@ -48,7 +48,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       await _loadNotifications();
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("All notifications marked as read")),
+          const SnackBar(content: Text('All notifications marked as read')),
         );
       }
     }
@@ -61,7 +61,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       await _loadNotifications();
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("All notifications cleared")),
+          const SnackBar(content: Text('All notifications cleared')),
         );
       }
     }
@@ -133,7 +133,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Notifications"),
+        title: const Text('Notifications'),
         actions: [
           PopupMenuButton<String>(
             onSelected: (value) {
@@ -170,7 +170,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                       ),
                       const SizedBox(height: 16),
                       Text(
-                        "No notifications",
+                        'No notifications',
                         style: Theme.of(context).textTheme.titleMedium?.copyWith(
                               color: Colors.grey[600],
                             ),

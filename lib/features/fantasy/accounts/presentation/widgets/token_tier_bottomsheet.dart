@@ -53,7 +53,7 @@ class _TokenTierBottomSheetState extends State<TokenTierBottomSheet> {
           ),
 
           Text(
-            "Token Breakdown",
+            'Token Breakdown',
             style: GoogleFonts.poppins(
               fontSize: 18,
               fontWeight: FontWeight.w600,
@@ -78,7 +78,7 @@ class _TokenTierBottomSheetState extends State<TokenTierBottomSheet> {
               final tiers = snapshot.data ?? [];
 
               if (tiers.isEmpty) {
-                return const Text("No token data available");
+                return const Text('No token data available');
               }
 
               return Column(
@@ -114,7 +114,7 @@ class _TokenTierBottomSheetState extends State<TokenTierBottomSheet> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            "₹${tier.minAmount} – ₹${tier.maxAmount}",
+            '₹${tier.minAmount} – ₹${tier.maxAmount}',
             style: GoogleFonts.poppins(
               fontSize: 14,
               fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
@@ -130,7 +130,7 @@ class _TokenTierBottomSheetState extends State<TokenTierBottomSheet> {
                     height: 12,
                   ),
                   Text(
-                    " ${tier.tokenAmount}",
+                    ' ${tier.tokenAmount}',
                     style: GoogleFonts.poppins(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
@@ -141,7 +141,7 @@ class _TokenTierBottomSheetState extends State<TokenTierBottomSheet> {
               ),
               if (isActive)
                 Text(
-                  "You are in this tier",
+                  'You are in this tier',
                   style: GoogleFonts.poppins(
                     fontSize: 11,
                     color: AppColors.mainColor,

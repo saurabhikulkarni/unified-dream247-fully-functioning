@@ -74,7 +74,7 @@ class _ContestDetailCardState extends State<ContestDetailCard> {
         }
       }
       appToast(
-        "You need to join another contest of 💎$entryFee to join this contest",
+        'You need to join another contest of 💎$entryFee to join this contest',
         context,
       );
     }
@@ -82,7 +82,7 @@ class _ContestDetailCardState extends State<ContestDetailCard> {
 
   void joinContest(BuildContext context) {
     upcomingMatchUsecase
-        .getTeamswithChallengeId(context, widget.data?.id ?? "")
+        .getTeamswithChallengeId(context, widget.data?.id ?? '')
         .then((value) async {
       int count = 0;
       for (var i in value) {
@@ -111,10 +111,10 @@ class _ContestDetailCardState extends State<ContestDetailCard> {
             AppSingleton.singleton.matchData.id!,
             widget.data?.id,
             0,
-            "",
-            "",
-            "",
-            "",
+            '',
+            '',
+            '',
+            '',
             widget.data?.discountFee ?? 0,
             true,
             widget.teamType,
@@ -129,7 +129,7 @@ class _ContestDetailCardState extends State<ContestDetailCard> {
             listen: false,
           ).updateMyTeams(
             updatedTeams,
-            AppSingleton.singleton.matchData.id ?? "",
+            AppSingleton.singleton.matchData.id ?? '',
           );
         } else if (count == 1) {
           showModalBottomSheet<void>(
@@ -144,7 +144,7 @@ class _ContestDetailCardState extends State<ContestDetailCard> {
               return JoinContestBottomsheet(
                 isClosedContestNew: false,
                 previousJoined: previousJoined,
-                challengeId: widget.data?.id ?? "",
+                challengeId: widget.data?.id ?? '',
                 discount: widget.data?.discountFee ?? 0,
                 isContestDetail: true,
                 selectedTeam: value
@@ -161,7 +161,7 @@ class _ContestDetailCardState extends State<ContestDetailCard> {
           await AppNavigation.gotoMyTeamsChallenges(
             context,
             widget.teamType,
-            widget.data?.id ?? "",
+            widget.data?.id ?? '',
             Provider.of<MyTeamsProvider>(
                   context,
                   listen: false,
@@ -172,9 +172,9 @@ class _ContestDetailCardState extends State<ContestDetailCard> {
                     ? 1
                     : widget.data?.teamLimit ?? 0
                 : 1,
-            "Join Team",
-            "",
-            "",
+            'Join Team',
+            '',
+            '',
             true,
             widget.data?.discountFee ?? 0,
             widget.data?.entryfee ?? 0,
@@ -213,8 +213,8 @@ class _ContestDetailCardState extends State<ContestDetailCard> {
                   horizontal: 14,
                   vertical: 10,
                 ),
-                decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.vertical(
+                decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.vertical(
                     top: Radius.circular(16),
                   ),
                 ),
@@ -227,7 +227,7 @@ class _ContestDetailCardState extends State<ContestDetailCard> {
                       children: [
                         Row(
                           children: [
-                            if ((widget.data?.flexibleContest ?? "0") == "1" ||
+                            if ((widget.data?.flexibleContest ?? '0') == '1' ||
                                 widget.data?.compress == true)
                               Row(
                                 children: [
@@ -300,7 +300,7 @@ class _ContestDetailCardState extends State<ContestDetailCard> {
                                 height: 10,
                               ),
                               Text(
-                                "${widget.data?.entryfee}",
+                                '${widget.data?.entryfee}',
                                 style: GoogleFonts.tomorrow(
                                   decoration: TextDecoration.lineThrough,
                                   decorationColor: AppColors.black,
@@ -313,7 +313,7 @@ class _ContestDetailCardState extends State<ContestDetailCard> {
                           ),
                         _joinButton(context),
                       ],
-                    )
+                    ),
                   ],
                 ),
               ),
@@ -338,7 +338,7 @@ class _ContestDetailCardState extends State<ContestDetailCard> {
                         Text(
                           ((widget.data?.maximumUser ?? 0) ==
                                   (widget.data?.joinedusers ?? 0))
-                              ? "Contest Full"
+                              ? 'Contest Full'
                               : '${(widget.data?.maximumUser ?? 0).toInt() - (widget.data?.joinedusers ?? 0)} Spots Left',
                           style: GoogleFonts.roboto(
                             color: AppColors.mainColor,
@@ -366,9 +366,9 @@ class _ContestDetailCardState extends State<ContestDetailCard> {
                   horizontal: 14,
                   vertical: 5,
                 ),
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   // color: AppColors.whiteFade1,
-                  borderRadius: const BorderRadius.vertical(
+                  borderRadius: BorderRadius.vertical(
                     bottom: Radius.circular(16),
                   ),
                 ),
@@ -385,14 +385,14 @@ class _ContestDetailCardState extends State<ContestDetailCard> {
                                 Icons.groups_2,
                             // : Icons.person_outline,
                             label: widget.data?.multiEntry == 1
-                                ? "Upto ${widget.data?.teamLimit}"
-                                : "Upto 5",
+                                ? 'Upto ${widget.data?.teamLimit}'
+                                : 'Upto 5',
                           ),
                           8.horizontalSpace,
                           _infoChip(
                             icon: Icons.emoji_events_outlined,
                             label:
-                                "${(((widget.data?.totalwinners ?? 1) / (widget.data?.maximumUser ?? 1)) * 100).round()}%",
+                                '${(((widget.data?.totalwinners ?? 1) / (widget.data?.maximumUser ?? 1)) * 100).round()}%',
                           ),
                         ],
                       ),
@@ -442,7 +442,7 @@ class _ContestDetailCardState extends State<ContestDetailCard> {
                     // ),
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 4),
+                          horizontal: 8, vertical: 4,),
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: [
@@ -458,7 +458,7 @@ class _ContestDetailCardState extends State<ContestDetailCard> {
                       child: Row(
                         children: [
                           Icon(Icons.looks_one_outlined,
-                              size: 14.sp, color: Colors.orange.shade900),
+                              size: 14.sp, color: Colors.orange.shade900,),
                           3.horizontalSpace,
                           Text(
                             '${Strings.indianRupee}${AppUtils.changeNumberToValue(widget.data?.winAmount?.toInt() ?? 0)}',
@@ -473,7 +473,7 @@ class _ContestDetailCardState extends State<ContestDetailCard> {
                     ),
                   ],
                 ),
-              )
+              ),
               // Container(
               //   padding: const EdgeInsets.symmetric(
               //     horizontal: 14,
@@ -598,7 +598,7 @@ class _ContestDetailCardState extends State<ContestDetailCard> {
                   ),
                 ],
               ),
-              child: (widget.data?.bonusType == "flat")
+              child: (widget.data?.bonusType == 'flat')
                   ? Row(
                       children: [
                         Text(
@@ -674,24 +674,24 @@ class _ContestDetailCardState extends State<ContestDetailCard> {
         if (widget.data!.isselected!) {
           String text = AppSingleton.singleton.appData.contestsharemessage!
               .replaceFirst(
-                "%TeamName%",
+                '%TeamName%',
                 Provider.of<UserDataProvider>(
                       context,
                       listen: false,
                     ).userData?.team ??
-                    "",
+                    '',
               )
               .replaceFirst(
-                "%Team1%",
+                '%Team1%',
                 AppSingleton.singleton.matchData.team1Name!,
               )
               .replaceFirst(
-                "%Team2%",
+                '%Team2%',
                 AppSingleton.singleton.matchData.team2Name!,
               )
-              .replaceFirst("%AppName%", APIServerUrl.appName)
-              .replaceFirst("%url_share%", '')
-              .replaceFirst("%inviteCode%", widget.data?.refercode ?? "");
+              .replaceFirst('%AppName%', APIServerUrl.appName)
+              .replaceFirst('%url_share%', '')
+              .replaceFirst('%inviteCode%', widget.data?.refercode ?? '');
           SharePlus.instance.share(ShareParams(text: text));
         } else {
           if (widget.data?.isPromoCodeContest ?? false) {
@@ -735,7 +735,7 @@ class _ContestDetailCardState extends State<ContestDetailCard> {
                           const SizedBox(height: 20),
                           customTextField(
                             codeController,
-                            "Enter Contest code",
+                            'Enter Contest code',
                             TextInputType.emailAddress,
                             0,
                             1,
@@ -746,7 +746,7 @@ class _ContestDetailCardState extends State<ContestDetailCard> {
                               onTap: () {
                                 if (codeController.text.isEmpty) {
                                   appToast(
-                                    "Please enter your contest code first",
+                                    'Please enter your contest code first',
                                     context,
                                   );
                                 } else {
@@ -802,11 +802,11 @@ class _ContestDetailCardState extends State<ContestDetailCard> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               (widget.data?.isselected == true)
-                  ? Text('')
+                  ? const Text('')
                   : ((widget.data?.entryfee ?? 0) -
                               (widget.data?.discountFee ?? 0) ==
                           0)
-                      ? Text('')
+                      ? const Text('')
                       : Image.asset(
                           Images.matchToken,
                           height: 18,
@@ -880,7 +880,7 @@ class _ContestDetailCardState extends State<ContestDetailCard> {
                   const SizedBox(height: 5),
                   customTextField(
                     codeController,
-                    "Enter Contest code",
+                    'Enter Contest code',
                     TextInputType.emailAddress,
                     0,
                     1,
@@ -891,7 +891,7 @@ class _ContestDetailCardState extends State<ContestDetailCard> {
                       onTap: () {
                         if (codeController.text.isEmpty) {
                           appToast(
-                            "Please enter your contest code first",
+                            'Please enter your contest code first',
                             context,
                           );
                         } else {
@@ -949,10 +949,10 @@ class _ContestDetailCardState extends State<ContestDetailCard> {
                 AppSingleton.singleton.matchData.id!,
                 widget.data?.id,
                 0,
-                "",
-                "",
-                "",
-                "",
+                '',
+                '',
+                '',
+                '',
                 widget.data?.discountFee ?? 0,
                 true,
                 widget.teamType,
@@ -968,7 +968,7 @@ class _ContestDetailCardState extends State<ContestDetailCard> {
                   listen: false,
                 ).updateMyTeams(
                   updatedTeams,
-                  AppSingleton.singleton.matchData.id ?? "",
+                  AppSingleton.singleton.matchData.id ?? '',
                 );
               }
             } else if (count == 1) {
@@ -982,10 +982,10 @@ class _ContestDetailCardState extends State<ContestDetailCard> {
                 ),
                 builder: (BuildContext context) {
                   return JoinContestBottomsheet(
-                    fantasyType: "Cricket",
+                    fantasyType: 'Cricket',
                     isClosedContestNew: false,
                     previousJoined: previousJoined,
-                    challengeId: widget.data?.id ?? "",
+                    challengeId: widget.data?.id ?? '',
                     selectedTeam: value
                         .firstWhere((element) => !element.isSelected!)
                         .jointeamid!,
@@ -1001,16 +1001,16 @@ class _ContestDetailCardState extends State<ContestDetailCard> {
               await AppNavigation.gotoMyTeamsChallenges(
                 context,
                 widget.teamType,
-                widget.data?.matchChallengeId ?? "",
+                widget.data?.matchChallengeId ?? '',
                 Provider.of<MyTeamsProvider>(
                       context,
                       listen: false,
                     ).myTeams[AppSingleton.singleton.matchData.id] ??
                     [],
                 1,
-                "Join Team",
-                "",
-                "",
+                'Join Team',
+                '',
+                '',
                 true,
                 widget.data?.discountFee ?? 0,
                 widget.data?.entryfee ?? 0,

@@ -73,7 +73,7 @@ class _CartScreenState extends State<CartScreen> {
   bool _isFreeSizeProduct(String sizeName) {
     final upperSizeName = sizeName.toUpperCase().replaceAll(' ', '');
     return standardFreeSizes.any((freeSize) => 
-      freeSize.toUpperCase().replaceAll(' ', '') == upperSizeName
+      freeSize.toUpperCase().replaceAll(' ', '') == upperSizeName,
     );
   }
 
@@ -146,7 +146,7 @@ class _CartScreenState extends State<CartScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            'Please select size for ${itemsWithoutSize.length} item(s) before checkout'
+            'Please select size for ${itemsWithoutSize.length} item(s) before checkout',
           ),
           backgroundColor: Colors.red,
           duration: const Duration(seconds: 3),
@@ -301,7 +301,7 @@ class _CartScreenState extends State<CartScreen> {
           if (retryCount >= maxRetries) {
             // All retries failed - show user-friendly error
             throw Exception(
-              'Unable to create order. Please check your internet connection and try again.'
+              'Unable to create order. Please check your internet connection and try again.',
             );
           }
         }

@@ -22,7 +22,7 @@ class CachedImage extends StatelessWidget {
         child: Shimmer.fromColors(
           baseColor: AppColors.shade1White,
           highlightColor: AppColors.greyColor,
-          child: SizedBox(height: 50, width: 50),
+          child: const SizedBox(height: 50, width: 50),
         ),
       ),
       errorWidget: (context, url, error) =>

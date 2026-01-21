@@ -121,7 +121,7 @@ class _ProductCardState extends State<ProductCard> {
           style: OutlinedButton.styleFrom(
               minimumSize: Size(cardWidth.toDouble(), cardHeight.toDouble()),
               maximumSize: Size(cardWidth.toDouble(), cardHeight.toDouble()),
-              padding: EdgeInsets.all(context.responsiveSpacing)),
+              padding: EdgeInsets.all(context.responsiveSpacing),),
           child: Column(
             children: [
               AspectRatio(
@@ -136,7 +136,7 @@ class _ProductCardState extends State<ProductCard> {
                 child: Padding(
                   padding: EdgeInsets.symmetric(
                       horizontal: context.responsiveSpacing / 2, 
-                      vertical: context.responsiveSpacing / 2),
+                      vertical: context.responsiveSpacing / 2,),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
@@ -178,7 +178,7 @@ class _ProductCardState extends State<ProductCard> {
                                   const SizedBox(width: 2),
                                   Flexible(
                                     child: Text(
-                                      "${widget.priceAfetDiscount!.toInt()}",
+                                      '${widget.priceAfetDiscount!.toInt()}',
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                       style: TextStyle(
@@ -200,7 +200,7 @@ class _ProductCardState extends State<ProductCard> {
                                   const SizedBox(width: 2),
                                   Flexible(
                                     child: Text(
-                                      "${widget.price.toInt()}",
+                                      '${widget.price.toInt()}',
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                       style: TextStyle(
@@ -228,7 +228,7 @@ class _ProductCardState extends State<ProductCard> {
                                   const SizedBox(width: 2),
                                   Flexible(
                                     child: Text(
-                                      "${widget.price.toInt()}",
+                                      '${widget.price.toInt()}',
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                       style: TextStyle(

@@ -69,7 +69,7 @@ class _SinglePlayer extends State<SinglePlayer> {
       if (zz.isSelectedPlayer) {
         totalCount++;
         creditUsed += zz.credit!;
-        if (zz.team == "team1") {
+        if (zz.team == 'team1') {
           team1Count++;
         } else {
           team2Count++;
@@ -140,9 +140,9 @@ class _SinglePlayer extends State<SinglePlayer> {
     }
 
     // 🚫 Block if team player limit exceeded
-    if (data.team == "team1" && team1Count >= maxPlayersPerTeam) {
+    if (data.team == 'team1' && team1Count >= maxPlayersPerTeam) {
       return false;
-    } else if (data.team == "team2" && team2Count >= maxPlayersPerTeam) {
+    } else if (data.team == 'team2' && team2Count >= maxPlayersPerTeam) {
       return false;
     }
 
@@ -217,7 +217,7 @@ class _SinglePlayer extends State<SinglePlayer> {
             children: [
               Container(
                 width: 32.w,
-                padding: EdgeInsets.only(left: 8),
+                padding: const EdgeInsets.only(left: 8),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -226,15 +226,15 @@ class _SinglePlayer extends State<SinglePlayer> {
                       style: GoogleFonts.exo2(
                           fontSize: 14.sp,
                           fontWeight: FontWeight.w600,
-                          color: AppColors.greyColor),
+                          color: AppColors.greyColor,),
                     ),
                     Text(
-                      getRoleShortName(widget.data.role ?? ""),
+                      getRoleShortName(widget.data.role ?? ''),
                       style: GoogleFonts.exo2(
                           fontSize: 9.sp,
                           fontWeight: FontWeight.w600,
-                          color: AppColors.blackColor),
-                    )
+                          color: AppColors.blackColor,),
+                    ),
                   ],
                 ),
               ),

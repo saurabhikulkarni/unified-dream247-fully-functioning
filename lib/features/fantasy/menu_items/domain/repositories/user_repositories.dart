@@ -27,7 +27,7 @@ abstract class UserRepositories {
   //     File imageFile, String folderName, String fileName);
 
   Future<bool?> submitSupportRequest(BuildContext context, String email,
-      String mobile, String reason, String message, File supportImage);
+      String mobile, String reason, String message, File supportImage,);
 
   Future<LevelRewardModel?> loadLevelRewards(BuildContext context);
 

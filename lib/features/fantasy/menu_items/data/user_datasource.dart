@@ -31,15 +31,15 @@ class UserDatasource extends UserRepositories {
   @override
   Future<String?> uploadImage(BuildContext context, File userImage) async {
     final url = APIServerUrl.userServerUrl + APIServerUrl.imageUploadUser;
-    debugPrint("Upload started...");
-    debugPrint("URL: $url");
+    debugPrint('Upload started...');
+    debugPrint('URL: $url');
 
     try {
       final dio = Dio(); // Normal Dio instance
 
       // Convert file into multipart form data
       final fileName = userImage.path.split('/').last;
-      debugPrint("File selected: $fileName");
+      debugPrint('File selected: $fileName');
 
       final formData = FormData.fromMap({
         'image': await MultipartFile.fromFile(
@@ -50,7 +50,7 @@ class UserDatasource extends UserRepositories {
 
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       final token = prefs.getString(AppStorageKeys.authToken);
-      debugPrint("Token: $token");
+      debugPrint('Token: $token');
 
       // Send POST request
       final response = await dio.post(
@@ -64,19 +64,19 @@ class UserDatasource extends UserRepositories {
         ),
         onSendProgress: (sent, total) {
           final percent = (sent / total * 100).toStringAsFixed(0);
-          debugPrint("Upload progress: $percent%");
+          debugPrint('Upload progress: $percent%');
         },
       );
 
-      debugPrint("Response status: ${response.statusCode}");
-      debugPrint("Raw response data: ${response.data}");
+      debugPrint('Response status: ${response.statusCode}');
+      debugPrint('Raw response data: ${response.data}');
 
       final res = response.data;
 
       if (ApiServerUtil.validateStatusCode(response.statusCode ?? 200)) {
         if (res[ApiResponseString.success] == true) {
           debugPrint(
-              "Upload success message: ${res[ApiResponseString.message]}");
+              'Upload success message: ${res[ApiResponseString.message]}',);
 
           ApiServerUtil.showAppToastforApi(
             res[ApiResponseString.message],
@@ -84,17 +84,17 @@ class UserDatasource extends UserRepositories {
           );
 
           // DEBUG: Check what exactly you’re returning
-          debugPrint("Returning data: ${response.data.runtimeType}");
+          debugPrint('Returning data: ${response.data.runtimeType}');
           final imageUrl = response.data['data']?['image_url'] as String?;
           return imageUrl;
         } else {
           debugPrint(
-              "Upload failed message: ${res[ApiResponseString.message]}");
+              'Upload failed message: ${res[ApiResponseString.message]}',);
           ApiServerUtil.showAppToastforApi(
-              res[ApiResponseString.message], context);
+              res[ApiResponseString.message], context,);
         }
       } else {
-        debugPrint("Invalid status code: ${response.statusCode}");
+        debugPrint('Invalid status code: ${response.statusCode}');
         if (context.mounted) {
           ApiServerUtil.manageException(res, context);
         }
@@ -107,7 +107,7 @@ class UserDatasource extends UserRepositories {
       }
     }
 
-    return "";
+    return '';
   }
 
   // @override
@@ -256,7 +256,7 @@ class UserDatasource extends UserRepositories {
         ApiServerKeys.issue: reason,
         ApiServerKeys.message: message,
         if (supportImage != null)
-          "image": await MultipartFile.fromFile(
+          'image': await MultipartFile.fromFile(
             supportImage.path,
             filename: supportImage.path.split('/').last,
           ),
@@ -265,7 +265,7 @@ class UserDatasource extends UserRepositories {
 
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       final token = prefs.getString(AppStorageKeys.authToken);
-      debugPrint("Token: $token");
+      debugPrint('Token: $token');
 
       // Send POST request
       final response = await dio.post(
@@ -279,7 +279,7 @@ class UserDatasource extends UserRepositories {
         ),
         onSendProgress: (sent, total) {
           final percent = (sent / total * 100).toStringAsFixed(0);
-          debugPrint("📦 Upload progress: $percent%");
+          debugPrint('📦 Upload progress: $percent%');
         },
       );
 
@@ -304,10 +304,10 @@ class UserDatasource extends UserRepositories {
         }
       }
     } catch (e) {
-      debugPrint("Support Request Error: $e");
+      debugPrint('Support Request Error: $e');
       if (context.mounted) {
         ApiServerUtil.showAppToastforApi(
-            "Failed to submit support request", context);
+            'Failed to submit support request', context,);
       }
     }
 
@@ -378,7 +378,7 @@ class UserDatasource extends UserRepositories {
           res[ApiResponseString.data][ApiResponseString.userId],
         );
         await AppStorage.saveToStorageString(
-          "userData",
+          'userData',
           jsonEncode(userDetails.toJson()),
         );
         if (context.mounted) {

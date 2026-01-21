@@ -34,7 +34,7 @@ class _MyContests extends State<MyContests> {
   bool isLoadingMore = false;
   bool isRefreshing = false;
   List<TeamTypeModel>? teamTypeList;
-  String teamTypeBy = "";
+  String teamTypeBy = '';
   late ScrollController _scrollController;
   UpcomingMatchUsecase upcomingMatchUsecase = UpcomingMatchUsecase(
     UpcomingMatchDatsource(ApiImpl(), ApiImplWithAccessToken()),
@@ -50,11 +50,11 @@ class _MyContests extends State<MyContests> {
       if (value != null && value.isNotEmpty) {
         setState(() {
           teamTypeList = value;
-          teamTypeBy = widget.teamType ?? (value.first.name ?? "");
+          teamTypeBy = widget.teamType ?? (value.first.name ?? '');
         });
       } else {
         setState(() {
-          teamTypeBy = widget.teamType ?? "";
+          teamTypeBy = widget.teamType ?? '';
         });
       }
 
@@ -145,7 +145,7 @@ class _MyContests extends State<MyContests> {
       }
     } catch (e) {
       scroll = false;
-      debugPrint("Error in loadData: $e");
+      debugPrint('Error in loadData: $e');
     } finally {
       if (mounted) {
         setState(() {
@@ -190,7 +190,7 @@ class _MyContests extends State<MyContests> {
       },
       child: Column(
         children: [
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           //Team-Type
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -204,11 +204,11 @@ class _MyContests extends State<MyContests> {
                     return Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 6),
                       child: TeamTypeWidget(
-                        title: type.name ?? "",
-                        isActive: teamTypeBy == (type.name ?? ""),
+                        title: type.name ?? '',
+                        isActive: teamTypeBy == (type.name ?? ''),
                         onTap: () {
                           setState(() {
-                            teamTypeBy = type.name ?? "";
+                            teamTypeBy = type.name ?? '';
                             // reload contests with new filter
                             contestList = _fetchInitialData();
                           });
@@ -243,7 +243,7 @@ class _MyContests extends State<MyContests> {
                           child: NoDataWidget(
                             image: Images.noContestImage,
                             showButton: false,
-                            title: "No Contests Available!",
+                            title: 'No Contests Available!',
                           ),
                         )
                       : SizedBox(
@@ -293,7 +293,7 @@ class _MyContests extends State<MyContests> {
                                                     ),
                                                     const SizedBox(height: 10),
                                                     const ShimmerWidget(
-                                                        height: 55),
+                                                        height: 55,),
                                                     const SizedBox(height: 10),
                                                   ],
                                                 ),
@@ -316,7 +316,7 @@ class _MyContests extends State<MyContests> {
                               return Column(
                                 children: [
                                   MyContestListView(
-                                    teamType: widget.teamType ?? "",
+                                    teamType: widget.teamType ?? '',
                                     mode: widget.mode,
                                     data: list[index],
                                     onDismiss: () => _fetchInitialData(),

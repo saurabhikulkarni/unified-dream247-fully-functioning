@@ -4,7 +4,7 @@ import 'package:unified_dream247/features/fantasy/my_matches/data/models/live_le
 
 class LiveLeaderboardProvider extends ChangeNotifier {
   final Map<String, List<LiveJointeams>> _liveJoinTeams = {};
-  String? _matchKey = "";
+  String? _matchKey = '';
 
   Map<String, List<LiveJointeams>> get liveJoinTeams => _liveJoinTeams;
   String? get matchKey => _matchKey;

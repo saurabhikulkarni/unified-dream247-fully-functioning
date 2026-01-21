@@ -124,12 +124,12 @@ class _SplashPageState extends State<SplashPage> with SingleTickerProviderStateM
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              const Color(0xFF6441A5), // Primary purple
-              const Color(0xFF472575), // Medium purple
-              const Color(0xFF2A0845), // Dark purple
+              Color(0xFF6441A5), // Primary purple
+              Color(0xFF472575), // Medium purple
+              Color(0xFF2A0845), // Dark purple
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,

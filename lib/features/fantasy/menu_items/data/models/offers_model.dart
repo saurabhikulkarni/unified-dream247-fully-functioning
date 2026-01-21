@@ -32,18 +32,18 @@ class OffersModel {
   });
 
   OffersModel.fromJson(Map<String, dynamic> json) {
-    id = ModelParsers.toStringParser(json["_id"]);
-    minAmount = ModelParsers.toNumParser(json["min_amount"]);
-    maxAmount = ModelParsers.toNumParser(json["max_amount"]);
-    bonus = ModelParsers.toNumParser(json["bonus"]);
-    offerCode = ModelParsers.toStringParser(json["offer_code"]);
-    bonusType = ModelParsers.toStringParser(json["bonus_type"]);
-    title = ModelParsers.toStringParser(json["title"]);
-    userTime = ModelParsers.toNumParser(json["user_time"]);
-    type = ModelParsers.toStringParser(json["type"]);
-    createdAt = ModelParsers.toStringParser(json["createdAt"]);
-    enddate = ModelParsers.toStringParser(json["enddate"]);
-    description = ModelParsers.toStringParser(json["description"]);
-    usedCount = ModelParsers.toNumParser(json["usedCount"]);
+    id = ModelParsers.toStringParser(json['_id']);
+    minAmount = ModelParsers.toNumParser(json['min_amount']);
+    maxAmount = ModelParsers.toNumParser(json['max_amount']);
+    bonus = ModelParsers.toNumParser(json['bonus']);
+    offerCode = ModelParsers.toStringParser(json['offer_code']);
+    bonusType = ModelParsers.toStringParser(json['bonus_type']);
+    title = ModelParsers.toStringParser(json['title']);
+    userTime = ModelParsers.toNumParser(json['user_time']);
+    type = ModelParsers.toStringParser(json['type']);
+    createdAt = ModelParsers.toStringParser(json['createdAt']);
+    enddate = ModelParsers.toStringParser(json['enddate']);
+    description = ModelParsers.toStringParser(json['description']);
+    usedCount = ModelParsers.toNumParser(json['usedCount']);
   }
 }

@@ -341,7 +341,7 @@ class ScorecardView extends StatelessWidget {
                 itemCount: data.fallOfWickets!.length,
                 itemBuilder: (context, index) {
                   return singleFallOfWicket(
-                      context, data.fallOfWickets![index]);
+                      context, data.fallOfWickets![index],);
                 },
               ),
             ),
@@ -374,7 +374,7 @@ class ScorecardView extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        data.name ?? "",
+                        data.name ?? '',
                         style: GoogleFonts.exo2(
                           fontWeight: FontWeight.w600,
                           color: AppColors.letterColor,
@@ -382,7 +382,7 @@ class ScorecardView extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        data.howOut ?? "",
+                        data.howOut ?? '',
                         style: TextStyle(
                           fontWeight: FontWeight.w400,
                           color: (data.howOut == 'Not out')
@@ -398,7 +398,7 @@ class ScorecardView extends StatelessWidget {
             ),
           ),
           Text(
-            data.runs ?? "",
+            data.runs ?? '',
             style: GoogleFonts.tomorrow(
               fontWeight: FontWeight.w600,
               color: AppColors.letterColor,
@@ -406,7 +406,7 @@ class ScorecardView extends StatelessWidget {
             ),
           ),
           Text(
-            data.balls ?? "0",
+            data.balls ?? '0',
             style: GoogleFonts.tomorrow(
               fontWeight: FontWeight.w600,
               color: AppColors.letterColor,
@@ -414,7 +414,7 @@ class ScorecardView extends StatelessWidget {
             ),
           ),
           Text(
-            data.fours ?? "0",
+            data.fours ?? '0',
             style: GoogleFonts.tomorrow(
               fontWeight: FontWeight.w600,
               color: AppColors.letterColor,
@@ -422,7 +422,7 @@ class ScorecardView extends StatelessWidget {
             ),
           ),
           Text(
-            data.sixes ?? "0",
+            data.sixes ?? '0',
             style: GoogleFonts.tomorrow(
               fontWeight: FontWeight.w600,
               color: AppColors.letterColor,
@@ -432,7 +432,7 @@ class ScorecardView extends StatelessWidget {
           SizedBox(
             width: 50,
             child: Text(
-              data.strikeRate ?? "0.0",
+              data.strikeRate ?? '0.0',
               textAlign: TextAlign.center,
               style: GoogleFonts.tomorrow(
                 fontWeight: FontWeight.w600,
@@ -457,7 +457,7 @@ class ScorecardView extends StatelessWidget {
           SizedBox(
             width: MediaQuery.of(context).size.width * 0.27,
             child: Text(
-              data.name ?? "",
+              data.name ?? '',
               style: GoogleFonts.exo2(
                 fontWeight: FontWeight.w600,
                 color: AppColors.letterColor,
@@ -466,7 +466,7 @@ class ScorecardView extends StatelessWidget {
             ),
           ),
           Text(
-            data.overs ?? "0",
+            data.overs ?? '0',
             style: GoogleFonts.exo2(
               fontWeight: FontWeight.w600,
               color: AppColors.letterColor,
@@ -474,7 +474,7 @@ class ScorecardView extends StatelessWidget {
             ),
           ),
           Text(
-            data.maidens ?? "0",
+            data.maidens ?? '0',
             style: GoogleFonts.tomorrow(
               fontWeight: FontWeight.w600,
               color: AppColors.letterColor,
@@ -482,7 +482,7 @@ class ScorecardView extends StatelessWidget {
             ),
           ),
           Text(
-            data.runs ?? "0",
+            data.runs ?? '0',
             style: GoogleFonts.tomorrow(
               fontWeight: FontWeight.w600,
               color: AppColors.letterColor,
@@ -490,7 +490,7 @@ class ScorecardView extends StatelessWidget {
             ),
           ),
           Text(
-            data.wickets ?? "0",
+            data.wickets ?? '0',
             style: GoogleFonts.tomorrow(
               fontWeight: FontWeight.w600,
               color: AppColors.letterColor,
@@ -500,7 +500,7 @@ class ScorecardView extends StatelessWidget {
           SizedBox(
             width: 40,
             child: Text(
-              data.economyRate ?? "0.0",
+              data.economyRate ?? '0.0',
               textAlign: TextAlign.center,
               style: GoogleFonts.tomorrow(
                 fontWeight: FontWeight.w600,
@@ -525,7 +525,7 @@ class ScorecardView extends StatelessWidget {
           SizedBox(
             width: MediaQuery.of(context).size.width * 0.4,
             child: Text(
-              data.name ?? "0",
+              data.name ?? '0',
               style: GoogleFonts.exo2(
                 fontWeight: FontWeight.w600,
                 color: AppColors.letterColor,
@@ -542,7 +542,7 @@ class ScorecardView extends StatelessWidget {
             ),
           ),
           Text(
-            data.oversAtDismissal ?? "0",
+            data.oversAtDismissal ?? '0',
             style: GoogleFonts.tomorrow(
               fontWeight: FontWeight.w600,
               color: AppColors.letterColor,

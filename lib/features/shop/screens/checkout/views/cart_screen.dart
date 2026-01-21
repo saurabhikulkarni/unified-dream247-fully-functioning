@@ -67,7 +67,7 @@ class _CartScreenState extends State<CartScreen> {
   bool _isFreeSizeProduct(String sizeName) {
     final upperSizeName = sizeName.toUpperCase().replaceAll(' ', '');
     return standardFreeSizes.any((freeSize) => 
-      freeSize.toUpperCase().replaceAll(' ', '') == upperSizeName
+      freeSize.toUpperCase().replaceAll(' ', '') == upperSizeName,
     );
   }
 
@@ -140,7 +140,7 @@ class _CartScreenState extends State<CartScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            'Please select size for ${itemsWithoutSize.length} item(s) before checkout'
+            'Please select size for ${itemsWithoutSize.length} item(s) before checkout',
           ),
           backgroundColor: Colors.red,
           duration: const Duration(seconds: 3),
@@ -204,7 +204,7 @@ class _CartScreenState extends State<CartScreen> {
     );
 
     // If user selected an address, proceed with order creation
-    if (selectedAddressId != null && selectedAddressId is String) {
+    if (selectedAddressId != null) {
       await _createOrderFromCart(totalTokensNeeded, selectedAddressId);
     }
   }
@@ -274,7 +274,7 @@ class _CartScreenState extends State<CartScreen> {
           if (retryCount >= maxRetries) {
             // All retries failed - show user-friendly error
             throw Exception(
-              'Unable to create order. Please check your internet connection and try again.'
+              'Unable to create order. Please check your internet connection and try again.',
             );
           }
         }
@@ -376,7 +376,7 @@ class _CartScreenState extends State<CartScreen> {
                     color: Colors.green.shade50,
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(
+                  child: const Icon(
                     Icons.check_circle,
                     color: Colors.green,
                     size: 60,
@@ -505,7 +505,7 @@ class _CartScreenState extends State<CartScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Shopping Cart (${cartService.getCartItemCount()})"),
+        title: Text('Shopping Cart (${cartService.getCartItemCount()})'),
       ),
       body: cartItems.isEmpty
           ? Center(
@@ -519,13 +519,13 @@ class _CartScreenState extends State<CartScreen> {
                   ),
                   const SizedBox(height: defaultPadding),
                   Text(
-                    "Your cart is empty",
+                    'Your cart is empty',
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                   const SizedBox(height: defaultPadding),
                   ElevatedButton(
                     onPressed: () => context.pop(),
-                    child: const Text("Continue Shopping"),
+                    child: const Text('Continue Shopping'),
                   ),
                 ],
               ),
@@ -627,7 +627,7 @@ class _CartScreenState extends State<CartScreen> {
                                             ),
                                             const SizedBox(width: 2),
                                             Text(
-                                              "${product?.price.toInt() ?? 0}",
+                                              '${product?.price.toInt() ?? 0}',
                                               style: const TextStyle(
                                                 fontWeight: FontWeight.bold,
                                               ),
@@ -701,7 +701,7 @@ class _CartScreenState extends State<CartScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text("Subtotal"),
+                          const Text('Subtotal'),
                           Row(
                             children: [
                               SvgPicture.asset(
@@ -710,7 +710,7 @@ class _CartScreenState extends State<CartScreen> {
                                 height: 14,
                               ),
                               const SizedBox(width: 2),
-                              Text("${subtotal.toInt()}"),
+                              Text('${subtotal.toInt()}'),
                             ],
                           ),
                         ],
@@ -720,7 +720,7 @@ class _CartScreenState extends State<CartScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            "Total",
+                            'Total',
                             style: Theme.of(context).textTheme.titleMedium,
                           ),
                           Row(
@@ -732,7 +732,7 @@ class _CartScreenState extends State<CartScreen> {
                               ),
                               const SizedBox(width: 3),
                               Text(
-                                "${total.toInt()}",
+                                '${total.toInt()}',
                                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -755,10 +755,10 @@ class _CartScreenState extends State<CartScreen> {
                               height: 20,
                             ),
                             const SizedBox(width: 8),
-                            const Text("Redeem"),
+                            const Text('Redeem'),
                             const SizedBox(width: 8),
                             Text(
-                              "${total.toInt()}",
+                              '${total.toInt()}',
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                               ),

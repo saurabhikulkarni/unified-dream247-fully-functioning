@@ -1,4 +1,5 @@
 /// GraphQL mutations for wishlist operations
+library;
 
 /// Mutation to add product to wishlist
 const String addToWishlistMutation = '''

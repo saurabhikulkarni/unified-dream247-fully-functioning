@@ -15,7 +15,7 @@ class ApiImpl {
         BaseOptions(
           connectTimeout: const Duration(seconds: 15),
           receiveTimeout: const Duration(seconds: 15),
-          headers: {"Content-Type": "application/json"},
+          headers: {'Content-Type': 'application/json'},
         ),
       );
 
@@ -68,7 +68,7 @@ class ApiImpl {
           headers: {
             ..._dio.options.headers,
             ...authHeaders,
-            if (headers != null) ...headers
+            if (headers != null) ...headers,
           },
         );
 
@@ -79,7 +79,7 @@ class ApiImpl {
         debugPrint('============ HEADERS ================');
         debugPrint(options.headers.toString());
         debugPrint('============ BODY ===================');
-        debugPrint(body?.toString() ?? "No Body");
+        debugPrint(body?.toString() ?? 'No Body');
 
         final response = await _dio.request(
           url,
@@ -115,19 +115,19 @@ class ApiImpl {
           }
         }
         
-        debugPrint("Dio error: ${e.message}");
+        debugPrint('Dio error: ${e.message}');
         if (attempt == retryCount - 1) rethrow;
       } on TimeoutException {
-        debugPrint("Request timed out. Retrying...");
+        debugPrint('Request timed out. Retrying...');
       } on SocketException catch (_) {
-        debugPrint("No internet. Retrying...");
+        debugPrint('No internet. Retrying...');
       }
 
       attempt++;
       await Future.delayed(Duration(seconds: 2 * attempt));
     }
 
-    throw Exception("Request failed after $retryCount attempts.");
+    throw Exception('Request failed after $retryCount attempts.');
   }
 
   // Public Methods:

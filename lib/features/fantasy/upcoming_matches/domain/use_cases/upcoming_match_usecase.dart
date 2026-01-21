@@ -324,7 +324,7 @@ class UpcomingMatchUsecase {
   }
 
   Future<List<ExpertAdviceModel>?>? getExpertAdvice(
-      BuildContext context) async {
+      BuildContext context,) async {
     var res = await upcomingMatchRepositories.getExpertAdvice(context);
     return res;
   }

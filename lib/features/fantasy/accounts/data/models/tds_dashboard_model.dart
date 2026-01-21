@@ -9,15 +9,15 @@ class TdsDashboardModel {
 
   factory TdsDashboardModel.fromJson(Map<String, dynamic> json) =>
       TdsDashboardModel(
-        financialReport: json["financial_report"] == null
+        financialReport: json['financial_report'] == null
             ? []
             : List<FinancialReport>.from(
-                json["financial_report"]!.map(
+                json['financial_report']!.map(
                   (x) => FinancialReport.fromJson(x),
                 ),
               ),
-        tdsFormula: ModelParsers.toStringParser(json["tds_formula"]),
-        example: ModelParsers.toStringParser(json["example"]),
+        tdsFormula: ModelParsers.toStringParser(json['tds_formula']),
+        example: ModelParsers.toStringParser(json['example']),
       );
 }
 
@@ -54,20 +54,20 @@ class FinancialReport {
     Map<String, dynamic> json,
   ) =>
       FinancialReport(
-        financialYear: json["financial_year"],
-        tdsAlreadyPaid: ModelParsers.toNumParser(json["tdsAlreadyPaid"]),
-        tdsToBeDeducted: ModelParsers.toNumParser(json["tdsToBeDeducted"]),
-        successDeposit: ModelParsers.toNumParser(json["successDeposit"]),
-        successWithdraw: ModelParsers.toNumParser(json["successWithdraw"]),
-        netWin: ModelParsers.toNumParser(json["netWin"]),
-        openingBalance: ModelParsers.toNumParser(json["openingBalance"]),
-        closingBalance: ModelParsers.toNumParser(json["closingBalance"]),
-        tdsStatus: json["tdsStatus"],
-        id: json["_id"],
+        financialYear: json['financial_year'],
+        tdsAlreadyPaid: ModelParsers.toNumParser(json['tdsAlreadyPaid']),
+        tdsToBeDeducted: ModelParsers.toNumParser(json['tdsToBeDeducted']),
+        successDeposit: ModelParsers.toNumParser(json['successDeposit']),
+        successWithdraw: ModelParsers.toNumParser(json['successWithdraw']),
+        netWin: ModelParsers.toNumParser(json['netWin']),
+        openingBalance: ModelParsers.toNumParser(json['openingBalance']),
+        closingBalance: ModelParsers.toNumParser(json['closingBalance']),
+        tdsStatus: json['tdsStatus'],
+        id: json['_id'],
         endDate:
-            json["endDate"] == null ? null : DateTime.parse(json["endDate"]),
-        startDate: json["startDate"] == null
+            json['endDate'] == null ? null : DateTime.parse(json['endDate']),
+        startDate: json['startDate'] == null
             ? null
-            : DateTime.parse(json["startDate"]),
+            : DateTime.parse(json['startDate']),
       );
 }

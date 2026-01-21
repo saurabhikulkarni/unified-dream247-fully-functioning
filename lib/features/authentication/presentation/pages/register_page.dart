@@ -96,7 +96,7 @@ class _RegisterViewState extends State<_RegisterView> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     const SizedBox(height: 20),
-                    Text(
+                    const Text(
                       'Create Account',
                       style: TextStyles.h2,
                       textAlign: TextAlign.center,
@@ -166,7 +166,7 @@ class _RegisterViewState extends State<_RegisterView> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
+                        const Text(
                           'Already have an account? ',
                           style: TextStyles.bodyMedium,
                         ),

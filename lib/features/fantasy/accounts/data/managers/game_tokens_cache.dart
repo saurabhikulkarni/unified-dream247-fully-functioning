@@ -90,7 +90,7 @@ class GameTokensCache {
 
       final lastSyncTime = DateTime.parse(lastSync);
       final diff = DateTime.now().difference(lastSyncTime);
-      final remaining = Duration(minutes: cacheExpiryMinutes) - diff;
+      final remaining = const Duration(minutes: cacheExpiryMinutes) - diff;
 
       return remaining.isNegative ? null : remaining;
     } catch (e) {

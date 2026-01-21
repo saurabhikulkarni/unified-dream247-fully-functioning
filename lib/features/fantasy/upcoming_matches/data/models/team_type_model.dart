@@ -6,8 +6,8 @@ class TeamTypeModel {
   TeamTypeModel({this.id, this.name, this.status});
 
   factory TeamTypeModel.fromJson(Map<String, dynamic> json) => TeamTypeModel(
-    id: json["_id"],
-    name: json["name"],
-    status: json["status"],
+    id: json['_id'],
+    name: json['name'],
+    status: json['status'],
   );
 }

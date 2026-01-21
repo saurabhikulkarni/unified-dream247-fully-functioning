@@ -48,7 +48,7 @@ class Scoreboard extends StatelessWidget {
                           context,
                           isLeft: true,
                           logo: ((list ?? []).isEmpty)
-                              ? AppSingleton.singleton.matchData.team1Logo ?? ""
+                              ? AppSingleton.singleton.matchData.team1Logo ?? ''
                               : ((list?[0].teams?.isNotEmpty ?? false)
                                       ? list![0].teams![0].logoUrl ??
                                           AppSingleton
@@ -58,7 +58,7 @@ class Scoreboard extends StatelessWidget {
                                               .singleton.matchData.team1Logo) ??
                                   '',
                           name: ((list ?? []).isEmpty)
-                              ? AppSingleton.singleton.matchData.team1Name ?? ""
+                              ? AppSingleton.singleton.matchData.team1Name ?? ''
                               : ((list?[0].teams?.isNotEmpty ?? false)
                                       ? list![0].teams![0].title ??
                                           AppSingleton
@@ -68,16 +68,16 @@ class Scoreboard extends StatelessWidget {
                                               .singleton.matchData.team1Name) ??
                                   '',
                           score: ((list ?? []).isEmpty)
-                              ? "---"
+                              ? '---'
                               : ((list?[0].teams ?? []).isNotEmpty)
                                   ? (list?[0].teams?[0].scoresFull != null &&
                                           list?[0].teams?[0].scoresFull != '')
-                                      ? (list?[0].teams?[0].scoresFull ?? "---")
+                                      ? (list?[0].teams?[0].scoresFull ?? '---')
                                           .replaceAll('&', '\n')
                                       : 'Yet to Bat'
                                   : (list?[0].teamb?.scoresFull != null &&
                                           list?[0].teama?.scoresFull != '')
-                                      ? (list?[0].teama?.scoresFull ?? "---")
+                                      ? (list?[0].teama?.scoresFull ?? '---')
                                           .replaceAll('&', '\n')
                                       : 'Yet to Bat',
                         ),
@@ -87,7 +87,7 @@ class Scoreboard extends StatelessWidget {
                           context,
                           isLeft: false,
                           logo: ((list ?? []).isEmpty)
-                              ? AppSingleton.singleton.matchData.team2Logo ?? ""
+                              ? AppSingleton.singleton.matchData.team2Logo ?? ''
                               : ((list?[0].teams?.isNotEmpty ?? false)
                                       ? list![0].teams![1].logoUrl ??
                                           AppSingleton
@@ -97,7 +97,7 @@ class Scoreboard extends StatelessWidget {
                                               .singleton.matchData.team2Logo) ??
                                   '',
                           name: ((list ?? []).isEmpty)
-                              ? AppSingleton.singleton.matchData.team2Name ?? ""
+                              ? AppSingleton.singleton.matchData.team2Name ?? ''
                               : ((list?[0].teams?.isNotEmpty ?? false)
                                       ? list![0].teams![1].title ??
                                           AppSingleton
@@ -107,16 +107,16 @@ class Scoreboard extends StatelessWidget {
                                               .singleton.matchData.team2Name) ??
                                   '',
                           score: ((list ?? []).isEmpty)
-                              ? "---"
+                              ? '---'
                               : ((list?[0].teams ?? []).isNotEmpty)
                                   ? (list?[0].teams?[1].scoresFull != null &&
                                           list?[0].teams?[1].scoresFull != '')
-                                      ? (list?[0].teams?[1].scoresFull ?? "---")
+                                      ? (list?[0].teams?[1].scoresFull ?? '---')
                                           .replaceAll('&', '\n')
                                       : 'Yet to Bat'
                                   : (list?[0].teamb?.scoresFull != null &&
                                           list?[0].teamb?.scoresFull != '')
-                                      ? (list?[0].teamb?.scoresFull ?? "---")
+                                      ? (list?[0].teamb?.scoresFull ?? '---')
                                           .replaceAll('&', '\n')
                                       : 'Yet to Bat',
                         ),
@@ -171,9 +171,9 @@ class Scoreboard extends StatelessWidget {
                   // ================= TOSS TEXT =================
                   if ((list ?? []).isNotEmpty)
                     if (list?[0].statusNote != null &&
-                        (list?[0].statusNote ?? "").isNotEmpty)
+                        (list?[0].statusNote ?? '').isNotEmpty)
                       Text(
-                        list?[0].statusNote ?? "---",
+                        list?[0].statusNote ?? '---',
                         style: GoogleFonts.exo2(
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
@@ -269,7 +269,7 @@ class Scoreboard extends StatelessWidget {
                 ),
                 const SizedBox(width: 6),
                 Text(
-                  mode?.toUpperCase() ?? "---",
+                  mode?.toUpperCase() ?? '---',
                   style: GoogleFonts.exo2(
                     color: (mode == 'Live')
                         ? AppColors.white

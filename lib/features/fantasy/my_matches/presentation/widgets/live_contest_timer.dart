@@ -17,7 +17,7 @@ class LiveContestTimer extends StatelessWidget {
           text: TextSpan(
             children: [
               TextSpan(
-                text: AppSingleton.singleton.matchData.team1Name ?? "IND",
+                text: AppSingleton.singleton.matchData.team1Name ?? 'IND',
                 style: GoogleFonts.exo2(
                   fontSize: 16.0,
                   color: transparent ? AppColors.blackColor : AppColors.white,
@@ -25,7 +25,7 @@ class LiveContestTimer extends StatelessWidget {
                 ),
               ),
               TextSpan(
-                text: " VS ",
+                text: ' VS ',
                 style: GoogleFonts.exo2(
                   fontSize: 14.0,
                   color: transparent ? AppColors.blackColor : AppColors.white,
@@ -33,7 +33,7 @@ class LiveContestTimer extends StatelessWidget {
                 ),
               ),
               TextSpan(
-                text: AppSingleton.singleton.matchData.team2Name ?? "AUS",
+                text: AppSingleton.singleton.matchData.team2Name ?? 'AUS',
                 style: GoogleFonts.exo2(
                   fontSize: 16.0,
                   color: transparent ? AppColors.blackColor : AppColors.white,

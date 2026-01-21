@@ -99,7 +99,7 @@ class JoinedContestShimmerWidget extends StatelessWidget {
                         children: [
                           Image.asset(Images.winner, height: 18, width: 18),
                           const Text(
-                            "1",
+                            '1',
                             style: TextStyle(
                               fontSize: 10,
                               color: AppColors.letterColor,

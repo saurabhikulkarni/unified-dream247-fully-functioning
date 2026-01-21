@@ -58,7 +58,7 @@ class _PopularProductsState extends State<PopularProducts> {
         Padding(
           padding: const EdgeInsets.all(defaultPadding),
           child: Text(
-            "Popular products",
+            'Popular products',
             style: Theme.of(context).textTheme.titleSmall,
           ),
         ),
@@ -94,12 +94,12 @@ class _PopularProductsState extends State<PopularProducts> {
                   product: _products[index],
                   press: () {
                     Navigator.pushNamed(context, productDetailsScreenRoute,
-                        arguments: {'product': _products[index]});
+                        arguments: {'product': _products[index]},);
                   },
                 ),
               ),
             ),
-          )
+          ),
       ],
     );
   }
