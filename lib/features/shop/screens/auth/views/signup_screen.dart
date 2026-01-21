@@ -155,6 +155,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         // Clean phone number (remove non-digit characters)
                         final cleanPhone = phone.replaceAll(RegExp(r'[^\d]'), '');
                         
+                        debugPrint('📝 [SIGNUP] Creating user in Hygraph...');
+                        debugPrint('📝 [SIGNUP] FirstName: $firstName, LastName: $lastName');
+                        debugPrint('📝 [SIGNUP] Phone: $cleanPhone');
+                        
                         // Call GraphQL mutation to create user and get their ID
                         final graphQLClient = GraphQLService.getClient();
                         final MutationOptions options = MutationOptions(
@@ -172,12 +176,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         
                         final QueryResult result = await graphQLClient.mutate(options);
                         
+                        debugPrint('📝 [SIGNUP] GraphQL Response: ${result.data}');
+                        
                         if (result.hasException) {
+                          debugPrint('❌ [SIGNUP] GraphQL Exception: ${result.exception}');
                           if (mounted) {
                             Navigator.of(context).pop(); // Hide loading
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: Text('Error: ${result.exception}'),
+                                content: Text('Error creating account: ${result.exception?.graphqlErrors.firstOrNull?.message ?? result.exception}'),
                                 backgroundColor: Colors.red,
                               ),
                             );
@@ -187,17 +194,24 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         
                         // Extract userId from response
                         final userId = result.data?['createUserDetail']?['id']?.toString();
+                        debugPrint('📝 [SIGNUP] Created User ID: $userId');
 
                         if (userId != null && userId.isNotEmpty) {
                           // Publish user (required for Hygraph)
+                          debugPrint('📝 [SIGNUP] Publishing user...');
                           try {
                             final publishOptions = MutationOptions(
                               document: gql(GraphQLQueries.publishUser),
                               variables: {'id': userId},
                             );
-                            await graphQLClient.mutate(publishOptions);
+                            final publishResult = await graphQLClient.mutate(publishOptions);
+                            if (publishResult.hasException) {
+                              debugPrint('⚠️ [SIGNUP] Publish exception: ${publishResult.exception}');
+                            } else {
+                              debugPrint('✅ [SIGNUP] User published successfully');
+                            }
                           } catch (e) {
-                            // Publishing failed, but user is created
+                            debugPrint('⚠️ [SIGNUP] Publishing failed: $e (user is still created)');
                           }
                           
                           // Save login session with userId from Hygraph (no fantasy token)
@@ -247,17 +261,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           
                           context.go(RouteNames.home);
                         } else {
+                          debugPrint('❌ [SIGNUP] userId is null or empty! Full response: ${result.data}');
                           if (mounted) {
                             Navigator.of(context).pop(); // Hide loading
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text('Error: Could not create user account'),
+                                content: Text('Error: Could not create user account - no user ID returned'),
                                 backgroundColor: Colors.red,
                               ),
                             );
                           }
                         }
-                      } catch (e) {
+                      } catch (e, stackTrace) {
+                        debugPrint('❌ [SIGNUP] Exception during signup: $e');
+                        debugPrint('❌ [SIGNUP] Stack trace: $stackTrace');
                         if (mounted) {
                           Navigator.of(context).pop(); // Hide loading
                           ScaffoldMessenger.of(context).showSnackBar(
