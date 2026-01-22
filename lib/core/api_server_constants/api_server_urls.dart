@@ -3,11 +3,11 @@ library;
 
 class ApiServerUrls {
   // Base URLs
-  static const String devBaseUrl = 'https://dev-api.dream247.com';
-  static const String prodBaseUrl = 'https://api.dream247.com';
+  static const String devBaseUrl = 'http://134.209.158.211:4000';
+  static const String prodBaseUrl = 'http://134.209.158.211:4000';
   
   // Current base URL (change based on environment)
-  static String get baseUrl => devBaseUrl;
+  static String get baseUrl => prodBaseUrl;
   
   // Authentication endpoints
   static const String login = '/auth/login';

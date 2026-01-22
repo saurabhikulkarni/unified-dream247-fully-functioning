@@ -18,11 +18,11 @@ class Environment {
   static String get gamingApiUrl {
     switch (env) {
       case 'prod':
-        return 'https://api.dream247.com/';
+        return 'http://134.209.158.211:4000/';
       case 'staging':
-        return 'https://staging-api.dream247.com/';
+        return 'http://134.209.158.211:4000/';
       default:
-        return 'https://dev-api.dream247.com/';
+        return 'http://134.209.158.211:4000/';
     }
   }
   

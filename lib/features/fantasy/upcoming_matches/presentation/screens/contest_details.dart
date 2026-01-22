@@ -99,186 +99,189 @@ class _ContestDetails extends State<ContestDetails> with RouteAware {
       addPadding: false,
       isLiveContest: false,
       updateIndex: (p0) => 0,
-      child: Column(
-        children: [
-          (contestDetails != null)
-              ? ContestDetailCard(
-                  teamType: widget.teamType,
-                  data: contestDetails,
-                  onDismiss: () {
-                    getContestDetails();
-                  },
-                  allContests: list,
-                )
-              : Column(
-                  children: [
-                    Container(
-                      margin: const EdgeInsets.all(10).copyWith(bottom: 0),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        color: AppColors.white,
-                        border:
-                            Border.all(color: AppColors.whiteFade1, width: 2),
-                      ),
-                      child: Column(
-                        children: [
-                          Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(10.0),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    ShimmerWidget(
-                                      height: 20,
-                                      width:
-                                          MediaQuery.of(context).size.width / 4,
-                                    ),
-                                    const SizedBox(height: 5),
-                                    ShimmerWidget(
-                                      height: 30,
-                                      width:
-                                          MediaQuery.of(context).size.width / 3,
-                                    ),
-                                    const SizedBox(height: 10),
-                                    const ShimmerWidget(height: 5),
-                                    const SizedBox(height: 10),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        ShimmerWidget(
-                                          height: 10,
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width /
-                                              4,
-                                        ),
-                                        ShimmerWidget(
-                                          height: 10,
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width /
-                                              4,
-                                        ),
-                                      ],
-                                    ),
-                                  ],
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            (contestDetails != null)
+                ? ContestDetailCard(
+                    teamType: widget.teamType,
+                    data: contestDetails,
+                    onDismiss: () {
+                      getContestDetails();
+                    },
+                    allContests: list,
+                  )
+                : Column(
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.all(10).copyWith(bottom: 0),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          color: AppColors.white,
+                          border:
+                              Border.all(color: AppColors.whiteFade1, width: 2),
+                        ),
+                        child: Column(
+                          children: [
+                            Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      ShimmerWidget(
+                                        height: 20,
+                                        width:
+                                            MediaQuery.of(context).size.width / 4,
+                                      ),
+                                      const SizedBox(height: 5),
+                                      ShimmerWidget(
+                                        height: 30,
+                                        width:
+                                            MediaQuery.of(context).size.width / 3,
+                                      ),
+                                      const SizedBox(height: 10),
+                                      const ShimmerWidget(height: 5),
+                                      const SizedBox(height: 10),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          ShimmerWidget(
+                                            height: 10,
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width /
+                                                4,
+                                          ),
+                                          ShimmerWidget(
+                                            height: 10,
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width /
+                                                4,
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                              const ShimmerWidget(
-                                height: 45,
-                                borderRadius: BorderRadius.only(
-                                  bottomRight: Radius.circular(12),
-                                  bottomLeft: Radius.circular(12),
+                                const ShimmerWidget(
+                                  height: 45,
+                                  borderRadius: BorderRadius.only(
+                                    bottomRight: Radius.circular(12),
+                                    bottomLeft: Radius.circular(12),
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        ],
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 10),
-                    const ShimmerWidget(
-                      margin: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
-                      height: 40,
-                    ),
-                  ],
-                ),
-          ((contestDetails?.textNote ?? '').isEmpty ||
-                  AppSingleton.singleton.matchData.textNote == '' ||
-                  AppSingleton.singleton.matchData.textNote == null)
-              ? const SizedBox.shrink()
-              : Container(
-                  padding: const EdgeInsets.all(10.0),
-                  height: 50,
-                  child: Center(
-                    child: Marquee(
-                      text: contestDetails?.textNote ?? '',
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.letterColor,
+                      const SizedBox(height: 10),
+                      const ShimmerWidget(
+                        margin: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
+                        height: 40,
                       ),
-                      scrollAxis: Axis.horizontal,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      blankSpace: 20.0,
-                      velocity: 100.0,
-                      pauseAfterRound: const Duration(seconds: 1),
-                      startPadding: 10.0,
-                      accelerationDuration: const Duration(seconds: 1),
-                      accelerationCurve: Curves.linear,
-                      decelerationDuration: const Duration(milliseconds: 500),
-                      decelerationCurve: Curves.easeOut,
+                    ],
+                  ),
+            ((contestDetails?.textNote ?? '').isEmpty ||
+                    AppSingleton.singleton.matchData.textNote == '' ||
+                    AppSingleton.singleton.matchData.textNote == null)
+                ? const SizedBox.shrink()
+                : Container(
+                    padding: const EdgeInsets.all(10.0),
+                    height: 50,
+                    child: Center(
+                      child: Marquee(
+                        text: contestDetails?.textNote ?? '',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.letterColor,
+                        ),
+                        scrollAxis: Axis.horizontal,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        blankSpace: 20.0,
+                        velocity: 100.0,
+                        pauseAfterRound: const Duration(seconds: 1),
+                        startPadding: 10.0,
+                        accelerationDuration: const Duration(seconds: 1),
+                        accelerationCurve: Curves.linear,
+                        decelerationDuration: const Duration(milliseconds: 500),
+                        decelerationCurve: Curves.easeOut,
+                      ),
                     ),
                   ),
-                ),
-          const SizedBox(height: 15),
-          Expanded(
-            child: DefaultTabController(
-              length: 2,
-              child: Scaffold(
-                backgroundColor: AppColors.white,
-                appBar: const TabBar(
-                  indicatorColor: AppColors.black,
-                  tabAlignment: TabAlignment.start,
-                  isScrollable: true,
-                  tabs: [
-                    Padding(
-                      padding: EdgeInsets.symmetric(vertical: 5),
-                      child: Text(
-                        'Winnings',
-                        style: TextStyle(
-                          color: AppColors.letterColor,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 14,
+            const SizedBox(height: 15),
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.6,
+              child: DefaultTabController(
+                length: 2,
+                child: Scaffold(
+                  backgroundColor: AppColors.white,
+                  appBar: const TabBar(
+                    indicatorColor: AppColors.black,
+                    tabAlignment: TabAlignment.start,
+                    isScrollable: true,
+                    tabs: [
+                      Padding(
+                        padding: EdgeInsets.symmetric(vertical: 5),
+                        child: Text(
+                          'Winnings',
+                          style: TextStyle(
+                            color: AppColors.letterColor,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14,
+                          ),
                         ),
                       ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(vertical: 5),
-                      child: Text(
-                        'Leaderboard',
-                        style: TextStyle(
-                          color: AppColors.letterColor,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 14,
+                      Padding(
+                        padding: EdgeInsets.symmetric(vertical: 5),
+                        child: Text(
+                          'Leaderboard',
+                          style: TextStyle(
+                            color: AppColors.letterColor,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-                body: TabBarView(
-                  children: [
-                    PriceCard(
-                      list: contestDetails?.matchpricecard ?? [],
-                      currentFillCards: currentFillCards,
-                      flexible: contestDetails?.flexibleContest,
-                      extraPriceList: contestDetails?.extrapricecard,
-                      mode: widget.mode,
-                      textNote: contestDetails?.textNote,
-                    ),
-                    UpcomingLeaderboard(
-                      teamType: widget.teamType,
-                      key: leaderboardKey,
-                      teamCount: (p0) {
-                        int limit = ((contestDetails?.multiEntry ?? 0) == 1)
-                            ? (contestDetails?.teamLimit ?? 1)
-                            : 1;
-                        if (limit == p0) {
-                          contestDetails?.isselected = true;
-                          AppUtils.isSelected.value = true;
-                        }
-                      },
-                      challengeId: contestDetails?.id ?? '',
-                    ),
-                  ],
+                    ],
+                  ),
+                  body: TabBarView(
+                    children: [
+                      PriceCard(
+                        list: contestDetails?.matchpricecard ?? [],
+                        currentFillCards: currentFillCards,
+                        flexible: contestDetails?.flexibleContest,
+                        extraPriceList: contestDetails?.extrapricecard,
+                        mode: widget.mode,
+                        textNote: contestDetails?.textNote,
+                      ),
+                      UpcomingLeaderboard(
+                        teamType: widget.teamType,
+                        key: leaderboardKey,
+                        teamCount: (p0) {
+                          int limit = ((contestDetails?.multiEntry ?? 0) == 1)
+                              ? (contestDetails?.teamLimit ?? 1)
+                              : 1;
+                          if (limit == p0) {
+                            contestDetails?.isselected = true;
+                            AppUtils.isSelected.value = true;
+                          }
+                        },
+                        challengeId: contestDetails?.id ?? '',
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

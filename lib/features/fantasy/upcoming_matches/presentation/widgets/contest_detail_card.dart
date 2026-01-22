@@ -79,6 +79,22 @@ class _ContestDetailCardState extends State<ContestDetailCard> {
       );
     }
   }
+  num getFirstPrize() {
+    // From matchpricecard list
+    if (widget.data?.matchpricecard != null &&
+        widget.data!.matchpricecard!.isNotEmpty &&
+        widget.data!.matchpricecard!.first.price != null) {
+      return widget.data!.matchpricecard!.first.price!;
+    }
+
+    // Fallback to priceCard
+    if (widget.data?.priceCard?.price != null) {
+      return num.tryParse(widget.data!.priceCard!.price!) ?? 0;
+    }
+
+    // Last fallback
+    return widget.data?.winAmount ?? 0;
+  }
 
   void joinContest(BuildContext context) {
     upcomingMatchUsecase
@@ -191,7 +207,7 @@ class _ContestDetailCardState extends State<ContestDetailCard> {
     int percent = (widget.data?.joinedusers ?? 0) *
         100 ~/
         (widget.data?.maximumUser ?? 1);
-
+    final firstPrize = getFirstPrize();
     return Stack(
       clipBehavior: Clip.none,
       children: [
@@ -461,7 +477,7 @@ class _ContestDetailCardState extends State<ContestDetailCard> {
                               size: 14.sp, color: Colors.orange.shade900,),
                           3.horizontalSpace,
                           Text(
-                            '${Strings.indianRupee}${AppUtils.changeNumberToValue(widget.data?.winAmount?.toInt() ?? 0)}',
+                            '${Strings.indianRupee}${AppUtils.changeNumberToValue(firstPrize)}',
                             style: GoogleFonts.exo2(
                               color: Colors.orange.shade900,
                               fontSize: 11.sp,

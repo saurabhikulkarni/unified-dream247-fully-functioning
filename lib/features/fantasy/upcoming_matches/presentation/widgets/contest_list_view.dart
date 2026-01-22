@@ -75,7 +75,22 @@ class ContestListView extends StatelessWidget {
       );
     }
   }
+num getFirstPrize() {
+    // From matchpricecard list
+    if (data?.matchpricecards != null &&
+        data!.matchpricecards!.isNotEmpty &&
+        data!.matchpricecards!.first.price != null) {
+      return data!.matchpricecards!.first.price!;
+    }
 
+    // Fallback to priceCard
+    if (data?.pricesCards?.price != null) {
+      return num.tryParse(data!.pricesCards!.price!) ?? 0;
+    }
+
+    // Last fallback
+    return data?.winAmount ?? 0;
+  }
   void joinContest(BuildContext context) {
     upcomingMatchUsecase
         .getTeamswithChallengeId(context, data?.matchchallengeid ?? '')
@@ -175,7 +190,7 @@ class ContestListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     int percent = (data?.joinedusers ?? 0) * 100 ~/ (data?.maximumUser ?? 1);
-
+    final firstPrize = getFirstPrize();
     return Stack(
       clipBehavior: Clip.none,
       children: [
@@ -452,7 +467,7 @@ class ContestListView extends StatelessWidget {
                                 size: 14.sp, color: Colors.orange.shade900,),
                             3.horizontalSpace,
                             Text(
-                              '${Strings.indianRupee}${AppUtils.changeNumberToValue(data?.winAmount?.toInt() ?? 0)}',
+                              '${Strings.indianRupee}${AppUtils.changeNumberToValue(firstPrize)}',
                               style: GoogleFonts.exo2(
                                 color: Colors.orange.shade900,
                                 fontSize: 11.sp,

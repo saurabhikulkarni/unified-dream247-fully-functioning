@@ -25,8 +25,6 @@ import 'package:unified_dream247/features/fantasy/menu_items/presentation/provid
 import 'package:unified_dream247/features/fantasy/upcoming_matches/data/upcoming_match_datsource.dart';
 import 'package:unified_dream247/features/fantasy/upcoming_matches/domain/use_cases/upcoming_match_usecase.dart';
 import 'package:unified_dream247/features/fantasy/upcoming_matches/presentation/widgets/contest_filled_bottom_sheet.dart';
-import 'package:get_it/get_it.dart';
-import 'package:unified_dream247/features/fantasy/accounts/data/services/contest_join_service.dart';
 
 class JoinContestBottomsheet extends StatefulWidget {
   final String challengeId, selectedTeam;
@@ -79,7 +77,7 @@ class _JoinContestBottomsheetState extends State<JoinContestBottomsheet> {
   UpcomingMatchUsecase upcomingMatchUsecase = UpcomingMatchUsecase(
     UpcomingMatchDatsource(ApiImpl(), ApiImplWithAccessToken()),
   );
-  late final ContestJoinService _contestJoinService = GetIt.instance<ContestJoinService>();
+  
   @override
   void initState() {
     super.initState();
@@ -176,32 +174,17 @@ class _JoinContestBottomsheetState extends State<JoinContestBottomsheet> {
     }
 
     if (!hasSufficientBalance) {
+      // Show proper message with balance info from getUsableBalance API
+      appToast(
+        'Insufficient balance! Need: ₹${(entryfee ?? 0).toStringAsFixed(2)}, Usable: ₹${(usableBalance ?? 0).toStringAsFixed(2)}',
+        context,
+      );
       AppNavigation.gotoAddCashScreen(context);
       setState(() => isJoining = false);
       return;
     }
 
-    // Check game tokens balance
-    final entryFeeAsDouble = (entryfee ?? 0).toDouble();
-    try {
-      final hasEnoughGameTokens = 
-          await _contestJoinService.hasEnoughTokens(entryFeeAsDouble);
-      
-      if (!hasEnoughGameTokens) {
-        final currentBalance = await _contestJoinService.getCurrentBalance();
-        appToast(
-          'Insufficient game tokens! Need: ₹${entryFeeAsDouble.toStringAsFixed(2)}, Have: ₹${currentBalance.toStringAsFixed(2)}',
-          context,
-        );
-        AppNavigation.gotoAddCashScreen(context);
-        setState(() => isJoining = false);
-        return;
-      }
-    } catch (e) {
-      printX('Error checking game tokens: $e');
-      // Continue with contest join even if game tokens check fails
-    }
-
+    // Balance already verified by getUsableBalance API - proceed to join
     await handleContestJoin(ctx);
 
     if (mounted) setState(() => isJoining = false);
@@ -233,27 +216,14 @@ class _JoinContestBottomsheetState extends State<JoinContestBottomsheet> {
       }
 
       if (data != null && data['success'] == true) {
-        // Debit game tokens after successful contest join
+        // Contest join successful - backend already deducted the entry fee
+        // Refresh wallet balance to sync with backend
         try {
-          final entryFeeAsDouble = (entryfee ?? 0).toDouble();
-          final response = await _contestJoinService.joinContest(
-            contestId: widget.challengeId,
-            entryFee: entryFeeAsDouble,
-          );
-          
-          // Log successful debit
-          printX('Game tokens debited successfully. New balance: ${response.newBalance}, Transaction: ${response.transactionId}');
-        } on ContestJoinException catch (e) {
-          // Tokens debit failed but contest join succeeded - show warning
-          if (e.isInsufficientBalance) {
-            appToast('⚠️ Contest joined, but game tokens insufficient', context);
-          } else {
-            printX('Game tokens debit warning: ${e.message}');
-            // Non-fatal error - continue with contest join success flow
-          }
+          final walletProvider = Provider.of<WalletDetailsProvider>(context, listen: false);
+          await walletProvider.refreshWalletDetails(context);
+          printX('Wallet balance refreshed after contest join');
         } catch (e) {
-          printX('Unexpected error debiting game tokens: $e');
-          // Non-fatal error - continue with contest join success flow
+          printX('Warning: Could not refresh wallet balance: $e');
         }
 
         if (data['data']?['is_private'] == 1) {
