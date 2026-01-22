@@ -7,11 +7,11 @@ class RazorpayConfig {
   // ⚠️ TEST MODE - Using Test Razorpay credentials for testing
   // Your Razorpay API Key (Public Key)
   // Available at: https://dashboard.razorpay.com/#/app/keys
-  static const String _testKeyId = 'rzp_test_S0bjTVUZm4brLR'; // Current test key
+  // static const String _testKeyId = 'rzp_test_S0bjTVUZm4brLR'; // Test key - commented out
   static const String _prodKeyId = 'rzp_live_RzKEI3xUwyf7Tu'; // Live key - for production
   
-  // Force test key for now - change to: ApiConfig.isProduction ? _prodKeyId : _testKeyId for production
-  static String get keyId => _testKeyId;
+  // Now using live key for production
+  static String get keyId => _prodKeyId;
 
   // Your Razorpay API Secret (Keep this ONLY on backend)
   // Never expose this in frontend code!
