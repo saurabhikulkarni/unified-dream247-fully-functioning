@@ -336,11 +336,8 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
           // Game Tokens Display - Clickable to navigate to wallet
           Consumer<WalletDetailsProvider>(
             builder: (context, walletProvider, child) {
-              // Calculate total game tokens (balance + winning + bonus)
-              final balance = double.tryParse(walletProvider.walletData?.balance ?? '0') ?? 0;
-              final winning = double.tryParse(walletProvider.walletData?.winning ?? '0') ?? 0;
-              final bonus = double.tryParse(walletProvider.walletData?.bonus ?? '0') ?? 0;
-              final totalGameTokens = (balance + winning + bonus).toInt();
+              // Show only the deposited balance (game tokens), not winning or bonus
+              final gameTokens = double.tryParse(walletProvider.walletData?.balance ?? '0') ?? 0;
               
               return GestureDetector(
                 onTap: () => _navigateToWallet(),
@@ -357,7 +354,7 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
                       const Text('💎', style: TextStyle(fontSize: 16)),
                       const SizedBox(width: 4),
                       Text(
-                        totalGameTokens.toString(),
+                        gameTokens.toInt().toString(),
                         style: const TextStyle(
                           color: Colors.black87,
                           fontWeight: FontWeight.bold,

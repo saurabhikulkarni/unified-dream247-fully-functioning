@@ -42,19 +42,19 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyCBFyKY9zMNVedDlgAi0E3rF9hPnK9zauU',
-    appId: '1:36493563938:android:553cf9b9551585d11e927b',
-    messagingSenderId: '36493563938',
-    projectId: 'dream247-2d710',
-    storageBucket: 'dream247-2d710.firebasestorage.app',
+    apiKey: 'AIzaSyBYtFUaZoSiYS-uh7qOJXPvsinmOlvvJ1U',
+    appId: '1:520080359838:android:f18d5c6d4337276683168f',
+    messagingSenderId: '520080359838',
+    projectId: 'pro-score-line',
+    storageBucket: 'pro-score-line.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'YOUR_IOS_API_KEY',
-    appId: 'YOUR_IOS_APP_ID',
-    messagingSenderId: '36493563938',
-    projectId: 'dream247-2d710',
-    storageBucket: 'dream247-2d710.firebasestorage.app',
-    iosBundleId: 'com.dream247.app',
+    apiKey: 'AIzaSyBYtFUaZoSiYS-uh7qOJXPvsinmOlvvJ1U',
+    appId: '1:520080359838:ios:f18d5c6d4337276683168f',
+    messagingSenderId: '520080359838',
+    projectId: 'pro-score-line',
+    storageBucket: 'pro-score-line.firebasestorage.app',
+    iosBundleId: 'com.brighthex.dream247',
   );
 }

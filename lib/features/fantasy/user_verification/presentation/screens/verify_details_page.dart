@@ -63,7 +63,16 @@ class _VerifyDetailsPageState extends State<VerifyDetailsPage> {
     try {
       setState(() => _isLoading = true);
 
-      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      // Configure GoogleSignIn with the Web Client ID from google-services.json
+      final GoogleSignIn googleSignIn = GoogleSignIn(
+        serverClientId: '520080359838-gr2c16lp5r3s6ov6ude2ji5boe3k8bp6.apps.googleusercontent.com',
+        scopes: ['email'],
+      );
+      
+      // Sign out first to ensure fresh login
+      await googleSignIn.signOut();
+      
+      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
       if (googleUser == null) {
         setState(() => _isLoading = false);
         return;

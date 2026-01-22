@@ -1,4 +1,4 @@
-package com.example.unified_dream247
+package com.brighthex.dream247
 
 import io.flutter.embedding.android.FlutterActivity
 

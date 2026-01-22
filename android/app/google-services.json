@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "520080359838-nhbtpg0goro0kf426p6r9vsh7n5qloi1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.brighthex.dream247",
+            "certificate_hash": "cbbb6fa08d88a95133c8dbaba1a581d4aa779804"
+          }
+        },
+        {
           "client_id": "520080359838-gr2c16lp5r3s6ov6ude2ji5boe3k8bp6.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -34,11 +42,10 @@
               "client_type": 3
             },
             {
-              "client_id": "520080359838-mr9o5oa9841qoj9hcimu2n3voph40een.apps.googleusercontent.com",
+              "client_id": "520080359838-kfrs5vakkh4aoudsp0rth9mpkhvrnqii.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.brighthex.proscoreline",
-                "app_store_id": "6752947512"
+                "bundle_id": "com.brighthex.dream247"
               }
             }
           ]
@@ -90,11 +97,10 @@
               "client_type": 3
             },
             {
-              "client_id": "520080359838-mr9o5oa9841qoj9hcimu2n3voph40een.apps.googleusercontent.com",
+              "client_id": "520080359838-kfrs5vakkh4aoudsp0rth9mpkhvrnqii.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.brighthex.proscoreline",
-                "app_store_id": "6752947512"
+                "bundle_id": "com.brighthex.dream247"
               }
             }
           ]
