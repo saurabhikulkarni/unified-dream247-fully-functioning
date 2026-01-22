@@ -1,28 +1,106 @@
 {
   "project_info": {
-    "project_number": "36493563938",
-    "project_id": "dream247-2d710",
-    "storage_bucket": "dream247-2d710.firebasestorage.app"
+    "project_number": "520080359838",
+    "project_id": "pro-score-line",
+    "storage_bucket": "pro-score-line.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:36493563938:android:553cf9b9551585d11e927b",
+        "mobilesdk_app_id": "1:520080359838:android:f18d5c6d4337276683168f",
         "android_client_info": {
-          "package_name": "com.example.Dream247"
+          "package_name": "com.brighthex.dream247"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "520080359838-gr2c16lp5r3s6ov6ude2ji5boe3k8bp6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
-          "current_key": "AIzaSyCBFyKY9zMNVedDlgAi0E3rF9hPnK9zauU"
+          "current_key": "AIzaSyBYtFUaZoSiYS-uh7qOJXPvsinmOlvvJ1U"
+        },
+        {
+          "current_key": "AIzaSyBJnVnq2HGyGCQwXLlX5bCIxqFqZrz_B_8"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "116073558205614667665",
+              "client_type": 3
+            },
+            {
+              "client_id": "520080359838-mr9o5oa9841qoj9hcimu2n3voph40een.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.brighthex.proscoreline",
+                "app_store_id": "6752947512"
+              }
+            }
+          ]
         }
       }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:520080359838:android:463a5beb3510606083168f",
+        "android_client_info": {
+          "package_name": "com.brighthex.proscoreline"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "520080359838-gft1s483gduhp21rlepte63aq66tkuls.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.brighthex.proscoreline",
+            "certificate_hash": "15ad9b67b514358df5b69bff635942ca17bd09ac"
+          }
+        },
+        {
+          "client_id": "520080359838-h4cupd02sip02kc4dkp5ggv3recircuj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.brighthex.proscoreline",
+            "certificate_hash": "aaac85abc2489abbf77b3f092ce5a81662f02f3d"
+          }
+        },
+        {
+          "client_id": "520080359838-gr2c16lp5r3s6ov6ude2ji5boe3k8bp6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBYtFUaZoSiYS-uh7qOJXPvsinmOlvvJ1U"
+        },
+        {
+          "current_key": "AIzaSyBJnVnq2HGyGCQwXLlX5bCIxqFqZrz_B_8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "116073558205614667665",
+              "client_type": 3
+            },
+            {
+              "client_id": "520080359838-mr9o5oa9841qoj9hcimu2n3voph40een.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.brighthex.proscoreline",
+                "app_store_id": "6752947512"
+              }
+            }
+          ]
+        }
+      },
+      "admob_app_id": "ca-app-pub-3759817684043906~7303572968"
     }
   ],
   "configuration_version": "1"
