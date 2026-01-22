@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:unified_dream247/features/shop/constants.dart';
+import 'package:unified_dream247/features/fantasy/menu_items/presentation/providers/user_data_provider.dart';
+import 'package:unified_dream247/features/fantasy/menu_items/data/user_datasource.dart';
+import 'package:unified_dream247/features/fantasy/menu_items/domain/use_cases/user_usecases.dart';
+import 'package:unified_dream247/features/fantasy/core/api_server_constants/api_server_impl/api_impl_header.dart';
 
 class UserInfoScreen extends StatefulWidget {
   const UserInfoScreen({super.key});
@@ -13,13 +18,56 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
   late TextEditingController _emailController;
   late TextEditingController _phoneController;
   String? _phoneError;
+  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _nameController = TextEditingController(text: 'Sepide');
-    _emailController = TextEditingController(text: 'theflutterway@gmail.com');
-    _phoneController = TextEditingController(text: '9876543210');
+    _nameController = TextEditingController();
+    _emailController = TextEditingController();
+    _phoneController = TextEditingController();
+    _loadUserDataFromBackend();
+  }
+
+  /// Load user data from backend API
+  Future<void> _loadUserDataFromBackend() async {
+    try {
+      // Fetch fresh user data from backend
+      final userUsecases = UserUsecases(UserDatasource(ApiImplWithAccessToken()));
+      await userUsecases.getUserDetails(context);
+      
+      // Get user data from provider (which was updated by getUserDetails)
+      if (mounted) {
+        final userDataProvider = Provider.of<UserDataProvider>(context, listen: false);
+        final userData = userDataProvider.userData;
+        
+        if (userData != null) {
+          setState(() {
+            _nameController.text = userData.name ?? userData.team ?? '';
+            _emailController.text = userData.email ?? '';
+            _phoneController.text = userData.mobile?.toString() ?? '';
+            _isLoading = false;
+          });
+          
+          debugPrint('📱 [EDIT_PROFILE] Loaded user data from backend:');
+          debugPrint('   Name: ${userData.name}');
+          debugPrint('   Email: ${userData.email}');
+          debugPrint('   Phone: ${userData.mobile}');
+        } else {
+          setState(() {
+            _isLoading = false;
+          });
+          debugPrint('⚠️ [EDIT_PROFILE] No user data available from backend');
+        }
+      }
+    } catch (e) {
+      debugPrint('❌ [EDIT_PROFILE] Error loading user data from backend: $e');
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
   }
 
   @override
@@ -37,6 +85,17 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('Edit Profile'),
+        ),
+        body: const Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+    
     return Scaffold(
       appBar: AppBar(
         title: const Text('Edit Profile'),
@@ -123,7 +182,7 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
           ),
           const SizedBox(height: defaultPadding * 2),
           ElevatedButton(
-            onPressed: () {
+            onPressed: () async {
               if (_phoneController.text.isNotEmpty &&
                   !_validateIndianMobileNumber(_phoneController.text)) {
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -134,9 +193,63 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
                 );
                 return;
               }
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Profile updated')),
-              );
+              
+              // Save user data to backend
+              try {
+                final userUsecases = UserUsecases(UserDatasource(ApiImplWithAccessToken()));
+                
+                // Get current user data to preserve other fields
+                final userDataProvider = Provider.of<UserDataProvider>(context, listen: false);
+                final currentUserData = userDataProvider.userData;
+                
+                // Call backend API to update profile
+                final result = await userUsecases.updateProfile(
+                  context,
+                  currentUserData?.team ?? _nameController.text, // teamName
+                  _nameController.text, // name
+                  currentUserData?.state ?? '', // state
+                  currentUserData?.gender ?? '', // gender
+                  currentUserData?.city ?? '', // city
+                  currentUserData?.address ?? '', // address
+                  currentUserData?.dob ?? '', // dob
+                  currentUserData?.pincode?.toString() ?? '', // pincode
+                );
+                
+                if (result == true) {
+                  debugPrint('✅ [EDIT_PROFILE] User data saved to backend successfully');
+                  
+                  // Refresh user data from backend
+                  await userUsecases.getUserDetails(context);
+                  
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Profile updated successfully'),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
+                  }
+                } else {
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Failed to update profile'),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
+                }
+              } catch (e) {
+                debugPrint('❌ [EDIT_PROFILE] Error saving user data: $e');
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Failed to update profile'),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                }
+              }
             },
             child: const Text('Save Changes'),
           ),

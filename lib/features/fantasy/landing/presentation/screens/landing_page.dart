@@ -61,7 +61,6 @@ class _LandingPageState extends State<LandingPage> {
         },
       ),
       const WinnersPage(),
-      const MoreOptionsPage(),
     ];
   }
 
@@ -263,8 +262,6 @@ class _LandingPageState extends State<LandingPage> {
         return 'My Matches';
       case 2:
         return 'Winners';
-      case 3:
-        return 'More';
       default:
         return 'Dream247';
     }
@@ -306,11 +303,6 @@ class _LandingPageState extends State<LandingPage> {
                 icon: Icons.emoji_events_outlined,
                 label: 'Winners',
                 index: 2,
-              ),
-              _bottomItem(
-                icon: Icons.person_outline,
-                label: 'Profile',
-                index: 3,
               ),
             ],
           ),

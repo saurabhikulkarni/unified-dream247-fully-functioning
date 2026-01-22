@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:unified_dream247/features/shop/components/product/product_card.dart';
 import 'package:unified_dream247/features/shop/models/product_model.dart';
 import 'package:unified_dream247/features/shop/services/wishlist_service.dart';
 import 'package:unified_dream247/features/shop/services/cart_service.dart';
+import 'package:unified_dream247/features/shop/services/user_service.dart';
 import 'package:unified_dream247/features/shop/route/route_constants.dart';
 
 import 'package:unified_dream247/features/shop/constants.dart';
@@ -41,14 +43,33 @@ class _WishlistScreenState extends State<WishlistScreen> {
       _isLoading = true;
     });
     
-    // Sync with backend first to get latest wishlist
-    await wishlistService.syncWithBackend();
+    // Ensure user ID is set from SharedPreferences
+    final prefs = await SharedPreferences.getInstance();
+    final userId = prefs.getString('user_id') ?? prefs.getString('shop_user_id');
+    
+    if (userId != null && userId.isNotEmpty) {
+      // Set user ID in services
+      await UserService.setCurrentUserId(userId);
+      wishlistService.setUserId(userId);
+      
+      debugPrint('📋 [WISHLIST] Loading wishlist for user: $userId');
+      
+      // Force reset local wishlist and sync fresh from backend
+      await wishlistService.forceResetWishlist();
+      await wishlistService.initialize();
+      await wishlistService.syncWithBackend();
+    } else {
+      debugPrint('⚠️ [WISHLIST] No user ID found, showing empty wishlist');
+      // Clear local wishlist if no user is logged in
+      await wishlistService.forceResetWishlist();
+    }
     
     if (mounted) {
       setState(() {
         _wishlistItems = wishlistService.getWishlist();
         _isLoading = false;
       });
+      debugPrint('📋 [WISHLIST] Loaded ${_wishlistItems.length} items');
     }
   }
 

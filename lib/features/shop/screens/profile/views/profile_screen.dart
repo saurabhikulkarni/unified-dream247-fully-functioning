@@ -73,6 +73,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            // Navigate back to unified home screen
+            context.go('/');
+          },
+        ),
+        title: const Text('Profile'),
+        elevation: 0,
+      ),
       body: ListView(
         children: [
           if (_isTestUser)

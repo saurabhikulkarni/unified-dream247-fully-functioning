@@ -41,7 +41,10 @@ class UserService {
     
     // Fall back to SharedPreferences if available
     if (_prefs != null) {
-      _currentUserId = _prefs!.getString('user_id');
+      // Try multiple keys for user ID
+      _currentUserId = _prefs!.getString('user_id') ?? 
+                       _prefs!.getString('shop_user_id') ?? 
+                       _prefs!.getString('hygraph_user_id');
     }
     
     return _currentUserId;
