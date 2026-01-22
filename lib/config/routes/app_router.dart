@@ -58,11 +58,16 @@ import '../../features/fantasy/menu_items/presentation/screens/refer_and_earn_pa
 
 import 'route_names.dart';
 
+/// Global RouteObserver for tracking navigation events
+/// Used by pages to auto-refresh when returning from other screens
+final RouteObserver<ModalRoute<void>> routeObserver = RouteObserver<ModalRoute<void>>();
+
 /// GoRouter configuration for the application
 class AppRouter {
   static final GoRouter router = GoRouter(
     initialLocation: RouteNames.splash,
     debugLogDiagnostics: true,
+    observers: [routeObserver],
     redirect: (context, state) async {
       // Check if user is trying to access Fantasy routes without authentication
       final isFantasyRoute = state.matchedLocation.startsWith('/fantasy');

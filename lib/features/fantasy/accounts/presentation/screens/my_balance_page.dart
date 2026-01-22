@@ -27,6 +27,7 @@ import 'package:unified_dream247/features/fantasy/menu_items/domain/use_cases/us
 import 'package:unified_dream247/core/services/wallet_service.dart';
 import 'package:unified_dream247/features/shop/services/auth_service.dart'
     as shop_auth;
+import 'package:unified_dream247/config/routes/app_router.dart';
 
 class MyBalancePage extends StatefulWidget {
   const MyBalancePage({super.key});
@@ -35,7 +36,7 @@ class MyBalancePage extends StatefulWidget {
   State<MyBalancePage> createState() => _MyBalancePage();
 }
 
-class _MyBalancePage extends State<MyBalancePage> {
+class _MyBalancePage extends State<MyBalancePage> with RouteAware {
   AccountsUsecases accountsUsecases = AccountsUsecases(
     AccountsDatasource(ApiImpl(), ApiImplWithAccessToken()),
   );
@@ -51,6 +52,56 @@ class _MyBalancePage extends State<MyBalancePage> {
     loadData();
     _loadShopTokens();
     _loadGameTokens();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Subscribe to route observer for auto-refresh when returning to this page
+    routeObserver.subscribe(this, ModalRoute.of(context)!);
+  }
+
+  @override
+  void dispose() {
+    routeObserver.unsubscribe(this);
+    super.dispose();
+  }
+
+  @override
+  void didPopNext() {
+    // Called when returning to this page from another page (e.g., after adding cash)
+    debugPrint('🔄 [ACCOUNTS] Returned to accounts page, auto-refreshing...');
+    _refreshAllData();
+  }
+
+  /// Refresh all wallet data (shop tokens, game tokens, wallet details)
+  Future<void> _refreshAllData() async {
+    debugPrint('🔄 [ACCOUNTS] Starting full refresh...');
+    lastRefreshTime = null; // Reset throttle to force refresh
+    
+    // Small delay to ensure backend has processed any pending transactions
+    await Future.delayed(const Duration(milliseconds: 500));
+    
+    // Force refresh wallet details from backend
+    await accountsUsecases.myWalletDetails(context);
+    debugPrint('✅ [ACCOUNTS] Wallet details refreshed');
+    
+    // Load full wallet data
+    await _loadFullWalletBalance();
+    debugPrint('✅ [ACCOUNTS] Full wallet balance loaded');
+    
+    // Refresh individual token components
+    await _loadShopTokens();
+    await _loadGameTokens();
+    debugPrint('✅ [ACCOUNTS] Individual tokens refreshed');
+    
+    if (mounted) {
+      setState(() {
+        // Force UI rebuild
+      });
+      debugPrint('✅ [ACCOUNTS] UI state updated');
+    }
+    debugPrint('✅ [ACCOUNTS] Auto-refresh complete');
   }
 
   /// Initialize Fantasy module data if not already loaded
@@ -211,21 +262,22 @@ class _MyBalancePage extends State<MyBalancePage> {
 
   @override
   Widget build(BuildContext context) {
-    final walletData =
-        Provider.of<WalletDetailsProvider>(context, listen: false).walletData;
-
-    return SubContainer(
-      showAppBar: true,
-      showWalletIcon: false,
-      headerText: Strings.accounts,
-      addPadding: false,
-      child: RefreshIndicator(
-        onRefresh: () => loadData(),
-        child: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
-          child: Padding(
-            padding: const EdgeInsets.only(bottom: 30),
-            child: Column(
+    return Consumer<WalletDetailsProvider>(
+      builder: (context, walletProvider, child) {
+        final walletData = walletProvider.walletData;
+        
+        return SubContainer(
+          showAppBar: true,
+          showWalletIcon: false,
+          headerText: Strings.accounts,
+          addPadding: false,
+          child: RefreshIndicator(
+            onRefresh: () => loadData(),
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 30),
+                child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Wallet Summary Card
@@ -346,13 +398,16 @@ class _MyBalancePage extends State<MyBalancePage> {
                               isShopToken: true,
                               gradientButton: true,
                               buttonText: 'Add Cash',
-                              onButtonTap: () {
-                                // Use Navigator.push instead of Get.to to avoid GetX context issues
-                                Navigator.push(
+                              onButtonTap: () async {
+                                // Navigate to Add Money page and refresh when returning
+                                final result = await Navigator.push<bool>(
                                   context,
                                   MaterialPageRoute(
                                       builder: (_) => const AddMoneyPage()),
                                 );
+                                // Always refresh when returning, regardless of result
+                                debugPrint('🔄 [ACCOUNTS] Returned from Add Money (result: $result), refreshing...');
+                                await _refreshAllData();
                               },
                             ),
                             const SizedBox(height: 12),
@@ -479,6 +534,8 @@ class _MyBalancePage extends State<MyBalancePage> {
         ),
       ),
     );
+      },
+    );
   }
 
   Widget _walletInfoTile({
@@ -519,12 +576,20 @@ class _MyBalancePage extends State<MyBalancePage> {
             ),
             child: Center(
               child: isShopToken
-                  ? SvgPicture.asset(
-                      'assets/icons/coin.svg',
-                      width: 24,
-                      height: 24,
-                      // ignore: deprecated_member_use
-                      color: AppColors.mainColor,
+                  ? Container(
+                      width: 32,
+                      height: 32,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFFF8E1),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Center(
+                        child: SvgPicture.asset(
+                          'assets/icons/coin.svg',
+                          width: 22,
+                          height: 22,
+                        ),
+                      ),
                     )
                   : isDiamondIcon
                       ? const Icon(
