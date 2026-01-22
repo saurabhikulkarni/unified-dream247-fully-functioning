@@ -10,6 +10,8 @@ import 'package:unified_dream247/features/shop/services/product_service.dart';
 import 'package:unified_dream247/features/shop/models/product_model.dart';
 import 'package:unified_dream247/features/fantasy/accounts/presentation/providers/wallet_details_provider.dart';
 import 'package:unified_dream247/features/fantasy/accounts/data/accounts_datasource.dart';
+import 'package:unified_dream247/features/fantasy/core/api_server_constants/api_server_impl/api_impl.dart';
+import 'package:unified_dream247/features/fantasy/core/api_server_constants/api_server_impl/api_impl_header.dart';
 import 'dart:math';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -55,7 +57,7 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
       if (mounted) {
         try {
           // Fetch wallet details which populates WalletDetailsProvider
-          final accountsDatasource = AccountsDatasourceImpl();
+          final accountsDatasource = AccountsDatasource(ApiImpl(), ApiImplWithAccessToken());
           await accountsDatasource.myWalletDetails(context);
           debugPrint('🔄 [HOME] Refreshed game tokens from wallet API');
         } catch (e) {
