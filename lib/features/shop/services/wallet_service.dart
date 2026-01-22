@@ -21,8 +21,8 @@ class WalletService {
     }
   }
 
-  // Keys for SharedPreferences
-  static const String _walletBalanceKey = 'wallet_balance';
+  // Keys for SharedPreferences - Using same key as ShopTokensProvider for consistency
+  static const String _walletBalanceKey = 'shop_tokens'; // Changed from 'wallet_balance' to sync with ShopTokensProvider
   static const String _walletTransactionsKey = 'wallet_transactions';
   static const String _userIdKey = 'user_id';
 
@@ -32,13 +32,14 @@ class WalletService {
   Future<double> getBalance() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      double cachedBalance = prefs.getDouble(_walletBalanceKey) ?? 0.0;
+      // shop_tokens is stored as int by ShopTokensProvider
+      double cachedBalance = (prefs.getInt(_walletBalanceKey) ?? 0).toDouble();
       
       // Try to sync with backend if we have a user ID
       final userId = prefs.getString(_userIdKey);
       if (userId != null) {
         await syncWithBackend();
-        return prefs.getDouble(_walletBalanceKey) ?? cachedBalance;
+        return (prefs.getInt(_walletBalanceKey) ?? 0).toDouble();
       }
       
       return cachedBalance;
@@ -54,7 +55,7 @@ class WalletService {
   Future<void> setBalance(double amount) async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setDouble(_walletBalanceKey, amount);
+      await prefs.setInt(_walletBalanceKey, amount.toInt());
     } catch (e) {
       if (kDebugMode) {
         print('Error setting wallet balance: $e');

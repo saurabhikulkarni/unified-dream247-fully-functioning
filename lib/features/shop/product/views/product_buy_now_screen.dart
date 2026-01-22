@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+import 'package:unified_dream247/core/providers/shop_tokens_provider.dart';
 import 'package:unified_dream247/features/shop/components/custom_modal_bottom_sheet.dart';
 import 'package:unified_dream247/features/shop/components/network_image_with_loader.dart';
 import 'package:unified_dream247/features/shop/models/product_model.dart';
@@ -9,7 +12,6 @@ import 'package:unified_dream247/features/shop/screens/product/views/components/
 import 'package:unified_dream247/features/shop/screens/product/views/location_permission_store_availability_screen.dart';
 import 'package:unified_dream247/features/shop/screens/product/views/size_guide_screen.dart';
 import 'package:unified_dream247/features/shop/services/cart_service.dart';
-import 'package:unified_dream247/features/shop/services/wallet_service.dart';
 import 'package:unified_dream247/features/shop/services/wishlist_service.dart';
 import 'package:unified_dream247/features/shop/services/user_service.dart';
 import 'package:unified_dream247/features/shop/services/notification_service.dart';
@@ -121,12 +123,15 @@ class _ProductBuyNowScreenState extends State<ProductBuyNowScreen> {
 
   Future<void> _loadWalletBalance() async {
     try {
-      final balance = await walletService.getBalance();
+      // Use ShopTokensProvider for consistent balance across the app
+      final shopTokensProvider = context.read<ShopTokensProvider>();
+      await shopTokensProvider.forceRefresh();
       setState(() {
-        walletBalance = balance;
+        walletBalance = shopTokensProvider.shopTokens.toDouble();
       });
+      debugPrint('💰 [PRODUCT_BUY_NOW] Wallet balance from provider: $walletBalance');
     } catch (e) {
-      // Silently handle error
+      debugPrint('⚠️ [PRODUCT_BUY_NOW] Error loading wallet balance: $e');
     }
   }
 
