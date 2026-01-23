@@ -139,7 +139,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             text: 'Wishlist',
             svgSrc: 'assets/icons/Wishlist.svg',
             press: () {
-              Navigator.pushNamed(context, wishlistScreenRoute);
+              // Redirect to existing wishlist navigator
+              context.push('/shop/wishlist');
             },
           ),
           ProfileMenuListTile(

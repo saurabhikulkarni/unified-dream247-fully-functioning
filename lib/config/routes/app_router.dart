@@ -24,7 +24,7 @@ import '../../features/shop/screens/product/views/product_details_screen.dart';
 import '../../features/shop/screens/checkout/views/cart_screen.dart';
 import '../../features/shop/screens/order/views/orders_screen.dart';
 import '../../features/shop/screens/order/views/order_tracking_screen.dart';
-import '../../features/shop/screens/wishlist/views/bookmark_screen.dart';
+import '../../features/shop/wishlist/views/wishlist_screen.dart';
 import '../../features/shop/screens/search/views/search_screen.dart';
 import '../../features/shop/screens/profile/views/profile_screen.dart'
     as shop_profile;
@@ -313,7 +313,7 @@ class AppRouter {
         name: 'shop_wishlist',
         pageBuilder: (context, state) => MaterialPage(
           key: state.pageKey,
-          child: const BookmarkScreen(),
+          child: const WishlistScreen(),
         ),
       ),
       GoRoute(

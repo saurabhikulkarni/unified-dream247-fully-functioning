@@ -57,8 +57,8 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
       if (mounted) {
         try {
           // Fetch wallet details which populates WalletDetailsProvider
-          final accountsDatasource = AccountsDatasource(ApiImpl(), ApiImplWithAccessToken());
-          await accountsDatasource.myWalletDetails(context);
+          final walletProvider = context.read<WalletDetailsProvider>();
+          await walletProvider.refreshWalletDetails(context);
           debugPrint('🔄 [HOME] Refreshed game tokens from wallet API');
         } catch (e) {
           debugPrint('⚠️ [HOME] Error refreshing game tokens: $e');
@@ -340,7 +340,10 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
               final gameTokens = double.tryParse(walletProvider.walletData?.balance ?? '0') ?? 0;
               
               return GestureDetector(
-                onTap: () => _navigateToWallet(),
+                onTap: () {
+                  debugPrint('💎 [HOME] Game tokens tapped. Balance: $gameTokens');
+                  _navigateToWallet();
+                },
                 child: Container(
                   margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),

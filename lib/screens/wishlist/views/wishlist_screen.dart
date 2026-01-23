@@ -236,18 +236,18 @@ class _WishlistScreenState extends State<WishlistScreen> {
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _wishlistItems.isEmpty
-          ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SvgPicture.asset(
-                    'assets/icons/Wishlist.svg',
-                    width: context.isTablet ? 100 : 80,
-                    height: context.isTablet ? 100 : 80,
-                    colorFilter: ColorFilter.mode(
-                      Colors.grey.shade400,
-                      BlendMode.srcIn,
-                    ),
+              ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SvgPicture.asset(
+                        'assets/icons/Wishlist.svg',
+                        width: context.isTablet ? 100 : 80,
+                        height: context.isTablet ? 100 : 80,
+                        colorFilter: ColorFilter.mode(
+                          Colors.grey.shade400,
+                          BlendMode.srcIn,
+                        ),
                   ),
                   const SizedBox(height: defaultPadding),
                   Text(
