@@ -65,7 +65,7 @@ class APIServerUrl {
   static const String getSelfLeaderboard = 'user-self-leaderboard?matchkey=';
   static const String getLeaderboardUpcoming = 'user-leaderboard?matchkey=';
   static const String getSelfLiveLeaderboard =
-      '/leaderboard-self-live-ranks?matchkey=';
+      'leaderboard-self-live-ranks?matchkey=';
   static const String getLiveRankLeaderboard =
       'leaderboard-live-ranks?matchkey=';
   static const String completeMatchGetMyTeams =

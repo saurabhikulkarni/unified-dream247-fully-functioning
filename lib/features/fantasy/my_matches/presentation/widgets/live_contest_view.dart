@@ -697,22 +697,45 @@ class _LiveContestViewState extends State<LiveContestView> {
   }
 
   void loadSelfData() async {
+    debugPrint('📋 [LIVE_CONTEST_VIEW] ========== loadSelfData START ==========');
+    debugPrint('📋 [LIVE_CONTEST_VIEW] challengeId: ${widget.challengeId}');
+    debugPrint('📋 [LIVE_CONTEST_VIEW] finalStatus: ${widget.finalStatus}');
+    debugPrint('📋 [LIVE_CONTEST_VIEW] skip: $skip, limit: $limit');
     setState(() => isLoadingMore = true);
-    final response = await myMatchesUsecases.getSelfLeaderboardLive(
-      context,
-      widget.challengeId,
-      widget.finalStatus,
-      skip,
-      limit,
-    );
-    if (response != null) {
-      final selfList =
-          LiveLeaderboardModel.fromJson(response).data?.jointeams ?? [];
-      setState(() {
-        fullList = selfList;
-        list = fullList.take(currentDisplayCount).toList();
-        isLoadingMore = false;
-      });
+    try {
+      final response = await myMatchesUsecases.getSelfLeaderboardLive(
+        context,
+        widget.challengeId,
+        widget.finalStatus,
+        skip,
+        limit,
+      );
+      debugPrint('📋 [LIVE_CONTEST_VIEW] Response received: ${response != null}');
+      if (response != null) {
+        debugPrint('📋 [LIVE_CONTEST_VIEW] Response keys: ${response.keys.toList()}');
+        debugPrint('📋 [LIVE_CONTEST_VIEW] success: ${response['success']}, message: ${response['message']}');
+        final parsed = LiveLeaderboardModel.fromJson(response);
+        final selfList = parsed.data?.jointeams ?? [];
+        debugPrint('📋 [LIVE_CONTEST_VIEW] Parsed selfList count: ${selfList.length}');
+        if (selfList.isNotEmpty) {
+          for (var team in selfList) {
+            debugPrint('📋 [LIVE_CONTEST_VIEW] Team: ${team.teamname}, rank: ${team.getcurrentrank}, points: ${team.points}, winAmount: "${team.winingamount}"');
+          }
+        }
+        setState(() {
+          fullList = selfList;
+          list = fullList.take(currentDisplayCount).toList();
+          isLoadingMore = false;
+        });
+        debugPrint('📋 [LIVE_CONTEST_VIEW] ✅ Updated state - fullList: ${fullList.length}, displayed: ${list.length}');
+      } else {
+        debugPrint('📋 [LIVE_CONTEST_VIEW] ⚠️ Response was NULL');
+        setState(() => isLoadingMore = false);
+      }
+    } catch (e, stack) {
+      debugPrint('📋 [LIVE_CONTEST_VIEW] ❌ ERROR: $e');
+      debugPrint('📋 [LIVE_CONTEST_VIEW] Stack: $stack');
+      setState(() => isLoadingMore = false);
     }
   }
 

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:unified_dream247/features/fantasy/core/utils/model_parsers.dart';
 
 class LeaderboardModel {
@@ -79,6 +80,8 @@ class LiveLeaderboardModel {
       this.totalJoinedTeams,});
 
   LiveLeaderboardModel.fromJson(Map<String, dynamic> json) {
+    debugPrint('📊 [MODEL] LiveLeaderboardModel.fromJson - parsing response');
+    debugPrint('📊 [MODEL] json[data] type: ${json['data']?.runtimeType}');
     success = ModelParsers.toBoolParser(json['success']);
     message = ModelParsers.toStringParser(json['message']);
     status = ModelParsers.toBoolParser(json['status']);
@@ -86,6 +89,7 @@ class LiveLeaderboardModel {
         ? null
         : LiveLeaderboardData.fromJson(json['data']);
     totalJoinedTeams = ModelParsers.toIntParser(json['total_joined_teams']);
+    debugPrint('📊 [MODEL] Parsed - success: $success, status: $status, totalJoinedTeams: $totalJoinedTeams');
   }
 }
 
@@ -95,6 +99,11 @@ class LiveLeaderboardData {
   LiveLeaderboardData({this.jointeams});
 
   LiveLeaderboardData.fromJson(Map<String, dynamic> json) {
+    debugPrint('📊 [MODEL] LiveLeaderboardData.fromJson - jointeams type: ${json['jointeams']?.runtimeType}');
+    debugPrint('📊 [MODEL] jointeams is null: ${json['jointeams'] == null}');
+    if (json['jointeams'] != null) {
+      debugPrint('📊 [MODEL] jointeams count: ${(json['jointeams'] as List).length}');
+    }
     jointeams = json['jointeams'] == null
         ? null
         : (json['jointeams'] as List)
@@ -154,5 +163,9 @@ class LiveJointeams {
     challengeData = ModelParsers.toStringParser(json['challengeData']);
     contestWinningType =
         ModelParsers.toStringParser(json['contest_winning_type']);
+    // Debug log for winning amount tracking
+    if (winingamount != null && winingamount!.isNotEmpty && winingamount != '0' && winingamount != '') {
+      debugPrint('💰 [MODEL] LiveJointeams - WINNER FOUND: team=$teamname, rank=$getcurrentrank, winAmount=$winingamount');
+    }
   }
 }

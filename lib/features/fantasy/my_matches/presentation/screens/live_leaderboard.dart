@@ -84,6 +84,11 @@ class _LiveLeaderboard extends State<LiveLeaderboard> {
   }
 
   void loadSelfData() async {
+    debugPrint('🏆 [LIVE_LEADERBOARD] ========== loadSelfData START ==========');
+    debugPrint('🏆 [LIVE_LEADERBOARD] challengeId: ${widget.challengeId}');
+    debugPrint('🏆 [LIVE_LEADERBOARD] finalStatus: ${widget.finalStatus}');
+    debugPrint('🏆 [LIVE_LEADERBOARD] matchKey: ${widget.matchKey}');
+    debugPrint('🏆 [LIVE_LEADERBOARD] skip: $skip, limit: $limit');
     setState(() {
       isLoadingMore = true;
     });
@@ -96,21 +101,47 @@ class _LiveLeaderboard extends State<LiveLeaderboard> {
       limit,
     )
         .then((value) {
+      debugPrint('🏆 [LIVE_LEADERBOARD] getSelfLeaderboardLive response: ${value != null ? "DATA RECEIVED" : "NULL"}');
+      if (value != null) {
+        debugPrint('🏆 [LIVE_LEADERBOARD] Raw response keys: ${value.keys.toList()}');
+        debugPrint('🏆 [LIVE_LEADERBOARD] success: ${value['success']}, status: ${value['status']}');
+        debugPrint('🏆 [LIVE_LEADERBOARD] message: ${value['message']}');
+      }
       setState(() {
         if (value != null) {
-          List<LiveJointeams> selfList = LiveLeaderboardModel.fromJson(
-            value,
-          ).data!.jointeams!.toList();
-          list.addAll(selfList);
-          displayedList = list.take(_currentMax).toList();
+          try {
+            final parsed = LiveLeaderboardModel.fromJson(value);
+            debugPrint('🏆 [LIVE_LEADERBOARD] Parsed - data null: ${parsed.data == null}');
+            debugPrint('🏆 [LIVE_LEADERBOARD] Parsed - jointeams null: ${parsed.data?.jointeams == null}');
+            debugPrint('🏆 [LIVE_LEADERBOARD] Parsed - jointeams count: ${parsed.data?.jointeams?.length ?? 0}');
+            
+            List<LiveJointeams> selfList = parsed.data?.jointeams?.toList() ?? [];
+            if (selfList.isNotEmpty) {
+              debugPrint('🏆 [LIVE_LEADERBOARD] First team: ${selfList.first.teamname}, rank: ${selfList.first.getcurrentrank}, points: ${selfList.first.points}, winAmount: ${selfList.first.winingamount}');
+            }
+            list.addAll(selfList);
+            displayedList = list.take(_currentMax).toList();
+            debugPrint('🏆 [LIVE_LEADERBOARD] Total list size: ${list.length}, displayed: ${displayedList.length}');
+          } catch (e, stack) {
+            debugPrint('🏆 [LIVE_LEADERBOARD] ❌ PARSE ERROR: $e');
+            debugPrint('🏆 [LIVE_LEADERBOARD] Stack: $stack');
+          }
           isLoadingMore = false;
+        } else {
+          debugPrint('🏆 [LIVE_LEADERBOARD] ⚠️ Response was NULL - no self leaderboard data');
         }
       });
+      loadData();
+    }).catchError((error, stack) {
+      debugPrint('🏆 [LIVE_LEADERBOARD] ❌ getSelfLeaderboardLive ERROR: $error');
+      debugPrint('🏆 [LIVE_LEADERBOARD] Stack: $stack');
       loadData();
     });
   }
 
   void loadData() async {
+    debugPrint('🏆 [LIVE_LEADERBOARD] ========== loadData START ==========');
+    debugPrint('🏆 [LIVE_LEADERBOARD] Loading all leaderboard, skip: $skip, limit: $limit');
     setState(() {
       isLoadingMore = true;
     });
@@ -123,22 +154,48 @@ class _LiveLeaderboard extends State<LiveLeaderboard> {
       limit,
     )
         .then((value) {
+      debugPrint('🏆 [LIVE_LEADERBOARD] getLeaderboardLive response: ${value != null ? "DATA RECEIVED" : "NULL"}');
+      if (value != null) {
+        debugPrint('🏆 [LIVE_LEADERBOARD] Raw response keys: ${value.keys.toList()}');
+        debugPrint('🏆 [LIVE_LEADERBOARD] success: ${value['success']}, status: ${value['status']}');
+      }
       setState(() {
         if (value != null) {
-          List<LiveJointeams> list1 = LiveLeaderboardModel.fromJson(
-                value,
-              ).data?.jointeams?.toList() ??
-              [];
-          if (list1.isEmpty) {
-            scroll = false;
-          } else {
-            list.addAll(list1);
-            displayedList = list.take(_currentMax).toList();
-            skip += limit;
+          try {
+            List<LiveJointeams> list1 = LiveLeaderboardModel.fromJson(
+                  value,
+                ).data?.jointeams?.toList() ??
+                [];
+            debugPrint('🏆 [LIVE_LEADERBOARD] Parsed leaderboard count: ${list1.length}');
+            if (list1.isNotEmpty) {
+              debugPrint('🏆 [LIVE_LEADERBOARD] Sample teams:');
+              for (int i = 0; i < (list1.length > 3 ? 3 : list1.length); i++) {
+                debugPrint('🏆 [LIVE_LEADERBOARD]   Team $i: ${list1[i].teamname}, rank: ${list1[i].getcurrentrank}, points: ${list1[i].points}, winAmount: "${list1[i].winingamount}"');
+              }
+            }
+            if (list1.isEmpty) {
+              debugPrint('🏆 [LIVE_LEADERBOARD] ⚠️ Empty leaderboard list returned');
+              scroll = false;
+            } else {
+              list.addAll(list1);
+              displayedList = list.take(_currentMax).toList();
+              skip += limit;
+              debugPrint('🏆 [LIVE_LEADERBOARD] ✅ Total list: ${list.length}, displayed: ${displayedList.length}');
+            }
+          } catch (e, stack) {
+            debugPrint('🏆 [LIVE_LEADERBOARD] ❌ PARSE ERROR: $e');
+            debugPrint('🏆 [LIVE_LEADERBOARD] Stack: $stack');
           }
+          isLoadingMore = false;
+        } else {
+          debugPrint('🏆 [LIVE_LEADERBOARD] ⚠️ Response was NULL');
           isLoadingMore = false;
         }
       });
+    }).catchError((error, stack) {
+      debugPrint('🏆 [LIVE_LEADERBOARD] ❌ getLeaderboardLive ERROR: $error');
+      debugPrint('🏆 [LIVE_LEADERBOARD] Stack: $stack');
+      setState(() => isLoadingMore = false);
     });
   }
 
@@ -539,8 +596,16 @@ class _LiveLeaderboard extends State<LiveLeaderboard> {
                       ],
                     ),
                     const SizedBox(height: 3),
-                    if (data.winingamount != '' &&
-                        double.parse(data.winingamount!) != 0)
+                    Builder(builder: (context) {
+                      // Debug winning amount display
+                      if (data.winingamount != null && data.winingamount!.isNotEmpty) {
+                        debugPrint('💰 [WINNING] Team: ${data.teamname}, winingamount: "${data.winingamount}", parsed: ${double.tryParse(data.winingamount!) ?? 0}');
+                      }
+                      return const SizedBox.shrink();
+                    }),
+                    if (data.winingamount != null &&
+                        data.winingamount!.isNotEmpty &&
+                        (double.tryParse(data.winingamount!) ?? 0) != 0)
                       Text(
                         'Won ${Strings.indianRupee}${AppUtils.changeNumberToValue(num.parse(data.winingamount!))}',
                         style: GoogleFonts.tomorrow(

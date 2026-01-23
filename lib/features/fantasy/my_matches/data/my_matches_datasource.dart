@@ -148,25 +148,43 @@ class MyMatchesDatasource extends MyMatchesRepositories {
     int skip,
     int limit,
   ) async {
+    debugPrint('🎯 [JOINED_CONTESTS] ========== getJoinedLiveContests START ==========');
     var provider = Provider.of<JoinedLiveContestProvider>(
       context,
       listen: false,
     );
     String matchKey = AppSingleton.singleton.matchData.id ?? '';
+    debugPrint('🎯 [JOINED_CONTESTS] matchKey: $matchKey');
+    debugPrint('🎯 [JOINED_CONTESTS] skip: $skip, limit: $limit');
 
     final url =
         '${APIServerUrl.myJoinContestServerUrl}${APIServerUrl.getJoinedContests}${AppSingleton.singleton.matchData.id!}&skip=$skip&limit=$limit';
+    debugPrint('🎯 [JOINED_CONTESTS] URL: $url');
+    
     final response = await clientwithToken.get(url);
-
     final res = response.data;
+
+    debugPrint('🎯 [JOINED_CONTESTS] Response status: ${response.statusCode}');
+    debugPrint('🎯 [JOINED_CONTESTS] Response keys: ${res?.keys?.toList()}');
+    debugPrint('🎯 [JOINED_CONTESTS] status: ${res[ApiResponseString.status]}, message: ${res[ApiResponseString.message]}');
 
     if (ApiServerUtil.validateStatusCode(response.statusCode ?? 200)) {
       if (res[ApiResponseString.status] == true) {
+        debugPrint('🎯 [JOINED_CONTESTS] ✅ Success - parsing contests');
         final contests = LiveChallengesModel.fromJson(res);
+        debugPrint('🎯 [JOINED_CONTESTS] Parsed contests count: ${contests.data?.length ?? 0}');
+        if (contests.data != null && contests.data!.isNotEmpty) {
+          for (int i = 0; i < (contests.data!.length > 3 ? 3 : contests.data!.length); i++) {
+            debugPrint('🎯 [JOINED_CONTESTS] Contest $i: ${contests.data![i].contestName}, status: ${contests.data![i].matchChallengeStatus}, totalwinners: ${contests.data![i].totalwinners}');
+          }
+        }
         provider.setjoinedContest(contests, matchKey);
         return contests;
+      } else {
+        debugPrint('🎯 [JOINED_CONTESTS] ⚠️ API status=false');
       }
     } else {
+      debugPrint('🎯 [JOINED_CONTESTS] ❌ HTTP error: ${response.statusCode}');
       if (context.mounted) {
         ApiServerUtil.manageException(response, context);
       }
@@ -459,19 +477,24 @@ class MyMatchesDatasource extends MyMatchesRepositories {
     final url =
         '${APIServerUrl.matchServerUrl}${APIServerUrl.getLiveRankLeaderboard}${AppSingleton.singleton.matchData.id}&final_status=$finalStatus&matchchallengeid=$challengeId&skip=$skip&limit=$limit&fantasy_type=${AppSingleton.singleton.matchData.fantasyType!}';
 
+    debugPrint('🏆 [LEADERBOARD] Fetching live leaderboard: $url');
     final response = await clientwithToken.get(url);
 
     final res = response.data;
+    debugPrint('🏆 [LEADERBOARD] Response status: ${response.statusCode}');
     if (ApiServerUtil.validateStatusCode(response.statusCode ?? 200)) {
       if (res[ApiResponseString.success] == true) {
+        debugPrint('🏆 [LEADERBOARD] Success - data received');
         return response.data;
       } else {
+        debugPrint('🏆 [LEADERBOARD] API returned failure: ${res[ApiResponseString.message]}');
         ApiServerUtil.showAppToastforApi(
           res[ApiResponseString.message],
           context,
         );
       }
     } else {
+      debugPrint('🏆 [LEADERBOARD] HTTP error: ${response.statusCode}');
       if (context.mounted) {
         ApiServerUtil.manageException(response, context);
       }
@@ -490,19 +513,24 @@ class MyMatchesDatasource extends MyMatchesRepositories {
     final url =
         '${APIServerUrl.matchServerUrl}${APIServerUrl.getSelfLiveLeaderboard}${AppSingleton.singleton.matchData.id}&final_status=$finalStatus&matchchallengeid=$challengeId&skip=$skip&limit=$limit&fantasy_type=${AppSingleton.singleton.matchData.fantasyType!}';
 
+    debugPrint('🏆 [SELF-LEADERBOARD] Fetching self leaderboard: $url');
     final response = await clientwithToken.get(url);
 
     final res = response.data;
+    debugPrint('🏆 [SELF-LEADERBOARD] Response status: ${response.statusCode}');
     if (ApiServerUtil.validateStatusCode(response.statusCode ?? 200)) {
       if (res[ApiResponseString.success] == true) {
+        debugPrint('🏆 [SELF-LEADERBOARD] Success - data received');
         return response.data;
       } else {
+        debugPrint('🏆 [SELF-LEADERBOARD] API returned failure: ${res[ApiResponseString.message]}');
         ApiServerUtil.showAppToastforApi(
           res[ApiResponseString.message],
           context,
         );
       }
     } else {
+      debugPrint('🏆 [SELF-LEADERBOARD] HTTP error: ${response.statusCode}');
       if (context.mounted) {
         ApiServerUtil.manageException(response, context);
       }
@@ -512,6 +540,7 @@ class MyMatchesDatasource extends MyMatchesRepositories {
 
   @override
   Future<List<TeamsModel>> liveGetMyTeams(BuildContext context) async {
+    debugPrint('👥 [MY_TEAMS] ========== liveGetMyTeams START ==========');
     var provider = Provider.of<MyTeamsProvider>(context, listen: false);
     String matchKey = AppSingleton.singleton.matchData.id ?? '';
 
@@ -519,20 +548,36 @@ class MyMatchesDatasource extends MyMatchesRepositories {
         APIServerUrl.liveGetMyTeams +
         matchKey;
 
+    debugPrint('👥 [MY_TEAMS] URL: $url');
+    debugPrint('👥 [MY_TEAMS] matchKey: $matchKey');
+    
     final response = await clientwithToken.get(url);
     final res = response.data;
 
+    debugPrint('👥 [MY_TEAMS] Response status code: ${response.statusCode}');
+    debugPrint('👥 [MY_TEAMS] Response data keys: ${res?.keys?.toList()}');
+    debugPrint('👥 [MY_TEAMS] status: ${res[ApiResponseString.status]}');
+
     if (ApiServerUtil.validateStatusCode(response.statusCode ?? 200)) {
       if (res[ApiResponseString.status] == true) {
-        AppUtils.teamsCount.value = res[ApiResponseString.data].length ?? 0;
+        final dataLength = res[ApiResponseString.data]?.length ?? 0;
+        debugPrint('👥 [MY_TEAMS] ✅ Success - teams count: $dataLength');
+        AppUtils.teamsCount.value = dataLength;
         List<TeamsModel> teams = List<TeamsModel>.from(
           res[ApiResponseString.data].map((x) => TeamsModel.fromJson(x)),
         );
+        
+        for (int i = 0; i < teams.length; i++) {
+          debugPrint('👥 [MY_TEAMS] Team $i: teamnumber=${teams[i].teamnumber}, jointeamid: ${teams[i].jointeamid}');
+        }
 
         provider.setMyTeams(teams, matchKey);
         return teams;
+      } else {
+        debugPrint('👥 [MY_TEAMS] ⚠️ API returned status=false, message: ${res[ApiResponseString.message]}');
       }
     } else {
+      debugPrint('👥 [MY_TEAMS] ❌ HTTP error: ${response.statusCode}');
       if (context.mounted) {
         ApiServerUtil.manageException(response, context);
       }
