@@ -378,7 +378,7 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
           children: [
             // Game Tokens Banner
             GestureDetector(
-              onTap: _navigateToFantasy,
+              onTap: _navigateToShop,
               child: Container(
                 height: bannerHeight,
                 decoration: BoxDecoration(
@@ -392,14 +392,14 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
                   ],
                 ),
                 child: Image.asset(
-                  'assets/images/game.png',
+                  'assets/images/trend.png',
                   fit: BoxFit.fill,
                   width: double.infinity,
                   errorBuilder: (context, error, stackTrace) => Container(
                     color: Colors.grey[300],
                     child: const Center(
                       child: Icon(
-                        Icons.sports_cricket,
+                        Icons.shopping_basket,
                         size: 60,
                         color: Colors.grey,
                       ),
@@ -591,7 +591,7 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
 
             // Trend Banner
             GestureDetector(
-              onTap: _navigateToShop,
+              onTap: _navigateToFantasy,
               child: Container(
                 height: bannerHeight,
                 decoration: BoxDecoration(
@@ -605,14 +605,14 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
                   ],
                 ),
                 child: Image.asset(
-                  'assets/images/trend.png',
+                  'assets/images/game.png',
                   fit: BoxFit.fill,
                   width: double.infinity,
                   errorBuilder: (context, error, stackTrace) => Container(
                     color: Colors.grey[300],
                     child: const Center(
                       child: Icon(
-                        Icons.shopping_basket,
+                        Icons.sports_cricket,
                         size: 60,
                         color: Colors.grey,
                       ),
