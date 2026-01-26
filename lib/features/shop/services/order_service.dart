@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:unified_dream247/features/shop/models/product_model.dart';
 import 'package:unified_dream247/features/shop/services/shiprocket_service.dart';
-import 'package:unified_dream247/features/shop/services/wallet_service.dart';
-import 'package:unified_dream247/features/shop/services/cart_service.dart';
+import 'package:unified_dream247/core/services/wallet_service.dart';
+import 'package:unified_dream247/core/services/shop/cart_service.dart' as core_cart;
 import 'package:uuid/uuid.dart';
 
 class OrderItem {
@@ -209,13 +209,17 @@ class OrderService {
   }) async {
     try {
       // Verify wallet has sufficient balance
-      final walletBalance = await walletService.getBalance();
+      final walletService = UnifiedWalletService();
+      final walletBalance = await walletService.getShopTokens();
       if (walletBalance < totalTokens) {
         throw Exception('Insufficient wallet balance');
       }
 
       // Deduct tokens from wallet
-      final deductionSuccess = await walletService.deductBalance(totalTokens.toDouble());
+      final deductionSuccess = await walletService.deductShopTokens(
+        totalTokens.toDouble(),
+        itemName: 'Order Payment',
+      );
       if (!deductionSuccess) {
         throw Exception('Failed to deduct tokens from wallet');
       }
@@ -232,7 +236,7 @@ class OrderService {
 
       // Clear cart if requested
       if (clearCartAfter) {
-        cartService.clearLocalCart();
+        await core_cart.cartService.clearCart();
       }
 
       return order;
@@ -284,7 +288,7 @@ class OrderService {
         estimatedDeliveryDate: now.subtract(const Duration(days: 1)).toString(),
         currentLocation: 'Delivered to customer',
       ),
-    ),);
+    ));
 
     // Sample order 2 - In Transit
     addOrder(Order(
@@ -317,7 +321,7 @@ class OrderService {
           longitude: 72.8777,
         ),
       ),
-    ),);
+    ));
 
     // Sample order 3 - Confirmed
     addOrder(Order(
@@ -338,7 +342,7 @@ class OrderService {
         orderStatus: 'Processing',
         estimatedDeliveryDate: now.add(const Duration(days: 3)).toString(),
       ),
-    ),);
+    ));
   }
 }
 

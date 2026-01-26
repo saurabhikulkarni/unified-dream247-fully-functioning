@@ -122,7 +122,7 @@ class ApiConfig {
   
   // Fantasy User API Endpoints
   static String get fantasyUserSyncEndpoint => '$fantasyBaseUrl/api/user/sync';
-  static String get fantasyUserLoginEndpoint => '$fantasyBaseUrl/api/user/login';
+  static String get fantasyUserLoginEndpoint => '${fantasyUserUrl}add-temporary-user'; // /user/add-temporary-user (creates user)
   static String get fantasyWalletBalanceEndpoint => '$fantasyBaseUrl/api/user/wallet/balance-full';
   static String get fantasyShopTokensEndpoint => '$fantasyBaseUrl/api/user/wallet/shop-tokens-only';
   static String get fantasyUnifiedHistoryEndpoint => '$fantasyBaseUrl/api/user/wallet/unified-history';

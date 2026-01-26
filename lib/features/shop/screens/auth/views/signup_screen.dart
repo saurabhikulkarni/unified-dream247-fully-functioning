@@ -107,13 +107,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       final name = _signUpFormState.getUserName();
                       final phone = _signUpFormState.getVerifiedPhone();
                       
-                      // Get userId and token from backend response (user created by backend in Hygraph)
+                      // Get userId, token, and fantasy_token from backend response
                       final userId = _signUpFormState.getVerifiedUserId();
                       final authToken = _signUpFormState.getVerifiedToken();
+                      final fantasyToken = _signUpFormState.getFantasyToken();
                       final isNewUser = _signUpFormState.isNewUser();
                       
                       debugPrint('📝 [SIGNUP] OTP verified. Backend response:');
-                      debugPrint('📝 [SIGNUP] userId: $userId, token: ${authToken != null ? "present (${authToken.length} chars)" : "null"}, isNewUser: $isNewUser');
+                      debugPrint('📝 [SIGNUP] userId: $userId');
+                      debugPrint('📝 [SIGNUP] authToken: ${authToken != null ? "present (${authToken.length} chars)" : "null"}');
+                      debugPrint('📝 [SIGNUP] fantasyToken: ${fantasyToken != null ? "present (${fantasyToken.length} chars)" : "null"}');
+                      debugPrint('📝 [SIGNUP] isNewUser: $isNewUser');
                       
                       if (phone == null || phone.isEmpty) {
                         ScaffoldMessenger.of(context).showSnackBar(
@@ -152,42 +156,111 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         
                         debugPrint('✅ [SIGNUP] User created by backend. UserId: $userId');
                         
-                        // Save login session with userId from backend (no need for Hygraph calls!)
+                        // Initialize services
                         final authService = AuthService();
                         final prefs = await SharedPreferences.getInstance();
-                        const initialShopTokens = 0; // New users start with 0 tokens
+                        const initialShopTokens = 0;
                         await prefs.setInt('shop_tokens', initialShopTokens);
                         debugPrint('💰 [SIGNUP] Stored initial shopTokens: $initialShopTokens');
                         
-                        // Use token from backend if available
+                        // Initialize core AuthService
+                        final coreAuthService = core_auth.AuthService();
+                        await coreAuthService.initialize();
+                        
+                        // Use fantasy token if provided, otherwise fall back to shop token
+                        String? finalToken = fantasyToken ?? authToken;
+                        
+                        if (fantasyToken != null && fantasyToken.isNotEmpty) {
+                          debugPrint('✅ [SIGNUP] Using Fantasy token from backend');
+                          debugPrint('✅ [SIGNUP] Token preview: ${fantasyToken.substring(0, 10)}...');
+                          
+                          // Save Fantasy token to all storage keys
+                          await prefs.setString('fantasy_token', fantasyToken);
+                          await prefs.setString('token', fantasyToken);
+                          await prefs.setString('auth_token', fantasyToken);
+                        } else {
+                          debugPrint('⚠️ [SIGNUP] No fantasy_token from backend!');
+                          debugPrint('⚠️ [SIGNUP] Using shop token as fallback');
+                          if (authToken != null) {
+                            debugPrint('📝 [SIGNUP] Shop token: ${authToken.substring(0, 10)}...');
+                          }
+                        }
+                        
+                        // Save login session
                         await authService.saveLoginSession(
                           phone: phone,
                           name: name,
                           phoneVerified: true,
                           userId: userId,
-                          fantasyToken: authToken, // Pass token from backend
+                          fantasyToken: finalToken, // Will be null if Shop backend doesn't provide it
                         );
                         
-                        // ✅ PERSISTENT SESSION: Also save to core AuthService
-                        final coreAuthService = core_auth.AuthService();
-                        await coreAuthService.initialize();
+                        // Save to core AuthService
                         await coreAuthService.saveUserSession(
                           userId: userId,
-                          authToken: authToken ?? '', // Use token from backend
+                          authToken: finalToken ?? '',
                           mobileNumber: phone,
                           name: name,
                         );
                         
-                        // ✅ FORCE SET ALL LOGIN FLAGS - Critical for session persistence
-                        await prefs.setBool('is_logged_in', true);
-                        await prefs.setBool('is_logged_in_fantasy', true);
+                        // ✅ FORCE SET ALL LOGIN FLAGS
+                        // Set is_logged_in_fantasy based on whether we have Fantasy token
+                        await prefs.setBool('is_logged_in', true); // Shop login successful
+                        await prefs.setBool('is_logged_in_fantasy', fantasyToken != null && fantasyToken.isNotEmpty); // Fantasy authenticated if token present
                         await prefs.setString('user_id', userId);
                         await prefs.setString('userId', userId);
                         await prefs.setString('shop_user_id', userId);
-                        await prefs.setString('user_id_fantasy', userId);
-                        if (authToken != null && authToken.isNotEmpty) {
-                          await prefs.setString('token', authToken);
-                          await prefs.setString('auth_token', authToken);
+                        await prefs.setString('mobile_number', phone);
+                        
+                        if (fantasyToken != null && fantasyToken.isNotEmpty) {
+                          await prefs.setString('user_id_fantasy', userId); // Only set if Fantasy is authenticated
+                          debugPrint('✅ [SIGNUP] Session flags set:');
+                          debugPrint('   - is_logged_in: true (Shop)');
+                          debugPrint('   - is_logged_in_fantasy: true (Fantasy authenticated)');
+                        } else {
+                          debugPrint('✅ [SIGNUP] Session flags set:');
+                          debugPrint('   - is_logged_in: true (Shop)');
+                          debugPrint('   - is_logged_in_fantasy: false (No Fantasy token)');
+                        }
+                        
+                        // ✅ CRITICAL: Save tokens to storage
+                        if (finalToken != null && finalToken.isNotEmpty) {
+                          await prefs.setString('token', finalToken);
+                          await prefs.setString('auth_token', finalToken);
+                          if (fantasyToken != null && fantasyToken.isNotEmpty) {
+                            await prefs.setString('shop_token', authToken ?? ''); // Save original shop token separately
+                          }
+                          debugPrint('✅ [SIGNUP] Tokens saved to storage');
+                        } else {
+                          debugPrint('⚠️ [SIGNUP] No token from Shop backend!');
+                        }
+                        
+                        // ✅ FINAL VALIDATION: Verify session is complete before navigation
+                        final savedToken = prefs.getString('token');
+                        final savedAuthToken = prefs.getString('auth_token');
+                        final savedIsLoggedIn = prefs.getBool('is_logged_in');
+                        final savedUserId = prefs.getString('user_id');
+                        
+                        debugPrint('🔐 [SIGNUP] FINAL SESSION VALIDATION:');
+                        debugPrint('   - is_logged_in: $savedIsLoggedIn');
+                        debugPrint('   - is_logged_in_fantasy: ${prefs.getBool('is_logged_in_fantasy')}');
+                        debugPrint('   - user_id: $savedUserId');
+                        debugPrint('   - token present: ${savedToken != null && savedToken.isNotEmpty}');
+                        debugPrint('   - auth_token present: ${savedAuthToken != null && savedAuthToken.isNotEmpty}');
+                        
+                        // Verify userId is saved (token is optional for Shop-only mode)
+                        if (savedUserId == null || savedUserId.isEmpty) {
+                          debugPrint('❌ [SIGNUP] UserId not saved properly! Aborting navigation.');
+                          if (mounted) {
+                            Navigator.of(context).pop();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Session error. Please try logging in again.'),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                          }
+                          return;
                         }
                         
                         // Debug: Verify flags were saved

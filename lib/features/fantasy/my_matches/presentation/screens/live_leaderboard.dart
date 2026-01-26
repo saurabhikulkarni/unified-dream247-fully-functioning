@@ -100,7 +100,7 @@ class _LiveLeaderboard extends State<LiveLeaderboard> {
         if (value != null) {
           List<LiveJointeams> selfList = LiveLeaderboardModel.fromJson(
             value,
-          ).data!.jointeams!.toList();
+          ).data?.jointeams?.toList() ?? [];
           list.addAll(selfList);
           displayedList = list.take(_currentMax).toList();
           isLoadingMore = false;

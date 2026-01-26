@@ -215,7 +215,7 @@ class _LogInFormState extends State<LogInForm> {
             headers: {'Content-Type': 'application/json'},
             body: jsonEncode(requestBody),
           )
-          .timeout(const Duration(seconds: 15));
+          .timeout(const Duration(seconds: 30));
 
       if (foundation.kDebugMode) {
         debugPrint('📱 [OTP_VERIFY] Response Body: ${response.body}');

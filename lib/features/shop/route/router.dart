@@ -64,10 +64,11 @@ import 'screen_export.dart';
 
 Route<dynamic> generateRoute(RouteSettings settings) {
   switch (settings.name) {
-    case onbordingScreenRoute:
-      return MaterialPageRoute(
-        builder: (context) => const OnBordingScreen(),
-      );
+    // Onboarding removed - using unified authentication flow
+    // case onbordingScreenRoute:
+    //   return MaterialPageRoute(
+    //     builder: (context) => const OnBordingScreen(),
+    //   );
     // case preferredLanuageScreenRoute:
     //   return MaterialPageRoute(
     //     builder: (context) => const PreferredLanguageScreen(),
@@ -365,7 +366,7 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     default:
       return MaterialPageRoute(
         // Make a screen for undefine
-        builder: (context) => const OnBordingScreen(),
+        builder: (context) => const LoginScreen(),
       );
   }
 }

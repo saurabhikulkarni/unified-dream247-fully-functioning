@@ -7,8 +7,10 @@ import 'dart:convert';
 import 'package:unified_dream247/config/api_config.dart';
 import 'package:unified_dream247/features/shop/services/graphql_client.dart';
 import 'package:unified_dream247/features/shop/services/graphql_queries.dart';
-import 'package:unified_dream247/features/shop/services/wallet_service.dart';
+import 'package:unified_dream247/core/services/wallet_service.dart';
 import 'package:unified_dream247/features/shop/services/wishlist_service.dart';
+import 'package:unified_dream247/core/services/shop/wishlist_service.dart' as core_wishlist;
+import 'package:unified_dream247/core/services/shop/cart_service.dart' as core_cart;
 import 'package:unified_dream247/features/shop/services/cart_service.dart';
 import 'package:unified_dream247/features/shop/services/user_service.dart';
 import 'package:unified_dream247/features/shop/constants.dart';
@@ -177,11 +179,13 @@ class AuthService {
         await prefs.setString('user_id_fantasy', userId);       // user_id_fantasy (fantasy legacy)
         await prefs.setString('userId', userId);                // userId (fantasy modern)
         
-        // Set userId in wallet, wishlist, cart, and user services for GraphQL backend sync
-        walletService.setUserId(userId);
-        wishlistService.setUserId(userId);
-        cartService.setUserId(userId);
+        // Set userId in user services for GraphQL backend sync
+        // Note: UnifiedWalletService gets userId from SharedPreferences automatically
         await UserService.setCurrentUserId(userId);
+        
+        // Initialize wishlist and cart services with userId
+        await core_wishlist.wishlistService.initialize();
+        await core_cart.cartService.initialize();
         
         // Fantasy session flags - SYNC BOTH login flags
         await prefs.setBool('is_logged_in_fantasy', true);
@@ -234,30 +238,45 @@ class AuthService {
     bool isNewUser = false,
   }) async {
     try {
-      // Fantasy backend user endpoint (now using centralized ApiConfig)
-      final baseUrl = ApiConfig.fantasyBaseUrl;
+      // Fantasy backend user endpoint - using correct userServerUrl structure
+      // Fantasy uses: baseUrl/user/ + endpoint (not /api/user/)
+      final userBaseUrl = ApiConfig.fantasyUserUrl;  // http://134.209.158.211:4000/user/
+      final loginEndpoint = '${userBaseUrl}verify-otp';  // Creates user or returns existing
       
-      // Prepare request body - send only required fields to Fantasy backend
+      // Clean mobile number (remove non-digits)
+      final cleanPhone = phone.replaceAll(RegExp(r'[^\d]'), '');
+      
+      // Parse name into firstName and lastName
+      final nameParts = (name ?? '').trim().split(' ');
+      final firstName = nameParts.isNotEmpty ? nameParts[0] : '';
+      final lastName = nameParts.length > 1 ? nameParts.sublist(1).join(' ') : '';
+      
+      // Prepare request body for Fantasy user creation/login
       final body = {
-        'phone': phone,
-        if (name != null) 'name': name,
-        if (userId != null) 'userId': userId,  // Hygraph auto-generated ID
+        'mobile_number': cleanPhone,
+        'first_name': firstName,
+        'last_name': lastName,
+        'username': username ?? firstName.toLowerCase(),
+        'name': name ?? '$firstName $lastName'.trim(),
+        'hygraph_user_id': userId ?? '',
       };
       
       print('🔑 [AUTH] ========== FETCHING FANTASY TOKEN ==========');
-      print('🔑 [AUTH] Phone: $phone');
+      print('🔑 [AUTH] Phone: $cleanPhone');
       print('🔑 [AUTH] Name: $name');
-      print('🔑 [AUTH] Backend URL: $baseUrl/user/get-version');
+      print('🔑 [AUTH] Hygraph UserId: $userId');
+      print('🔑 [AUTH] isNewUser: $isNewUser');
+      print('🔑 [AUTH] Backend URL: $loginEndpoint');
       print('🔑 [AUTH] Request body: ${json.encode(body)}');
       
-      // Make HTTP POST request to fantasy backend
-      final response = await http.get(
-        Uri.parse('$baseUrl/user/get-version'),
+      // Make HTTP POST request to fantasy backend for user login/registration
+      final response = await http.post(
+        Uri.parse(loginEndpoint),
         headers: {
           'Content-Type': 'application/json',
         },
-        
-      ).timeout(const Duration(seconds: 10));
+        body: json.encode(body),
+      ).timeout(const Duration(seconds: 30));
       
       print('🔑 [AUTH] Response status: ${response.statusCode}');
       print('🔑 [AUTH] Response body: ${response.body}');
@@ -399,9 +418,9 @@ class AuthService {
       }
       
       // Clear LOCAL wallet, wishlist, cart caches
-      walletService.clear();
-      wishlistService.clear();
-      cartService.clear();
+      await UnifiedWalletService().clearAll();
+      await core_wishlist.wishlistService.clearWishlist();
+      await core_cart.cartService.clearCart();
       await UserService.setCurrentUserId('');
       
       // Clear image cache to prevent memory issues on re-login

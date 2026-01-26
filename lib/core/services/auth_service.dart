@@ -248,20 +248,14 @@ class AuthService {
         debugPrint('🔗 [AUTH] URL: ${ApiConfig.fantasyUserLoginEndpoint}');
       }
 
+      // Fantasy backend add-temporary-user expects mobile_number only
+      // It will return a temporary user entry and send OTP
       final response = await http
           .post(
             Uri.parse(ApiConfig.fantasyUserLoginEndpoint),
             headers: {'Content-Type': 'application/json'},
             body: jsonEncode({
-              'hygraph_user_id': hygraphUserId,
-              'mobile_number': cleanMobile,
-              'first_name': firstName,
-              'last_name': lastName,
-              'username': username,
-              'name': name ?? '$firstName $lastName'.trim(),
-              'shopTokens': shopTokens,
-              'totalSpentTokens': totalSpentTokens,
-              'wallet_balance': walletBalance,
+              'mobile': cleanMobile, // Fantasy expects 'mobile' not 'mobile_number'
             }),
           )
           .timeout(const Duration(seconds: ApiConfig.requestTimeoutSeconds));

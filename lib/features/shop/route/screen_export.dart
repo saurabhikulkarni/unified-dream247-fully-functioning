@@ -1,4 +1,5 @@
-export '../screens/onboarding/views/onbording_screnn.dart';
+// DEPRECATED: Onboarding screen removed - using unified authentication
+// export '../screens/onboarding/views/onbording_screnn.dart';
 
 export 'route_constants.dart';
 export '../screens/auth/views/login_screen.dart';

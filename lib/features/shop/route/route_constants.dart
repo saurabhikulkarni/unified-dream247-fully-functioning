@@ -1,4 +1,5 @@
-const String onbordingScreenRoute = 'onbording';
+// DEPRECATED: Onboarding removed - using unified authentication
+// const String onbordingScreenRoute = 'onbording';
 const String notificationPermissionScreenRoute = 'notification_permission';
 const String preferredLanuageScreenRoute = 'preferred_language';
 const String logInScreenRoute = 'login';

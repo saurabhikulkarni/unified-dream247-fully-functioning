@@ -79,44 +79,62 @@ void main() async {
     // Initialize app provider for periodic balance refresh
     appProvider = AppProvider(refreshInterval: 30);
 
+    debugPrint('✅ Core services initialized - showing UI');
+    debugPrint('🎯 Using Shop Splash Screen as entry point');
+  } catch (e) {
+    debugPrint('⚠️ Initialization error: $e');
+  }
+
+  // Run the app FIRST - show UI immediately
+  runApp(
+    const OKToast(
+      child: MyApp(),
+    ),
+  );
+
+  // Initialize non-critical services in background AFTER UI is shown
+  _initializeBackgroundServices();
+}
+
+/// Initialize non-critical services in background after UI loads
+/// This prevents black screen delays on app startup
+Future<void> _initializeBackgroundServices() async {
+  try {
+    debugPrint('🔄 [BACKGROUND] Initializing secondary services...');
+    
     final shopAuthService = shop_auth.AuthService();
 
-    // Initialize ecommerce services
-    await UserService.initialize(); // Initialize user service first
+    // Initialize ecommerce services (non-blocking)
+    await UserService.initialize();
     await wishlistService.initialize();
     await cartService.initialize();
     await searchService.initialize();
 
-    // Initialize and fetch game tokens on app startup
-    await _initializeGameTokens();
-
+    // Initialize game tokens only if user is logged in
     if (await shopAuthService.isUnifiedLoggedIn()) {
-      debugPrint('✅ User logged in - syncing...');
+      debugPrint('✅ [BACKGROUND] User logged in - initializing game tokens...');
+      await _initializeGameTokens();
+      
       final userId = await shopAuthService.getUnifiedUserId();
       debugPrint('   User ID: $userId');
 
       await wishlistService.syncWithBackend();
       await cartService.syncWithBackend();
 
-      // Fetch version data for logged-in users (includes payment gateway config)
+      // Fetch version data for logged-in users
       await AppConfigService().fetchVersionData();
 
-      // Trigger initial refresh for logged-in users
+      // Trigger initial refresh
       await appProvider.forceRefresh();
+    } else {
+      debugPrint('ℹ️ [BACKGROUND] User not logged in - skipping game tokens');
     }
 
-    debugPrint('✅ All services initialized');
-    debugPrint('🎯 Using Shop Splash Screen as entry point');
+    debugPrint('✅ [BACKGROUND] All services initialized');
   } catch (e) {
-    debugPrint('⚠️ Initialization error: $e');
+    debugPrint('⚠️ [BACKGROUND] Service initialization error: $e');
+    // Continue with app - background services can retry later
   }
-
-  // Run the app
-  runApp(
-    const OKToast(
-      child: MyApp(),
-    ),
-  );
 }
 
 /// Initialize game tokens on app startup

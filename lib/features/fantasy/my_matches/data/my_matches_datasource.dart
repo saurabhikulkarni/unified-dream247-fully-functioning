@@ -457,7 +457,7 @@ class MyMatchesDatasource extends MyMatchesRepositories {
     int limit,
   ) async {
     final url =
-        '${APIServerUrl.matchServerUrl}${APIServerUrl.getLiveRankLeaderboard}${AppSingleton.singleton.matchData.id}&final_status=$finalStatus&matchchallengeid=$challengeId&skip=$skip&limit=$limit&fantasy_type=${AppSingleton.singleton.matchData.fantasyType!}';
+        '${APIServerUrl.matchServerUrl}${APIServerUrl.getLiveRankLeaderboard}${AppSingleton.singleton.matchData.id}&final_status=$finalStatus&matchchallengeid=$challengeId&skip=$skip&limit=$limit&fantasy_type=${AppSingleton.singleton.matchData.fantasyType ?? ''}';
 
     final response = await clientwithToken.get(url);
 
@@ -488,7 +488,7 @@ class MyMatchesDatasource extends MyMatchesRepositories {
     int limit,
   ) async {
     final url =
-        '${APIServerUrl.matchServerUrl}${APIServerUrl.getSelfLiveLeaderboard}${AppSingleton.singleton.matchData.id}&final_status=$finalStatus&matchchallengeid=$challengeId&skip=$skip&limit=$limit&fantasy_type=${AppSingleton.singleton.matchData.fantasyType!}';
+        '${APIServerUrl.matchServerUrl}${APIServerUrl.getSelfLiveLeaderboard}${AppSingleton.singleton.matchData.id}&final_status=$finalStatus&matchchallengeid=$challengeId&skip=$skip&limit=$limit&fantasy_type=${AppSingleton.singleton.matchData.fantasyType ?? ''}';
 
     final response = await clientwithToken.get(url);
 
