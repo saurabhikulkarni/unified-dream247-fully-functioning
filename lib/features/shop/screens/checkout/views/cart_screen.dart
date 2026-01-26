@@ -355,7 +355,7 @@ class _CartScreenState extends State<CartScreen> {
             // All retries failed - refund the tokens and show user-friendly error
             await _walletService.addShopTokens(
               total.toDouble(),
-              source: 'Order Creation Failed - Refund',
+              paymentMethod: 'refund',
             );
             throw Exception(
               'Unable to create order. Your tokens have been refunded. Please check your internet connection and try again.',
@@ -368,7 +368,7 @@ class _CartScreenState extends State<CartScreen> {
         // Refund tokens since order creation failed
         await _walletService.addShopTokens(
           total.toDouble(),
-          source: 'Order Creation Failed - Refund',
+          paymentMethod: 'refund',
         );
         throw Exception('Order creation failed after $maxRetries attempts');
       }
