@@ -1,5 +1,5 @@
 class ApiServerKeys {
-  static String authorization = 'authorization';
+  static String authorization = 'Authorization';
   static String contentType = 'Content-Type';
   static String applicationJson = 'application/json';
   static String mobile = 'mobile';
