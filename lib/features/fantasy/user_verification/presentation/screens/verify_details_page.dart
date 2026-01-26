@@ -6,6 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:unified_dream247/features/fantasy/core/api_server_constants/api_server_impl/api_impl_header.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/app_colors.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/images.dart';
@@ -174,6 +175,18 @@ class _VerifyDetailsPageState extends State<VerifyDetailsPage> {
   //   );
   // }
   void submitAadharDetails() async {
+    // Validate Aadhaar number is exactly 12 digits
+    if (_aadhaarNumber.text.length != 12) {
+      appToast('Please enter a valid 12-digit Aadhaar number', context);
+      return;
+    }
+
+    // Validate Aadhaar number contains only digits
+    if (!RegExp(r'^\d{12}$').hasMatch(_aadhaarNumber.text)) {
+      appToast('Aadhaar number must contain only digits', context);
+      return;
+    }
+
     setState(() {
       _isSendingOtp = true;
     });
@@ -190,12 +203,18 @@ class _VerifyDetailsPageState extends State<VerifyDetailsPage> {
     if (res != null && res['success'] == true) {
       final refId = res['data']?['data']?['reference_id']?.toString();
       if (refId != null && refId.isNotEmpty) {
+        // Store ref_id in SharedPreferences
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('aadhaar_ref_id', refId);
+        
         _showAadhaarOtpDialog(refId);
       } else {
         appToast('Reference Id missing from server', context);
       }
     } else {
-      appToast(res?['message'] ?? 'Failed to send Aadhaar OTP', context);
+      // Use backend error message if available
+      final errorMessage = res?['message'] ?? 'Failed to send Aadhaar OTP';
+      appToast(errorMessage, context);
     }
   }
 
@@ -208,6 +227,10 @@ class _VerifyDetailsPageState extends State<VerifyDetailsPage> {
     );
 
     if (res == true) {
+      // Clear ref_id from SharedPreferences after successful verification
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove('aadhaar_ref_id');
+
       Provider.of<KycDetailsProvider>(context, listen: false)
           .kycData
           ?.aadharVerify = 1;
@@ -243,7 +266,7 @@ class _VerifyDetailsPageState extends State<VerifyDetailsPage> {
                     maxLength: 6,
                     keyboardType: TextInputType.number,
                     decoration: const InputDecoration(
-                        hintText: 'Enter OTP',
+                        hintText: 'Enter 6-digit OTP',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(10)),
                         ),),
@@ -276,7 +299,21 @@ class _VerifyDetailsPageState extends State<VerifyDetailsPage> {
                   onPressed: _isVerifyingOtp
                       ? null
                       : () async {
-                          if (otpCtrl.text.length != 6) return;
+                          // Validate OTP is exactly 6 digits
+                          if (otpCtrl.text.length != 6) {
+                            setDialogState(() {
+                              _otpMessage = 'Please enter a valid 6-digit OTP';
+                            });
+                            return;
+                          }
+
+                          // Validate OTP contains only digits
+                          if (!RegExp(r'^\d{6}$').hasMatch(otpCtrl.text)) {
+                            setDialogState(() {
+                              _otpMessage = 'OTP must contain only digits';
+                            });
+                            return;
+                          }
 
                           setDialogState(() {
                             _isVerifyingOtp = true;
