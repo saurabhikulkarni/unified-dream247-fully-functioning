@@ -226,11 +226,36 @@ class _HomePageState extends State<HomePage> {
                                     imageUrl,
                                     fit: BoxFit.cover,
                                     width: double.infinity,
-                                    errorBuilder: (_, __, ___) => Image.network(
-                                      fallbackImage,
-                                      fit: BoxFit.cover,
-                                      width: double.infinity,
-                                    ),
+                                    loadingBuilder: (context, child, loadingProgress) {
+                                      if (loadingProgress == null) return child;
+                                      return Container(
+                                        color: Colors.grey[300],
+                                        child: Center(
+                                          child: CircularProgressIndicator(
+                                            value: loadingProgress.expectedTotalBytes != null
+                                                ? loadingProgress.cumulativeBytesLoaded / (loadingProgress.expectedTotalBytes ?? 1)
+                                                : null,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    errorBuilder: (_, __, ___) {
+                                      debugPrint('⚠️ [FANTASY_BANNER] Failed to load image: $imageUrl, using fallback');
+                                      return Container(
+                                        color: Colors.grey[300],
+                                        child: Center(
+                                          child: Icon(Icons.broken_image, color: Colors.grey[600]),
+                                        ),
+                                      );
+                                    },
+                                    frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+                                      if (wasSynchronouslyLoaded) return child;
+                                      return AnimatedOpacity(
+                                        opacity: frame == null ? 0 : 1,
+                                        duration: const Duration(milliseconds: 500),
+                                        child: child,
+                                      );
+                                    },
                                   ),
                                 );
                               }).toList(),

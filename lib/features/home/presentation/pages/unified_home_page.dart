@@ -220,17 +220,19 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
       debugPrint(
           '🕵️ [HOME] Pre-Sync Token Check: ${token != null ? "FOUND (${token.length} chars)" : "MISSING"}');
 
-      // Sync session data before navigation
-      final data = await _authService.syncFantasyVersion();
-      if (data != null) {
-        debugPrint('🎮 [HOME] Fantasy Version Synced: ${data.keys.toList()}');
-      } else {
-        debugPrint('⚠️ [HOME] Fantasy Version Sync returned null');
-      }
+      // Sync fantasy version in background (non-blocking) to prevent 30s timeout delay
+      // The endpoint is unreliable, so we don't wait for it
+      _authService.syncFantasyVersion().then((data) {
+        if (data != null) {
+          debugPrint('🎮 [HOME] Fantasy Version Synced (background): ${data.keys.toList()}');
+        }
+      }).catchError((e) {
+        debugPrint('⚠️ [HOME] Fantasy Version Sync failed (background): $e');
+      });
     } catch (e) {
-      debugPrint('❌ [HOME] Error syncing fantasy version: $e');
+      debugPrint('❌ [HOME] Error in pre-navigation setup: $e');
     }
-    debugPrint('🎮 [HOME] Navigating to Fantasy');
+    debugPrint('🎮 [HOME] Navigating to Fantasy (sync in background)');
     if (mounted) {
       context.push('/fantasy/home');
     }

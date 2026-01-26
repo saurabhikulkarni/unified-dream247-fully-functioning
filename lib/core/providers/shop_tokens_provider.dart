@@ -12,8 +12,10 @@ class ShopTokensProvider extends ChangeNotifier {
   bool _isRefreshing = false;
   final int refreshInterval;
   final OrderServiceGraphQL _graphQLService = OrderServiceGraphQL();
+  DateTime? _lastRefreshTime;
+  static const int minRefreshIntervalSeconds = 60; // Minimum 60 seconds between refreshes
 
-  ShopTokensProvider({this.refreshInterval = 30}) {
+  ShopTokensProvider({this.refreshInterval = 120}) {
     _initializeTokens();
   }
 
@@ -37,19 +39,31 @@ class ShopTokensProvider extends ChangeNotifier {
     }
   }
 
-  /// Start periodic refresh
+  /// Start periodic refresh with reduced frequency
   void _startPeriodicRefresh() {
     _refreshTimer?.cancel();
     _refreshTimer = Timer.periodic(Duration(seconds: refreshInterval), (_) {
       refreshShopTokens();
     });
     debugPrint(
-        '🔄 [SHOP_TOKENS_PROVIDER] Periodic refresh started (${refreshInterval}s)');
+        '🔄 [SHOP_TOKENS_PROVIDER] Periodic refresh started (${refreshInterval}s interval, min debounce: ${minRefreshIntervalSeconds}s)');
   }
 
-  /// Refresh shopTokens from backend
+  /// Refresh shopTokens from backend with debouncing to prevent excessive calls
   Future<void> refreshShopTokens() async {
-    if (_isRefreshing) return;
+    if (_isRefreshing) {
+      debugPrint('⚠️ [SHOP_TOKENS_PROVIDER] Already refreshing, skipping duplicate call');
+      return;
+    }
+
+    // Debounce: Only refresh if minimum interval has passed
+    if (_lastRefreshTime != null) {
+      final timeSinceLastRefresh = DateTime.now().difference(_lastRefreshTime!).inSeconds;
+      if (timeSinceLastRefresh < minRefreshIntervalSeconds) {
+        debugPrint('⏳ [SHOP_TOKENS_PROVIDER] Skipping refresh (${timeSinceLastRefresh}s since last), min interval: ${minRefreshIntervalSeconds}s');
+        return;
+      }
+    }
 
     try {
       _isRefreshing = true;
@@ -75,8 +89,16 @@ class ShopTokensProvider extends ChangeNotifier {
       debugPrint(
           '🔄 [SHOP_TOKENS_PROVIDER] Fetching shop tokens from GraphQL for user: $userId');
 
-      // Use GraphQL to fetch shop tokens from Hygraph
-      final walletData = await _graphQLService.getUserWallet(userId);
+      // Use GraphQL to fetch shop tokens from Hygraph with timeout
+      final walletDataFuture = _graphQLService.getUserWallet(userId);
+      final walletData = await walletDataFuture.timeout(
+        const Duration(seconds: 8),
+        onTimeout: () {
+          debugPrint('⏱️ [SHOP_TOKENS_PROVIDER] GraphQL request timed out after 8 seconds');
+          throw TimeoutException('Shop tokens fetch timeout');
+        },
+      );
+      
       final shopTokensValue = walletData['shopTokens'];
 
       // Convert to int (shopTokens can be double or int from GraphQL)
@@ -87,6 +109,7 @@ class ShopTokensProvider extends ChangeNotifier {
       debugPrint('💰 [SHOP_TOKENS_PROVIDER] Backend shop tokens: $newBalance');
 
       _shopTokens = newBalance;
+      _lastRefreshTime = DateTime.now();
       await prefs.setInt('shop_tokens', _shopTokens);
       notifyListeners();
       debugPrint('✅ [SHOP_TOKENS_PROVIDER] Updated shop tokens: $_shopTokens');
