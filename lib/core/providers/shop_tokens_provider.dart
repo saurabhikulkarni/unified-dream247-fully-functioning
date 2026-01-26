@@ -1,9 +1,8 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:flutter/foundation.dart';
-import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:unified_dream247/features/shop/services/order_service_graphql.dart';
+import 'package:unified_dream247/features/shop/services/user_service.dart';
 
 /// Provider for managing shopTokens state
 /// Handles periodic refresh and local persistence
@@ -12,6 +11,7 @@ class ShopTokensProvider extends ChangeNotifier {
   Timer? _refreshTimer;
   bool _isRefreshing = false;
   final int refreshInterval;
+  final OrderServiceGraphQL _graphQLService = OrderServiceGraphQL();
 
   ShopTokensProvider({this.refreshInterval = 30}) {
     _initializeTokens();
@@ -25,11 +25,12 @@ class ShopTokensProvider extends ChangeNotifier {
       final prefs = await SharedPreferences.getInstance();
       _shopTokens = prefs.getInt('shop_tokens') ?? 0;
       notifyListeners();
-      debugPrint('💰 [SHOP_TOKENS_PROVIDER] Initialized from cache: $_shopTokens');
-      
+      debugPrint(
+          '💰 [SHOP_TOKENS_PROVIDER] Initialized from cache: $_shopTokens');
+
       // Immediately refresh from backend to ensure sync
       await refreshShopTokens();
-      
+
       _startPeriodicRefresh();
     } catch (e) {
       debugPrint('❌ [SHOP_TOKENS_PROVIDER] Error initializing: $e');
@@ -42,7 +43,8 @@ class ShopTokensProvider extends ChangeNotifier {
     _refreshTimer = Timer.periodic(Duration(seconds: refreshInterval), (_) {
       refreshShopTokens();
     });
-    debugPrint('🔄 [SHOP_TOKENS_PROVIDER] Periodic refresh started (${refreshInterval}s)');
+    debugPrint(
+        '🔄 [SHOP_TOKENS_PROVIDER] Periodic refresh started (${refreshInterval}s)');
   }
 
   /// Refresh shopTokens from backend
@@ -52,55 +54,42 @@ class ShopTokensProvider extends ChangeNotifier {
     try {
       _isRefreshing = true;
       final prefs = await SharedPreferences.getInstance();
-      final authToken = prefs.getString('token') ?? 
-                       prefs.getString('auth_token');
-      
+      final authToken =
+          prefs.getString('token') ?? prefs.getString('auth_token');
+
       if (authToken == null || authToken.isEmpty) {
         debugPrint('⚠️ [SHOP_TOKENS_PROVIDER] No auth token, skipping refresh');
         _isRefreshing = false;
         return;
       }
 
-      // Use the working wallet endpoint that returns balance (shop tokens)
-      // Endpoint: /user/user-wallet-details returns {data: {balance: 2000.00, ...}}
-      final baseUrl = dotenv.env['UserServerUrl'] ?? 'http://134.209.158.211:4000/user/';
-      final url = '${baseUrl}user-wallet-details';
-      
-      debugPrint('🔄 [SHOP_TOKENS_PROVIDER] Fetching from: $url');
-      debugPrint('🔑 [SHOP_TOKENS_PROVIDER] Token: ${authToken.substring(0, 20)}...');
-      
-      final response = await http.get(
-        Uri.parse(url),
-        headers: {
-          'Authorization': 'Bearer $authToken',
-          'Content-Type': 'application/json',
-        },
-      ).timeout(const Duration(seconds: 10));
-      
-      debugPrint('📥 [SHOP_TOKENS_PROVIDER] Status: ${response.statusCode}');
-      debugPrint('📥 [SHOP_TOKENS_PROVIDER] Body: ${response.body}');
-      
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        if (data['success'] == true && data['data'] != null) {
-          final walletData = data['data'];
-          // Shop tokens are stored in 'balance' field from this endpoint
-          final balanceStr = walletData['balance']?.toString() ?? '0';
-          final newBalance = double.tryParse(balanceStr)?.toInt() ?? 0;
-          
-          debugPrint('💰 [SHOP_TOKENS_PROVIDER] Backend balance: $newBalance');
-        
-          _shopTokens = newBalance;
-          await prefs.setInt('shop_tokens', _shopTokens);
-          notifyListeners();
-          debugPrint('✅ [SHOP_TOKENS_PROVIDER] Updated shop tokens: $_shopTokens');
-        } else {
-          debugPrint('⚠️ [SHOP_TOKENS_PROVIDER] Response not successful: ${data['message']}');
-        }
-      } else {
-        debugPrint('❌ [SHOP_TOKENS_PROVIDER] HTTP error: ${response.statusCode}');
-        debugPrint('❌ [SHOP_TOKENS_PROVIDER] Response: ${response.body}');
+      // Get userId for GraphQL query
+      final userId = UserService.getCurrentUserId();
+      if (userId == null || userId.isEmpty) {
+        debugPrint(
+            '⚠️ [SHOP_TOKENS_PROVIDER] No userId found, skipping refresh');
+        _isRefreshing = false;
+        return;
       }
+
+      debugPrint(
+          '🔄 [SHOP_TOKENS_PROVIDER] Fetching shop tokens from GraphQL for user: $userId');
+
+      // Use GraphQL to fetch shop tokens from Hygraph
+      final walletData = await _graphQLService.getUserWallet(userId);
+      final shopTokensValue = walletData['shopTokens'];
+
+      // Convert to int (shopTokens can be double or int from GraphQL)
+      final newBalance = (shopTokensValue is double)
+          ? shopTokensValue.toInt()
+          : (shopTokensValue as int? ?? 0);
+
+      debugPrint('💰 [SHOP_TOKENS_PROVIDER] Backend shop tokens: $newBalance');
+
+      _shopTokens = newBalance;
+      await prefs.setInt('shop_tokens', _shopTokens);
+      notifyListeners();
+      debugPrint('✅ [SHOP_TOKENS_PROVIDER] Updated shop tokens: $_shopTokens');
     } catch (e) {
       debugPrint('⚠️ [SHOP_TOKENS_PROVIDER] Refresh error: $e');
     } finally {
