@@ -24,7 +24,7 @@ class _LoginScreenState extends State<LoginScreen> {
     // Preload the welcome image to avoid loading delay
     WidgetsBinding.instance.addPostFrameCallback((_) {
       precacheImage(
-        const AssetImage('assets/images/welcome-min.jpg'),
+        const AssetImage('assets/images/welcome-min.webp'),
         context,
       );
     });

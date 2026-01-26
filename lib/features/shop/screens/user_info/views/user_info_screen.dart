@@ -160,24 +160,14 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
           TextField(
             controller: _phoneController,
             keyboardType: TextInputType.phone,
-            onChanged: (value) {
-              setState(() {
-                if (value.isEmpty) {
-                  _phoneError = null;
-                } else if (!_validateIndianMobileNumber(value)) {
-                  _phoneError = 'Enter a valid Indian mobile number (10 digits starting with 6-9)';
-                } else {
-                  _phoneError = null;
-                }
-              });
-            },
+            readOnly: true,  // ✅ Phone is authentication credential - cannot be changed
             decoration: InputDecoration(
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(defaultBorderRadious),
               ),
-              hintText: 'Enter your phone number (e.g., 9876543210)',
-              errorText: _phoneError,
-              errorMaxLines: 2,
+              hintText: 'Phone number linked to your account',
+              filled: true,
+              fillColor: Colors.grey.shade100,
             ),
           ),
           const SizedBox(height: defaultPadding * 2),

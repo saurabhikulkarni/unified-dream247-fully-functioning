@@ -1,9 +1,7 @@
 // ignore_for_file: constant_identifier_names, use_build_context_synchronously
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:unified_dream247/features/fantasy/core/api_server_constants/api_server_impl/api_impl_header.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/app_colors.dart';
-import 'package:unified_dream247/features/fantasy/core/app_constants/images.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/strings.dart';
 import 'package:unified_dream247/features/fantasy/core/global_widgets/app_toast.dart';
 import 'package:unified_dream247/features/fantasy/core/global_widgets/common_widgets.dart';
@@ -13,10 +11,7 @@ import 'package:unified_dream247/features/fantasy/core/utils/app_utils.dart';
 import 'package:unified_dream247/features/fantasy/menu_items/data/user_datasource.dart';
 import 'package:unified_dream247/features/fantasy/menu_items/domain/use_cases/user_usecases.dart';
 import 'package:unified_dream247/features/fantasy/menu_items/presentation/providers/user_data_provider.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-
-enum Gender { Male, Female }
 
 class EditProfile extends StatefulWidget {
   const EditProfile({super.key});
@@ -26,18 +21,9 @@ class EditProfile extends StatefulWidget {
 }
 
 class _EditProfile extends State<EditProfile> {
+  // 📝 Only Team Name field - other user details edited in Shop profile
   final TextEditingController _teamNameController = TextEditingController();
-  final TextEditingController _userNameController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _mobileController = TextEditingController();
-  final TextEditingController _dobController = TextEditingController();
-  final TextEditingController _pincodeController = TextEditingController();
-  final TextEditingController _addressController = TextEditingController();
-  final TextEditingController _cityController = TextEditingController();
-  final TextEditingController _stateController = TextEditingController();
-  File? userImage;
-  String profileImageName = '';
-  Gender selectedGender = Gender.Male;
+  
   UserUsecases userUsecases = UserUsecases(
     UserDatasource(ApiImplWithAccessToken()),
   );
@@ -47,61 +33,52 @@ class _EditProfile extends State<EditProfile> {
     super.initState();
   }
 
+  /// Update only Team Name
   void submitData() async {
     final userData =
         Provider.of<UserDataProvider>(context, listen: false).userData;
+    
     if (!AppUtils.isValidTeamName(_teamNameController.text)) {
       appToast('Please enter valid Team Name', context);
-    } else {
-      await userUsecases
-          .updateProfile(
-        context,
-        _teamNameController.text.trim(),
-        _userNameController.text,
-        _stateController.text,
-        selectedGender.name,
-        _cityController.text,
-        _addressController.text,
-        _dobController.text,
-        _pincodeController.text,
-      )
-          .then((value) {
-        if (value != null) {
-          setState(() {
-            userData!.name = _userNameController.text;
-            userData.team = _teamNameController.text;
-            userData.state = _stateController.text;
-            userData.gender = selectedGender.name;
-            userData.city = _cityController.text;
-            userData.address = _addressController.text;
-            userData.dob = _dobController.text;
-            userData.pincode = int.parse(_pincodeController.text);
-            userData.teamNameUpdateStatus = true;
-            Provider.of<UserDataProvider>(
-              context,
-              listen: false,
-            ).updateUser(userData);
-            Navigator.of(context).pop();
-          });
-        }
-      });
+      return;
     }
+    
+    // ✅ Update only team name - preserve all other user details
+    await userUsecases
+        .updateProfile(
+          context,
+          _teamNameController.text.trim(),  // ✅ New team name
+          userData?.name ?? '',             // Preserve name
+          userData?.state ?? '',            // Preserve state
+          userData?.gender ?? '',           // Preserve gender
+          userData?.city ?? '',             // Preserve city
+          userData?.address ?? '',          // Preserve address
+          userData?.dob ?? '',              // Preserve dob
+          userData?.pincode?.toString() ?? '',  // Preserve pincode
+        )
+        .then((value) {
+          if (value != null) {
+            setState(() {
+              userData!.team = _teamNameController.text;  // ✅ Update team name
+              userData.teamNameUpdateStatus = true;
+              
+              Provider.of<UserDataProvider>(context, listen: false)
+                  .updateUser(userData);
+              
+              appToast('Team name updated successfully', context);
+              Navigator.of(context).pop();
+            });
+          }
+        });
   }
 
   @override
   Widget build(BuildContext context) {
     final userData =
         Provider.of<UserDataProvider>(context, listen: false).userData;
+    
+    // ✅ Only initialize team name
     _teamNameController.text = userData?.team ?? '';
-    _userNameController.text = userData?.name ?? '';
-    _emailController.text = userData?.email ?? '';
-    _mobileController.text = userData?.mobile.toString() ?? '';
-    _dobController.text = userData?.dob ?? '';
-    _pincodeController.text = userData?.pincode.toString() ?? '';
-    _addressController.text = userData?.address ?? '';
-    _cityController.text = userData?.city ?? '';
-    _stateController.text = userData?.state ?? '';
-    selectedGender = userData?.gender == 'Male' ? Gender.Male : Gender.Female;
 
     return SubContainer(
       showAppBar: true,
@@ -127,66 +104,51 @@ class _EditProfile extends State<EditProfile> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const SizedBox(height: 20),
-                // Profile Avatar Section
-                Center(
-                  child: Stack(
+                const SizedBox(height: 30),
+                
+                // 📝 Info Section
+                Container(
+                  decoration: BoxDecoration(
+                    color: AppColors.mainColor.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: AppColors.mainColor.withValues(alpha: 0.3),
+                      width: 1,
+                    ),
+                  ),
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
                     children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColors.mainColor.withValues(alpha: 0.2),
-                              blurRadius: 10,
-                              offset: const Offset(0, 6),
-                            ),
-                          ],
-                        ),
-                        child: CircleAvatar(
-                          radius: 55,
-                          backgroundColor:
-                              AppColors.mainColor.withValues(alpha: 0.2),
-                          child: CircleAvatar(
-                            radius: 50,
-                            backgroundImage: userImage != null
-                                ? FileImage(userImage!)
-                                : (userData?.image != null &&
-                                            (userData?.image ?? '').isNotEmpty
-                                        ? NetworkImage(userData?.image ?? '')
-                                        : const AssetImage(
-                                            Images.imageDefalutPlayer,))
-                                    as ImageProvider,
-                          ),
+                      Icon(
+                        Icons.info_outline,
+                        color: AppColors.mainColor,
+                        size: 28,
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        'Edit Team Name',
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.mainColor,
                         ),
                       ),
-                      Positioned(
-                        top: 70,
-                        right: 0,
-                        child: InkWell(
-                          onTap: () {
-                            imageDialog(context);
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.all(6),
-                            decoration: const BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: AppColors.mainColor,
-                            ),
-                            child: const Icon(
-                              Icons.camera_alt_rounded,
-                              color: AppColors.white,
-                              size: 20,
-                            ),
-                          ),
+                      const SizedBox(height: 8),
+                      const Text(
+                        'To edit your name, email, and other personal details, please use the Shop Profile section.',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: AppColors.letterColor,
+                          height: 1.5,
                         ),
                       ),
                     ],
                   ),
                 ),
+                
                 const SizedBox(height: 30),
 
-                // Form Card Section
+                // 🎯 Team Name Form Card
                 Container(
                   decoration: BoxDecoration(
                     color: AppColors.white,
@@ -199,152 +161,42 @@ class _EditProfile extends State<EditProfile> {
                       ),
                     ],
                   ),
-                  padding: const EdgeInsets.all(18),
+                  padding: const EdgeInsets.all(24),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      // Label
+                      Text(
+                        'Team Name',
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.letterColor,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      
+                      // Team Name Input Field (Only Editable Field)
                       customTextFieldReadOnly(
                         _teamNameController,
-                        'Enter Team Name',
+                        'Enter your fantasy team name',
                         TextInputType.name,
                         10,
-                        false,
+                        false,  // ✅ false = enabled (editable)
                         1,
                       ),
-                      const SizedBox(height: 18),
-                      customTextFieldReadOnly(
-                        _userNameController,
-                        'Enter User Name',
-                        TextInputType.name,
-                        0,
-                        false,
-                        1,
-                      ),
-                      const SizedBox(height: 18),
-                      customTextFieldReadOnly(
-                        _emailController,
-                        'Enter Email Address',
-                        TextInputType.emailAddress,
-                        0,
-                        false,
-                        1,
-                      ),
-                      const SizedBox(height: 18),
-                      customTextFieldReadOnly(
-                        _mobileController,
-                        'Enter Mobile Number',
-                        TextInputType.number,
-                        10,
-                        false,
-                        1,
-                      ),
-                      const SizedBox(height: 18),
-                      customTextFieldReadOnly(
-                        _dobController,
-                        'Enter DOB',
-                        TextInputType.name,
-                        0,
-                        false,
-                        1,
-                      ),
-                      const SizedBox(height: 18),
-                      customTextFieldReadOnly(
-                        _stateController,
-                        'Enter State',
-                        TextInputType.name,
-                        0,
-                        false,
-                        1,
-                      ),
-                      const SizedBox(height: 18),
-                      customTextFieldReadOnly(
-                        _pincodeController,
-                        'Enter Pincode',
-                        TextInputType.number,
-                        6,
-                        false,
-                        1,
-                      ),
-                      const SizedBox(height: 18),
-
-                      // Gender Selection
-                      Row(
-                        children: [
-                          Expanded(
-                            child: RadioListTile<Gender>(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              tileColor: selectedGender == Gender.Male
-                                  ? AppColors.mainColor.withValues(alpha: 0.1)
-                                  : AppColors.transparent,
-                              title: const Text(
-                                'Male',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 15,
-                                  color: AppColors.letterColor,
-                                ),
-                              ),
-                              value: Gender.Male,
-                              groupValue: selectedGender,
-                              activeColor: AppColors.mainColor,
-                              onChanged: (value) {
-                                setState(() {
-                                  selectedGender = value!;
-                                });
-                              },
-                            ),
-                          ),
-                          Expanded(
-                            child: RadioListTile<Gender>(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              tileColor: selectedGender == Gender.Female
-                                  ? AppColors.mainColor.withValues(alpha: 0.1)
-                                  : AppColors.transparent,
-                              title: const Text(
-                                'Female',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 15,
-                                  color: AppColors.letterColor,
-                                ),
-                              ),
-                              value: Gender.Female,
-                              groupValue: selectedGender,
-                              activeColor: AppColors.mainColor,
-                              onChanged: (value) {
-                                setState(() {
-                                  selectedGender = value!;
-                                });
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      const SizedBox(height: 18),
-                      customTextFieldReadOnly(
-                        _addressController,
-                        'Enter address',
-                        TextInputType.name,
-                        0,
-                        false,
-                        1,
-                      ),
-                      const SizedBox(height: 18),
-                      customTextFieldReadOnly(
-                        _cityController,
-                        'Enter City',
-                        TextInputType.name,
-                        0,
-                        false,
-                        1,
+                      
+                      const SizedBox(height: 8),
+                      Text(
+                        'e.g., Dream Warriors, Victory Squad, etc.',
+                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                          color: AppColors.lightGrey,
+                          fontStyle: FontStyle.italic,
+                        ),
                       ),
                     ],
                   ),
                 ),
+                
                 const SizedBox(height: 30),
 
                 // Submit Button
@@ -354,7 +206,7 @@ class _EditProfile extends State<EditProfile> {
                   onTap: () {
                     submitData();
                   },
-                  text: 'Submit',
+                  text: 'Update Team Name',
                 ),
                 const SizedBox(height: 40),
               ],
@@ -364,111 +216,4 @@ class _EditProfile extends State<EditProfile> {
       ),
     );
   }
-
-  Widget fieldTitle(String text) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 10, bottom: 3),
-      child: Text(
-        text,
-        style: const TextStyle(
-          fontWeight: FontWeight.w500,
-          fontSize: 15,
-          color: AppColors.letterColor,
-        ),
-      ),
-    );
-  }
-
-  void imageDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Select Image Source'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                GestureDetector(
-                  child: const Text('Camera'),
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    chooseImage(ImageSource.camera, context);
-                  },
-                ),
-                const Padding(padding: EdgeInsets.all(8.0)),
-                GestureDetector(
-                  child: const Text('Gallery'),
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    chooseImage(ImageSource.gallery, context);
-                  },
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Future<void> chooseImage(ImageSource source, BuildContext context) async {
-    final picker = ImagePicker();
-    final pickedFile = await picker.pickImage(source: source);
-
-    if (pickedFile != null) {
-      // Instantly show selected image
-      setState(() {
-        userImage = File(pickedFile.path);
-        profileImageName = pickedFile.name;
-      });
-
-      // Upload the same file
-      uploadImage(userImage!);
-    } else {
-      debugPrint('Image picking canceled.');
-    }
-  }
-
-  void uploadImage(File imageFile) async {
-    try {
-      final value = await userUsecases.uploadImage(context, imageFile);
-
-      if (value != null && value.isNotEmpty) {
-        final userData =
-            Provider.of<UserDataProvider>(context, listen: false).userData;
-        userData!.image = value;
-
-        Provider.of<UserDataProvider>(
-          context,
-          listen: false,
-        ).updateUser(userData);
-      }
-    } catch (e) {
-      debugPrint('Error uploading image: $e');
-      appToast('Failed to upload image', context);
-    }
-  }
-
-  // void uploadImage() {
-  //   final userData =
-  //       Provider.of<UserDataProvider>(context, listen: false).userData;
-  //   if (userImage == null) {
-  //   } else {
-  //     String fileName = "${userData?.team}_$profileImageName";
-  //     AccountsServices.uploadImageToS3(
-  //       userImage!,
-  //       "user_profiles",
-  //       fileName,
-  //     ).then((value) {
-  //       String profileLoc = "user_profiles/$fileName";
-  //       AccountsServices.uploadImage(context, profileLoc);
-  //       userData!.image =
-  //           "https://-store.s3.ap-south-1.amazonaws.com/$profileLoc";
-  //       Provider.of<UserDataProvider>(
-  //         context,
-  //         listen: true,
-  //       ).updateUser(userData);
-  //     });
-  //   }
-  // }
 }

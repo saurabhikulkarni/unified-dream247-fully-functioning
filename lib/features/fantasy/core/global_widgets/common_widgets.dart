@@ -44,7 +44,7 @@ Widget customTextFieldReadOnly(
 ) {
   return TextField(
     controller: controller,
-    enabled: readOnly,
+    enabled: !readOnly,  // ✅ Fixed: Inverted logic - if readOnly=false, field should be enabled
     maxLines: maxlines,
     decoration: InputDecoration(
       floatingLabelBehavior: FloatingLabelBehavior.never,
@@ -81,7 +81,7 @@ Widget customTextFieldReadOnlyUppercase(
 ) {
   return TextField(
     controller: controller,
-    enabled: readOnly,
+    enabled: !readOnly,  // ✅ Fixed: Inverted logic - if readOnly=false, field should be enabled
     decoration: InputDecoration(
       labelText: hint,
       filled: true,

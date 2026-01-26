@@ -50,6 +50,12 @@ class UserFullDetailsResponse {
   bool? teamNameUpdateStatus;
   String? joiningDate;
   bool? isPromoterBlocked;
+  int? contests;      // Total contests joined
+  int? matches;       // Total matches played
+  int? series;        // Total series played
+  int? wins;          // Total wins
+  int? totalDiamonds; // Total diamonds earned
+  int? totalGameToken; // Total game tokens earned
 
   UserFullDetailsResponse({
     this.id,
@@ -101,6 +107,12 @@ class UserFullDetailsResponse {
     this.totalmatches,
     this.totalseries,
     this.teamNameUpdateStatus,
+    this.contests,
+    this.matches,
+    this.series,
+    this.wins,
+    this.totalDiamonds,
+    this.totalGameToken,
   });
 
   factory UserFullDetailsResponse.fromJson(Map<String, dynamic> json) =>
@@ -156,6 +168,12 @@ class UserFullDetailsResponse {
         totalseries: ModelParsers.toIntParser(json['totalseries']),
         teamNameUpdateStatus:
             ModelParsers.toBoolParser(json['teamNameUpdateStatus']),
+        contests: ModelParsers.toIntParser(json['contests']),
+        matches: ModelParsers.toIntParser(json['matches']),
+        series: ModelParsers.toIntParser(json['series']),
+        wins: ModelParsers.toIntParser(json['wins']),
+        totalDiamonds: ModelParsers.toIntParser(json['totalDiamonds']),
+        totalGameToken: ModelParsers.toIntParser(json['totalGameToken']),
       );
 
   Map<String, dynamic> toJson() => {
@@ -208,5 +226,11 @@ class UserFullDetailsResponse {
         'totalmatches': totalmatches,
         'totalseries': totalseries,
         'teamNameUpdateStatus': teamNameUpdateStatus,
+        'contests': contests,
+        'matches': matches,
+        'series': series,
+        'wins': wins,
+        'totalDiamonds': totalDiamonds,
+        'totalGameToken': totalGameToken,
       };
 }
