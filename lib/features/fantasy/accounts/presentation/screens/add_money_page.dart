@@ -39,6 +39,8 @@ import 'package:unified_dream247/features/fantasy/accounts/data/services/game_to
 import 'package:unified_dream247/features/shop/services/auth_service.dart'
     as shop_auth;
 import 'package:get_it/get_it.dart';
+import 'package:unified_dream247/core/providers/shop_tokens_provider.dart';
+import 'package:unified_dream247/features/fantasy/accounts/presentation/providers/wallet_details_provider.dart';
 
 class AddMoneyPage extends StatefulWidget {
   const AddMoneyPage({super.key});
@@ -381,6 +383,21 @@ class _AddMoneyPage extends State<AddMoneyPage> {
           orderId: response.orderId ?? '',
         );
         debugPrint('✅ [ADD_MONEY] Shop backend synced with new tokens');
+
+        // 4️⃣ Refresh providers to update all screens
+        if (mounted) {
+          try {
+            final shopTokensProvider = context.read<ShopTokensProvider>();
+            await shopTokensProvider.forceRefresh();
+            debugPrint('✅ [ADD_MONEY] Shop tokens provider refreshed');
+            
+            final walletProvider = context.read<WalletDetailsProvider>();
+            await walletProvider.refreshWalletDetails(context);
+            debugPrint('✅ [ADD_MONEY] Game tokens provider refreshed');
+          } catch (e) {
+            debugPrint('⚠️ [ADD_MONEY] Error refreshing providers: $e');
+          }
+        }
 
         appToast(res['message'] ?? 'Payment Successful', context);
         setState(() => _showMysteryBox = true);

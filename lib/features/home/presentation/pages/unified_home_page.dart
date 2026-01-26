@@ -336,8 +336,10 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
           // Game Tokens Display - Clickable to navigate to wallet
           Consumer<WalletDetailsProvider>(
             builder: (context, walletProvider, child) {
-              // Show only the deposited balance (game tokens), not winning or bonus
-              final gameTokens = double.tryParse(walletProvider.walletData?.balance ?? '0') ?? 0;
+              // Show total game tokens (balance + bonus including mystery box)
+              final balance = double.tryParse(walletProvider.walletData?.balance ?? '0') ?? 0;
+              final bonus = double.tryParse(walletProvider.walletData?.bonus ?? '0') ?? 0;
+              final gameTokens = balance + bonus;
               
               return GestureDetector(
                 onTap: () {

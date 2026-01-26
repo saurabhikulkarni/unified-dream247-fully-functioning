@@ -300,6 +300,23 @@ class _CartScreenState extends State<CartScreen> {
         throw Exception('User not logged in');
       }
       
+      // Deduct wallet balance FIRST (before creating order) to ensure atomicity
+      final deductSuccess = await _walletService.deductShopTokens(
+        total.toDouble(),
+        itemName: 'Cart Purchase',
+        orderId: 'pending-${DateTime.now().millisecondsSinceEpoch}',
+      );
+      
+      if (!deductSuccess) {
+        if (kDebugMode) print('❌ Token deduction failed');
+        throw Exception('Failed to deduct wallet balance');
+      }
+      
+      if (kDebugMode) {
+        final newBalance = await _walletService.getShopTokens();
+        print('✅ Tokens deducted successfully. New balance: $newBalance');
+      }
+
       // Convert cart items to OrderItemModel for GraphQL
       final orderItems = cartItems.map((cartItem) {
         return OrderItemModel(
@@ -335,15 +352,24 @@ class _CartScreenState extends State<CartScreen> {
           if (kDebugMode) print('❌ Order creation failed (attempt $retryCount): $e');
           
           if (retryCount >= maxRetries) {
-            // All retries failed - show user-friendly error
+            // All retries failed - refund the tokens and show user-friendly error
+            await _walletService.addShopTokens(
+              total.toDouble(),
+              source: 'Order Creation Failed - Refund',
+            );
             throw Exception(
-              'Unable to create order. Please check your internet connection and try again.',
+              'Unable to create order. Your tokens have been refunded. Please check your internet connection and try again.',
             );
           }
         }
       }
       
       if (order == null) {
+        // Refund tokens since order creation failed
+        await _walletService.addShopTokens(
+          total.toDouble(),
+          source: 'Order Creation Failed - Refund',
+        );
         throw Exception('Order creation failed after $maxRetries attempts');
       }
 
@@ -409,20 +435,21 @@ class _CartScreenState extends State<CartScreen> {
         }
       }
 
-      // Deduct wallet balance using unified wallet service
-      final deductSuccess = await _walletService.deductShopTokens(
-        total.toDouble(),
-        itemName: 'Cart Purchase',
-        orderId: order.id ?? order.orderNumber,
-      );
-      
-      if (!deductSuccess) {
-        throw Exception('Failed to deduct wallet balance');
-      }
-      
-      // Refresh shop tokens provider to sync UI
+      // Update shop tokens provider immediately with new balance
       if (mounted) {
-        await context.read<ShopTokensProvider>().forceRefresh();
+        // Get the updated balance from wallet service
+        final newBalance = await _walletService.getShopTokens();
+        if (kDebugMode) print('💰 Updating shop tokens provider with balance: $newBalance');
+        await context.read<ShopTokensProvider>().updateTokens(newBalance.toInt());
+        if (kDebugMode) print('✅ Shop tokens provider updated, UI should refresh');
+        
+        // Also refresh from backend to ensure sync (with small delay)
+        Future.delayed(const Duration(milliseconds: 500), () {
+          if (mounted) {
+            if (kDebugMode) print('🔄 Forcing backend refresh for shop tokens');
+            context.read<ShopTokensProvider>().forceRefresh();
+          }
+        });
       }
 
       // Clear cart completely (both local and backend)
