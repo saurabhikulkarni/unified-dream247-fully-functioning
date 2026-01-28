@@ -1,5 +1,8 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'dart:async';
 import 'package:unified_dream247/core/constants/storage_constants.dart';
 import 'package:unified_dream247/features/shop/models/shop_transaction_model.dart';
 import 'package:unified_dream247/features/shop/services/order_service_graphql.dart';
@@ -48,37 +51,53 @@ class UnifiedWalletService {
 
   // ==================== SHOP TOKENS ====================
 
-  /// Get current shop tokens balance (from backend or cache)
+  /// Get current shop tokens balance (from cache FIRST, then backend)
   Future<double> getShopTokens() async {
     await _ensureInitialized();
     
     try {
+      // ✅ PRIORITY 1: Check SharedPreferences FIRST (most reliable)
+      // This has the value synced from Fantasy REST API endpoint
+      final cachedValue = _prefs?.get(StorageConstants.shopTokens);
+      if (cachedValue != null) {
+        double value = 0.0;
+        if (cachedValue is double) {
+          value = cachedValue;
+        } else if (cachedValue is int) {
+          value = cachedValue.toDouble();
+        }
+        if (value > 0) {
+          debugPrint('📊 [UNIFIED_WALLET] Shop tokens (from SharedPreferences cache): $value');
+          return value;
+        }
+      }
+
+      // ✅ PRIORITY 2: Try to fetch from backend if cache is empty or 0
       final userId = UserService.getCurrentUserId();
       if (userId == null) {
         debugPrint('⚠️ [UNIFIED_WALLET] User not logged in, using local storage');
         return _safeGetDouble(StorageConstants.shopTokens);
       }
 
-      // Try to fetch from backend
+      // Try to fetch from GraphQL backend
       final wallet = await _graphQLService.getUserWallet(userId);
       final backendTokens = wallet['shopTokens'] as double? ?? 0.0;
       
-      // Sync to local storage
-      await _prefs?.setDouble(StorageConstants.shopTokens, backendTokens);
-      debugPrint('📊 [UNIFIED_WALLET] Shop tokens (from backend): $backendTokens');
-      return backendTokens;
-    } catch (e) {
-      // Fallback to local storage
-      debugPrint('⚠️ [UNIFIED_WALLET] Backend fetch failed, using local: $e');
-      try {
-        final value = _prefs?.get(StorageConstants.shopTokens);
-        if (value == null) return 0.0;
-        if (value is double) return value;
-        if (value is int) return value.toDouble();
-        return 0.0;
-      } catch (_) {
-        return 0.0;
+      // If backend has value, sync to local storage
+      if (backendTokens > 0) {
+        await _prefs?.setDouble(StorageConstants.shopTokens, backendTokens);
+        debugPrint('📊 [UNIFIED_WALLET] Shop tokens (from GraphQL backend): $backendTokens');
+        return backendTokens;
       }
+      
+      // Backend returned 0 - keep using cached value if available
+      final cached = _safeGetDouble(StorageConstants.shopTokens);
+      debugPrint('⚠️ [UNIFIED_WALLET] Backend returned 0, keeping cached value: $cached');
+      return cached;
+    } catch (e) {
+      // Fallback to local storage on any error
+      debugPrint('⚠️ [UNIFIED_WALLET] Backend fetch failed, using local: $e');
+      return _safeGetDouble(StorageConstants.shopTokens);
     }
   }
 
@@ -151,47 +170,222 @@ class UnifiedWalletService {
         return false;
       }
 
-      // Call backend to deduct tokens
-      final result = await _graphQLService.deductShopTokens(
-        userId: userId,
-        amount: amount,
-        orderId: orderId ?? 'local-${DateTime.now().millisecondsSinceEpoch}',
-        itemName: itemName ?? 'Purchase',
-      );
+      debugPrint('🔄 [UNIFIED_WALLET] Starting token deduction...');
+      debugPrint('   - Current balance: $current');
+      debugPrint('   - Amount to deduct: $amount');
 
-      if (result['success'] == true) {
-        final newBalance = result['newBalance'] as double? ?? 0.0;
-        await _prefs?.setDouble(StorageConstants.shopTokens, newBalance);
+      // PRIMARY: Try GraphQL deduction first (this is the reliable method)
+      try {
+        debugPrint('📝 [UNIFIED_WALLET] Attempting GraphQL deduction...');
+        final result = await _graphQLService.deductShopTokens(
+          userId: userId,
+          amount: amount,
+          orderId: orderId ?? 'local-${DateTime.now().millisecondsSinceEpoch}',
+          itemName: itemName ?? 'Purchase',
+        );
+
+        if (result['success'] == true) {
+          final newBalance = result['newBalance'] as double? ?? 0.0;
+          
+          // Update local cache with GraphQL result
+          await _prefs?.setInt(StorageConstants.shopTokens, newBalance.toInt());
+          
+          debugPrint('✅ [UNIFIED_WALLET] GraphQL deduction successful');
+          debugPrint('   - Amount deducted: $amount');
+          debugPrint('   - New balance from GraphQL: $newBalance');
+          
+          // Try to sync from Fantasy to ensure we have latest balance
+          // Fantasy might have the actual source of truth
+          await _refreshFromFantasyIfNeeded(newBalance);
+          
+          return true;
+        } else {
+          debugPrint('⚠️ [UNIFIED_WALLET] GraphQL deduction returned success=false');
+          return false;
+        }
+      } catch (graphQLError) {
+        debugPrint('⚠️ [UNIFIED_WALLET] GraphQL deduction failed: $graphQLError');
         
-        debugPrint('✅ [UNIFIED_WALLET] Deducted $amount for: $itemName (Backend)');
-        debugPrint('💰 New balance: $newBalance');
+        // FALLBACK: Try Fantasy deduction endpoint (may not exist)
+        final fantasyDeducted = await _deductFromFantasyBackend(
+          amount: amount,
+          orderId: orderId ?? 'local-${DateTime.now().millisecondsSinceEpoch}',
+          itemName: itemName ?? 'Purchase',
+        );
+        
+        if (fantasyDeducted) {
+          debugPrint('✅ [UNIFIED_WALLET] Fallback: Fantasy deduction successful');
+          return true;
+        }
+        
+        // If both fail, deduct locally as last resort
+        debugPrint('⚠️ [UNIFIED_WALLET] All backend deductions failed, using local fallback');
+        final newAmount = current - amount;
+        await setShopTokens(newAmount);
+        
+        await ShopTransactionManager.addTransaction(
+          type: 'purchase',
+          amount: amount,
+          description: itemName ?? 'Purchase',
+          status: 'pending',
+        );
+        
         return true;
       }
-      
-      return false;
     } catch (e) {
-      debugPrint('⚠️ [UNIFIED_WALLET] Backend deduction failed: $e');
+      debugPrint('❌ [UNIFIED_WALLET] Deduction error: $e');
+      return false;
+    }
+  }
+
+  /// Helper to refresh from Fantasy if needed
+  Future<void> _refreshFromFantasyIfNeeded(double expectedBalance) async {
+    try {
+      // Small delay to allow backend to sync
+      await Future.delayed(const Duration(milliseconds: 500));
       
-      // Fallback: Deduct from local storage
-      final current = await getShopTokens();
-      if (current < amount) {
-        debugPrint('❌ [UNIFIED_WALLET] Insufficient shop tokens (Fallback)');
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('token') ?? prefs.getString('auth_token');
+      
+      if (token == null) return;
+
+      final baseUrl = 'http://134.209.158.211:4000';
+      final url = '$baseUrl/user/user-wallet-details';
+      
+      final response = await http.get(
+        Uri.parse(url),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      ).timeout(const Duration(seconds: 10));
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        if (data['success'] == true && data['data'] != null) {
+          final balanceStr = data['data']['balance']?.toString() ?? '0';
+          final fantasyBalance = double.tryParse(balanceStr)?.toInt() ?? 0;
+          
+          debugPrint('🔄 [UNIFIED_WALLET] Fantasy balance after deduction: $fantasyBalance');
+          
+          // If Fantasy has different balance than expected, update to Fantasy's value
+          if (fantasyBalance != expectedBalance.toInt()) {
+            debugPrint('⚠️ [UNIFIED_WALLET] Syncing from Fantasy (GraphQL returned $expectedBalance, Fantasy has $fantasyBalance)');
+            await _prefs?.setInt(StorageConstants.shopTokens, fantasyBalance);
+          }
+        }
+      }
+    } catch (e) {
+      // Silent fail - this is just a sanity check
+      debugPrint('ℹ️ [UNIFIED_WALLET] Fantasy refresh check skipped: $e');
+    }
+  }
+
+  /// Deduct from Fantasy backend directly
+  Future<bool> _deductFromFantasyBackend({
+    required double amount,
+    required String orderId,
+    required String itemName,
+  }) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('token') ?? prefs.getString('auth_token');
+      
+      if (token == null) {
+        debugPrint('❌ [FANTASY_DEDUCT] No auth token available');
         return false;
       }
 
-      final newAmount = current - amount;
-      await setShopTokens(newAmount);
+      final baseUrl = 'http://134.209.158.211:4000';
+      final url = '$baseUrl/user/deduct-tokens';
+      
+      debugPrint('🔄 [FANTASY_DEDUCT] Attempting Fantasy backend deduction');
+      debugPrint('   - URL: $url');
+      debugPrint('   - Amount: $amount');
+      debugPrint('   - Order ID: $orderId');
 
-      // Add transaction locally
-      await ShopTransactionManager.addTransaction(
-        type: 'purchase',
-        amount: -amount,
-        description: 'Purchased $itemName',
-        itemName: itemName,
-      );
+      try {
+        final response = await http.post(
+          Uri.parse(url),
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+          body: jsonEncode({
+            'amount': amount,
+            'orderId': orderId,
+            'reason': itemName,
+            'transactionType': 'shop_purchase',
+          }),
+        ).timeout(const Duration(seconds: 10));
 
-      debugPrint('✅ [UNIFIED_WALLET] Deducted $amount shop tokens (Local only)');
-      return true;
+        debugPrint('📊 [FANTASY_DEDUCT] Response Status: ${response.statusCode}');
+        debugPrint('📝 [FANTASY_DEDUCT] Response Body: ${response.body}');
+        
+        if (response.statusCode == 200 || response.statusCode == 201) {
+          final data = jsonDecode(response.body);
+          
+          if (data['success'] == true) {
+            final newBalance = double.tryParse(data['data']?['balance']?.toString() ?? '0') ?? 0;
+            
+            // Update local cache with new balance from Fantasy
+            await _prefs?.setInt(StorageConstants.shopTokens, newBalance.toInt());
+            
+            debugPrint('✅ [FANTASY_DEDUCT] Successfully deducted $amount');
+            debugPrint('   - New balance: $newBalance');
+            return true;
+          } else {
+            debugPrint('⚠️ [FANTASY_DEDUCT] Response was 200 but success != true');
+            debugPrint('   - Response: $data');
+          }
+        } else if (response.statusCode == 404) {
+          debugPrint('⚠️ [FANTASY_DEDUCT] Endpoint not found (404) - will use GraphQL fallback');
+        } else {
+          debugPrint('❌ [FANTASY_DEDUCT] HTTP Error ${response.statusCode}');
+        }
+        
+        return false;
+      } on TimeoutException {
+        debugPrint('⏱️ [FANTASY_DEDUCT] Request timed out - will use GraphQL fallback');
+        return false;
+      }
+    } catch (e) {
+      debugPrint('❌ [FANTASY_DEDUCT] Error: $e');
+      return false;
+    }
+  }
+
+  /// Refresh shop tokens from Fantasy backend
+  Future<void> refreshShopTokensFromFantasy() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('token') ?? prefs.getString('auth_token');
+      
+      if (token == null) return;
+
+      final baseUrl = 'http://134.209.158.211:4000';
+      final url = '$baseUrl/user/user-wallet-details';
+      
+      final response = await http.get(
+        Uri.parse(url),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      ).timeout(const Duration(seconds: 10));
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        if (data['success'] == true && data['data'] != null) {
+          final balanceStr = data['data']['balance']?.toString() ?? '0';
+          final balance = double.tryParse(balanceStr)?.toInt() ?? 0;
+          
+          await _prefs?.setInt(StorageConstants.shopTokens, balance);
+          debugPrint('✅ [WALLET_SERVICE] Refreshed shop tokens from Fantasy: $balance');
+        }
+      }
+    } catch (e) {
+      debugPrint('⚠️ [WALLET_SERVICE] Error refreshing from Fantasy: $e');
     }
   }
 

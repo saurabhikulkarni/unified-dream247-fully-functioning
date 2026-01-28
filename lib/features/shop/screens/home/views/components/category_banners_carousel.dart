@@ -3,7 +3,6 @@ import 'package:go_router/go_router.dart';
 import 'package:unified_dream247/features/shop/components/category_banner_card.dart';
 import 'package:unified_dream247/features/shop/constants.dart';
 import 'package:unified_dream247/features/shop/models/category_model.dart';
-import 'package:unified_dream247/features/shop/route/route_constants.dart';
 
 class CategoryBannersCarousel extends StatefulWidget {
   const CategoryBannersCarousel({super.key});

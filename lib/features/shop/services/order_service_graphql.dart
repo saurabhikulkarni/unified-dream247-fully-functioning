@@ -1025,6 +1025,7 @@ class OrderServiceGraphQL {
   /// Returns: Map with walletBalance and shopTokens
   Future<Map<String, dynamic>> getUserWallet(String userId) async {
     try {
+      debugPrint('🔄 [ORDER_SERVICE] Fetching wallet for user: $userId');
       final result = await _client.query(
         QueryOptions(
           document: gql(GraphQLQueries.getUserWallet),
@@ -1033,20 +1034,25 @@ class OrderServiceGraphQL {
       );
 
       if (result.hasException) {
+        debugPrint('❌ [ORDER_SERVICE] GraphQL exception: ${result.exception}');
         throw Exception('Failed to fetch wallet: ${result.exception}');
       }
 
       final userData = result.data?['userDetail'];
       if (userData == null) {
+        debugPrint('❌ [ORDER_SERVICE] User wallet data is null from Hygraph');
         throw Exception('User wallet not found');
       }
 
+      debugPrint('✅ [ORDER_SERVICE] Wallet data fetched: $userData');
+      
       return {
         'walletBalance': userData['walletBalance']?.toDouble() ?? 0.0,
         'shopTokens': userData['shopTokens']?.toDouble() ?? 0.0,
         'totalSpentTokens': userData['totalSpentTokens']?.toDouble() ?? 0.0,
       };
     } catch (e) {
+      debugPrint('❌ [ORDER_SERVICE] Error fetching wallet: $e');
       if (kDebugMode) print('Error fetching wallet: $e');
       rethrow;
     }
@@ -1179,6 +1185,44 @@ class OrderServiceGraphQL {
     } catch (e) {
       if (kDebugMode) print('Error updating order payment method: $e');
       rethrow;
+    }
+  }
+
+  /// Sync shop tokens to Hygraph after login
+  /// This ensures Hygraph has the correct shop token balance
+  Future<bool> syncShopTokensToHygraph({
+    required String userId,
+    required int shopTokens,
+  }) async {
+    try {
+      debugPrint('🔄 [ORDER_SERVICE] Syncing shop tokens to Hygraph: userId=$userId, tokens=$shopTokens');
+      
+      final result = await _client.mutate(
+        MutationOptions(
+          document: gql(GraphQLQueries.updateShopTokens),
+          variables: {
+            'userId': userId,
+            'shopTokens': shopTokens,
+          },
+        ),
+      );
+
+      if (result.hasException) {
+        debugPrint('❌ [ORDER_SERVICE] Failed to sync shop tokens: ${result.exception}');
+        return false;
+      }
+
+      final userData = result.data?['updateUserDetail'];
+      if (userData == null) {
+        debugPrint('❌ [ORDER_SERVICE] Invalid response syncing shop tokens');
+        return false;
+      }
+
+      debugPrint('✅ [ORDER_SERVICE] Shop tokens synced to Hygraph: ${userData['shopTokens']}');
+      return true;
+    } catch (e) {
+      debugPrint('❌ [ORDER_SERVICE] Error syncing shop tokens: $e');
+      return false;
     }
   }
 }

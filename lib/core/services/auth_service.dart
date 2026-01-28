@@ -134,7 +134,7 @@ class AuthService {
         if (accessToken != null) {
           await _prefs?.setString(StorageConstants.authToken, accessToken);
           await _prefs?.setString(
-              'token', accessToken); // For Fantasy compatibility
+              'token', accessToken,); // For Fantasy compatibility
         }
         if (refreshToken != null) {
           await _prefs?.setString('refresh_token', refreshToken);
@@ -385,7 +385,7 @@ class AuthService {
       debugPrint('✅ [AUTH] Token saved: ${authToken.length} chars');
     } else {
       debugPrint(
-          '⚠️ [AUTH] Skipping token save - empty token provided (keeping existing)');
+          '⚠️ [AUTH] Skipping token save - empty token provided (keeping existing)',);
     }
 
     await _prefs?.setString('mobile_number', mobileNumber);
@@ -426,7 +426,7 @@ class AuthService {
     final result = (isShopLoggedIn || isFantasyLoggedIn) && hasValidToken;
 
     debugPrint(
-        '🔐 [AUTH] isLoggedIn check: shop=$isShopLoggedIn, fantasy=$isFantasyLoggedIn, token=${hasValidToken ? "valid" : "missing"} => $result');
+        '🔐 [AUTH] isLoggedIn check: shop=$isShopLoggedIn, fantasy=$isFantasyLoggedIn, token=${hasValidToken ? "valid" : "missing"} => $result',);
 
     return result;
   }

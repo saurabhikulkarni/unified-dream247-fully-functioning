@@ -13,7 +13,6 @@ import 'package:unified_dream247/features/fantasy/core/global_widgets/no_data_wi
 import 'package:unified_dream247/features/fantasy/core/global_widgets/size_widget.dart';
 import 'package:unified_dream247/features/fantasy/landing/data/home_datasource.dart';
 import 'package:unified_dream247/features/fantasy/landing/data/models/app_data.dart';
-import 'package:unified_dream247/features/fantasy/landing/data/models/banners_get_set.dart';
 import 'package:unified_dream247/features/fantasy/landing/data/models/joined_matches_model.dart';
 import 'package:unified_dream247/features/fantasy/landing/data/models/match_list_model.dart';
 import 'package:unified_dream247/features/fantasy/landing/data/singleton/app_singleton.dart';
@@ -79,7 +78,7 @@ class _HomePageState extends State<HomePage> {
     // User is logged in to shop, check if fantasy token exists
     if (token == null || token.isEmpty) {
       debugPrint(
-          '⚠️ [FANTASY_HOME] No fantasy token yet - waiting for LandingPage to initialize...');
+          '⚠️ [FANTASY_HOME] No fantasy token yet - waiting for LandingPage to initialize...',);
       // Don't redirect - LandingPage._verifyUserIdAndInit() should be handling token fetch
       // Wait a bit and check again
       await Future.delayed(const Duration(milliseconds: 500));
@@ -87,7 +86,7 @@ class _HomePageState extends State<HomePage> {
       final retryToken = prefs.getString(AppStorageKeys.authToken);
       if (retryToken == null || retryToken.isEmpty) {
         debugPrint(
-            '⚠️ [FANTASY_HOME] Still no token after wait, attempting fetch...');
+            '⚠️ [FANTASY_HOME] Still no token after wait, attempting fetch...',);
 
         final phone = prefs.getString('user_phone') ?? '';
         final name = prefs.getString('user_name') ?? '';
@@ -119,7 +118,7 @@ class _HomePageState extends State<HomePage> {
       }
     } else {
       debugPrint(
-          '✅ [FANTASY_HOME] Auth token found: ${token.substring(0, token.length > 20 ? 20 : token.length)}...');
+          '✅ [FANTASY_HOME] Auth token found: ${token.substring(0, token.length > 20 ? 20 : token.length)}...',);
     }
 
     loadData();

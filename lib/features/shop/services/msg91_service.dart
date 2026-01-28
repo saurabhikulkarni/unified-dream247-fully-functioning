@@ -61,7 +61,31 @@ class Msg91Service {
         print('📱 [MSG91] Response body: ${response.body}');
       }
       
-      final responseData = jsonDecode(response.body) as Map<String, dynamic>;
+      // Handle rate limiting and other error responses
+      if (response.statusCode == 429) {
+        if (kDebugMode) {
+          print('⏱️ [MSG91] Rate limited - too many OTP requests');
+        }
+        return {
+          'success': false,
+          'message': 'Too many OTP requests. Please wait a few minutes before trying again.',
+        };
+      }
+
+      // Try to parse as JSON, handle plain text error responses
+      Map<String, dynamic> responseData;
+      try {
+        responseData = jsonDecode(response.body) as Map<String, dynamic>;
+      } catch (e) {
+        // If JSON parsing fails, treat response body as error message
+        if (kDebugMode) {
+          print('⚠️ [MSG91] Response is not JSON, treating as plain text error');
+        }
+        return {
+          'success': false,
+          'message': response.body,
+        };
+      }
 
       if (response.statusCode == 200 && responseData['success'] == true) {
         if (kDebugMode) {
@@ -186,7 +210,31 @@ class Msg91Service {
         print('📱 [MSG91] Full Response Body: ${response.body}');
       }
 
-      final responseData = jsonDecode(response.body) as Map<String, dynamic>;
+      // Handle rate limiting
+      if (response.statusCode == 429) {
+        if (kDebugMode) {
+          print('⏱️ [MSG91] Rate limited - too many verification requests');
+        }
+        return {
+          'success': false,
+          'message': 'Too many verification requests. Please wait a few minutes before trying again.',
+        };
+      }
+
+      // Try to parse as JSON, handle plain text error responses
+      Map<String, dynamic> responseData;
+      try {
+        responseData = jsonDecode(response.body) as Map<String, dynamic>;
+      } catch (e) {
+        // If JSON parsing fails, treat response body as error message
+        if (kDebugMode) {
+          print('⚠️ [MSG91] Response is not JSON, treating as plain text error');
+        }
+        return {
+          'success': false,
+          'message': response.body,
+        };
+      }
 
       if (response.statusCode == 200 && responseData['success'] == true) {
         final token = responseData['token'];

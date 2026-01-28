@@ -11,7 +11,6 @@ import 'package:unified_dream247/features/shop/models/order_models.dart';
 import 'package:unified_dream247/features/shop/services/cart_service.dart';
 import 'package:unified_dream247/features/shop/services/address_service.dart';
 import 'package:unified_dream247/features/shop/services/order_service_graphql.dart';
-import 'package:unified_dream247/features/shop/route/route_constants.dart';
 import 'package:unified_dream247/core/providers/shop_tokens_provider.dart';
 import 'package:unified_dream247/core/services/wallet_service.dart';
 import 'package:unified_dream247/features/shop/services/user_service.dart';
@@ -438,18 +437,10 @@ class _CartScreenState extends State<CartScreen> {
       // Update shop tokens provider immediately with new balance
       if (mounted) {
         // Get the updated balance from wallet service
-        final newBalance = await _walletService.getShopTokens();
-        if (kDebugMode) print('💰 Updating shop tokens provider with balance: $newBalance');
-        await context.read<ShopTokensProvider>().updateTokens(newBalance.toInt());
-        if (kDebugMode) print('✅ Shop tokens provider updated, UI should refresh');
-        
-        // Also refresh from backend to ensure sync (with small delay)
-        Future.delayed(const Duration(milliseconds: 500), () {
-          if (mounted) {
-            if (kDebugMode) print('🔄 Forcing backend refresh for shop tokens');
-            context.read<ShopTokensProvider>().forceRefresh();
-          }
-        });
+        // Note: syncFromStorage() already called above updates provider from local cache
+        // Do NOT call forceRefresh() here as it will re-query Fantasy backend
+        // which still shows the original balance (never received deduction)
+        // This would undo the deduction. Local deduction is now the source of truth.
       }
 
       // Clear cart completely (both local and backend)

@@ -94,9 +94,9 @@ class AppRouter {
         debugPrint('   - is_logged_in: $isLoggedIn');
         debugPrint('   - is_logged_in_fantasy: $isLoggedInFantasy');
         debugPrint(
-            '   - token: ${token != null ? "${token.length} chars" : "NULL"}');
+            '   - token: ${token != null ? "${token.length} chars" : "NULL"}',);
         debugPrint(
-            '   - auth_token: ${authToken != null ? "${authToken.length} chars" : "NULL"}');
+            '   - auth_token: ${authToken != null ? "${authToken.length} chars" : "NULL"}',);
         debugPrint('   - isAuthenticated: $isAuthenticated');
 
         // If Fantasy login exists but Shop doesn't, sync the flags
@@ -107,9 +107,9 @@ class AppRouter {
 
         if (!isAuthenticated) {
           debugPrint(
-              '🔐 [ROUTER] Unauthenticated user trying to access Fantasy route');
+              '🔐 [ROUTER] Unauthenticated user trying to access Fantasy route',);
           debugPrint(
-              '🔐 [ROUTER] Redirecting from ${state.matchedLocation} to /login');
+              '🔐 [ROUTER] Redirecting from ${state.matchedLocation} to /login',);
           // Redirect to login if accessing fantasy routes without authentication
           return '/login';
         }
@@ -415,7 +415,7 @@ class AppRouter {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(Icons.help_outline,
-                        size: 80, color: Theme.of(context).primaryColor),
+                        size: 80, color: Theme.of(context).primaryColor,),
                     const SizedBox(height: 24),
                     const Text(
                       'Need Help?',

@@ -14,7 +14,7 @@ class OrdersScreen extends StatefulWidget {
   State<OrdersScreen> createState() => _OrdersScreenState();
 }
 
-class _OrdersScreenState extends State<OrdersScreen> {
+class _OrdersScreenState extends State<OrdersScreen> with RouteAware {
   bool _isLoading = true;
   List<OrderModel> _orders = [];
   final OrderServiceGraphQL orderService = OrderServiceGraphQL();
@@ -25,10 +25,18 @@ class _OrdersScreenState extends State<OrdersScreen> {
     _loadOrders();
   }
 
+  @override
+  void didPopNext() {
+    // Called when returning to this screen from another page (e.g., after order placed)
+    debugPrint('🔄 [ORDERS] Returned to orders screen, refreshing list...');
+    _loadOrders();
+  }
+
   Future<void> _loadOrders() async {
     if (!mounted) return;
     
     try {
+      debugPrint('📲 [ORDERS] 🔄 Loading orders from backend...');
       setState(() {
         _isLoading = true;
         _orders = []; // Clear previous orders while loading
@@ -36,11 +44,11 @@ class _OrdersScreenState extends State<OrdersScreen> {
       
       final orders = await orderService.getUserOrders();
       
+      debugPrint('✅ [ORDERS] 📦 FETCHED: ${orders.length} orders from backend');
       if (kDebugMode) {
-        print('📦 Fetched ${orders.length} orders from service');
         for (int i = 0; i < orders.length; i++) {
           final order = orders[i];
-          print('  Order $i: id=${order.id}, orderNumber=${order.orderNumber}, items=${order.items.length}');
+          print('     Order $i: #${order.orderNumber}, id=${order.id}, items=${order.items.length}');
         }
       }
       
@@ -49,7 +57,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
           _orders = orders;
           _isLoading = false;
         });
-        if (kDebugMode) print('✅ UI Updated: _orders.length=${_orders.length}, _isLoading=$_isLoading');
+        debugPrint('✅ [ORDERS] 📋 DISPLAYED: ${_orders.length} orders shown in list');
       }
     } catch (e) {
       if (mounted) {
@@ -57,6 +65,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
           _isLoading = false;
           // Keep existing orders if available, don't clear them on error
         });
+        debugPrint('❌ [ORDERS] Error loading orders: $e');
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Error loading orders: ${e.toString()}'),

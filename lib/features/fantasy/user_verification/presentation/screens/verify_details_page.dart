@@ -201,7 +201,13 @@ class _VerifyDetailsPageState extends State<VerifyDetailsPage> {
     });
 
     if (res != null && res['success'] == true) {
-      final refId = res['data']?['data']?['reference_id']?.toString();
+      // Try both nested and flat structures to handle API response variations
+      final refId = res['data']?['data']?['reference_id']?.toString() ?? 
+                    res['data']?['reference_id']?.toString();
+      
+      debugPrint('🔍 [KYC] API Response: $res');
+      debugPrint('🔍 [KYC] Extracted refId: $refId');
+      
       if (refId != null && refId.isNotEmpty) {
         // Store ref_id in SharedPreferences
         final prefs = await SharedPreferences.getInstance();

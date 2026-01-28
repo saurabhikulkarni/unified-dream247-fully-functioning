@@ -7,7 +7,6 @@ import 'package:unified_dream247/features/shop/models/product_model.dart';
 import 'package:unified_dream247/features/shop/services/wishlist_service.dart';
 import 'package:unified_dream247/features/shop/services/cart_service.dart';
 import 'package:unified_dream247/features/shop/services/user_service.dart';
-import 'package:unified_dream247/features/shop/route/route_constants.dart';
 
 import 'package:unified_dream247/features/shop/constants.dart';
 import 'package:unified_dream247/features/shop/utils/responsive_extension.dart';

@@ -76,6 +76,9 @@ void main() async {
     // Initialize unified app config service (for getVersion data)
     await AppConfigService().initialize();
 
+    // Initialize UserService BEFORE showing UI - ShopTokensProvider needs it!
+    await UserService.initialize();
+
     // Initialize app provider for periodic balance refresh
     appProvider = AppProvider(refreshInterval: 30);
 
@@ -105,7 +108,7 @@ Future<void> _initializeBackgroundServices() async {
     final shopAuthService = shop_auth.AuthService();
 
     // Initialize ecommerce services (non-blocking)
-    await UserService.initialize();
+    // NOTE: UserService already initialized in main() before UI is shown
     await wishlistService.initialize();
     await cartService.initialize();
     await searchService.initialize();
@@ -152,7 +155,7 @@ Future<void> _initializeGameTokens() async {
       );
     } else {
       debugPrint(
-          '⚠️ [APP_INIT] Game tokens not available, using empty balance');
+          '⚠️ [APP_INIT] Game tokens not available, using empty balance',);
     }
   } catch (e) {
     debugPrint('❌ [APP_INIT] Game tokens initialization error: $e');

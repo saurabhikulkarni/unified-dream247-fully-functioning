@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:unified_dream247/features/shop/components/gradient_button.dart';
 import 'package:unified_dream247/features/shop/components/network_image_with_loader.dart';
 import 'package:unified_dream247/features/shop/constants.dart';
@@ -29,7 +30,6 @@ class _CartScreenState extends State<CartScreen> {
   final CartService cartService = CartService();
   final AddressService addressService = AddressService();
   final OrderServiceGraphQL orderServiceGraphQL = OrderServiceGraphQL();
-  final UnifiedWalletService _walletService = UnifiedWalletService();
   
   // Track per-item error messages (e.g., out of stock)
   final Map<String, String> _itemErrors = {};
@@ -163,7 +163,26 @@ class _CartScreenState extends State<CartScreen> {
     final totalTokensNeeded = total.toInt();
     
     // Get current wallet balance from provider
-    final currentWalletBalance = context.read<ShopTokensProvider>().shopTokens;
+    var currentWalletBalance = context.read<ShopTokensProvider>().shopTokens;
+    
+    // If provider shows 0, try to fetch from SharedPreferences directly
+    if (currentWalletBalance == 0) {
+      final prefs = await SharedPreferences.getInstance();
+      try {
+        // Try as int first
+        currentWalletBalance = prefs.getInt('shop_tokens') ?? 0;
+      } catch (e) {
+        // Try as double if int fails
+        try {
+          final doubleValue = prefs.getDouble('shop_tokens') ?? 0.0;
+          currentWalletBalance = doubleValue.toInt();
+        } catch (e2) {
+          currentWalletBalance = 0;
+        }
+      }
+    }
+
+    debugPrint('💳 [CART] Checking balance: Provider=${ context.read<ShopTokensProvider>().shopTokens}, Actual=$currentWalletBalance, Required=$totalTokensNeeded');
 
     // Check if wallet has enough tokens
     if (currentWalletBalance < totalTokensNeeded) {
@@ -368,11 +387,11 @@ class _CartScreenState extends State<CartScreen> {
           // Continue with order - Shiprocket is optional
         }
       }
-
       // Deduct wallet balance using UnifiedWalletService
+      debugPrint('💳 [CART] 🔄 STARTING_DEDUCTION: $total tokens from order #${order.orderNumber}');
       final success = await walletService.deductShopTokens(
         total.toDouble(),
-        itemName: 'Order #${order.orderNumber ?? "PENDING"}',
+        itemName: 'Order #${order.orderNumber},',
         orderId: order.id ?? 'local-${DateTime.now().millisecondsSinceEpoch}',
       );
       
@@ -380,6 +399,7 @@ class _CartScreenState extends State<CartScreen> {
         if (!mounted) return;
         Navigator.pop(context); // Close loading dialog
         
+        debugPrint('❌ [CART] Deduction FAILED');
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Failed to deduct shop tokens. Please try again.'),
@@ -389,9 +409,14 @@ class _CartScreenState extends State<CartScreen> {
         return;
       }
       
-      // Refresh shop tokens provider to sync UI
+      debugPrint('✅ [CART] ✅ DEDUCTION_SUCCESS: $total tokens deducted');
+      
+      // Sync shop tokens provider from storage to update UI immediately
+      // The deduction already updated SharedPreferences, now sync the provider
       if (mounted) {
-        await context.read<ShopTokensProvider>().forceRefresh();
+        await context.read<ShopTokensProvider>().syncFromStorage();
+        debugPrint('✅ [CART] 📤 SYNCED_PROVIDER: Shop tokens provider updated with new balance');
+
       }
 
       // Clear cart completely (both local and backend)
@@ -400,19 +425,14 @@ class _CartScreenState extends State<CartScreen> {
       if (!mounted) return;
       Navigator.pop(context); // Close loading dialog
 
-      // Navigate to order tracking screen with appropriate ID
-      await Navigator.of(context).pushNamed(
-        orderTrackingScreenRoute,
-        arguments: {
-          'orderId': shiprocketOrderId ?? order.id ?? order.orderNumber,
-        },
-      );
+      debugPrint('✅ [CART] 📋 NAVIGATE_TO_ORDERS: Showing order in My Orders list');
       
-      // After order tracking, pop back to home
-      if (!mounted) return;
-      Navigator.of(context).pop({
-        'needsRefresh': true,
-      });
+      // Navigate to Orders screen (same as profile > Orders)
+      // This shows the list of all orders with the newly created one at the top
+      await Navigator.of(context).pushNamedAndRemoveUntil(
+        ordersScreenRoute,
+        (route) => route.isFirst, // Keep only the home/root route
+      );
     } catch (e) {
       if (!mounted) return;
       Navigator.pop(context); // Close loading dialog

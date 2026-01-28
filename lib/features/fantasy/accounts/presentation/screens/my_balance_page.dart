@@ -70,8 +70,8 @@ class _MyBalancePage extends State<MyBalancePage> with RouteAware {
 
   @override
   void didPopNext() {
-    // Called when returning to this page from another page (e.g., after adding cash)
-    debugPrint('🔄 [ACCOUNTS] Returned to accounts page, auto-refreshing...');
+    // Called when returning to this page from another page (e.g., after adding cash or order)
+    debugPrint('🔄 [WALLET] ⬆️ RETURN_TO_WALLET: Page regained focus, refreshing all data...');
     _refreshAllData();
   }
 
@@ -146,7 +146,7 @@ class _MyBalancePage extends State<MyBalancePage> with RouteAware {
 
       if (!hasAppData) {
         debugPrint(
-            '📥 [WALLET] Loading app data (navigated directly to wallet)...');
+            '📥 [WALLET] Loading app data (navigated directly to wallet)...',);
         final homeUsecases = HomeUsecases(
           HomeDatasource(ApiImplWithAccessToken()),
         );
@@ -181,12 +181,16 @@ class _MyBalancePage extends State<MyBalancePage> with RouteAware {
 
   /// Load shop tokens from unified wallet service
   Future<void> _loadShopTokens() async {
+    debugPrint('📲 [WALLET] Loading shop tokens from wallet service...');
     await walletService.initialize();
     final shopTokens = await walletService.getShopTokens();
+    
+    debugPrint('💰 [WALLET] ✅ FETCHED_SHOP_TOKENS: $shopTokens');
+    debugPrint('   - Source: SharedPreferences (updated by order deduction)');
+    
     setState(() {
       _shopTokens = shopTokens;
     });
-    debugPrint('📊 [FANTASY_WALLET] Shop tokens loaded: $shopTokens');
 
     // Sync to ShopTokensProvider for shop app
     if (mounted) {
@@ -194,9 +198,9 @@ class _MyBalancePage extends State<MyBalancePage> with RouteAware {
         final shopTokensProvider = context.read<ShopTokensProvider>();
         await shopTokensProvider.updateTokens(shopTokens.toInt());
         debugPrint(
-            '✅ [FANTASY_WALLET] Shop tokens synced to provider: ${shopTokens.toInt()}');
+            '✅ [WALLET] 📤 SYNCED_TO_PROVIDER: Shop tokens updated in provider to ${shopTokens.toInt()}',);
       } catch (e) {
-        debugPrint('⚠️ [FANTASY_WALLET] Could not sync to provider: $e');
+        debugPrint('⚠️ [WALLET] Could not sync to provider: $e');
       }
     }
   }
@@ -239,7 +243,7 @@ class _MyBalancePage extends State<MyBalancePage> with RouteAware {
             final shopTokensProvider = context.read<ShopTokensProvider>();
             await shopTokensProvider.updateTokens(_shopTokens.toInt());
             debugPrint(
-                '✅ [WALLET_SCREEN] Shop tokens synced to provider: ${_shopTokens.toInt()}');
+                '✅ [WALLET_SCREEN] Shop tokens synced to provider: ${_shopTokens.toInt()}',);
           } catch (e) {
             debugPrint('⚠️ [WALLET_SCREEN] Could not sync to provider: $e');
           }
@@ -416,7 +420,7 @@ class _MyBalancePage extends State<MyBalancePage> with RouteAware {
                                   icon: Images.icDeposit,
                                   title: 'Shop Token',
                                   value: AppUtils.stringifyNumber(num.parse(
-                                          walletData?.balance.toString() ?? "0")
+                                          walletData?.balance.toString() ?? '0',),
                                       // num.parse(_shopTokens.toStringAsFixed(0))
                                       ),
                                   color: AppColors.lightGreen.withAlpha(20),
@@ -428,11 +432,11 @@ class _MyBalancePage extends State<MyBalancePage> with RouteAware {
                                     final result = await Navigator.push<bool>(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (_) => const AddMoneyPage()),
+                                          builder: (_) => const AddMoneyPage(),),
                                     );
                                     // Always refresh when returning, regardless of result
                                     debugPrint(
-                                        '🔄 [ACCOUNTS] Returned from Add Money (result: $result), refreshing...');
+                                        '🔄 [ACCOUNTS] Returned from Add Money (result: $result), refreshing...',);
                                     await _refreshAllData();
                                   },
                                 ),
@@ -441,7 +445,7 @@ class _MyBalancePage extends State<MyBalancePage> with RouteAware {
                                   icon: Images.icWinning,
                                   title: Strings.winning,
                                   isDiamondIcon: true,
-                                  value: walletData?.winning ?? "0",
+                                  value: walletData?.winning ?? '0',
                                   color: AppColors.orangeColor.withAlpha(40),
                                   buttonText:
                                       // (Provider.of<WalletDetailsProvider>(
@@ -471,7 +475,7 @@ class _MyBalancePage extends State<MyBalancePage> with RouteAware {
                                 _walletInfoTile(
                                   icon: Images.icCashback,
                                   title: 'Game Token',
-                                  value: walletData?.bonus ?? "0",
+                                  value: walletData?.bonus ?? '0',
                                   color: AppColors.blueColor.withAlpha(40),
                                   tooltip: 'Use these Tokens to play Games.',
                                   isTokenIcon: true,
@@ -608,8 +612,8 @@ class _MyBalancePage extends State<MyBalancePage> with RouteAware {
                   ? Container(
                       width: 32,
                       height: 32,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFFFF8E1),
+                      decoration: const BoxDecoration(
+                        color: Color(0xFFFFF8E1),
                         shape: BoxShape.circle,
                       ),
                       child: Center(

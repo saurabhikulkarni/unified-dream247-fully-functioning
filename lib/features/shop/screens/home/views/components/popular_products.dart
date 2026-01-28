@@ -4,7 +4,6 @@ import 'package:unified_dream247/features/shop/components/product/product_card.d
 import 'package:unified_dream247/features/shop/components/skleton/product/products_skelton.dart';
 import 'package:unified_dream247/features/shop/models/product_model.dart';
 import 'package:unified_dream247/features/shop/services/product_service.dart';
-import 'package:unified_dream247/features/shop/route/screen_export.dart';
 import 'package:unified_dream247/features/shop/utils/responsive_extension.dart';
 
 import 'package:unified_dream247/features/shop/constants.dart';

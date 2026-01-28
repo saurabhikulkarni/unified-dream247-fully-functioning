@@ -79,7 +79,7 @@ class UpcomingContestAppBar extends StatelessWidget
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (_) => const MyBalancePage()),
+                                builder: (_) => const MyBalancePage(),),
                           );
                         },
                         child: Image.asset(

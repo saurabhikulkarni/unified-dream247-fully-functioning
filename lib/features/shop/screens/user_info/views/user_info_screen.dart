@@ -17,7 +17,6 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
   late TextEditingController _nameController;
   late TextEditingController _emailController;
   late TextEditingController _phoneController;
-  String? _phoneError;
   bool _isLoading = true;
 
   @override
@@ -193,9 +192,11 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
                 final currentUserData = userDataProvider.userData;
                 
                 // Call backend API to update profile
+                // ⚠️ DON'T send the team field - it causes "Team Name Already Exists" error
+                // Team name is managed separately in the Fantasy app's Edit Profile
                 final result = await userUsecases.updateProfile(
                   context,
-                  currentUserData?.team ?? _nameController.text, // teamName
+                  currentUserData?.team ?? '', // teamName - KEEP AS IS, DON'T CHANGE
                   _nameController.text, // name
                   currentUserData?.state ?? '', // state
                   currentUserData?.gender ?? '', // gender

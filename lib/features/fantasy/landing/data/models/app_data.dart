@@ -135,7 +135,7 @@ class AppVersionResponse {
         bannerData!.add(BannerData.fromJson(v));
       });
     }
-    seriesLeaderboard = ModelParsers.toIntParser(json["seriesLeaderboard"]);
+    seriesLeaderboard = ModelParsers.toIntParser(json['seriesLeaderboard']);
     investmentLeaderboard = ModelParsers.toIntParser(
       json['investmentLeaderboard'],
     );

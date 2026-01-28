@@ -166,7 +166,7 @@ class AppDrawer extends StatelessWidget {
                           onTap: () => Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (_) => const MyBalancePage()),
+                                builder: (_) => const MyBalancePage(),),
                           ),
                           borderRadius: const BorderRadius.only(
                             topLeft: Radius.circular(18),
@@ -215,7 +215,7 @@ class AppDrawer extends StatelessWidget {
                           onTap: () => Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (_) => const AddMoneyPage()),
+                                builder: (_) => const AddMoneyPage(),),
                           ),
                           child: Container(
                             height: 42.h,
@@ -264,7 +264,7 @@ class AppDrawer extends StatelessWidget {
                     onTap: () => Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (_) => const VerifyDetailsPage()),
+                          builder: (_) => const VerifyDetailsPage(),),
                     ),
                   ),
                   _drawerItem(
@@ -273,19 +273,8 @@ class AppDrawer extends StatelessWidget {
                     onTap: () => Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (_) => const ReferAndEarnPage()),
+                          builder: (_) => const ReferAndEarnPage(),),
                     ),
-                  ),
-                  _drawerItem(
-                    svg: Images.howToPlay,
-                    title: 'How to Play',
-                    onTap: () => AppNavigation.gotoHowtoPlayPage(context),
-                  ),
-                  _drawerItem(
-                    svg: Images.respplay,
-                    title: 'Responsible Gaming',
-                    onTap: () =>
-                        AppNavigation.gotoResponsibleGamingPage(context),
                   ),
                   _drawerItem(
                     svg: Images.settings,
@@ -293,14 +282,6 @@ class AppDrawer extends StatelessWidget {
                     onTap: () => Navigator.push(
                       context,
                       MaterialPageRoute(builder: (_) => const SettingsPage()),
-                    ),
-                  ),
-                  _drawerItem(
-                    icon: Icons.headset_mic_outlined,
-                    title: '24x7 Help & Support',
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const SupportPage()),
                     ),
                   ),
                   _drawerItem(

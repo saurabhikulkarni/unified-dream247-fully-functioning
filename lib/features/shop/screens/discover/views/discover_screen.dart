@@ -3,7 +3,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:unified_dream247/features/shop/constants.dart';
 import 'package:unified_dream247/features/shop/models/category_model.dart';
-import 'package:unified_dream247/features/shop/route/route_constants.dart';
 import 'package:unified_dream247/features/shop/screens/search/views/components/search_form.dart';
 
 class DiscoverScreen extends StatelessWidget {

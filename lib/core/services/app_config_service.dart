@@ -73,7 +73,7 @@ class AppConfigService {
       ).timeout(const Duration(seconds: ApiConfig.requestTimeoutSeconds));
 
       debugPrint(
-          '🔄 [APP_CONFIG] Version API Response: ${response.statusCode}');
+          '🔄 [APP_CONFIG] Version API Response: ${response.statusCode}',);
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);

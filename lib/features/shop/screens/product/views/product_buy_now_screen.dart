@@ -6,7 +6,6 @@ import 'package:unified_dream247/core/providers/shop_tokens_provider.dart';
 import 'package:unified_dream247/features/shop/components/custom_modal_bottom_sheet.dart';
 import 'package:unified_dream247/features/shop/components/network_image_with_loader.dart';
 import 'package:unified_dream247/features/shop/models/product_model.dart';
-import 'package:unified_dream247/features/shop/route/route_constants.dart';
 import 'package:unified_dream247/features/shop/screens/product/views/added_to_cart_message_screen.dart';
 import 'package:unified_dream247/features/shop/screens/product/views/components/product_list_tile.dart';
 import 'package:unified_dream247/features/shop/screens/product/views/location_permission_store_availability_screen.dart';

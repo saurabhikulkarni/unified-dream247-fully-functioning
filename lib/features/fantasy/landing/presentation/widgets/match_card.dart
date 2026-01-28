@@ -30,6 +30,9 @@ class MatchCard extends StatelessWidget {
         AppSingleton().matchData = data;
         AppUtils.teamsCount.value = 0;
         AppUtils.contestCount.value = 0;
+        
+        // When lineup is out, still navigate to contests
+        // But in upcoming_contest_screen, it will show lineup tab when playing11Status == 1
         AppNavigation.gotoUpcomingContestScreen(context, 'upcoming');
       },
       child: Container(

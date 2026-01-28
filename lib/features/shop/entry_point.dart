@@ -1,11 +1,8 @@
 import 'package:animations/animations.dart';
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:unified_dream247/features/shop/constants.dart';
 import 'package:unified_dream247/features/shop/route/screen_export.dart';
 import 'package:unified_dream247/features/shop/services/cart_service.dart';
@@ -21,9 +18,7 @@ class EntryPoint extends StatefulWidget {
 }
 
 class _EntryPointState extends State<EntryPoint> with WidgetsBindingObserver {
-  double walletBalance = 0.0;
   int _currentIndex = 0;
-  final UnifiedWalletService _walletService = walletService;
 
   List<Widget> get _pages => [
     const HomeScreen(),
@@ -148,16 +143,7 @@ class _EntryPointState extends State<EntryPoint> with WidgetsBindingObserver {
                 constraints: const BoxConstraints(),
                 onPressed: () async {
                   final result = await context.push('/shop/cart');
-                  // Refresh cart count and wallet balance after returning from cart
-                  if (mounted) {
-                    setState(() {
-                      // Update wallet if cart screen returns updated balance
-                      if (result is Map) {
-                        walletBalance = result['walletBalance'] ?? walletBalance;
-                      }
-                    });
-                  }
-                  // Trigger token refresh after cart
+                  // Refresh shop tokens after returning from cart
                   if (mounted) {
                     final shopTokensProvider = context.read<ShopTokensProvider>();
                     shopTokensProvider.forceRefresh();

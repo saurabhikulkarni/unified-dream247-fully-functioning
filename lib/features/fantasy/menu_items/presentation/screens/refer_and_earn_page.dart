@@ -147,10 +147,10 @@ class _ReferAndEarnPage extends State<ReferAndEarnPage> {
                         ClipboardData(text: userData?.referCode ?? ''),
                       );
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: const Text('Code Copied to Clipboard'),
+                        const SnackBar(
+                          content: Text('Code Copied to Clipboard'),
                           backgroundColor: AppColors.mainColor,
-                          duration: const Duration(seconds: 2),
+                          duration: Duration(seconds: 2),
                         ),
                       );
                     },

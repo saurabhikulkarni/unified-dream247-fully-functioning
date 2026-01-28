@@ -208,7 +208,7 @@ class ProductService {
         return [];
       }
 
-      final List<dynamic> sizesJson = sizesData as List<dynamic>;
+      final List<dynamic> sizesJson = sizesData;
       print('[PRODUCT_SERVICE] Fetched ${sizesJson.length} sizes: $sizesJson');
       return sizesJson
           .map((json) => SizeModel.fromJson(json as Map<String, dynamic>))

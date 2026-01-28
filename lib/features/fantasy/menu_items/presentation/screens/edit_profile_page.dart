@@ -119,7 +119,7 @@ class _EditProfile extends State<EditProfile> {
                   padding: const EdgeInsets.all(16),
                   child: Column(
                     children: [
-                      Icon(
+                      const Icon(
                         Icons.info_outline,
                         color: AppColors.mainColor,
                         size: 28,

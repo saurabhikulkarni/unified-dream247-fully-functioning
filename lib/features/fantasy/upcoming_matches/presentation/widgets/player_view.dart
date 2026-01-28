@@ -249,8 +249,30 @@ class _SinglePlayer extends State<SinglePlayer> {
                   child: Stack(
                     alignment: Alignment.bottomCenter,
                     children: [
-                      SafeNetworkImage(
-                        url: widget.data.image,
+                      Tooltip(
+                        message: widget.data.image ?? 'No image URL',
+                        child: SafeNetworkImage(
+                          url: widget.data.image,
+                        ),
+                      ),
+                      Positioned(
+                        bottom: 2,
+                        right: 2,
+                        child: Visibility(
+                          visible: widget.data.image == null || widget.data.image!.isEmpty,
+                          child: Container(
+                            width: 12,
+                            height: 12,
+                            decoration: BoxDecoration(
+                              color: Colors.red,
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: const Tooltip(
+                              message: 'No image URL found',
+                              child: Icon(Icons.warning, size: 8, color: Colors.white),
+                            ),
+                          ),
+                        ),
                       ),
                       // Align(
                       //   alignment: Alignment.bottomLeft,

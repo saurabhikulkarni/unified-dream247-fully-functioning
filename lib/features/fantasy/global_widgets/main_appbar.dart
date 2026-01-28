@@ -78,7 +78,7 @@ class MainAppbar extends StatelessWidget implements PreferredSizeWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (_) => const MyBalancePage()),
+                                builder: (_) => const MyBalancePage(),),
                           );
                         },
                         child: Image.asset(

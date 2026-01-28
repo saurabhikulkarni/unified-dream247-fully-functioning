@@ -328,6 +328,19 @@ class GraphQLQueries {
     }
   ''';
 
+  // Update shop tokens balance in Hygraph
+  static const String updateShopTokens = '''
+    mutation UpdateShopTokens(\$userId: ID!, \$shopTokens: Int!) {
+      updateUserDetail(
+        where: {id: \$userId}
+        data: {shopTokens: \$shopTokens}
+      ) {
+        id
+        shopTokens
+      }
+    }
+  ''';
+
   // ============ Address Queries & Mutations ============
   
   // Get all addresses for a user
@@ -1118,7 +1131,7 @@ class GraphQLQueries {
         data: {
           userId: \$userId
           type: purchase
-          amount: -\$amount
+          amount: \$amount
           description: "Purchased \$itemName"
           orderReference: \$orderId
           paymentMethod: "shopTokens"

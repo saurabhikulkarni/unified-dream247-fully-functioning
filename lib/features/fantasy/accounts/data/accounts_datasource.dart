@@ -57,7 +57,7 @@ class AccountsDatasource implements AccountsRepositories {
         return response.data;
       } else {
         debugPrint(
-            '❌ [ACCOUNTS_DS] Add cash failed: ${res[ApiResponseString.message]}');
+            '❌ [ACCOUNTS_DS] Add cash failed: ${res[ApiResponseString.message]}',);
         ApiServerUtil.showAppToastforApi(
           res[ApiResponseString.message],
           context,

@@ -124,7 +124,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (_) => const EditProfile()),
+                                builder: (_) => const EditProfile(),),
                           );
                         },
                         height: 36,
@@ -133,14 +133,13 @@ class _ProfilePageState extends State<ProfilePage> {
                         textColor: AppColors.white,
                       ),
                     ),
-                    const SizedBox(width: 20),
                     Expanded(
                       child: MainButton(
                         onTap: () {
-                          AppNavigation.gotoVerifyDetailsScreen(context);
+                          AppNavigation.gotoEditProfileScreen(context);
                         },
                         height: 36,
-                        text: 'KYC',
+                        text: 'Edit Profile',
                         color: AppColors.mainColor,
                         textColor: AppColors.white,
                       ),

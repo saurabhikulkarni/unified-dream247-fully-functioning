@@ -177,11 +177,4 @@ class GameTokensErrorHandler {
 }
 
 /// Extension for better error handling
-extension on dynamic {
-  TokenError asTokenError() {
-    if (this is TokenError) {
-      return this as TokenError;
-    }
-    return GameTokensErrorHandler.categorizeError(this);
-  }
-}
+extension on dynamic {}

@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:unified_dream247/core/services/auth_service.dart' as core_auth;
 import 'package:unified_dream247/core/constants/api_constants.dart';
 import 'package:unified_dream247/features/fantasy/core/utils/user_id_helper.dart';

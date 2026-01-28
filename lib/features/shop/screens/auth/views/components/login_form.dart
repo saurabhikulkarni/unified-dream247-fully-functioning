@@ -14,6 +14,7 @@ import 'package:unified_dream247/features/shop/components/gradient_button.dart';
 import 'package:unified_dream247/features/shop/services/auth_service.dart';
 import 'package:unified_dream247/features/shop/services/msg91_service.dart';
 import 'package:unified_dream247/features/shop/services/user_service.dart';
+import 'package:unified_dream247/features/shop/services/order_service_graphql.dart';
 import 'package:unified_dream247/features/shop/models/product_model.dart';
 import 'package:unified_dream247/features/shop/constants.dart';
 
@@ -109,7 +110,7 @@ class _LogInFormState extends State<LogInForm> {
             builder: (context) => AlertDialog(
               title: const Text('Account Not Found'),
               content: const Text(
-                  'No account exists with this mobile number. Please sign up first.'),
+                  'No account exists with this mobile number. Please sign up first.',),
               actions: [
                 TextButton(
                   onPressed: () {
@@ -134,7 +135,7 @@ class _LogInFormState extends State<LogInForm> {
       // ✅ Store Hygraph userId for later use when saving session
       _hygraphUserId = existingUser.id;
       debugPrint(
-          '📝 [LOGIN] Found existing user with Hygraph ID: $_hygraphUserId');
+          '📝 [LOGIN] Found existing user with Hygraph ID: $_hygraphUserId',);
     } catch (e) {
       // If user check fails, continue with OTP anyway (fallback)
       print('⚠️ [LOGIN] Error checking user existence: $e');
@@ -154,6 +155,13 @@ class _LogInFormState extends State<LogInForm> {
         _sessionId = result['sessionId'];
         _otpController.clear(); // Clear previous OTP if any
       });
+      
+      if (foundation.kDebugMode) {
+        debugPrint('✅ [OTP_SEND] OTP sent successfully');
+        debugPrint('✅ [OTP_SEND] SessionID saved: ${_sessionId ?? "NULL"}');
+        debugPrint('✅ [OTP_SEND] Message: ${result['message']}');
+      }
+      
       _startResendTimer();
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -169,7 +177,7 @@ class _LogInFormState extends State<LogInForm> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-                result['message'] ?? 'Failed to send OTP. Please try again.'),
+                result['message'] ?? 'Failed to send OTP. Please try again.',),
             backgroundColor: Colors.red,
           ),
         );
@@ -207,17 +215,28 @@ class _LogInFormState extends State<LogInForm> {
         requestBody['sessionId'] = _sessionId;
       }
 
+      // Debug logging
+      if (foundation.kDebugMode) {
+        debugPrint('📱 [OTP_VERIFY] Verifying OTP...');
+        debugPrint('📱 [OTP_VERIFY] Phone: $phone');
+        debugPrint('📱 [OTP_VERIFY] OTP: $otp');
+        debugPrint('📱 [OTP_VERIFY] SessionID: ${_sessionId ?? "NULL"}');
+        debugPrint('📱 [OTP_VERIFY] Request Body: $requestBody');
+        debugPrint('📱 [OTP_VERIFY] Endpoint: ${ApiConstants.shopBackendUrl}${ApiConstants.verifyOtpEndpoint}');
+      }
+
       // Call unified verify-otp endpoint
       final response = await http
           .post(
             Uri.parse(
-                '${ApiConstants.shopBackendUrl}${ApiConstants.verifyOtpEndpoint}'),
+                '${ApiConstants.shopBackendUrl}${ApiConstants.verifyOtpEndpoint}',),
             headers: {'Content-Type': 'application/json'},
             body: jsonEncode(requestBody),
           )
           .timeout(const Duration(seconds: 30));
 
       if (foundation.kDebugMode) {
+        debugPrint('📱 [OTP_VERIFY] Response Status: ${response.statusCode}');
         debugPrint('📱 [OTP_VERIFY] Response Body: ${response.body}');
       }
 
@@ -225,7 +244,6 @@ class _LogInFormState extends State<LogInForm> {
 
       if (data['success'] == true) {
         final user = data['user'] ?? {}; // Handle null user object
-        final token = data['token'] ?? user['token']; // Check root token first
         final refreshToken = data['refreshToken'];
 
         // Store shopTokens balance
@@ -268,10 +286,10 @@ class _LogInFormState extends State<LogInForm> {
 
         if (userId.isEmpty || authToken.isEmpty) {
           debugPrint(
-              '❌ [OTP_VERIFY] Critical data missing! userId: $userId, token: $authToken');
+              '❌ [OTP_VERIFY] Critical data missing! userId: $userId, token: $authToken',);
           return {
             'success': false,
-            'message': 'Login failed: Missing required user data (ID/Token)'
+            'message': 'Login failed: Missing required user data (ID/Token)',
           };
         }
 
@@ -287,13 +305,38 @@ class _LogInFormState extends State<LogInForm> {
           refreshToken: refreshToken,
         );
 
-        debugPrint('✅ [OTP_VERIFY] User session saved with shopTokens');
+        debugPrint('✅ [OTP_VERIFY] User session saved with shopTokens: $shopTokens');
+
+        // Sync shop tokens to Hygraph so they're available for future app sessions
+        // This ensures the ShopTokensProvider can fetch correct balance from Hygraph
+        // Always sync, even if 0, to ensure Hygraph has the latest value
+        if (userId.isNotEmpty) {
+          try {
+            debugPrint('🔄 [OTP_VERIFY] Syncing shop tokens to Hygraph: $shopTokens tokens');
+            final orderService = OrderServiceGraphQL();
+            final syncSuccess = await orderService.syncShopTokensToHygraph(
+              userId: userId,
+              shopTokens: shopTokens.toInt(),
+            );
+            if (syncSuccess) {
+              debugPrint('✅ [OTP_VERIFY] Shop tokens synced to Hygraph successfully');
+            } else {
+              debugPrint('⚠️ [OTP_VERIFY] Shop tokens sync to Hygraph failed (non-critical)');
+            }
+          } catch (e) {
+            debugPrint('⚠️ [OTP_VERIFY] Error syncing shop tokens: $e (non-critical)');
+            // Non-critical sync failure, don't block login
+          }
+        } else {
+          debugPrint('⚠️ [OTP_VERIFY] No userId available for shop tokens sync');
+        }
+
         return {'success': true, 'message': 'Login successful'};
       }
 
       return {
         'success': false,
-        'message': data['message'] ?? 'OTP verification failed'
+        'message': data['message'] ?? 'OTP verification failed',
       };
     } catch (e) {
       debugPrint('❌ [OTP_VERIFY] Error: $e');
@@ -334,6 +377,13 @@ class _LogInFormState extends State<LogInForm> {
     print('📱 [LOGIN] OTP Verification message: ${result['message']}');
 
     if (result['success'] == true) {
+      // ✅ CRITICAL: Now save login session to fetch Fantasy token and sync wallet data
+      // This step restores shopTokens from Fantasy backend wallet endpoint
+      // and ensures both shop and game tokens are properly synced
+      debugPrint('🔐 [LOGIN] Saving session and syncing wallet data from Fantasy backend...');
+      await saveLoginSession();
+      debugPrint('✅ [LOGIN] Session saved, wallet data synced');
+      
       return true;
     } else {
       if (mounted) {
@@ -375,14 +425,14 @@ class _LogInFormState extends State<LogInForm> {
         if (userFromBackend != null) {
           debugPrint('✅ [LOGIN] User data retrieved from backend:');
           debugPrint(
-              '   - Name: ${userFromBackend.firstName} ${userFromBackend.lastName}');
+              '   - Name: ${userFromBackend.firstName} ${userFromBackend.lastName}',);
           debugPrint('   - Wallet Balance: ${userFromBackend.walletBalance}');
 
           // Restore wallet balance from backend
           await prefs.setDouble(
-              'wallet_balance', userFromBackend.walletBalance);
+              'wallet_balance', userFromBackend.walletBalance,);
           await prefs.setInt(
-              'wallet_last_update', DateTime.now().millisecondsSinceEpoch);
+              'wallet_last_update', DateTime.now().millisecondsSinceEpoch,);
         }
       } catch (e) {
         debugPrint('⚠️ [LOGIN] Could not fetch user from Hygraph: $e');
@@ -420,10 +470,12 @@ class _LogInFormState extends State<LogInForm> {
             final walletData = data['data'] ?? data;
 
             // Restore shopTokens from backend
-            final shopTokens = (walletData['shopTokens'] as num?)?.toInt() ?? 0;
+            // The Fantasy wallet endpoint returns 'balance' field which represents shop tokens
+            final shopTokens = (walletData['balance'] as num?)?.toInt() ?? 
+                              (walletData['shopTokens'] as num?)?.toInt() ?? 0;
             await prefs.setInt('shop_tokens', shopTokens);
             debugPrint(
-                '💰 [LOGIN] Restored shopTokens from backend: $shopTokens');
+                '💰 [LOGIN] Restored shopTokens from backend: $shopTokens',);
 
             // Restore wallet balance from Fantasy backend if available
             final walletBalance =
@@ -432,7 +484,7 @@ class _LogInFormState extends State<LogInForm> {
             if (walletBalance != null) {
               await prefs.setDouble('wallet_balance', walletBalance);
               debugPrint(
-                  '💰 [LOGIN] Restored wallet balance from backend: $walletBalance');
+                  '💰 [LOGIN] Restored wallet balance from backend: $walletBalance',);
             }
           }
         }
@@ -464,7 +516,7 @@ class _LogInFormState extends State<LogInForm> {
         debugPrint('✅ [LOGIN] Core auth session updated with fantasy token');
       } else {
         debugPrint(
-            '⚠️ [LOGIN] Skipping core auth update - no fantasy token (keeping existing token)');
+            '⚠️ [LOGIN] Skipping core auth update - no fantasy token (keeping existing token)',);
       }
 
       // ✅ STEP 5: Ensure login flag is set
@@ -473,7 +525,7 @@ class _LogInFormState extends State<LogInForm> {
       debugPrint('🔐 [LOGIN] ========== USER SESSION RESTORED ==========');
       debugPrint('✅ [LOGIN] User data safely stored on backend');
       debugPrint(
-          '✅ [LOGIN] Session restored - user can continue where they left off');
+          '✅ [LOGIN] Session restored - user can continue where they left off',);
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -489,7 +541,7 @@ class _LogInFormState extends State<LogInForm> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-                'Login successful but some data could not be restored: $e'),
+                'Login successful but some data could not be restored: $e',),
             backgroundColor: Colors.orange,
           ),
         );

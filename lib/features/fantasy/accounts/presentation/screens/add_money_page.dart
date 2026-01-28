@@ -127,7 +127,7 @@ class _AddMoneyPage extends State<AddMoneyPage> {
           }
         } else {
           debugPrint(
-              '❌ [ADD_MONEY] No phone number available for token refresh');
+              '❌ [ADD_MONEY] No phone number available for token refresh',);
         }
       } else {
         debugPrint('✅ [ADD_MONEY] Fantasy token exists');
@@ -161,7 +161,7 @@ class _AddMoneyPage extends State<AddMoneyPage> {
           });
         }
         debugPrint(
-            '✅ [ADD_MONEY] User data loaded: ${userData?.name ?? "Unknown"}');
+            '✅ [ADD_MONEY] User data loaded: ${userData?.name ?? "Unknown"}',);
       }
     } catch (e) {
       debugPrint('⚠️ [ADD_MONEY] Error loading data: $e');
@@ -172,17 +172,6 @@ class _AddMoneyPage extends State<AddMoneyPage> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     userData = Provider.of<UserDataProvider>(context).userData;
-  }
-
-  bool get _isUserVerified {
-    // If user data is not loaded yet, allow proceeding (backend will verify)
-    // This prevents blocking users when data is still loading
-    if (userData == null) {
-      debugPrint(
-          '⚠️ [ADD_MONEY] User data not loaded, allowing payment (backend will verify)');
-      return true;
-    }
-    return userData?.verified == 1;
   }
 
   void _initRazorpay() {
@@ -197,7 +186,7 @@ class _AddMoneyPage extends State<AddMoneyPage> {
   Future<void> _createRazorpayOrder() async {
     debugPrint('🔄 [ADD_CASH] Creating Razorpay order...');
     debugPrint(
-        '💰 [ADD_CASH] Amount: ${_amountController.text}, PromoId: $promoId');
+        '💰 [ADD_CASH] Amount: ${_amountController.text}, PromoId: $promoId',);
 
     final res = await accountsUsecases.requestAddCash(
       context,
@@ -210,10 +199,10 @@ class _AddMoneyPage extends State<AddMoneyPage> {
 
     if (res == null) {
       debugPrint(
-          '❌ [ADD_CASH] Response is null - likely auth issue or network error');
+          '❌ [ADD_CASH] Response is null - likely auth issue or network error',);
       appToast(
           'Unable to create order. Please check your connection and try again.',
-          context);
+          context,);
       return;
     }
 
@@ -355,6 +344,8 @@ class _AddMoneyPage extends State<AddMoneyPage> {
         // Payment successful - sync tokens from backend
         final amount = double.parse(_amountController.text);
 
+        debugPrint('💰 [ADD_MONEY] Payment verified successfully. Amount to add: $amount');
+
         // Initialize wallet service
         await walletService.initialize();
 
@@ -362,29 +353,39 @@ class _AddMoneyPage extends State<AddMoneyPage> {
         await walletService.addShopTokens(amount);
         debugPrint('✅ [ADD_MONEY] Added $amount shop tokens to Hygraph');
 
-        // 2️⃣ Fetch and sync game tokens from Fantasy backend
+        // 2️⃣ Add game tokens explicitly (not relying on backend auto-add)
         try {
+          // Get current game tokens
+          final currentGameTokens = await walletService.getGameTokens();
+          debugPrint('📊 [ADD_MONEY] Current game tokens before add: $currentGameTokens');
+          
+          // Add the amount to game tokens
+          final newGameTokens = currentGameTokens + amount;
+          await walletService.setGameTokens(newGameTokens);
+          debugPrint('✅ [ADD_MONEY] Added $amount game tokens. New balance: $newGameTokens');
+          
+          // 3️⃣ Also refresh from Fantasy backend to sync server-side changes
           final gameTokensService = GetIt.instance<GameTokensService>();
           await gameTokensService.refreshGameTokens();
-          debugPrint(
-              '✅ [ADD_MONEY] Game tokens synced from Fantasy after topup');
+          debugPrint('✅ [ADD_MONEY] Game tokens refreshed from Fantasy backend');
         } catch (e) {
-          debugPrint('❌ [ADD_MONEY] Error syncing game tokens: $e');
-          // Fallback: Add to local cache
-          await walletService.setGameTokens(
-            (await walletService.getGameTokens()) + amount,
-          );
+          debugPrint('❌ [ADD_MONEY] Error adding game tokens: $e');
+          // Don't fail - local addition already happened
         }
 
-        // 3️⃣ NEW: Sync shop tokens to Shop backend
-        await _syncShopTokensToShopBackend(
-          amount: amount,
-          paymentId: response.paymentId ?? '',
-          orderId: response.orderId ?? '',
-        );
-        debugPrint('✅ [ADD_MONEY] Shop backend synced with new tokens');
+        // 4️⃣ Sync shop tokens to Shop backend
+        try {
+          await _syncShopTokensToShopBackend(
+            amount: amount,
+            paymentId: response.paymentId ?? '',
+            orderId: response.orderId ?? '',
+          );
+          debugPrint('✅ [ADD_MONEY] Shop backend synced with new tokens');
+        } catch (e) {
+          debugPrint('⚠️ [ADD_MONEY] Warning: Shop backend sync failed: $e (non-critical)');
+        }
 
-        // 4️⃣ Refresh providers to update all screens
+        // 5️⃣ Refresh providers to update all screens
         if (mounted) {
           try {
             final shopTokensProvider = context.read<ShopTokensProvider>();
@@ -416,7 +417,7 @@ class _AddMoneyPage extends State<AddMoneyPage> {
     setState(() => _isPaymentFlowLocked = false); // Reset lock on error
     appToast('Payment Failed: ${response.message}', context);
     debugPrint(
-        '❌ [RAZORPAY] Payment Error: ${response.message} (Code: ${response.code})');
+        '❌ [RAZORPAY] Payment Error: ${response.message} (Code: ${response.code})',);
   }
 
   void _handleExternalWallet(ExternalWalletResponse response) {}
@@ -464,7 +465,7 @@ class _AddMoneyPage extends State<AddMoneyPage> {
         100000;
 
     debugPrint(
-        '💰 [ADD_MONEY] Validating: amount=$amount, min=$minAdd, max=$maxAdd');
+        '💰 [ADD_MONEY] Validating: amount=$amount, min=$minAdd, max=$maxAdd',);
 
     if (amount < minAdd) {
       setState(() {
@@ -1160,7 +1161,7 @@ class _AddMoneyPage extends State<AddMoneyPage> {
                     final amount = num.parse(_amountController.text);
 
                     debugPrint(
-                        '💳 [ADD_CASH] Initiating payment: amount=$amount, min=$minLimit, max=$maxLimit');
+                        '💳 [ADD_CASH] Initiating payment: amount=$amount, min=$minLimit, max=$maxLimit',);
 
                     if (amount >= minLimit && amount <= maxLimit) {
                       await _createRazorpayOrder();

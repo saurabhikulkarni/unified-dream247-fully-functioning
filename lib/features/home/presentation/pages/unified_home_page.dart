@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:unified_dream247/config/api_config.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
@@ -9,12 +8,8 @@ import 'package:unified_dream247/core/providers/shop_tokens_provider.dart';
 import 'package:unified_dream247/features/shop/services/product_service.dart';
 import 'package:unified_dream247/features/shop/models/product_model.dart';
 import 'package:unified_dream247/features/fantasy/accounts/presentation/providers/wallet_details_provider.dart';
-import 'package:unified_dream247/features/fantasy/accounts/data/accounts_datasource.dart';
-import 'package:unified_dream247/features/fantasy/core/api_server_constants/api_server_impl/api_impl.dart';
-import 'package:unified_dream247/features/fantasy/core/api_server_constants/api_server_impl/api_impl_header.dart';
 import 'dart:math';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
+import 'dart:async';
 
 class UnifiedHomePage extends StatefulWidget {
   const UnifiedHomePage({super.key});
@@ -23,19 +18,50 @@ class UnifiedHomePage extends StatefulWidget {
   State<UnifiedHomePage> createState() => _UnifiedHomePageState();
 }
 
-class _UnifiedHomePageState extends State<UnifiedHomePage> {
+class _UnifiedHomePageState extends State<UnifiedHomePage>
+    with WidgetsBindingObserver, RouteAware {
   final ProductService _productService = ProductService();
   List<ProductModel> _products = [];
   bool _isLoading = true;
   final core_auth.AuthService _authService = core_auth.AuthService();
+  late RouteObserver<ModalRoute<dynamic>> _routeObserver;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _routeObserver = RouteObserver<ModalRoute<dynamic>>();
     _initAuth();
     _loadProducts();
     _refreshShopTokens();
     _refreshGameTokens();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _gameTokensRefreshTimer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      // Auto-refresh both shop and game tokens when app resumes from background
+      debugPrint('🔄 [HOME] App resumed, refreshing both shop and game tokens');
+      _refreshShopTokens();
+      _refreshGameTokens();
+    }
+  }
+
+  /// Called when this page is pushed back to the foreground (e.g., returning from wallet screen)
+  @override
+  void didPopNext() {
+    debugPrint('🔙 [HOME] Returning to home page - refreshing token balances');
+    // Force immediate refresh of both token types when returning from another screen
+    _refreshShopTokens();
+    _refreshGameTokens();
+    super.didPopNext();
   }
 
   /// Refresh shop tokens when entering home page
@@ -65,6 +91,34 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
         }
       }
     });
+    
+    // Also set up a periodic refresh every 15 seconds to ensure we catch token changes
+    // This helps when user spends tokens in contests or games
+    Future.delayed(const Duration(milliseconds: 500), () {
+      if (mounted) {
+        _startGameTokensRefreshTimer();
+      }
+    });
+  }
+  
+  Timer? _gameTokensRefreshTimer;
+  
+  void _startGameTokensRefreshTimer() {
+    // Cancel any existing timer
+    _gameTokensRefreshTimer?.cancel();
+    
+    // Refresh game tokens every 15 seconds while on this page
+    _gameTokensRefreshTimer = Timer.periodic(const Duration(seconds: 15), (_) async {
+      if (mounted) {
+        try {
+          final walletProvider = context.read<WalletDetailsProvider>();
+          await walletProvider.refreshWalletDetails(context);
+          debugPrint('🔄 [HOME] Periodic game tokens refresh done');
+        } catch (e) {
+          debugPrint('⚠️ [HOME] Periodic refresh error: $e');
+        }
+      }
+    });
   }
 
   Future<void> _initAuth() async {
@@ -86,9 +140,9 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
     debugPrint('   - isLoggedIn: $isLoggedIn');
     debugPrint('   - isLoggedInFantasy: $isLoggedInFantasy');
     debugPrint(
-        '   - token key: ${token != null ? "FOUND (${token.length} chars)" : "NULL"}');
+        '   - token key: ${token != null ? "FOUND (${token.length} chars)" : "NULL"}',);
     debugPrint(
-        '   - auth_token key: ${authToken != null ? "FOUND (${authToken.length} chars)" : "NULL"}');
+        '   - auth_token key: ${authToken != null ? "FOUND (${authToken.length} chars)" : "NULL"}',);
 
     // Check if we have any valid token
     final hasValidToken = (token != null && token.isNotEmpty) ||
@@ -113,7 +167,7 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
     final anyLoginFlag = isLoggedIn || isLoggedInFantasy;
     if (anyLoginFlag && !hasValidToken) {
       debugPrint(
-          '🧟 [HOME] Zombie Session Detected (LoggedIn=$anyLoginFlag, Token=null/empty)');
+          '🧟 [HOME] Zombie Session Detected (LoggedIn=$anyLoginFlag, Token=null/empty)',);
       debugPrint('🧹 [HOME] Forcing cleanup and logout...');
 
       await _authService.logout();
@@ -182,24 +236,27 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
         final val = prefs.get(key);
         // Mask long values for readability
         String displayVal = val.toString();
-        if (displayVal.length > 50)
+        if (displayVal.length > 50) {
           displayVal =
               '${displayVal.substring(0, 20)}...[MASKED]...${displayVal.substring(displayVal.length - 10)}';
+        }
         debugPrint('🔍 [HOME] Key: $key = $displayVal');
       }
       debugPrint('🔍 [HOME] ======================================');
 
       // 1. Check if we have a valid token in ANY key
       String? usableToken = prefs.getString('token');
-      if (usableToken == null || usableToken.isEmpty)
+      if (usableToken == null || usableToken.isEmpty) {
         usableToken = prefs.getString('auth_token');
-      if (usableToken == null || usableToken.isEmpty)
+      }
+      if (usableToken == null || usableToken.isEmpty) {
         usableToken = prefs.getString('temp_otp_token'); // From Msg91 intercept
+      }
 
       // 2. IMPORTANT: If retrieved token appears to be a User ID (no dots, short), DO NOT USE IT
       if (usableToken != null && !usableToken.contains('.')) {
         debugPrint(
-            '⚠️ [HOME] Found suspicious token (likely UserID): $usableToken. Ignoring.');
+            '⚠️ [HOME] Found suspicious token (likely UserID): $usableToken. Ignoring.',);
         usableToken = null;
       }
 
@@ -218,7 +275,7 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
       // Debug: Check current auth status
       final token = _authService.getAuthToken();
       debugPrint(
-          '🕵️ [HOME] Pre-Sync Token Check: ${token != null ? "FOUND (${token.length} chars)" : "MISSING"}');
+          '🕵️ [HOME] Pre-Sync Token Check: ${token != null ? "FOUND (${token.length} chars)" : "MISSING"}',);
 
       // Sync fantasy version in background (non-blocking) to prevent 30s timeout delay
       // The endpoint is unreliable, so we don't wait for it
@@ -301,6 +358,7 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
           // Shop Tokens Display - Clickable to navigate to wallet
           Consumer<ShopTokensProvider>(
             builder: (context, shopTokensProvider, child) {
+              debugPrint('🪙 [HOME_HEADER] Shop tokens display: ${shopTokensProvider.shopTokens}');
               return GestureDetector(
                 onTap: () => _navigateToWallet(),
                 child: Container(
@@ -338,14 +396,17 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
           // Game Tokens Display - Clickable to navigate to wallet
           Consumer<WalletDetailsProvider>(
             builder: (context, walletProvider, child) {
-              // Show total game tokens (balance + bonus including mystery box)
+              // Show ONLY game tokens balance (NOT including bonus/winning)
+              // Winning and bonus are displayed only in wallet page
               final balance = double.tryParse(walletProvider.walletData?.balance ?? '0') ?? 0;
-              final bonus = double.tryParse(walletProvider.walletData?.bonus ?? '0') ?? 0;
-              final gameTokens = balance + bonus;
+              
+              debugPrint('💎 [HOME_DISPLAY] Game tokens display:');
+              debugPrint('   - walletData: ${walletProvider.walletData}');
+              debugPrint('   - balance (game tokens): $balance');
               
               return GestureDetector(
                 onTap: () {
-                  debugPrint('💎 [HOME] Game tokens tapped. Balance: $gameTokens');
+                  debugPrint('💎 [HOME] Game tokens tapped. Balance: $balance');
                   _navigateToWallet();
                 },
                 child: Container(
@@ -361,7 +422,7 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
                       const Text('💎', style: TextStyle(fontSize: 16)),
                       const SizedBox(width: 4),
                       Text(
-                        gameTokens.toInt().toString(),
+                        balance.toInt().toString(),
                         style: const TextStyle(
                           color: Colors.black87,
                           fontWeight: FontWeight.bold,
@@ -431,7 +492,7 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
                             colors: [
                               Color(0xFF773DD6),
                               Color(0xFF482576),
-                              Color(0xFF341255)
+                              Color(0xFF341255),
                             ],
                             stops: [0.0, 0.5, 1.0],
                             begin: Alignment.topLeft,
@@ -493,7 +554,7 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
                                         (context, error, stackTrace) => Icon(
                                             Icons.emoji_events,
                                             size: iconSize,
-                                            color: const Color(0xFFFFC107)),
+                                            color: const Color(0xFFFFC107),),
                                   ),
                                 ),
                               ),
@@ -515,7 +576,7 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
                             colors: [
                               Color(0xFF773DD6),
                               Color(0xFF482576),
-                              Color(0xFF341255)
+                              Color(0xFF341255),
                             ],
                             stops: [0.0, 0.5, 1.0],
                             begin: Alignment.topLeft,
@@ -577,7 +638,7 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
                                         (context, error, stackTrace) => Icon(
                                             Icons.shopping_bag,
                                             size: iconSize,
-                                            color: const Color(0xFFFFC107)),
+                                            color: const Color(0xFFFFC107),),
                                   ),
                                 ),
                               ),
@@ -733,7 +794,7 @@ class _UnifiedHomePageState extends State<UnifiedHomePage> {
                                                   fit: BoxFit.cover,
                                                   width: double.infinity,
                                                   errorBuilder: (context, error,
-                                                          stackTrace) =>
+                                                          stackTrace,) =>
                                                       Center(
                                                     child: Icon(
                                                       Icons.image_outlined,

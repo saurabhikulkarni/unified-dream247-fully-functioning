@@ -41,7 +41,7 @@ class MainAppbar extends StatelessWidget implements PreferredSizeWidget {
                       // Back button
                       IconButton(
                         icon: const Icon(Icons.arrow_back,
-                            color: AppColors.white),
+                            color: AppColors.white,),
                         onPressed: () {
                           Navigator.of(context)
                               .popUntil((route) => route.isFirst);
@@ -94,7 +94,7 @@ class MainAppbar extends StatelessWidget implements PreferredSizeWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (_) => const MyBalancePage()),
+                                builder: (_) => const MyBalancePage(),),
                           );
                         },
                         child: Image.asset(

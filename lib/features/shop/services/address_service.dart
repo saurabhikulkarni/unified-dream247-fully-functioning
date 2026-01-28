@@ -54,7 +54,7 @@ class AddressService {
         _localAddresses.map((a) => {
           ...a.toJson(),
           'userId': a.userId,
-        }).toList(),
+        },).toList(),
       );
       await prefs.setString(_localAddressesKey, addressesJson);
       print('[ADDRESS_SERVICE] Saved ${_localAddresses.length} addresses to local storage');

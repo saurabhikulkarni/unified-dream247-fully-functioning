@@ -10,6 +10,11 @@ class WalletDetailsProvider extends ChangeNotifier {
   BalanceModel? get walletData => _walletData;
 
   void setBalance(BalanceModel? value) {
+    debugPrint('💰 [WALLET_PROVIDER] setBalance called');
+    debugPrint('   - balance: ${value?.balance}');
+    debugPrint('   - bonus: ${value?.bonus}');
+    debugPrint('   - winning: ${value?.winning}');
+    debugPrint('   - totalamount: ${value?.totalamount}');
     _walletData = value;
     notifyListeners();
   }
@@ -17,11 +22,14 @@ class WalletDetailsProvider extends ChangeNotifier {
   /// Refresh wallet details from the backend API
   Future<void> refreshWalletDetails(BuildContext context) async {
     try {
+      debugPrint('🔄 [WALLET_PROVIDER] Starting wallet refresh...');
       final datasource = AccountsDatasource(ApiImpl(), ApiImplWithAccessToken());
-      await datasource.myWalletDetails(context);
+      final result = await datasource.myWalletDetails(context);
+      debugPrint('✅ [WALLET_PROVIDER] Wallet refresh complete');
+      debugPrint('   - Result: $result');
       // Note: myWalletDetails already calls setBalance on this provider
     } catch (e) {
-      debugPrint('Error refreshing wallet details: $e');
+      debugPrint('❌ [WALLET_PROVIDER] Error refreshing wallet details: $e');
     }
   }
 
