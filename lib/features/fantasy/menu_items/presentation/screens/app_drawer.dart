@@ -257,15 +257,6 @@ class AppDrawer extends StatelessWidget {
 
                   // MENU ITEMS
                   _drawerItem(
-                    icon: Icons.verified_outlined,
-                    title: 'KYC (Verify Account)',
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (_) => const VerifyDetailsPage(),),
-                    ),
-                  ),
-                  _drawerItem(
                     svg: Images.referEarn,
                     title: Strings.referEarn,
                     onTap: () => Navigator.push(
