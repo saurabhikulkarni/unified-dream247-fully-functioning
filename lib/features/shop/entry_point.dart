@@ -7,7 +7,6 @@ import 'package:unified_dream247/features/shop/constants.dart';
 import 'package:unified_dream247/features/shop/route/screen_export.dart';
 import 'package:unified_dream247/features/shop/services/cart_service.dart';
 import 'package:unified_dream247/features/shop/services/wishlist_service.dart';
-import 'package:unified_dream247/core/services/wallet_service.dart';
 import 'package:unified_dream247/core/providers/shop_tokens_provider.dart';
 
 class EntryPoint extends StatefulWidget {

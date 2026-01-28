@@ -10,6 +10,11 @@ class UserDataProvider extends ChangeNotifier {
   UserFullDetailsResponse? get userData => _userData;
 
   void setUserData(UserFullDetailsResponse? value) async {
+    if (value == null) {
+      debugPrint('⚠️ [UserDataProvider] Attempting to set null userData');
+    } else {
+      debugPrint('✅ [UserDataProvider] Setting user data: ${value.name ?? value.team ?? value.id ?? "Unknown"}');
+    }
     _userData = value;
     notifyListeners();
   }

@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:unified_dream247/core/services/wallet_service.dart';
 
 /// Provider for managing shopTokens state
 /// Handles periodic refresh and local persistence
@@ -17,6 +18,8 @@ class ShopTokensProvider extends ChangeNotifier {
 
   ShopTokensProvider({this.refreshInterval = 30}) {
     _initializeTokens();
+    // Register with UnifiedWalletService for instant deduction updates
+    UnifiedWalletService().setShopTokensProvider(this);
   }
 
   int get shopTokens => _shopTokens;
@@ -40,7 +43,7 @@ class ShopTokensProvider extends ChangeNotifier {
       }
       notifyListeners();
       debugPrint(
-          '💰 [SHOP_TOKENS_PROVIDER] Initialized from cache: $_shopTokens');
+          '💰 [SHOP_TOKENS_PROVIDER] Initialized from cache: $_shopTokens',);
       debugPrint('   All keys in SharedPreferences: ${prefs.getKeys().toList()}');
 
       // Immediately refresh from backend to ensure sync
@@ -59,7 +62,7 @@ class ShopTokensProvider extends ChangeNotifier {
       refreshShopTokens();
     });
     debugPrint(
-        '🔄 [SHOP_TOKENS_PROVIDER] Periodic refresh started (${refreshInterval}s interval)');
+        '🔄 [SHOP_TOKENS_PROVIDER] Periodic refresh started (${refreshInterval}s interval)',);
   }
 
   /// Refresh shopTokens from Fantasy backend /user/user-wallet-details
@@ -68,7 +71,7 @@ class ShopTokensProvider extends ChangeNotifier {
   Future<void> refreshShopTokens() async {
     if (_isRefreshing) {
       debugPrint(
-          '⚠️  [SHOP_TOKENS_PROVIDER] Already refreshing, skipping duplicate call');
+          '⚠️  [SHOP_TOKENS_PROVIDER] Already refreshing, skipping duplicate call',);
       return;
     }
 
@@ -97,7 +100,7 @@ class ShopTokensProvider extends ChangeNotifier {
 
       if (authToken == null || authToken.isEmpty) {
         debugPrint(
-            '⚠️  [SHOP_TOKENS_PROVIDER] No auth token, skipping refresh, using cached: $cachedTokens');
+            '⚠️  [SHOP_TOKENS_PROVIDER] No auth token, skipping refresh, using cached: $cachedTokens',);
         _shopTokens = cachedTokens;
         notifyListeners();
         _isRefreshing = false;
@@ -113,7 +116,7 @@ class ShopTokensProvider extends ChangeNotifier {
 
       debugPrint('🔄 [SHOP_TOKENS_PROVIDER] Fetching from Fantasy backend: $url');
       debugPrint(
-          '🔄 [SHOP_TOKENS_PROVIDER] Token: ${authToken.substring(0, 20)}...');
+          '🔄 [SHOP_TOKENS_PROVIDER] Token: ${authToken.substring(0, 20)}...',);
 
       final response = await http.get(
         Uri.parse(url),
@@ -143,7 +146,7 @@ class ShopTokensProvider extends ChangeNotifier {
           // This can happen if shop tokens haven't been synced to Fantasy backend yet
           if (newBalance == 0 && cachedTokens > 0) {
             debugPrint(
-                '⚠️  [SHOP_TOKENS_PROVIDER] Backend returned 0 but cache has $cachedTokens - KEEPING CACHED VALUE');
+                '⚠️  [SHOP_TOKENS_PROVIDER] Backend returned 0 but cache has $cachedTokens - KEEPING CACHED VALUE',);
             _shopTokens = cachedTokens;
           } else {
             _shopTokens = newBalance;
@@ -153,14 +156,14 @@ class ShopTokensProvider extends ChangeNotifier {
           notifyListeners();
         } else {
           debugPrint(
-              '❌ [SHOP_TOKENS_PROVIDER] Response not successful: ${data['message']}');
+              '❌ [SHOP_TOKENS_PROVIDER] Response not successful: ${data['message']}',);
           // Use cached value as fallback
           _shopTokens = cachedTokens;
           notifyListeners();
         }
       } else {
         debugPrint(
-            '❌ [SHOP_TOKENS_PROVIDER] HTTP error: ${response.statusCode}');
+            '❌ [SHOP_TOKENS_PROVIDER] HTTP error: ${response.statusCode}',);
         // Use cached value as fallback
         _shopTokens = cachedTokens;
         notifyListeners();

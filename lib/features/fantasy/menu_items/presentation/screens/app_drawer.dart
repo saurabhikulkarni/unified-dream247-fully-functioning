@@ -4,7 +4,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/app_colors.dart';
-import 'package:unified_dream247/features/fantasy/core/app_constants/app_pages.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/images.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/strings.dart';
 import 'package:unified_dream247/features/fantasy/accounts/presentation/providers/wallet_details_provider.dart';
@@ -14,7 +13,6 @@ import 'package:unified_dream247/features/fantasy/menu_items/presentation/provid
 import 'package:unified_dream247/features/fantasy/menu_items/presentation/screens/edit_profile_page.dart';
 import 'package:unified_dream247/features/fantasy/menu_items/presentation/screens/refer_and_earn_page.dart';
 import 'package:unified_dream247/features/fantasy/menu_items/presentation/screens/settings_page.dart';
-import 'package:unified_dream247/features/fantasy/menu_items/presentation/screens/support_page.dart';
 import 'package:unified_dream247/features/fantasy/menu_items/presentation/widgets/logout_dialogbox.dart';
 import 'package:unified_dream247/features/fantasy/user_verification/presentation/screens/verify_details_page.dart';
 

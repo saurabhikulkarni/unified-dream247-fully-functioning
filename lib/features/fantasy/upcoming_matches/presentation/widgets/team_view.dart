@@ -106,7 +106,7 @@ class _TeamView extends State<TeamView> {
                                         MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
-                                        '${userData?.team ?? "${Provider.of<UserDataProvider>(context, listen: false).userData?.mobile}"} (T${widget.data.teamnumber})',
+                                        '${widget.data.userid ?? "${Provider.of<UserDataProvider>(context, listen: false).userData?.mobile}"} (T${widget.data.teamnumber})',
                                         style: GoogleFonts.exo2(
                                           fontWeight: FontWeight.w700,
                                           fontSize: 14.sp,
@@ -117,7 +117,7 @@ class _TeamView extends State<TeamView> {
                                               !showCheckbox)
                                           ? Row(
                                               children: [
-                                                const Icon(Icons.refresh),
+                                                //const Icon(Icons.refresh),
                                                 IconButton(
                                                   icon: Icon(
                                                     Icons.edit_outlined,

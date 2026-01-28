@@ -340,27 +340,64 @@ class AccountsDatasource implements AccountsRepositories {
 
   @override
   Future<BalanceModel?>? myWalletDetails(BuildContext context) async {
-    final url = '${APIServerUrl.userServerUrl}${APIServerUrl.myWalletDetails}';
+    try {
+      final url = '${APIServerUrl.userServerUrl}${APIServerUrl.myWalletDetails}';
+      debugPrint('🔄 [WALLET_API] Fetching wallet details from: $url');
 
-    final response = await clientWithToken.get(url);
+      final response = await clientWithToken.get(url);
 
-    final res = response.data;
+      final res = response.data;
+      debugPrint('📥 [WALLET_API] Response status: ${response.statusCode}');
+      debugPrint('📥 [WALLET_API] Response: $res');
 
-    if (ApiServerUtil.validateStatusCode(response.statusCode ?? 200)) {
-      if (res[ApiResponseString.success] == true) {
-        final balance = BalanceModel.fromJson(res[ApiResponseString.data]);
-        Provider.of<WalletDetailsProvider>(
-          context,
-          listen: false,
-        ).setBalance(balance);
-        return balance;
+      if (ApiServerUtil.validateStatusCode(response.statusCode ?? 200)) {
+        if (res[ApiResponseString.success] == true) {
+          debugPrint('✅ [WALLET_API] API success = true');
+          final balance = BalanceModel.fromJson(res[ApiResponseString.data]);
+          debugPrint('💰 [WALLET_API] Parsed balance: ${balance.balance}, bonus: ${balance.bonus}, winning: ${balance.winning}, total: ${balance.totalamount}');
+          
+          // Try to update provider via context first
+          bool updatedViaContext = false;
+          if (context.mounted) {
+            try {
+              final provider = Provider.of<WalletDetailsProvider>(
+                context,
+                listen: false,
+              );
+              provider.setBalance(balance);
+              debugPrint('✅ [WALLET_API] Provider updated via context');
+              updatedViaContext = true;
+            } catch (e) {
+              debugPrint('⚠️ [WALLET_API] Failed to update provider via context: $e');
+            }
+          } else {
+            debugPrint('⚠️ [WALLET_API] Context is not mounted');
+          }
+          
+          // Fallback: update via static reference if context method failed
+          if (!updatedViaContext) {
+            debugPrint('🔄 [WALLET_API] Attempting static provider update as fallback...');
+            WalletDetailsProvider.updateBalanceStatic(balance);
+            debugPrint('✅ [WALLET_API] Provider updated via static method');
+          }
+          
+          return balance;
+        } else {
+          debugPrint('❌ [WALLET_API] API success = false');
+          return null;
+        }
+      } else {
+        debugPrint('❌ [WALLET_API] Invalid status code: ${response.statusCode}');
+        if (context.mounted) {
+          ApiServerUtil.manageException(response, context);
+        }
+        return null;
       }
-    } else {
-      if (context.mounted) {
-        ApiServerUtil.manageException(response, context);
-      }
+    } catch (e) {
+      debugPrint('❌ [WALLET_API] Exception in myWalletDetails: $e');
+      debugPrint('❌ [WALLET_API] Stack trace: ${StackTrace.current}');
+      return null;
     }
-    return null;
   }
 
   @override

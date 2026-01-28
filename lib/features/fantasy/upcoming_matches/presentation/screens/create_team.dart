@@ -473,23 +473,7 @@ class _CreateTeam extends State<CreateTeam> {
                 ),
 
               // Substitute Bar
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                decoration: const BoxDecoration(
-                  color: AppColors.mainColor,
-                ),
-                child: Center(
-                  child: Text(
-                    'Substitute',
-                    style: GoogleFonts.exo2(
-                      color: AppColors.white,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14,
-                    ),
-                  ),
-                ),
-              ),
+              
               // Bottom Buttons
               Align(
                 alignment: Alignment.bottomCenter,

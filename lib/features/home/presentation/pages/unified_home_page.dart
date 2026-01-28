@@ -163,16 +163,15 @@ class _UnifiedHomePageState extends State<UnifiedHomePage>
       return; // Synced!
     }
 
-    // ZOMBIE SESSION CHECK - only if logged in flag is true but NO valid token exists
-    final anyLoginFlag = isLoggedIn || isLoggedInFantasy;
-    if (anyLoginFlag && !hasValidToken) {
+    // ZOMBIE SESSION CHECK - ONLY if SHOP is logged in but NO valid token exists
+    // Do NOT logout if Fantasy is logged in but tokens are missing - just resync
+    if (isLoggedIn && !hasValidToken) {
+      // Shop is marked as logged in but has no tokens - this is a true zombie session
       debugPrint(
-          '🧟 [HOME] Zombie Session Detected (LoggedIn=$anyLoginFlag, Token=null/empty)',);
+          '🧟 [HOME] Zombie Session Detected (Shop Logged In but Token=null/empty)',);
       debugPrint('🧹 [HOME] Forcing cleanup and logout...');
 
       await _authService.logout();
-      // Also clear Fantasy flags
-      await prefs.remove('is_logged_in_fantasy');
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -184,6 +183,11 @@ class _UnifiedHomePageState extends State<UnifiedHomePage>
         );
         setState(() {});
       }
+    } else if (isLoggedInFantasy && !hasValidToken) {
+      // Fantasy is logged in but tokens are missing - try to resync from Fantasy storage
+      debugPrint('⚠️ [HOME] Fantasy logged in but tokens missing. Clearing stale flags...');
+      await prefs.remove('is_logged_in_fantasy');
+      await prefs.setBool('is_logged_in', false);
     } else if (hasValidToken && validToken != null) {
       // Ensure token is synced to both keys
       if (token == null || token.isEmpty) {
@@ -396,17 +400,17 @@ class _UnifiedHomePageState extends State<UnifiedHomePage>
           // Game Tokens Display - Clickable to navigate to wallet
           Consumer<WalletDetailsProvider>(
             builder: (context, walletProvider, child) {
-              // Show ONLY game tokens balance (NOT including bonus/winning)
-              // Winning and bonus are displayed only in wallet page
-              final balance = double.tryParse(walletProvider.walletData?.balance ?? '0') ?? 0;
+              // Show game tokens (bonus) NOT shop balance
+              // bonus = Game Tokens, balance = Shop Tokens
+              final gameTokens = double.tryParse(walletProvider.walletData?.bonus ?? '0') ?? 0;
               
               debugPrint('💎 [HOME_DISPLAY] Game tokens display:');
               debugPrint('   - walletData: ${walletProvider.walletData}');
-              debugPrint('   - balance (game tokens): $balance');
+              debugPrint('   - bonus (game tokens): $gameTokens');
               
               return GestureDetector(
                 onTap: () {
-                  debugPrint('💎 [HOME] Game tokens tapped. Balance: $balance');
+                  debugPrint('💎 [HOME] Game tokens tapped. Value: $gameTokens');
                   _navigateToWallet();
                 },
                 child: Container(
@@ -422,7 +426,7 @@ class _UnifiedHomePageState extends State<UnifiedHomePage>
                       const Text('💎', style: TextStyle(fontSize: 16)),
                       const SizedBox(width: 4),
                       Text(
-                        balance.toInt().toString(),
+                        gameTokens.toInt().toString(),
                         style: const TextStyle(
                           color: Colors.black87,
                           fontWeight: FontWeight.bold,

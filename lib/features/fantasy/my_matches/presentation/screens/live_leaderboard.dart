@@ -382,7 +382,7 @@ class _LiveLeaderboard extends State<LiveLeaderboard> {
     bool isTeamSelected =
         (data.jointeamid == team1id || data.jointeamid == team2id);
     bool isUserTeam = data.teamname ==
-        Provider.of<UserDataProvider>(context, listen: false).userData!.team!;
+        Provider.of<UserDataProvider>(context, listen: false).userData?.team;
     return Card(
       elevation: 0.8,
       margin: const EdgeInsets.symmetric(vertical: 3, horizontal: 6),

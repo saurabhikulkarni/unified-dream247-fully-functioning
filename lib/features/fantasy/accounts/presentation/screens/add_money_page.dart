@@ -41,6 +41,7 @@ import 'package:unified_dream247/features/shop/services/auth_service.dart'
 import 'package:get_it/get_it.dart';
 import 'package:unified_dream247/core/providers/shop_tokens_provider.dart';
 import 'package:unified_dream247/features/fantasy/accounts/presentation/providers/wallet_details_provider.dart';
+import 'package:unified_dream247/features/fantasy/core/utils/app_storage.dart';
 
 class AddMoneyPage extends StatefulWidget {
   const AddMoneyPage({super.key});
@@ -151,7 +152,16 @@ class _AddMoneyPage extends State<AddMoneyPage> {
         debugPrint('📥 [ADD_MONEY] Loading user data...');
         final userUsecases =
             UserUsecases(UserDatasource(ApiImplWithAccessToken()));
-        await userUsecases.getUserDetails(context);
+        
+        try {
+          final result = await userUsecases.getUserDetails(context);
+          debugPrint('📥 [ADD_MONEY] getUserDetails result: $result');
+          
+          // Wait a moment for provider update
+          await Future.delayed(const Duration(milliseconds: 200));
+        } catch (e) {
+          debugPrint('❌ [ADD_MONEY] Error fetching user details: $e');
+        }
 
         // Update local reference
         if (mounted) {
@@ -160,11 +170,30 @@ class _AddMoneyPage extends State<AddMoneyPage> {
                 Provider.of<UserDataProvider>(context, listen: false).userData;
           });
         }
-        debugPrint(
-            '✅ [ADD_MONEY] User data loaded: ${userData?.name ?? "Unknown"}',);
+        
+        if (userData == null) {
+          debugPrint('⚠️ [ADD_MONEY] userData is still null after fetch attempt');
+          debugPrint('⚠️ [ADD_MONEY] Trying to load from local storage...');
+          
+          try {
+            final userDataString = await AppStorage.getStorageValueString('userData');
+            if (userDataString != null && userDataString.isNotEmpty) {
+              final decodedData = jsonDecode(userDataString);
+              if (decodedData is Map<String, dynamic>) {
+                userData = UserFullDetailsResponse.fromJson(decodedData);
+                debugPrint('✅ [ADD_MONEY] User data restored from local storage');
+              }
+            }
+          } catch (e) {
+            debugPrint('❌ [ADD_MONEY] Error loading from local storage: $e');
+          }
+        } else {
+          debugPrint('✅ [ADD_MONEY] User data loaded: ${userData?.name ?? userData?.team ?? "Unknown"}');
+        }
       }
     } catch (e) {
       debugPrint('⚠️ [ADD_MONEY] Error loading data: $e');
+      debugPrint('⚠️ [ADD_MONEY] Stack: ${StackTrace.current}');
     }
   }
 
@@ -986,9 +1015,7 @@ class _AddMoneyPage extends State<AddMoneyPage> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     GestureDetector(
-                      onTap: () {
-                        appToast('Coming Soon', context);
-                      },
+                     
                       child: Image.asset(
                         Images.mysteryBox,
                         height: 50,

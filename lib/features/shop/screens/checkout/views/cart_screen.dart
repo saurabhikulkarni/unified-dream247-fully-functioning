@@ -436,11 +436,20 @@ class _CartScreenState extends State<CartScreen> {
 
       // Update shop tokens provider immediately with new balance
       if (mounted) {
-        // Get the updated balance from wallet service
-        // Note: syncFromStorage() already called above updates provider from local cache
-        // Do NOT call forceRefresh() here as it will re-query Fantasy backend
-        // which still shows the original balance (never received deduction)
-        // This would undo the deduction. Local deduction is now the source of truth.
+        // Force refresh ShopTokensProvider to sync with backend after order placed
+        // This ensures UI shows the deducted balance from backend
+        debugPrint('🔄 [CART] Refreshing ShopTokensProvider after order creation');
+        
+        // Trigger a refresh to pull latest balance from backend
+        if (context.mounted) {
+          try {
+            final shopTokensProvider = context.read<ShopTokensProvider>();
+            await shopTokensProvider.refreshShopTokens();
+            debugPrint('✅ [CART] ShopTokensProvider refreshed with backend balance');
+          } catch (e) {
+            debugPrint('⚠️ [CART] Failed to refresh ShopTokensProvider: $e');
+          }
+        }
       }
 
       // Clear cart completely (both local and backend)

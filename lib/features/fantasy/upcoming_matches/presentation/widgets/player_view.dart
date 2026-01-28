@@ -322,6 +322,22 @@ class _SinglePlayer extends State<SinglePlayer> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
+                    AppSingleton().matchData.playing11Status == 1
+                        ? Text(
+                            (widget.data.playingstatus == 1)
+                                ? '⦿ in Lineup'
+                                : '⦿ not in Lineup',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 7.sp,
+                              color: (widget.data.playingstatus == 1)
+                                  ? AppColors.green
+                                  : (widget.data.playingstatus == 0)
+                                      ? Colors.red
+                                      : AppColors.greyColor,
+                            ),
+                          )
+                        : const SizedBox.shrink(),
                     SizedBox(
                       width: 45.w,
                       child: Text(

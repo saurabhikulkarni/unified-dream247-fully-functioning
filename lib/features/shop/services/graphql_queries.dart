@@ -1110,7 +1110,7 @@ class GraphQLQueries {
   // Deduct shop tokens for purchase (only for shop transactions)
   static const String deductShopTokens = '''
     mutation DeductShopTokens(
-      \$userId: ID!,
+      \$userId: String!,
       \$amount: Float!,
       \$orderId: String!,
       \$itemName: String!
