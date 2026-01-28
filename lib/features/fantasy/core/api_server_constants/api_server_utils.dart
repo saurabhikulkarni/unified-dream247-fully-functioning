@@ -91,7 +91,11 @@ class ApiServerUtil {
     } else if (statusCode == 503) {
       AppNavigation.gotoSplashScreen(context);
     } else {
-      final message = response.data?['message'] ?? Strings.somethingWentWrong;
+      // Handle cases where response.data might be HTML or non-JSON
+      String message = Strings.somethingWentWrong;
+      if (response.data is Map && response.data != null) {
+        message = response.data['message'] ?? Strings.somethingWentWrong;
+      }
       appToast(message, context);
     }
   }

@@ -303,7 +303,7 @@ class UnifiedWalletService {
       }
 
       const baseUrl = 'http://134.209.158.211:4000';
-      final url = '$baseUrl/api/user/wallet/deduct-shop-tokens';
+      final url = '$baseUrl/user/wallet/deduct-shop-tokens';
       
       debugPrint('🔄 [FANTASY_DEDUCT] Attempting Fantasy backend deduction');
       debugPrint('   - URL: $url');
