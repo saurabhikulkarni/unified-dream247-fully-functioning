@@ -90,7 +90,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                             content: Text(
-                                'Please agree to the terms and privacy policy',),
+                              'Please agree to the terms and privacy policy',
+                            ),
                           ),
                         );
                         return;
@@ -99,30 +100,33 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       // First verify OTP (backend also creates user in Hygraph)
                       final otpVerified = await _signUpFormState.verifyOtp();
                       if (!mounted) return;
-                      
+
                       if (!otpVerified) {
                         return; // Error message already shown in verifyOtp
                       }
 
                       final name = _signUpFormState.getUserName();
                       final phone = _signUpFormState.getVerifiedPhone();
-                      
+
                       // Get userId, token, and fantasy_token from backend response
                       final userId = _signUpFormState.getVerifiedUserId();
                       final authToken = _signUpFormState.getVerifiedToken();
                       final fantasyToken = _signUpFormState.getFantasyToken();
                       final isNewUser = _signUpFormState.isNewUser();
-                      
+
                       debugPrint('📝 [SIGNUP] OTP verified. Backend response:');
                       debugPrint('📝 [SIGNUP] userId: $userId');
-                      debugPrint('📝 [SIGNUP] authToken: ${authToken != null ? "present (${authToken.length} chars)" : "null"}');
-                      debugPrint('📝 [SIGNUP] fantasyToken: ${fantasyToken != null ? "present (${fantasyToken.length} chars)" : "null"}');
+                      debugPrint(
+                          '📝 [SIGNUP] authToken: ${authToken != null ? "present (${authToken.length} chars)" : "null"}');
+                      debugPrint(
+                          '📝 [SIGNUP] fantasyToken: ${fantasyToken != null ? "present (${fantasyToken.length} chars)" : "null"}');
                       debugPrint('📝 [SIGNUP] isNewUser: $isNewUser');
-                      
+
                       if (phone == null || phone.isEmpty) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                            content: Text('Please verify your phone number with OTP'),
+                            content: Text(
+                                'Please verify your phone number with OTP'),
                             backgroundColor: Colors.red,
                           ),
                         );
@@ -133,148 +137,208 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       showDialog(
                         context: context,
                         barrierDismissible: false,
-                        builder: (context) => const Center(child: CircularProgressIndicator()),
+                        builder: (context) =>
+                            const Center(child: CircularProgressIndicator()),
                       );
 
                       try {
                         // User already created by backend during OTP verification
                         // No need to call Hygraph directly - backend handles this!
-                        
+
                         if (userId == null || userId.isEmpty) {
                           debugPrint('❌ [SIGNUP] No userId from backend!');
                           if (mounted) {
                             Navigator.of(context).pop();
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text('Error: Backend did not return user ID. Please try again or contact support.'),
+                                content: Text(
+                                    'Error: Backend did not return user ID. Please try again or contact support.'),
                                 backgroundColor: Colors.red,
                               ),
                             );
                           }
                           return;
                         }
-                        
-                        debugPrint('✅ [SIGNUP] User created by backend. UserId: $userId');
-                        
+
+                        debugPrint(
+                            '✅ [SIGNUP] User created by backend. UserId: $userId');
+
                         // Initialize services
                         final authService = AuthService();
                         final prefs = await SharedPreferences.getInstance();
                         const initialShopTokens = 0;
                         await prefs.setInt('shop_tokens', initialShopTokens);
-                        debugPrint('💰 [SIGNUP] Stored initial shopTokens: $initialShopTokens');
-                        
+                        debugPrint(
+                            '💰 [SIGNUP] Stored initial shopTokens: $initialShopTokens');
+
                         // Initialize core AuthService
                         final coreAuthService = core_auth.AuthService();
                         await coreAuthService.initialize();
-                        
+
                         // Use fantasy token if provided, otherwise fall back to shop token
                         String? finalToken = fantasyToken ?? authToken;
-                        
+
                         if (fantasyToken != null && fantasyToken.isNotEmpty) {
-                          debugPrint('✅ [SIGNUP] Using Fantasy token from backend');
-                          debugPrint('✅ [SIGNUP] Token preview: ${fantasyToken.substring(0, 10)}...');
-                          
+                          debugPrint(
+                              '✅ [SIGNUP] Using Fantasy token from backend');
+                          debugPrint(
+                              '✅ [SIGNUP] Token preview: ${fantasyToken.substring(0, 10)}...');
+
                           // Save Fantasy token to all storage keys
                           await prefs.setString('fantasy_token', fantasyToken);
                           await prefs.setString('token', fantasyToken);
                           await prefs.setString('auth_token', fantasyToken);
                         } else {
-                          debugPrint('⚠️ [SIGNUP] No fantasy_token from backend!');
-                          debugPrint('⚠️ [SIGNUP] Using shop token as fallback');
+                          debugPrint(
+                              '⚠️ [SIGNUP] No fantasy_token from backend!');
+                          debugPrint(
+                              '⚠️ [SIGNUP] Using shop token as fallback');
                           if (authToken != null) {
-                            debugPrint('📝 [SIGNUP] Shop token: ${authToken.substring(0, 10)}...');
+                            debugPrint(
+                                '📝 [SIGNUP] Shop token: ${authToken.substring(0, 10)}...');
                           }
                         }
-                        
+
                         // Save login session
                         await authService.saveLoginSession(
                           phone: phone,
                           name: name,
                           phoneVerified: true,
                           userId: userId,
-                          fantasyToken: finalToken, // Will be null if Shop backend doesn't provide it
+                          fantasyToken:
+                              finalToken, // Will be null if Shop backend doesn't provide it
                         );
-                        
-                        // Save to core AuthService
+
+                        // Save to core AuthService with unified auth
                         await coreAuthService.saveUserSession(
                           userId: userId,
                           authToken: finalToken ?? '',
                           mobileNumber: phone,
                           name: name,
+                          shopEnabled: true,
+                          fantasyEnabled: true,
+                          modules: ['shop', 'fantasy'],
                         );
-                        
-                        // ✅ FORCE SET ALL LOGIN FLAGS
-                        // Set is_logged_in_fantasy based on whether we have Fantasy token
-                        await prefs.setBool('is_logged_in', true); // Shop login successful
-                        await prefs.setBool('is_logged_in_fantasy', fantasyToken != null && fantasyToken.isNotEmpty); // Fantasy authenticated if token present
-                        await prefs.setString('user_id', userId);
-                        await prefs.setString('userId', userId);
-                        await prefs.setString('shop_user_id', userId);
-                        await prefs.setString('mobile_number', phone);
-                        
-                        if (fantasyToken != null && fantasyToken.isNotEmpty) {
-                          await prefs.setString('user_id_fantasy', userId); // Only set if Fantasy is authenticated
-                          debugPrint('✅ [SIGNUP] Session flags set:');
-                          debugPrint('   - is_logged_in: true (Shop)');
-                          debugPrint('   - is_logged_in_fantasy: true (Fantasy authenticated)');
-                        } else {
-                          debugPrint('✅ [SIGNUP] Session flags set:');
-                          debugPrint('   - is_logged_in: true (Shop)');
-                          debugPrint('   - is_logged_in_fantasy: false (No Fantasy token)');
-                        }
-                        
-                        // ✅ CRITICAL: Save tokens to storage
-                        if (finalToken != null && finalToken.isNotEmpty) {
-                          await prefs.setString('token', finalToken);
-                          await prefs.setString('auth_token', finalToken);
-                          if (fantasyToken != null && fantasyToken.isNotEmpty) {
-                            await prefs.setString('shop_token', authToken ?? ''); // Save original shop token separately
+
+                        debugPrint(
+                            '✅ [SIGNUP] Initial session saved with Shop token');
+
+                        // ✅ SYNC NEW USER TO FANTASY BACKEND
+                        // This ensures fantasy_enabled is set true by passing bearer token
+                        debugPrint(
+                            '🔗 [SIGNUP] Syncing new user to Fantasy backend...');
+                        try {
+                          final fantasyLoginResult =
+                              await coreAuthService.loginFromShop(
+                            hygraphUserId: userId,
+                            mobileNumber: phone,
+                            name: name,
+                            shopTokens: initialShopTokens,
+                            totalSpentTokens: 0,
+                            walletBalance: 0.0,
+                          );
+
+                          if (fantasyLoginResult['success'] == true) {
+                            debugPrint(
+                                '✅ [SIGNUP] User successfully synced to Fantasy backend');
+
+                            // Extract Fantasy token from sync response
+                            final fantasySyncToken =
+                                fantasyLoginResult['accessToken'] ??
+                                    fantasyLoginResult['token'];
+
+                            if (fantasySyncToken != null &&
+                                fantasySyncToken.isNotEmpty) {
+                              // Update with Fantasy-specific token
+                              finalToken = fantasySyncToken;
+
+                              await prefs.setString('token', fantasySyncToken);
+                              await prefs.setString(
+                                  'auth_token', fantasySyncToken);
+                              await prefs.setString(
+                                  'fantasy_token', fantasySyncToken);
+                              debugPrint(
+                                  '✅ [SIGNUP] Fantasy token saved: ${fantasySyncToken.substring(0, 20)}...');
+
+                              // Update core auth with Fantasy token
+                              await coreAuthService.saveUserSession(
+                                userId: userId,
+                                authToken: fantasySyncToken,
+                                mobileNumber: phone,
+                                name: name,
+                                shopEnabled: true,
+                                fantasyEnabled: true,
+                                modules: ['shop', 'fantasy'],
+                              );
+                              debugPrint(
+                                  '✅ [SIGNUP] Fantasy enabled with bearer token');
+                            }
+                          } else {
+                            debugPrint(
+                                '⚠️ [SIGNUP] Fantasy sync failed: ${fantasyLoginResult['message']}');
+                            debugPrint(
+                                '⚠️ [SIGNUP] Continuing with Shop-only mode');
                           }
-                          debugPrint('✅ [SIGNUP] Tokens saved to storage');
-                        } else {
-                          debugPrint('⚠️ [SIGNUP] No token from Shop backend!');
+                        } catch (e) {
+                          debugPrint('⚠️ [SIGNUP] Fantasy sync error: $e');
+                          debugPrint(
+                              '⚠️ [SIGNUP] Continuing with Shop-only mode');
                         }
-                        
+
+                        debugPrint(
+                            '✅ [SIGNUP] Final session - Shop & Fantasy enabled');
+                        debugPrint('   - Bearer token passed to Fantasy app');
+
                         // ✅ FINAL VALIDATION: Verify session is complete before navigation
                         final savedToken = prefs.getString('token');
                         final savedAuthToken = prefs.getString('auth_token');
                         final savedIsLoggedIn = prefs.getBool('is_logged_in');
                         final savedUserId = prefs.getString('user_id');
-                        
+
                         debugPrint('🔐 [SIGNUP] FINAL SESSION VALIDATION:');
                         debugPrint('   - is_logged_in: $savedIsLoggedIn');
-                        debugPrint('   - is_logged_in_fantasy: ${prefs.getBool('is_logged_in_fantasy')}');
+                        debugPrint(
+                            '   - is_logged_in_fantasy: ${prefs.getBool('is_logged_in_fantasy')}');
                         debugPrint('   - user_id: $savedUserId');
-                        debugPrint('   - token present: ${savedToken != null && savedToken.isNotEmpty}');
-                        debugPrint('   - auth_token present: ${savedAuthToken != null && savedAuthToken.isNotEmpty}');
-                        
+                        debugPrint(
+                            '   - token present: ${savedToken != null && savedToken.isNotEmpty}');
+                        debugPrint(
+                            '   - auth_token present: ${savedAuthToken != null && savedAuthToken.isNotEmpty}');
+
                         // Verify userId is saved (token is optional for Shop-only mode)
                         if (savedUserId == null || savedUserId.isEmpty) {
-                          debugPrint('❌ [SIGNUP] UserId not saved properly! Aborting navigation.');
+                          debugPrint(
+                              '❌ [SIGNUP] UserId not saved properly! Aborting navigation.');
                           if (mounted) {
                             Navigator.of(context).pop();
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text('Session error. Please try logging in again.'),
+                                content: Text(
+                                    'Session error. Please try logging in again.'),
                                 backgroundColor: Colors.red,
                               ),
                             );
                           }
                           return;
                         }
-                        
+
                         // Debug: Verify flags were saved
                         debugPrint('🔐 [SIGNUP] Session flags after save:');
-                        debugPrint('   - is_logged_in: ${prefs.getBool('is_logged_in')}');
-                        debugPrint('   - is_logged_in_fantasy: ${prefs.getBool('is_logged_in_fantasy')}');
-                        debugPrint('   - user_id: ${prefs.getString('user_id')}');
-                        debugPrint('   - token: ${prefs.getString('token') != null ? "present" : "null"}');
-                        
-                        debugPrint('✅ [SIGNUP] User session saved - persistent login enabled');
-                        
+                        debugPrint(
+                            '   - is_logged_in: ${prefs.getBool('is_logged_in')}');
+                        debugPrint(
+                            '   - is_logged_in_fantasy: ${prefs.getBool('is_logged_in_fantasy')}');
+                        debugPrint(
+                            '   - user_id: ${prefs.getString('user_id')}');
+                        debugPrint(
+                            '   - token: ${prefs.getString('token') != null ? "present" : "null"}');
+
+                        debugPrint(
+                            '✅ [SIGNUP] User session saved - persistent login enabled');
+
                         if (!mounted) return;
                         Navigator.of(context).pop(); // Hide loading
-                        
+
                         // Show success message
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
@@ -283,7 +347,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             duration: Duration(seconds: 3),
                           ),
                         );
-                        
+
                         context.go(RouteNames.home);
                       } catch (e, stackTrace) {
                         debugPrint('❌ [SIGNUP] Exception during signup: $e');

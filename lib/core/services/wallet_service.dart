@@ -92,7 +92,7 @@ class UnifiedWalletService {
 
       // Try to fetch from GraphQL backend
       final wallet = await _graphQLService.getUserWallet(userId);
-      final backendTokens = wallet['shopTokens'] as double? ?? 0.0;
+      final backendTokens = wallet['balance'] as double? ?? 0.0;
       
       // If backend has value, sync to local storage
       if (backendTokens > 0) {
@@ -110,6 +110,7 @@ class UnifiedWalletService {
       debugPrint('⚠️ [UNIFIED_WALLET] Backend fetch failed, using local: $e');
       return _safeGetDouble(StorageConstants.shopTokens);
     }
+    
   }
 
   /// Set shop tokens balance (local only - use addShopTokens or deductShopTokens for backend sync)

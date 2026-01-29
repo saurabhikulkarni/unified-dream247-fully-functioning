@@ -134,7 +134,9 @@ class AuthService {
         if (accessToken != null) {
           await _prefs?.setString(StorageConstants.authToken, accessToken);
           await _prefs?.setString(
-              'token', accessToken,); // For Fantasy compatibility
+            'token',
+            accessToken,
+          ); // For Fantasy compatibility
         }
         if (refreshToken != null) {
           await _prefs?.setString('refresh_token', refreshToken);
@@ -255,7 +257,8 @@ class AuthService {
             Uri.parse(ApiConfig.fantasyUserLoginEndpoint),
             headers: {'Content-Type': 'application/json'},
             body: jsonEncode({
-              'mobile': cleanMobile, // Fantasy expects 'mobile' not 'mobile_number'
+              'mobile':
+                  cleanMobile, // Fantasy expects 'mobile' not 'mobile_number'
             }),
           )
           .timeout(const Duration(seconds: ApiConfig.requestTimeoutSeconds));
@@ -385,13 +388,14 @@ class AuthService {
       debugPrint('✅ [AUTH] Token saved: ${authToken.length} chars');
     } else {
       debugPrint(
-          '⚠️ [AUTH] Skipping token save - empty token provided (keeping existing)',);
+        '⚠️ [AUTH] Skipping token save - empty token provided (keeping existing)',
+      );
     }
 
     await _prefs?.setString('mobile_number', mobileNumber);
-    await _prefs?.setBool(StorageConstants.isLoggedIn, true);
-    // Also set Fantasy login flag for consistency
-    await _prefs?.setBool('is_logged_in_fantasy', true);
+    await _prefs?.setBool(StorageConstants.isLoggedIn, shopEnabled);
+    // Set Fantasy login flag based on fantasyEnabled parameter
+    await _prefs?.setBool('is_logged_in_fantasy', fantasyEnabled);
 
     if (email != null) {
       await _prefs?.setString(StorageConstants.userEmail, email);
@@ -426,7 +430,8 @@ class AuthService {
     final result = (isShopLoggedIn || isFantasyLoggedIn) && hasValidToken;
 
     debugPrint(
-        '🔐 [AUTH] isLoggedIn check: shop=$isShopLoggedIn, fantasy=$isFantasyLoggedIn, token=${hasValidToken ? "valid" : "missing"} => $result',);
+      '🔐 [AUTH] isLoggedIn check: shop=$isShopLoggedIn, fantasy=$isFantasyLoggedIn, token=${hasValidToken ? "valid" : "missing"} => $result',
+    );
 
     return result;
   }

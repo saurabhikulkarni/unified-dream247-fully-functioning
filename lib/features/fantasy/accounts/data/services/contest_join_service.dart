@@ -94,7 +94,7 @@ class ContestJoinService {
   /// Call backend debit-tokens endpoint
   /// POST /user/debit-tokens
   Future<Map<String, dynamic>> _debitTokensFromBackend({
-    required double amount,
+    required double amount, 
     required String contestId,
     required String description,
   }) async {

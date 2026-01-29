@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/error/error_handler.dart';
 import '../../domain/usecases/send_otp_usecase.dart';
@@ -71,7 +72,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           );
           emit(Authenticated(user));
         } catch (e) {
-          emit(AuthError('Login successful but failed to save session: ${e.toString()}'));
+          emit(AuthError(
+              'Login successful but failed to save session: ${e.toString()}'));
         }
       },
     );
@@ -107,7 +109,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           );
           emit(Authenticated(user));
         } catch (e) {
-          emit(AuthError('Registration successful but failed to save session: ${e.toString()}'));
+          emit(AuthError(
+              'Registration successful but failed to save session: ${e.toString()}'));
         }
       },
     );
@@ -133,7 +136,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         emit(AuthError(errorMessage));
       },
       (user) async {
-        print('🔐 [AUTH_BLOC] OTP verified successfully for user: ${user.name}');
+        print(
+            '🔐 [AUTH_BLOC] OTP verified successfully for user: ${user.name}');
         // Save unified session for shop and fantasy after successful OTP verification
         try {
           final authToken = await localDataSource.getAccessToken();
@@ -150,7 +154,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           emit(Authenticated(user));
         } catch (e) {
           print('🔐 [AUTH_BLOC] Failed to save session: $e');
-          emit(AuthError('OTP verification successful but failed to save session: ${e.toString()}'));
+          emit(AuthError(
+              'OTP verification successful but failed to save session: ${e.toString()}'));
         }
       },
     );
@@ -171,7 +176,26 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     CheckAuthStatusEvent event,
     Emitter<AuthState> emit,
   ) async {
-    // TODO: Implement check auth status
-    emit(const Unauthenticated());
+    try {
+      // Check if user has a valid cached session
+      final user = await localDataSource.getCachedUser();
+      final accessToken = await localDataSource.getAccessToken();
+
+      debugPrint('🔍 [AUTH_BLOC] Checking auth status...');
+      debugPrint('   - Cached user: ${user != null ? user.name : "null"}');
+      debugPrint(
+          '   - Access token: ${accessToken != null ? "present" : "null"}');
+
+      if (user != null && accessToken != null && accessToken.isNotEmpty) {
+        debugPrint('✅ [AUTH_BLOC] Valid session found - user authenticated');
+        emit(Authenticated(user.toEntity()));
+      } else {
+        debugPrint('❌ [AUTH_BLOC] No valid session - user unauthenticated');
+        emit(const Unauthenticated());
+      }
+    } catch (e) {
+      debugPrint('❌ [AUTH_BLOC] Error checking auth status: $e');
+      emit(const Unauthenticated());
+    }
   }
 }

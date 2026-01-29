@@ -8,8 +8,10 @@ import 'package:unified_dream247/config/api_config.dart';
 import 'package:unified_dream247/features/shop/services/graphql_client.dart';
 import 'package:unified_dream247/features/shop/services/graphql_queries.dart';
 import 'package:unified_dream247/core/services/wallet_service.dart';
-import 'package:unified_dream247/core/services/shop/wishlist_service.dart' as core_wishlist;
-import 'package:unified_dream247/core/services/shop/cart_service.dart' as core_cart;
+import 'package:unified_dream247/core/services/shop/wishlist_service.dart'
+    as core_wishlist;
+import 'package:unified_dream247/core/services/shop/cart_service.dart'
+    as core_cart;
 import 'package:unified_dream247/features/shop/services/user_service.dart';
 import 'package:unified_dream247/features/shop/constants.dart';
 import 'package:unified_dream247/features/fantasy/core/app_constants/app_storage_keys.dart';
@@ -43,7 +45,7 @@ class AuthService {
   Future<void> initialize() async {
     if (_isInitialized) return;
     _isInitialized = true;
-    
+
     // Initialize UserService with userId from SharedPreferences if user is logged in
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -109,7 +111,7 @@ class AuthService {
   // Login test user directly (bypass OTP)
   Future<bool> loginTestUser() async {
     if (!enableTestUser) return false;
-    
+
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(_userIdKey, testUserId);
@@ -119,20 +121,20 @@ class AuthService {
       await prefs.setBool(_phoneVerifiedKey, true);
       await prefs.setDouble(_walletBalanceKey, testUserWalletBalance);
       await prefs.setString(_lastLoginKey, DateTime.now().toIso8601String());
-      
+
       // Set current user ID in UserService
       await UserService.setCurrentUserId(testUserId);
-      
+
       // Share user ID with fantasy auth service
       await prefs.setString('user_id_fantasy', testUserId);
       await prefs.setBool('is_logged_in_fantasy', true);
       await prefs.setString('user_phone_fantasy', testUserPhone);
-      
+
       print('✅ Test user logged in successfully');
       print('User ID: $testUserId');
       print('Phone: $testUserPhone');
       print('Wallet: $testUserWalletBalance');
-      
+
       return true;
     } catch (e) {
       print('Error logging in test user: $e');
@@ -166,37 +168,42 @@ class AuthService {
       await prefs.setString(_userNameKey, name);
       await prefs.setBool(_phoneVerifiedKey, phoneVerified);
       await prefs.setString(_lastLoginKey, DateTime.now().toIso8601String());
-      
+
       // Store userId and set it in wallet/wishlist/cart services
       if (userId != null && userId.isNotEmpty) {
-        print('📝 [AUTH] Saving userId from Hygraph: ${userId.substring(0, userId.length > 20 ? 20 : userId.length)}...');
-        
+        print(
+            '📝 [AUTH] Saving userId from Hygraph: ${userId.substring(0, userId.length > 20 ? 20 : userId.length)}...');
+
         // Save to all possible keys for Shop and Fantasy compatibility
-        await prefs.setString(_userIdKey, userId);              // user_id (primary)
-        await prefs.setString('shop_user_id', userId);          // shop_user_id (explicit)
-        await prefs.setString('user_id_fantasy', userId);       // user_id_fantasy (fantasy legacy)
-        await prefs.setString('userId', userId);                // userId (fantasy modern)
-        
+        await prefs.setString(_userIdKey, userId); // user_id (primary)
+        await prefs.setString(
+            'shop_user_id', userId); // shop_user_id (explicit)
+        await prefs.setString(
+            'user_id_fantasy', userId); // user_id_fantasy (fantasy legacy)
+        await prefs.setString('userId', userId); // userId (fantasy modern)
+
         // Set userId in user services for GraphQL backend sync
         // Note: UnifiedWalletService gets userId from SharedPreferences automatically
         await UserService.setCurrentUserId(userId);
-        
+
         // Initialize wishlist and cart services with userId
         await core_wishlist.wishlistService.initialize();
         await core_cart.cartService.initialize();
-        
+
         // Fantasy session flags - SYNC BOTH login flags
         await prefs.setBool('is_logged_in_fantasy', true);
-        await prefs.setBool(_isLoggedInKey, true);  // Also set Shop login flag for sync
+        await prefs.setBool(
+            _isLoggedInKey, true); // Also set Shop login flag for sync
         await prefs.setString('user_phone_fantasy', phone);
-        
+
         print('✅ [AUTH] UserId saved to all storage keys');
-        print('✅ [AUTH] Both is_logged_in and is_logged_in_fantasy set to true');
+        print(
+            '✅ [AUTH] Both is_logged_in and is_logged_in_fantasy set to true');
       }
-      
+
       // Store user phone (shared identifier across both systems)
       await prefs.setString('user_phone', phone);
-      
+
       // Store fantasy JWT token for API authentication
       if (fantasyToken != null && fantasyToken.isNotEmpty) {
         // Save to both keys for compatibility:
@@ -206,8 +213,9 @@ class AuthService {
         await prefs.setString('auth_token', fantasyToken);
         print('✅ [AUTH] Fantasy token saved successfully');
         print('✅ [AUTH] Token length: ${fantasyToken.length}');
-        print('✅ [AUTH] Token preview: ${fantasyToken.substring(0, fantasyToken.length > 20 ? 20 : fantasyToken.length)}...');
-        
+        print(
+            '✅ [AUTH] Token preview: ${fantasyToken.substring(0, fantasyToken.length > 20 ? 20 : fantasyToken.length)}...');
+
         // Verify token was saved to both keys
         final tokenKey1 = prefs.getString('token');
         final tokenKey2 = prefs.getString('auth_token');
@@ -238,17 +246,20 @@ class AuthService {
     try {
       // Fantasy backend user endpoint - using correct userServerUrl structure
       // Fantasy uses: baseUrl/user/ + endpoint (not /api/user/)
-      final userBaseUrl = ApiConfig.fantasyUserUrl;  // http://134.209.158.211:4000/user/
-      final loginEndpoint = '${userBaseUrl}verify-otp';  // Creates user or returns existing
-      
+      final userBaseUrl =
+          ApiConfig.fantasyUserUrl; // http://134.209.158.211:4000/user/
+      final loginEndpoint =
+          '${userBaseUrl}verify-otp'; // Creates user or returns existing
+
       // Clean mobile number (remove non-digits)
       final cleanPhone = phone.replaceAll(RegExp(r'[^\d]'), '');
-      
+
       // Parse name into firstName and lastName
       final nameParts = (name ?? '').trim().split(' ');
       final firstName = nameParts.isNotEmpty ? nameParts[0] : '';
-      final lastName = nameParts.length > 1 ? nameParts.sublist(1).join(' ') : '';
-      
+      final lastName =
+          nameParts.length > 1 ? nameParts.sublist(1).join(' ') : '';
+
       // Prepare request body for Fantasy user creation/login
       final body = {
         'mobile_number': cleanPhone,
@@ -258,7 +269,7 @@ class AuthService {
         'name': name ?? '$firstName $lastName'.trim(),
         'hygraph_user_id': userId ?? '',
       };
-      
+
       print('🔑 [AUTH] ========== FETCHING FANTASY TOKEN ==========');
       print('🔑 [AUTH] Phone: $cleanPhone');
       print('🔑 [AUTH] Name: $name');
@@ -266,33 +277,35 @@ class AuthService {
       print('🔑 [AUTH] isNewUser: $isNewUser');
       print('🔑 [AUTH] Backend URL: $loginEndpoint');
       print('🔑 [AUTH] Request body: ${json.encode(body)}');
-      
+
       // Make HTTP POST request to fantasy backend for user login/registration
-      final response = await http.post(
-        Uri.parse(loginEndpoint),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: json.encode(body),
-      ).timeout(const Duration(seconds: 30));
-      
+      final response = await http
+          .post(
+            Uri.parse(loginEndpoint),
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: json.encode(body),
+          )
+          .timeout(const Duration(seconds: 30));
+
       print('🔑 [AUTH] Response status: ${response.statusCode}');
       print('🔑 [AUTH] Response body: ${response.body}');
-      
+
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = json.decode(response.body);
         print('🔑 [AUTH] Parsed response data: $data');
         print('🔑 [AUTH] Response keys available: ${data.keys.toList()}');
-        
+
         // Try different possible token keys from multiple response formats
         String? token;
-        
+
         // Format 1: Direct token field
         token = data['token'] as String?;
         if (token != null && token.isNotEmpty) {
           print('✅ [AUTH] Token found in "token" field');
         }
-        
+
         // Format 2: accessToken field
         if (token == null || token.isEmpty) {
           token = data['accessToken'] as String?;
@@ -300,7 +313,7 @@ class AuthService {
             print('✅ [AUTH] Token found in "accessToken" field');
           }
         }
-        
+
         // Format 3: access_token field
         if (token == null || token.isEmpty) {
           token = data['access_token'] as String?;
@@ -308,7 +321,7 @@ class AuthService {
             print('✅ [AUTH] Token found in "access_token" field');
           }
         }
-        
+
         // Format 4: data.auth_key field (nested in data object)
         if (token == null || token.isEmpty) {
           final dataObj = data['data'];
@@ -319,7 +332,7 @@ class AuthService {
             }
           }
         }
-        
+
         // Format 5: Direct auth_key field
         if (token == null || token.isEmpty) {
           token = data['auth_key'] as String?;
@@ -327,22 +340,25 @@ class AuthService {
             print('✅ [AUTH] Token found in "auth_key" field');
           }
         }
-        
+
         if (token != null && token.isNotEmpty) {
           print('✅ [AUTH] Fantasy token fetched successfully');
           print('✅ [AUTH] Token length: ${token.length}');
-          print('✅ [AUTH] Token preview: ${token.substring(0, token.length > 50 ? 50 : token.length)}...');
+          print(
+              '✅ [AUTH] Token preview: ${token.substring(0, token.length > 50 ? 50 : token.length)}...');
           print('🔑 [AUTH] ========== FANTASY TOKEN READY ==========');
           return token;
         } else {
           print('❌ [AUTH] No token found in any expected field');
           print('❌ [AUTH] Response keys: ${data.keys}');
           print('❌ [AUTH] Full response structure: $data');
-          print('❌ [AUTH] Tried fields: token, accessToken, access_token, data.auth_key, auth_key');
+          print(
+              '❌ [AUTH] Tried fields: token, accessToken, access_token, data.auth_key, auth_key');
           return null;
         }
       } else {
-        print('❌ [AUTH] Fantasy token fetch failed with status: ${response.statusCode}');
+        print(
+            '❌ [AUTH] Fantasy token fetch failed with status: ${response.statusCode}');
         print('❌ [AUTH] Response body: ${response.body}');
         return null;
       }
@@ -365,17 +381,18 @@ class AuthService {
   }
 
   /// Clear LOCAL login session (logout)
-  /// 
+  ///
   /// ✅ IMPORTANT: This only clears LOCAL session data.
   /// ✅ User's data (shopTokens, wallet balance, orders, etc.) is SAFELY STORED ON BACKEND.
   /// ✅ When user logs back in, their data will be automatically restored from the backend.
   Future<void> unifiedLogout() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      
+
       debugPrint('🔐 [LOGOUT] ========== UNIFIED LOGOUT ==========');
-      debugPrint('ℹ️ [LOGOUT] Clearing LOCAL session only - backend data is preserved');
-      
+      debugPrint(
+          'ℹ️ [LOGOUT] Clearing LOCAL session only - backend data is preserved');
+
       // Clear Shop LOCAL authentication (backend data is preserved)
       await prefs.setBool(_isLoggedInKey, false);
       await prefs.remove(_userPhoneKey);
@@ -388,7 +405,7 @@ class AuthService {
       await prefs.remove('shop_user_id');
       await prefs.remove('userId');
       await prefs.remove('user_id');
-      
+
       // Clear LOCAL Fantasy authentication tokens
       await prefs.remove('token');
       await prefs.remove('auth_token');
@@ -399,13 +416,13 @@ class AuthService {
       await prefs.remove('shop_tokens');
       await prefs.remove('wallet_balance');
       await prefs.remove('wallet_last_update');
-      
+
       // Clear LOCAL Fantasy storage
       await AppStorage.saveToStorageBool(AppStorageKeys.isLoggedIn, false);
       await AppStorage.removeStorageValue(AppStorageKeys.authToken);
       await AppStorage.removeStorageValue(AppStorageKeys.loginToken);
       await AppStorage.removeStorageValue(AppStorageKeys.userId);
-      
+
       // Clear core AuthService LOCAL data
       try {
         final coreAuthService = core_auth.AuthService();
@@ -414,20 +431,21 @@ class AuthService {
       } catch (e) {
         debugPrint('⚠️ [LOGOUT] Error clearing core AuthService: $e');
       }
-      
+
       // Clear LOCAL wallet, wishlist, cart caches
       await UnifiedWalletService().clearAll();
       await core_wishlist.wishlistService.clearWishlist();
       await core_cart.cartService.clearCart();
       await UserService.setCurrentUserId('');
-      
+
       // Clear image cache to prevent memory issues on re-login
       PaintingBinding.instance.imageCache.clear();
       PaintingBinding.instance.imageCache.clearLiveImages();
       debugPrint('🧹 [LOGOUT] Image cache cleared');
-      
+
       debugPrint('✅ [LOGOUT] LOCAL session cleared');
-      debugPrint('✅ [LOGOUT] Backend data (shopTokens, wallet, orders) is PRESERVED');
+      debugPrint(
+          '✅ [LOGOUT] Backend data (shopTokens, wallet, orders) is PRESERVED');
       debugPrint('✅ [LOGOUT] User can login again and restore their data');
       debugPrint('🔐 [LOGOUT] ========== LOGOUT COMPLETE ==========');
     } catch (e) {
@@ -553,7 +571,7 @@ class AuthService {
   }) async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      
+
       // Save for Shop module
       await prefs.setBool(_isLoggedInKey, true);
       await prefs.setString(_userPhoneKey, phone);
@@ -561,26 +579,27 @@ class AuthService {
       await prefs.setBool(_phoneVerifiedKey, phoneVerified);
       await prefs.setString(_userIdKey, userId);
       await prefs.setString(_lastLoginKey, DateTime.now().toIso8601String());
-      
+
       if (email != null && email.isNotEmpty) {
         await prefs.setString('user_email', email);
       }
       if (authToken != null && authToken.isNotEmpty) {
         await prefs.setString(_authTokenKey, authToken);
       }
-      
+
       // Save for Fantasy module
-      await AppStorage.saveToStorageString(AppStorageKeys.loginToken, authToken ?? userId);
+      await AppStorage.saveToStorageString(
+          AppStorageKeys.loginToken, authToken ?? userId);
       await AppStorage.saveToStorageString(AppStorageKeys.userId, userId);
       await AppStorage.saveToStorageString(AppStorageKeys.userPhone, phone);
       await AppStorage.saveToStorageString(AppStorageKeys.userName, name);
       await AppStorage.saveToStorageBool(AppStorageKeys.isLoggedIn, true);
       await AppStorage.saveToStorageBool('phone_verified', phoneVerified);
-      
+
       if (email != null && email.isNotEmpty) {
         await AppStorage.saveToStorageString('user_email', email);
       }
-      
+
       // Save to core AuthService
       final coreAuthService = core_auth.authService;
       await coreAuthService.saveUserSession(
@@ -590,9 +609,9 @@ class AuthService {
         email: email,
         name: name,
       );
-      
+
       await UserService.setCurrentUserId(userId);
-      
+
       debugPrint('✅✅✅ UNIFIED LOGIN SUCCESSFUL ✅✅✅');
       debugPrint('📱 Shop & Fantasy now share the SAME authentication');
       debugPrint('👤 User ID: $userId');
@@ -609,7 +628,9 @@ class AuthService {
     try {
       final prefs = await SharedPreferences.getInstance();
       final shopLoggedIn = prefs.getBool(_isLoggedInKey) ?? false;
-      final fantasyLoggedIn = await AppStorage.getStorageBoolValue(AppStorageKeys.isLoggedIn) ?? false;
+      final fantasyLoggedIn =
+          await AppStorage.getStorageBoolValue(AppStorageKeys.isLoggedIn) ??
+              false;
       return shopLoggedIn || fantasyLoggedIn;
     } catch (e) {
       debugPrint('❌ Error checking unified login: $e');
@@ -622,7 +643,7 @@ class AuthService {
     try {
       final prefs = await SharedPreferences.getInstance();
       String? userId = prefs.getString(_userIdKey);
-      
+
       if (userId == null || userId.isEmpty) {
         userId = await AppStorage.getStorageValueString(AppStorageKeys.userId);
       }
@@ -638,9 +659,10 @@ class AuthService {
     try {
       final prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString(_authTokenKey);
-      
+
       if (token == null || token.isEmpty) {
-        token = await AppStorage.getStorageValueString(AppStorageKeys.loginToken);
+        token =
+            await AppStorage.getStorageValueString(AppStorageKeys.loginToken);
       }
       return token;
     } catch (e) {
@@ -654,35 +676,37 @@ class AuthService {
     try {
       final prefs = await SharedPreferences.getInstance();
       final refreshToken = prefs.getString('refresh_token');
-      
+
       if (refreshToken == null || refreshToken.isEmpty) {
         debugPrint('⚠️ [TOKEN_REFRESH] No refresh token available');
         return null;
       }
 
-      final response = await http.post(
-        Uri.parse(ApiConfig.fantasyRefreshTokenEndpoint),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'refreshToken': refreshToken}),
-      ).timeout(const Duration(seconds: 8));
-      
+      final response = await http
+          .post(
+            Uri.parse(ApiConfig.fantasyRefreshTokenEndpoint),
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({'refreshToken': refreshToken}),
+          )
+          .timeout(const Duration(seconds: 8));
+
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        
+
         // Update auth token
         final newToken = data['token'] ?? data['accessToken'];
         if (newToken != null) {
           await prefs.setString(_authTokenKey, newToken);
           await prefs.setString('token', newToken);
         }
-        
+
         // NEW: Update shopTokens balance from backend response
         if (data['user'] != null && data['user']['shopTokens'] != null) {
           final shopTokens = (data['user']['shopTokens'] as num).toInt();
           await prefs.setInt('shop_tokens', shopTokens);
           debugPrint('💰 [TOKEN_REFRESH] Updated shopTokens: $shopTokens');
         }
-        
+
         debugPrint('✅ [TOKEN_REFRESH] Token refreshed successfully');
         return newToken;
       } else {

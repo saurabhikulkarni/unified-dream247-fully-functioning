@@ -24,13 +24,11 @@ class _UnifiedHomePageState extends State<UnifiedHomePage>
   List<ProductModel> _products = [];
   bool _isLoading = true;
   final core_auth.AuthService _authService = core_auth.AuthService();
-  late RouteObserver<ModalRoute<dynamic>> _routeObserver;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _routeObserver = RouteObserver<ModalRoute<dynamic>>();
     _initAuth();
     _loadProducts();
     _refreshShopTokens();
@@ -124,12 +122,10 @@ class _UnifiedHomePageState extends State<UnifiedHomePage>
   Future<void> _initAuth() async {
     await _authService.initialize();
 
-    // Wait for any pending login operations (Race Condition Fix)
-    await Future.delayed(const Duration(seconds: 2));
-
-    // FORCE RELOAD PREFS
+    // ❌ REMOVED: The 2-second delay was causing race conditions
+    // ❌ REMOVED: prefs.reload() was reverting in-memory changes from signup!
+    // Just get the current instance - it should have the latest values
     final prefs = await SharedPreferences.getInstance();
-    await prefs.reload();
 
     final token = prefs.getString('token'); // Direct check
     final authToken = prefs.getString('auth_token'); // Legacy check

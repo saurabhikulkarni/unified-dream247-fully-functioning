@@ -54,7 +54,19 @@ class ApiServerUtil {
     final statusCode = response.statusCode;
 
     if (statusCode == 401 || statusCode == 440) {
-      // Use unified logout
+      // ⚠️ DO NOT auto-logout on 401 errors!
+      // This can happen for new users whose accounts aren't synced to Fantasy backend yet
+      // Or when Fantasy token needs refresh
+      debugPrint('⚠️ [API_UTILS] Received 401/440 error');
+      debugPrint('⚠️ [API_UTILS] NOT auto-logging out - user may be newly signed up');
+      
+      // Just show a warning toast instead of forcing logout
+      // User can manually logout if they want to
+      appToast('Session may have expired. Please try logging in again if issues persist.', context);
+      
+      // ❌ REMOVED: Do NOT auto-logout and redirect to login
+      // The old code was too aggressive and logged out new users immediately
+      /*
       final authService = AuthService();
       await authService.unifiedLogout();
 
@@ -86,6 +98,7 @@ class ApiServerUtil {
         ).clearliveJoinTeams();
         context.go(RouteNames.login);
       }
+      */
     } else if (statusCode == 500) {
       appToast(Strings.internalServerError, context);
     } else if (statusCode == 503) {
