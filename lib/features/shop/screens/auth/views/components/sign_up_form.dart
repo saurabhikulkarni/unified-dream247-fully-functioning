@@ -136,6 +136,7 @@ class _SignUpFormState extends State<SignUpForm> {
 
   String? _verifiedUserId; // Store userId returned from backend after signup
   String? _verifiedToken; // Store auth token returned from backend
+  String? _verifiedFantasyToken; // Store fantasy_token returned from backend
   bool _isNewUser = false; // Track if this is a new user signup
   
   Future<bool> verifyOtp() async {
@@ -187,11 +188,17 @@ class _SignUpFormState extends State<SignUpForm> {
     }
 
     if (result['success'] == true) {
-      // Store userId and token returned from backend
+      // Store userId, token, and fantasy_token returned from backend
       _verifiedUserId = result['userId']?.toString();
       _verifiedToken = result['token']?.toString();
+      _verifiedFantasyToken = result['fantasy_token']?.toString();
       _isNewUser = result['isNewUser'] == true;
-      debugPrint('✅ [SIGNUP] OTP verified. UserId: $_verifiedUserId, Token: ${_verifiedToken != null ? "present" : "null"}, isNewUser: $_isNewUser');
+      
+      debugPrint('✅ [SIGNUP] OTP verified successfully');
+      debugPrint('   - UserId: $_verifiedUserId');
+      debugPrint('   - Token: ${_verifiedToken != null ? "present" : "null"}');
+      debugPrint('   - Fantasy Token: ${_verifiedFantasyToken != null ? "present (${_verifiedFantasyToken!.length} chars)" : "null"}');
+      debugPrint('   - isNewUser: $_isNewUser');
       
       // Mark phone as verified in AuthService
       await AuthService().markPhoneVerified(phone);
@@ -212,6 +219,9 @@ class _SignUpFormState extends State<SignUpForm> {
   
   /// Get the auth token returned from backend after OTP verification
   String? getVerifiedToken() => _verifiedToken;
+  
+  /// Get the fantasy token returned from backend after OTP verification
+  String? getFantasyToken() => _verifiedFantasyToken;
   
   /// Check if this is a new user signup
   bool isNewUser() => _isNewUser;
