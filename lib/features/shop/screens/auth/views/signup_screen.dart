@@ -112,6 +112,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       final userId = _signUpFormState.getVerifiedUserId();
                       final authToken = _signUpFormState.getVerifiedToken();
                       final fantasyToken = _signUpFormState.getFantasyToken();
+                      final fantasyUserId = _signUpFormState.getFantasyUserId();
                       final isNewUser = _signUpFormState.isNewUser();
 
                       debugPrint('📝 [SIGNUP] OTP verified. Backend response:');
@@ -120,6 +121,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           '📝 [SIGNUP] authToken: ${authToken != null ? "present (${authToken.length} chars)" : "null"}');
                       debugPrint(
                           '📝 [SIGNUP] fantasyToken: ${fantasyToken != null ? "present (${fantasyToken.length} chars)" : "null"}');
+                      debugPrint('📝 [SIGNUP] fantasyUserId: $fantasyUserId');
                       debugPrint('📝 [SIGNUP] isNewUser: $isNewUser');
 
                       if (phone == null || phone.isEmpty) {
@@ -175,29 +177,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         final coreAuthService = core_auth.AuthService();
                         await coreAuthService.initialize();
 
-                        // Use fantasy token if provided, otherwise fall back to shop token
-                        String? finalToken = fantasyToken ?? authToken;
-
-                        if (fantasyToken != null && fantasyToken.isNotEmpty) {
-                          debugPrint(
-                              '✅ [SIGNUP] Using Fantasy token from backend');
-                          debugPrint(
-                              '✅ [SIGNUP] Token preview: ${fantasyToken.substring(0, 10)}...');
-
-                          // Save Fantasy token to all storage keys
-                          await prefs.setString('fantasy_token', fantasyToken);
-                          await prefs.setString('token', fantasyToken);
-                          await prefs.setString('auth_token', fantasyToken);
-                        } else {
-                          debugPrint(
-                              '⚠️ [SIGNUP] No fantasy_token from backend!');
-                          debugPrint(
-                              '⚠️ [SIGNUP] Using shop token as fallback');
-                          if (authToken != null) {
-                            debugPrint(
-                                '📝 [SIGNUP] Shop token: ${authToken.substring(0, 10)}...');
-                          }
-                        }
+                        // Use authToken as primary (should work for both Shop & Fantasy APIs)
+                        // This matches login flow which uses unified token from backend
+                        String? finalToken = authToken;
+                        
+                        debugPrint('🔑 [SIGNUP] Using token for session:');
+                        debugPrint('   - Primary token (authToken): ${authToken != null ? "present" : "null"}');
+                        debugPrint('   - Fantasy token field: ${fantasyToken != null ? "present" : "null"}');
 
                         // Save login session
                         await authService.saveLoginSession(
@@ -209,85 +195,39 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               finalToken, // Will be null if Shop backend doesn't provide it
                         );
 
-                        // Save to core AuthService with unified auth
+                        // Save to core AuthService
                         await coreAuthService.saveUserSession(
                           userId: userId,
                           authToken: finalToken ?? '',
                           mobileNumber: phone,
                           name: name,
+                          fantasyUserId: fantasyUserId,
                           shopEnabled: true,
                           fantasyEnabled: true,
                           modules: ['shop', 'fantasy'],
                         );
 
-                        debugPrint(
-                            '✅ [SIGNUP] Initial session saved with Shop token');
-
-                        // ✅ SYNC NEW USER TO FANTASY BACKEND
-                        // This ensures fantasy_enabled is set true by passing bearer token
-                        debugPrint(
-                            '🔗 [SIGNUP] Syncing new user to Fantasy backend...');
-                        try {
-                          final fantasyLoginResult =
-                              await coreAuthService.loginFromShop(
-                            hygraphUserId: userId,
-                            mobileNumber: phone,
-                            name: name,
-                            shopTokens: initialShopTokens,
-                            totalSpentTokens: 0,
-                            walletBalance: 0.0,
-                          );
-
-                          if (fantasyLoginResult['success'] == true) {
-                            debugPrint(
-                                '✅ [SIGNUP] User successfully synced to Fantasy backend');
-
-                            // Extract Fantasy token from sync response
-                            final fantasySyncToken =
-                                fantasyLoginResult['accessToken'] ??
-                                    fantasyLoginResult['token'];
-
-                            if (fantasySyncToken != null &&
-                                fantasySyncToken.isNotEmpty) {
-                              // Update with Fantasy-specific token
-                              finalToken = fantasySyncToken;
-
-                              await prefs.setString('token', fantasySyncToken);
-                              await prefs.setString(
-                                  'auth_token', fantasySyncToken);
-                              await prefs.setString(
-                                  'fantasy_token', fantasySyncToken);
-                              debugPrint(
-                                  '✅ [SIGNUP] Fantasy token saved: ${fantasySyncToken.substring(0, 20)}...');
-
-                              // Update core auth with Fantasy token
-                              await coreAuthService.saveUserSession(
-                                userId: userId,
-                                authToken: fantasySyncToken,
-                                mobileNumber: phone,
-                                name: name,
-                                shopEnabled: true,
-                                fantasyEnabled: true,
-                                modules: ['shop', 'fantasy'],
-                              );
-                              debugPrint(
-                                  '✅ [SIGNUP] Fantasy enabled with bearer token');
-                            }
-                          } else {
-                            debugPrint(
-                                '⚠️ [SIGNUP] Fantasy sync failed: ${fantasyLoginResult['message']}');
-                            debugPrint(
-                                '⚠️ [SIGNUP] Continuing with Shop-only mode');
-                          }
-                        } catch (e) {
-                          debugPrint('⚠️ [SIGNUP] Fantasy sync error: $e');
-                          debugPrint(
-                              '⚠️ [SIGNUP] Continuing with Shop-only mode');
+                        // ✅ FORCE SET ALL LOGIN FLAGS - Critical for session persistence
+                        await prefs.setBool('is_logged_in', true);
+                        await prefs.setBool('is_logged_in_fantasy', true);
+                        await prefs.setString('user_id', userId);
+                        await prefs.setString('userId', userId);
+                        await prefs.setString('shop_user_id', userId);
+                        await prefs.setString('user_id_fantasy', userId);
+                        await prefs.setString('mobile_number', phone);
+                        if (finalToken != null && finalToken.isNotEmpty) {
+                          await prefs.setString('token', finalToken);
+                          await prefs.setString('auth_token', finalToken);
                         }
 
-                        debugPrint(
-                            '✅ [SIGNUP] Final session - Shop & Fantasy enabled');
-                        debugPrint('   - Bearer token passed to Fantasy app');
+                        // Debug: Verify flags were saved
+                        debugPrint('🔐 [SIGNUP] Session flags after save:');
+                        debugPrint('   - is_logged_in: ${prefs.getBool('is_logged_in')}');
+                        debugPrint('   - is_logged_in_fantasy: ${prefs.getBool('is_logged_in_fantasy')}');
+                        debugPrint('   - user_id: ${prefs.getString('user_id')}');
+                        debugPrint('   - token: ${prefs.getString('token') != null ? "present" : "null"}');
+
+                        debugPrint('✅ [SIGNUP] User session saved - persistent login enabled');
 
                         // ✅ FINAL VALIDATION: Verify session is complete before navigation
                         final savedToken = prefs.getString('token');

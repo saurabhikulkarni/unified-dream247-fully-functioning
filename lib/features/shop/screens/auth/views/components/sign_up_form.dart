@@ -137,6 +137,7 @@ class _SignUpFormState extends State<SignUpForm> {
   String? _verifiedUserId; // Store userId returned from backend after signup
   String? _verifiedToken; // Store auth token returned from backend
   String? _verifiedFantasyToken; // Store fantasy token returned from backend
+  String? _verifiedFantasyUserId; // Store fantasy_user_id returned from backend
   bool _isNewUser = false; // Track if this is a new user signup
   
   Future<bool> verifyOtp() async {
@@ -188,16 +189,41 @@ class _SignUpFormState extends State<SignUpForm> {
     }
 
     if (result['success'] == true) {
-      // Store userId, token, and fantasy_token returned from backend
-      _verifiedUserId = result['userId']?.toString();
-      _verifiedToken = result['token']?.toString();
-      _verifiedFantasyToken = result['fantasy_token']?.toString();
+      // Extract data from backend response (same structure as login)
+      final user = result['user'] ?? {};
+      
+      // Store userId and token returned from backend
+      // Try multiple possible field names for compatibility
+      _verifiedUserId = result['userId']?.toString() ?? 
+                        result['id']?.toString() ?? 
+                        user['id']?.toString() ?? 
+                        user['userId']?.toString() ?? 
+                        user['hygraph_user_id']?.toString();
+                        
+      _verifiedToken = result['authToken']?.toString() ?? 
+                      result['token']?.toString() ?? 
+                      user['token']?.toString() ?? 
+                      user['authToken']?.toString();
+                      
+      // Fantasy token may be in different fields
+      _verifiedFantasyToken = result['fantasy_token']?.toString() ?? 
+                             result['fantasyToken']?.toString() ?? 
+                             user['fantasy_token']?.toString();
+                             
+      // Fantasy user ID (important for session)
+      _verifiedFantasyUserId = result['fantasy_user_id']?.toString() ?? 
+                               result['fantasyUserId']?.toString() ?? 
+                               user['fantasy_user_id']?.toString() ?? 
+                               user['fantasyUserId']?.toString();
+                             
       _isNewUser = result['isNewUser'] == true;
       
       debugPrint('✅ [SIGNUP] OTP verified successfully');
       debugPrint('   - UserId: $_verifiedUserId');
-      debugPrint('   - Token: ${_verifiedToken != null ? "present" : "null"}');
+      debugPrint('   - Token (authToken): ${_verifiedToken != null ? "present (${_verifiedToken!.length} chars)" : "null"}');
       debugPrint('   - Fantasy Token: ${_verifiedFantasyToken != null ? "present (${_verifiedFantasyToken!.length} chars)" : "null"}');
+      debugPrint('   - Fantasy User ID: $_verifiedFantasyUserId');
+      debugPrint('   - Backend response keys: ${result.keys.toList()}');
       debugPrint('   - isNewUser: $_isNewUser');
       
       // Mark phone as verified in AuthService
@@ -222,6 +248,9 @@ class _SignUpFormState extends State<SignUpForm> {
   
   /// Get the fantasy token returned from backend after OTP verification
   String? getFantasyToken() => _verifiedFantasyToken;
+  
+  /// Get the fantasy user ID returned from backend after OTP verification
+  String? getFantasyUserId() => _verifiedFantasyUserId;
   
   /// Check if this is a new user signup
   bool isNewUser() => _isNewUser;
