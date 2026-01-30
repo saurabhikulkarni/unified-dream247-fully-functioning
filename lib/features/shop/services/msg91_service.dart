@@ -244,12 +244,12 @@ class Msg91Service {
       }
 
       if (response.statusCode == 200 && responseData['success'] == true) {
-        final token = responseData['token'];
+        final token = responseData['token'] ?? responseData['authToken'];
         if (token != null && token is String && token.isNotEmpty) {
            try {
              final prefs = await SharedPreferences.getInstance();
              await prefs.setString('temp_otp_token', token);
-             await prefs.setString('auth_token', token); // Also try to set directly
+             await prefs.setString('auth_token', token);
              await prefs.setString('token', token);
              if (kDebugMode) {
                print('✅ [MSG91] Intercepted and saved Auth Token: ${token.substring(0, 5)}...');
@@ -259,13 +259,12 @@ class Msg91Service {
            }
         }
         
-        return {
-          'success': true,
-          'message': responseData['message'] ?? 'OTP verified successfully',
-          'token': responseData['token'], // Optional auth token from backend
-          'userId': responseData['userId'], // User ID from Hygraph (created by backend)
-          'isNewUser': responseData['isNewUser'] ?? false, // Whether this is a new signup
-        };
+        if (kDebugMode) {
+          print('✅ [MSG91] Complete backend response: $responseData');
+        }
+        
+        // Return complete backend response - pass through all fields
+        return responseData;
       } else {
         // ... (existing failure code)
         return {

@@ -1,11 +1,10 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:unified_dream247/config/routes/route_names.dart';
 import 'package:unified_dream247/features/shop/screens/auth/views/components/sign_up_form.dart';
-import 'package:unified_dream247/features/shop/services/auth_service.dart';
 import 'package:unified_dream247/features/shop/constants.dart';
-import 'package:unified_dream247/core/services/auth_service.dart' as core_auth;
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -111,100 +110,66 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       final name = _signUpFormState.getUserName();
                       final phone = _signUpFormState.getVerifiedPhone();
 
-                      // Get all data from backend response
+                      // Get data from backend response
                       final userId = _signUpFormState.getVerifiedUserId();
                       final authToken = _signUpFormState.getVerifiedToken();
                       final fantasyUserId = _signUpFormState.getFantasyUserId();
 
-                      if (phone == null || phone.isEmpty) {
+                      if (userId == null || userId.isEmpty || authToken == null || authToken.isEmpty) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                            content: Text('Please verify your phone number with OTP'),
+                            content: Text('Error: Invalid response from backend'),
                             backgroundColor: Colors.red,
                           ),
                         );
                         return;
                       }
 
-                      if (userId == null || userId.isEmpty) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Error: No user ID received from backend'),
-                            backgroundColor: Colors.red,
-                          ),
-                        );
-                        return;
-                      }
-
-                      // Show loading indicator
-                      showDialog(
-                        context: context,
-                        barrierDismissible: false,
-                        builder: (context) =>
-                            const Center(child: CircularProgressIndicator()),
-                      );
-
+                      // Save complete session
                       try {
-                        // Save session locally
-                        final authService = AuthService();
-                        final coreAuthService = core_auth.AuthService();
                         final prefs = await SharedPreferences.getInstance();
-
-                        // Initialize services
-                        await coreAuthService.initialize();
-
-                        // Save to Shop AuthService
-                        await authService.saveLoginSession(
-                          phone: phone,
-                          name: name,
-                          phoneVerified: true,
-                          userId: userId,
-                          fantasyToken: authToken,
-                        );
-
-                        // Save to core AuthService
-                        await coreAuthService.saveUserSession(
-                          userId: userId,
-                          authToken: authToken ?? '',
-                          mobileNumber: phone,
-                          name: name,
-                          fantasyUserId: fantasyUserId,
-                          shopEnabled: true,
-                          fantasyEnabled: true,
-                          modules: ['shop', 'fantasy'],
-                        );
-
-                        // Set all login flags for persistent session
-                        await prefs.setBool('is_logged_in', true);
-                        await prefs.setBool('is_logged_in_fantasy', true);
+                        
+                        // Save all user data
                         await prefs.setString('user_id', userId);
                         await prefs.setString('userId', userId);
                         await prefs.setString('mobile_number', phone);
+                        await prefs.setString('token', authToken);
+                        await prefs.setString('auth_token', authToken);
+                        await prefs.setBool('is_logged_in', true);
                         
-                        if (authToken != null && authToken.isNotEmpty) {
-                          await prefs.setString('token', authToken);
-                          await prefs.setString('auth_token', authToken);
+                        // Save fantasy data if available
+                        if (fantasyUserId != null && fantasyUserId.isNotEmpty) {
+                          await prefs.setString('user_id_fantasy', fantasyUserId);
+                          await prefs.setBool('is_logged_in_fantasy', true);
+                          await prefs.setBool('fantasy_enabled', true);
+                          
+                          if (kDebugMode) {
+                            print('✅ [SIGNUP] Fantasy user saved: $fantasyUserId');
+                          }
                         }
-
+                        
+                        if (kDebugMode) {
+                          print('✅ [SIGNUP] Session saved successfully');
+                          print('   - userId: $userId');
+                          print('   - phone: $phone');
+                          print('   - fantasy_user_id: $fantasyUserId');
+                        }
+                        
                         if (!mounted) return;
-                        Navigator.of(context).pop(); // Hide loading
 
-                        // Show success message
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                             content: Text('Account created successfully!'),
                             backgroundColor: Colors.green,
-                            duration: Duration(seconds: 2),
                           ),
                         );
 
                         context.go(RouteNames.home);
                       } catch (e) {
                         if (mounted) {
-                          Navigator.of(context).pop(); // Hide loading
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text('Error: $e'),
+                              content: Text('Error saving session: $e'),
                               backgroundColor: Colors.red,
                             ),
                           );
