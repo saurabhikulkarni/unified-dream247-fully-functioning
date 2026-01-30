@@ -46,6 +46,22 @@ class _ContestPageState extends State<ContestPage>
       length: (AppSingleton.singleton.appData.guruTeam == 1) ? 4 : 3,
       vsync: this,
     );
+    
+    // Check if match has already started
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        final matchStartTimeStr = AppSingleton.singleton.matchData.timeStart;
+        if (matchStartTimeStr != null) {
+          final matchStartTime = int.parse(matchStartTimeStr.toString());
+          final currentTime = DateTime.now().millisecondsSinceEpoch;
+          
+          // If match has already started, show dialog
+          if (currentTime >= matchStartTime) {
+            showMatchTimeOverDialog(context);
+          }
+        }
+      }
+    });
   }
 
   @override
@@ -61,7 +77,7 @@ class _ContestPageState extends State<ContestPage>
   void showMatchTimeOverDialog(BuildContext ctx) async {
     showDialog(
       context: ctx,
-      builder: (BuildContext ctx) {
+      builder: (BuildContext dialogContext) {
         return AlertDialog(
           title: Row(
             children: [
@@ -79,15 +95,24 @@ class _ContestPageState extends State<ContestPage>
             ],
           ),
           content: const Text(
-            '🎉 Contest for this match are closed now, Join upcoming matches and enjoy winnings. 🎉',
-            style: TextStyle(fontSize: 12, color: Colors.black87, height: 1.5),
+            'Match has already started and you cannot join contests now. Please join upcoming matches.',
+            style: TextStyle(fontSize: 14, color: Colors.black87, height: 1.5),
           ),
           actions: <Widget>[
-            InkWell(
-              child: const Text('OK'),
-              onTap: () {
-                AppNavigation.gotoLandingScreenReplacement(context);
+            TextButton(
+              style: TextButton.styleFrom(
+                backgroundColor: AppColors.mainColor,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              onPressed: () {
+                Navigator.of(dialogContext).pop(); // Close dialog
+                Navigator.of(ctx).pop(); // Go back to fantasy home
               },
+              child: const Text('OK'),
             ),
           ],
         );
@@ -103,7 +128,15 @@ class _ContestPageState extends State<ContestPage>
       showWalletIcon: true,
       showAppBar: true,
       addPadding: false,
-      updateIndex: (p0) => 0,
+      updateIndex: (p0) {
+        // When timer expires, show dialog
+        showMatchTimeOverDialog(context);
+        return 0;
+      },
+      onWillPop: () async {
+        // Allow normal back navigation
+        return true;
+      },
       child: DefaultTabController(
         length: (AppSingleton.singleton.appData.guruTeam == 1) ? 4 : 3,
         child: Scaffold(

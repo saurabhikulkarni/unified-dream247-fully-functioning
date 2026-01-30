@@ -96,10 +96,15 @@ class _UpcomingContestTimerState extends State<UpcomingContestTimer>
           AppSingleton.singleton.matchData.timeStart.toString(),
           () {
             if (mounted) {
-              if (Navigator.of(context).canPop()) {
-                Navigator.of(context).pop();
+              // If updateIndex callback is provided, call it and let it handle navigation
+              // Otherwise, just pop the navigator
+              if (widget.updateIndex != null) {
+                widget.updateIndex?.call(0);
+              } else {
+                if (Navigator.of(context).canPop()) {
+                  Navigator.of(context).pop();
+                }
               }
-              widget.updateIndex?.call(0);
             }
           },
           context,
