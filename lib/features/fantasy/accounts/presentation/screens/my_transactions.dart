@@ -31,7 +31,6 @@ class _MyTransactions extends State<MyTransactions>
   int skip = 0;
   int limit = 15;
   String type = 'depositAndWithdrawals';
-  bool oldTransactions = false;
   int _currentIndex = 0;
   AccountsUsecases accountsUsecases = AccountsUsecases(
     AccountsDatasource(ApiImpl(), ApiImplWithAccessToken()),
@@ -138,27 +137,24 @@ class _MyTransactions extends State<MyTransactions>
     });
 
     TransactionsModel? result;
-    if ((oldTransactions)) {
-      result = await accountsUsecases.getTransactions(
-        context,
-        type,
-        skip,
-        limit,
-        selectedStatus,
-      );
-    } else {
-      result = await accountsUsecases.getTransactionsRedis(
-        context,
-        type,
-        skip,
-        limit,
-        selectedStatus,
-      );
-    }
+    // Only pass status filter for depositAndWithdrawals type
+    final statusFilter = (type == 'depositAndWithdrawals') ? selectedStatus : '';
+    result = await accountsUsecases.getTransactions(
+      context,
+      type,
+      skip,
+      limit,
+      statusFilter,
+    );
 
     if (_latestRequestId != requestId) return;
 
     if (result != null && result.transactions != null) {
+      debugPrint('📊 [TRANSACTIONS] Loaded ${result.transactions?.length ?? 0} transactions for type: $type');
+      if (result.transactions!.isNotEmpty) {
+        debugPrint('📊 [TRANSACTIONS] First transaction: ${result.transactions![0].type} - ${result.transactions![0].transactionType} - Amount: ${result.transactions![0].amount}');
+      }
+      
       setState(() {
         if ((result?.transactions ?? []).isNotEmpty) {
           transactionsMap[type]!.addAll(result?.transactions ?? []);
@@ -167,6 +163,8 @@ class _MyTransactions extends State<MyTransactions>
           hasMore = false;
         }
       });
+    } else {
+      debugPrint('❌ [TRANSACTIONS] No result or transactions null for type: $type');
     }
 
     setState(() {
@@ -570,41 +568,6 @@ class _MyTransactions extends State<MyTransactions>
               }),
             ),
           ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: InkWell(
-              onTap: () {
-                setState(() {
-                  oldTransactions = !oldTransactions;
-                  skip = 0;
-                  transactionsMap[type] = [];
-                });
-                fetchTransactions();
-              },
-              child: Container(
-                margin: const EdgeInsets.only(bottom: 40, top: 10),
-                padding: const EdgeInsets.symmetric(
-                  vertical: 10,
-                  horizontal: 30,
-                ),
-                decoration: BoxDecoration(
-                  color: AppColors.white,
-                  border: Border.all(color: AppColors.whiteFade1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  oldTransactions
-                      ? 'View Recent Transactions'
-                      : 'View Old Transactions',
-                  style: const TextStyle(
-                    color: AppColors.mainColor,
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ),
-          ),
         ],
       ),
     );
@@ -824,9 +787,9 @@ class _MyTransactions extends State<MyTransactions>
                   ),
                   RichText(
                     text: TextSpan(
-                      text: (data.transactionType! == 'Credit') ? '+' : '-',
+                      text: (data.transactionType?.toLowerCase() == 'credit') ? '+' : '-',
                       style: GoogleFonts.tomorrow(
-                        color: (data.transactionType! == 'Credit')
+                        color: (data.transactionType?.toLowerCase() == 'credit')
                             ? AppColors.green
                             : AppColors.mainLightColor,
                         fontWeight: FontWeight.w700,
@@ -836,7 +799,7 @@ class _MyTransactions extends State<MyTransactions>
                         TextSpan(
                           text: "${Strings.indianRupee}${data.amount ?? "0"}",
                           style: GoogleFonts.tomorrow(
-                            color: (data.transactionType! == 'Credit')
+                            color: (data.transactionType?.toLowerCase() == 'credit')
                                 ? AppColors.green
                                 : AppColors.mainLightColor,
                             fontWeight: FontWeight.w700,

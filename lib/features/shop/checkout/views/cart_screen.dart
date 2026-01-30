@@ -279,6 +279,13 @@ class _CartScreenState extends State<CartScreen> {
         throw Exception('User not logged in');
       }
       
+      // NOTE: Wallet deduction is now handled by backend API automatically
+      // Backend will deduct tokens when order is created via POST /api/orders/place
+      
+      if (kDebugMode) {
+        print('🚀 Creating order - backend will handle wallet deduction');
+      }
+
       // Convert cart items to OrderItemModel for GraphQL
       final orderItems = cartItems.map((cartItem) {
         return OrderItemModel(
@@ -387,36 +394,20 @@ class _CartScreenState extends State<CartScreen> {
           // Continue with order - Shiprocket is optional
         }
       }
-      // Deduct wallet balance using UnifiedWalletService
-      debugPrint('💳 [CART] 🔄 STARTING_DEDUCTION: $total tokens from order #${order.orderNumber}');
-      final success = await walletService.deductShopTokens(
-        total.toDouble(),
-        itemName: 'Order #${order.orderNumber},',
-        orderId: order.id ?? 'local-${DateTime.now().millisecondsSinceEpoch}',
-      );
       
-      if (!success) {
-        if (!mounted) return;
-        Navigator.pop(context); // Close loading dialog
-        
-        debugPrint('❌ [CART] Deduction FAILED');
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Failed to deduct shop tokens. Please try again.'),
-            backgroundColor: Colors.red,
-          ),
-        );
-        return;
-      }
+      // NOTE: Wallet deduction is handled by backend API automatically
+      // Backend deducts tokens when order is created via POST /api/orders/place
+      debugPrint('✅ [CART] Order created successfully - backend handled wallet deduction');
       
-      debugPrint('✅ [CART] ✅ DEDUCTION_SUCCESS: $total tokens deducted');
-      
-      // Sync shop tokens provider from storage to update UI immediately
-      // The deduction already updated SharedPreferences, now sync the provider
+      // Refresh shop tokens provider to fetch latest balance from backend
       if (mounted) {
-        await context.read<ShopTokensProvider>().syncFromStorage();
-        debugPrint('✅ [CART] 📤 SYNCED_PROVIDER: Shop tokens provider updated with new balance');
-
+        try {
+          final shopTokensProvider = context.read<ShopTokensProvider>();
+          await shopTokensProvider.refreshShopTokens();
+          debugPrint('✅ [CART] ShopTokensProvider refreshed with backend balance');
+        } catch (e) {
+          debugPrint('⚠️ [CART] Failed to refresh ShopTokensProvider: $e');
+        }
       }
 
       // Clear cart completely (both local and backend)

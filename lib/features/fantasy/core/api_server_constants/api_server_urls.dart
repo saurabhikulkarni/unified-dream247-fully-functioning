@@ -99,7 +99,7 @@ class APIServerUrl {
   static const String getoffers = 'fetch-offers';
   static const String tokenTier = 'getTiers';
   static const String mytransactions = 'my-transactions?type=';
-  static const String mytransactionsredis = 'my-redis-transaction?type=';
+  static const String mytransactionsredis = 'my-transactions?type=';
   static const String usersTransactionDetails =
       'my-detailed-transactions?transactionId=';
   static const String sabPaisaTxnResponse = 'sabPaisa-callback';

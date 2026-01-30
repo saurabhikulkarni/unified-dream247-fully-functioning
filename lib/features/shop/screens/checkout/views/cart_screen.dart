@@ -299,21 +299,11 @@ class _CartScreenState extends State<CartScreen> {
         throw Exception('User not logged in');
       }
       
-      // Deduct wallet balance FIRST (before creating order) to ensure atomicity
-      final deductSuccess = await _walletService.deductShopTokens(
-        total.toDouble(),
-        itemName: 'Cart Purchase',
-        orderId: 'pending-${DateTime.now().millisecondsSinceEpoch}',
-      );
-      
-      if (!deductSuccess) {
-        if (kDebugMode) print('❌ Token deduction failed');
-        throw Exception('Failed to deduct wallet balance');
-      }
+      // NOTE: Wallet deduction is now handled by backend API automatically
+      // Backend will deduct tokens when order is created via POST /api/orders/place
       
       if (kDebugMode) {
-        final newBalance = await _walletService.getShopTokens();
-        print('✅ Tokens deducted successfully. New balance: $newBalance');
+        print('🚀 Creating order - backend will handle wallet deduction');
       }
 
       // Convert cart items to OrderItemModel for GraphQL
@@ -351,24 +341,16 @@ class _CartScreenState extends State<CartScreen> {
           if (kDebugMode) print('❌ Order creation failed (attempt $retryCount): $e');
           
           if (retryCount >= maxRetries) {
-            // All retries failed - refund the tokens and show user-friendly error
-            await _walletService.addShopTokens(
-              total.toDouble(),
-              paymentMethod: 'refund',
-            );
+            // All retries failed - backend handles refund automatically
             throw Exception(
-              'Unable to create order. Your tokens have been refunded. Please check your internet connection and try again.',
+              'Unable to create order. Please check your internet connection and try again.',
             );
           }
         }
       }
       
       if (order == null) {
-        // Refund tokens since order creation failed
-        await _walletService.addShopTokens(
-          total.toDouble(),
-          paymentMethod: 'refund',
-        );
+        // Backend handles refund automatically if order creation fails
         throw Exception('Order creation failed after $maxRetries attempts');
       }
 

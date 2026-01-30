@@ -7,6 +7,10 @@ import 'package:unified_dream247/features/shop/services/graphql_queries.dart';
 import 'package:unified_dream247/features/shop/services/user_service.dart';
 import 'package:unified_dream247/features/shop/services/stock_service.dart';
 import 'package:uuid/uuid.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:unified_dream247/config/api_config.dart';
 
 /// OrderService with GraphQL integration
 class OrderServiceGraphQL {
@@ -29,12 +33,13 @@ class OrderServiceGraphQL {
   DateTime? _lastRequestTime;
   static const Duration _minRequestInterval = Duration(milliseconds: 1500); // Increased to 1.5s to avoid burst limits on free tier
   
-  // OPTIMIZED: Fast order creation with minimal API calls
+  // OPTIMIZED: Fast order creation using REST API
   Future<OrderModel> createOrderOptimized({
     required List<OrderItemModel> items,
     required double totalAmount,
     String? addressId,
     OrderStatus status = OrderStatus.pending,
+    String? notes,
   }) async {
     try {
       final userId = UserService.getCurrentUserId();
@@ -46,56 +51,77 @@ class OrderServiceGraphQL {
         throw Exception('Order must have at least one item');
       }
 
-      final orderNumber = _generateOrderNumber();
-      
       if (kDebugMode) {
-        print('🚀 [OPTIMIZED] Creating order with ${items.length} items...');
+        print('🚀 [ORDER_API] Creating order with ${items.length} items via REST API...');
       }
       
-      // STEP 1: Create order (1 API call)
-      final orderId = await _createOrderOnly(
-        userId: userId,
-        orderNumber: orderNumber,
-        totalAmount: totalAmount,
-        status: status,
-        addressId: addressId,
+      // Get auth token
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('token') ?? prefs.getString('auth_token');
+      
+      if (token == null || token.isEmpty) {
+        throw Exception('Authentication token not found');
+      }
+
+      // Prepare request body
+      final requestBody = {
+        'items': items.map((item) => {
+          'productId': item.productId,
+          'quantity': item.quantity,
+          'sizeId': item.sizeId ?? '',
+        }).toList(),
+        'addressId': addressId ?? '',
+        'notes': notes ?? '',
+      };
+
+      if (kDebugMode) {
+        print('📦 [ORDER_API] Request body: ${jsonEncode(requestBody)}');
+      }
+
+      // Call REST API
+      final url = '${ApiConfig.shopBackendUrl}/api/orders/place';
+      if (kDebugMode) {
+        print('🌐 [ORDER_API] Calling: $url');
+      }
+
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(requestBody),
       );
-      
-      await Future.delayed(const Duration(milliseconds: 500));
-      
-      // STEP 2: Create ALL items in parallel (items.length API calls simultaneously)
+
       if (kDebugMode) {
-        print('📦 [OPTIMIZED] Creating ${items.length} items in parallel...');
+        print('📡 [ORDER_API] Response status: ${response.statusCode}');
+        print('📡 [ORDER_API] Response body: ${response.body}');
       }
-      final itemIds = await _createOrderItemsParallel(orderId: orderId, items: items);
-      
-      await Future.delayed(const Duration(milliseconds: 500));
-      
-      // STEP 3: Batch publish items + order (2 API calls total)
-      if (kDebugMode) {
-        print('📤 [OPTIMIZED] Publishing items and order...');
+
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        final errorData = jsonDecode(response.body);
+        throw Exception(errorData['message'] ?? 'Failed to create order');
       }
-      await Future.wait([
-        _publishManyOrderItems(itemIds),
-        _publishOrder(orderId),
-      ]);
+
+      final responseData = jsonDecode(response.body);
       
-      await Future.delayed(const Duration(milliseconds: 500));
-      
-      // STEP 4: Update stock in parallel (items.length API calls simultaneously)
-      if (kDebugMode) {
-        print('📊 [OPTIMIZED] Updating stock for ${items.length} items...');
+      if (responseData['success'] != true) {
+        throw Exception(responseData['message'] ?? 'Order creation failed');
       }
-      await _updateStockParallel(items);
-      
+
+      final orderData = responseData['data'];
+      final orderId = orderData['orderId'] ?? orderData['id'] ?? orderData['_id'];
+      final orderNumber = orderData['orderNumber'] ?? _generateOrderNumber();
+
       if (kDebugMode) {
-        print('✅ [OPTIMIZED] Order created successfully!');
+        print('✅ [ORDER_API] Order created successfully!');
+        print('📝 [ORDER_API] Order ID: $orderId');
+        print('📝 [ORDER_API] Order Number: $orderNumber');
       }
       
-      // Return order without re-fetching to avoid rate limits
-      // Construct the order object from data we already have
+      // Construct order items from request data
       final orderItems = items.map((item) => OrderItemModel(
-        id: null, // Item IDs not needed for return value
+        id: null,
         productId: item.productId,
         sizeId: item.sizeId,
         size: item.size,
@@ -106,7 +132,7 @@ class OrderServiceGraphQL {
       ),).toList();
       
       return OrderModel(
-        id: orderId,
+        id: orderId?.toString(),
         orderNumber: orderNumber,
         userId: userId,
         items: orderItems,
@@ -117,6 +143,9 @@ class OrderServiceGraphQL {
         updatedAt: DateTime.now(),
       );
     } catch (e) {
+      if (kDebugMode) {
+        print('❌ [ORDER_API] Error creating order: $e');
+      }
       throw Exception('Error creating order: $e');
     }
   }
@@ -198,22 +227,6 @@ class OrderServiceGraphQL {
     }
   }
   
-  // Helper: Update stock in parallel
-  Future<void> _updateStockParallel(List<OrderItemModel> items) async {
-    final stockService = StockService();
-    final futures = items
-        .where((item) => item.sizeId != null && item.sizeId!.isNotEmpty)
-        .map((item) => stockService.reduceStock(
-              sizeId: item.sizeId!,
-              quantityToReduce: item.quantity,
-            ),)
-        .toList();
-    
-    if (futures.isNotEmpty) {
-      await Future.wait(futures);
-    }
-  }
-
   // Convert OrderStatus enum to string for GraphQL
   // Hygraph expects enum values to match the schema exactly
   // Try lowercase first as that's a common pattern
