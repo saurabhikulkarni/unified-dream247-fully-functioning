@@ -96,7 +96,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         return;
                       }
 
-                      // First verify OTP (backend also creates user in Hygraph)
+                      // Verify OTP - Backend handles everything:
+                      // - Creates user in Hygraph
+                      // - Creates user in Fantasy MongoDB
+                      // - Links fantasy_user_id back to Hygraph
+                      // - Returns all tokens and IDs
                       final otpVerified = await _signUpFormState.verifyOtp();
                       if (!mounted) return;
 
@@ -107,18 +111,25 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       final name = _signUpFormState.getUserName();
                       final phone = _signUpFormState.getVerifiedPhone();
 
-                      // Get userId, token, and fantasy_token from backend response
+                      // Get all data from backend response
                       final userId = _signUpFormState.getVerifiedUserId();
                       final authToken = _signUpFormState.getVerifiedToken();
-                      final fantasyToken = _signUpFormState.getFantasyToken();
                       final fantasyUserId = _signUpFormState.getFantasyUserId();
-                      final isNewUser = _signUpFormState.isNewUser();
 
                       if (phone == null || phone.isEmpty) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                            content: Text(
-                                'Please verify your phone number with OTP'),
+                            content: Text('Please verify your phone number with OTP'),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                        return;
+                      }
+
+                      if (userId == null || userId.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Error: No user ID received from backend'),
                             backgroundColor: Colors.red,
                           ),
                         );
@@ -134,53 +145,27 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       );
 
                       try {
-                        // User already created by backend during OTP verification
-                        // No need to call Hygraph directly - backend handles this!
-
-                        if (userId == null || userId.isEmpty) {
-                          if (mounted) {
-                            Navigator.of(context).pop();
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text(
-                                    'Error: Backend did not return user ID. Please try again or contact support.'),
-                                backgroundColor: Colors.red,
-                              ),
-                            );
-                          }
-                          return;
-                        }
+                        // Save session locally
+                        final authService = AuthService();
+                        final coreAuthService = core_auth.AuthService();
+                        final prefs = await SharedPreferences.getInstance();
 
                         // Initialize services
-                        final authService = AuthService();
-                        final prefs = await SharedPreferences.getInstance();
-                        const initialShopTokens = 0;
-                        await prefs.setInt('shop_tokens', initialShopTokens);
-                        debugPrint(
-                            '💰 [SIGNUP] Stored initial shopTokens: $initialShopTokens');
-
-                        // Initialize core AuthService
-                        final coreAuthService = core_auth.AuthService();
                         await coreAuthService.initialize();
 
-                        // Use authToken as primary (should work for both Shop & Fantasy APIs)
-                        // This matches login flow which uses unified token from backend
-                        String? finalToken = authToken;
-
-                        // Save login session
+                        // Save to Shop AuthService
                         await authService.saveLoginSession(
                           phone: phone,
                           name: name,
                           phoneVerified: true,
                           userId: userId,
-                          fantasyToken:
-                              finalToken, // Will be null if Shop backend doesn't provide it
+                          fantasyToken: authToken,
                         );
 
                         // Save to core AuthService
                         await coreAuthService.saveUserSession(
                           userId: userId,
-                          authToken: finalToken ?? '',
+                          authToken: authToken ?? '',
                           mobileNumber: phone,
                           name: name,
                           fantasyUserId: fantasyUserId,
@@ -189,38 +174,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           modules: ['shop', 'fantasy'],
                         );
 
-                        // ✅ FORCE SET ALL LOGIN FLAGS - Critical for session persistence
+                        // Set all login flags for persistent session
                         await prefs.setBool('is_logged_in', true);
                         await prefs.setBool('is_logged_in_fantasy', true);
                         await prefs.setString('user_id', userId);
                         await prefs.setString('userId', userId);
-                        await prefs.setString('shop_user_id', userId);
-                        await prefs.setString('user_id_fantasy', userId);
                         await prefs.setString('mobile_number', phone);
-                        if (finalToken != null && finalToken.isNotEmpty) {
-                          await prefs.setString('token', finalToken);
-                          await prefs.setString('auth_token', finalToken);
-                        }
-
-                        // ✅ FINAL VALIDATION: Verify session is complete before navigation
-                        final savedToken = prefs.getString('token');
-                        final savedAuthToken = prefs.getString('auth_token');
-                        final savedIsLoggedIn = prefs.getBool('is_logged_in');
-                        final savedUserId = prefs.getString('user_id');
-
-                        // Verify userId is saved (token is optional for Shop-only mode)
-                        if (savedUserId == null || savedUserId.isEmpty) {
-                          if (mounted) {
-                            Navigator.of(context).pop();
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text(
-                                    'Session error. Please try logging in again.'),
-                                backgroundColor: Colors.red,
-                              ),
-                            );
-                          }
-                          return;
+                        
+                        if (authToken != null && authToken.isNotEmpty) {
+                          await prefs.setString('token', authToken);
+                          await prefs.setString('auth_token', authToken);
                         }
 
                         if (!mounted) return;
@@ -229,15 +192,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         // Show success message
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                            content: Text('✅ Account created successfully!'),
+                            content: Text('Account created successfully!'),
                             backgroundColor: Colors.green,
-                            duration: Duration(seconds: 3),
+                            duration: Duration(seconds: 2),
                           ),
                         );
 
                         context.go(RouteNames.home);
-                      } catch (e, stackTrace) {
-                        debugPrint('❌ [SIGNUP] Exception during signup: $e');
+                      } catch (e) {
                         if (mounted) {
                           Navigator.of(context).pop(); // Hide loading
                           ScaffoldMessenger.of(context).showSnackBar(

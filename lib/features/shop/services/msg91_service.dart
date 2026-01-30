@@ -135,6 +135,7 @@ class Msg91Service {
   /// [sessionId] - Optional session ID returned from sendOtp (if backend uses it)
   /// [firstName] - Optional first name for new user signup (backend creates user in Hygraph)
   /// [lastName] - Optional last name for new user signup (backend creates user in Hygraph)
+  /// [referrerCode] - Optional referrer code if user has one
   /// 
   /// Returns Map with 'success' boolean and optional 'message'
   /// 
@@ -152,6 +153,7 @@ class Msg91Service {
     String? sessionId,
     String? firstName,
     String? lastName,
+    String? referrerCode,
   }) async {
     try {
       // Clean mobile number
@@ -183,12 +185,17 @@ class Msg91Service {
       }
       
       // Include firstName/lastName for new user signup
-      // Backend will create user in Hygraph using its own HYGRAPH_TOKEN
+      // Backend will create user in Hygraph & Fantasy MongoDB
       if (firstName != null && firstName.isNotEmpty) {
         requestBody['firstName'] = firstName;
       }
       if (lastName != null && lastName.isNotEmpty) {
         requestBody['lastName'] = lastName;
+      }
+      
+      // Include referrer code if provided (optional)
+      if (referrerCode != null && referrerCode.isNotEmpty) {
+        requestBody['referrerCode'] = referrerCode;
       }
 
       if (kDebugMode) {

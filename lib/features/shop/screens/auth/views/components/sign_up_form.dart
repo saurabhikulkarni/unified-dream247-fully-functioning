@@ -30,6 +30,7 @@ class _SignUpFormState extends State<SignUpForm> {
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _referrerCodeController = TextEditingController();
   final TextEditingController _otpController = TextEditingController();
   bool _otpSent = false;
   Timer? _resendTimer;
@@ -42,6 +43,7 @@ class _SignUpFormState extends State<SignUpForm> {
     _firstNameController.dispose();
     _lastNameController.dispose();
     _phoneController.dispose();
+    _referrerCodeController.dispose();
     _otpController.dispose();
     _resendTimer?.cancel();
     super.dispose();
@@ -155,6 +157,7 @@ class _SignUpFormState extends State<SignUpForm> {
     final otp = _otpController.text.trim();
     final firstName = _firstNameController.text.trim();
     final lastName = _lastNameController.text.trim();
+    final referrerCode = _referrerCodeController.text.trim();
 
     if (otp.isEmpty || otp.length < 4) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -174,13 +177,14 @@ class _SignUpFormState extends State<SignUpForm> {
     );
 
     // Verify OTP via MSG91 service (backend API)
-    // Backend will create user in Hygraph using firstName/lastName
+    // Backend will create user in Hygraph & Fantasy MongoDB, handle everything
     final result = await msg91Service.verifyOtp(
       mobileNumber: phone,
       otp: otp,
       sessionId: _sessionId,
-      firstName: firstName,  // Backend creates user with this
-      lastName: lastName,    // Backend creates user with this
+      firstName: firstName,
+      lastName: lastName,
+      referrerCode: referrerCode.isNotEmpty ? referrerCode : null, // Optional
     );
 
     // Hide loading indicator
@@ -217,14 +221,6 @@ class _SignUpFormState extends State<SignUpForm> {
                                user['fantasyUserId']?.toString();
                              
       _isNewUser = result['isNewUser'] == true;
-      
-      debugPrint('✅ [SIGNUP] OTP verified successfully');
-      debugPrint('   - UserId: $_verifiedUserId');
-      debugPrint('   - Token (authToken): ${_verifiedToken != null ? "present (${_verifiedToken!.length} chars)" : "null"}');
-      debugPrint('   - Fantasy Token: ${_verifiedFantasyToken != null ? "present (${_verifiedFantasyToken!.length} chars)" : "null"}');
-      debugPrint('   - Fantasy User ID: $_verifiedFantasyUserId');
-      debugPrint('   - Backend response keys: ${result.keys.toList()}');
-      debugPrint('   - isNewUser: $_isNewUser');
       
       // Mark phone as verified in AuthService
       await AuthService().markPhoneVerified(phone);
@@ -325,6 +321,16 @@ class _SignUpFormState extends State<SignUpForm> {
               }
               return null;
             },
+          ),
+          const SizedBox(height: defaultPadding),
+          TextFormField(
+            controller: _referrerCodeController,
+            decoration: const InputDecoration(
+              hintText: 'Referrer code (optional)',
+              prefixIcon: Icon(Icons.card_giftcard),
+              helperText: 'Enter referral code if you have one',
+            ),
+            // No validator - field is optional
           ),
           const SizedBox(height: defaultPadding),
           if (!_otpSent)
