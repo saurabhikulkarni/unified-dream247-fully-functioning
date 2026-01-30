@@ -81,7 +81,11 @@ class OrderServiceGraphQL {
       // Call REST API
       final url = ApiConfig.shopPlaceOrderEndpoint;
       if (kDebugMode) {
+        print('═══════════════════════════════════════════════════════');
         print('🌐 [ORDER_API] Calling: $url');
+        print('🔑 [ORDER_API] Token: ${token.substring(0, 20)}...');
+        print('📦 [ORDER_API] Sending request to backend...');
+        print('═══════════════════════════════════════════════════════');
       }
 
       final response = await http.post(
@@ -94,8 +98,10 @@ class OrderServiceGraphQL {
       );
 
       if (kDebugMode) {
+        print('═══════════════════════════════════════════════════════');
         print('📡 [ORDER_API] Response status: ${response.statusCode}');
         print('📡 [ORDER_API] Response body: ${response.body}');
+        print('═══════════════════════════════════════════════════════');
       }
 
       if (response.statusCode != 200 && response.statusCode != 201) {
