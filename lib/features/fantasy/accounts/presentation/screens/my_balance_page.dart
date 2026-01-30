@@ -565,8 +565,8 @@ class _MyBalancePage extends State<MyBalancePage> with RouteAware {
       child: Row(
         children: [
           Container(
-            width: 45,
-            height: 45,
+            width: 45.w,
+            height: 45.h,
             decoration: BoxDecoration(
               color: color ?? AppColors.lightCard,
               borderRadius: BorderRadius.circular(12),
@@ -574,8 +574,8 @@ class _MyBalancePage extends State<MyBalancePage> with RouteAware {
             child: Center(
               child: isShopToken
                   ? Container(
-                      width: 32,
-                      height: 32,
+                      width: 32.w,
+                      height: 32.h,
                       decoration: const BoxDecoration(
                         color: Color(0xFFFFF8E1),
                         shape: BoxShape.circle,
@@ -583,27 +583,27 @@ class _MyBalancePage extends State<MyBalancePage> with RouteAware {
                       child: Center(
                         child: SvgPicture.asset(
                           'assets/icons/coin.svg',
-                          width: 22,
-                          height: 22,
+                          width: 22.w,
+                          height: 22.h,
                         ),
                       ),
                     )
                   : isDiamondIcon
-                      ? const Icon(
+                      ? Icon(
                           Icons.diamond_outlined,
-                          size: 24,
+                          size: 24.sp,
                           color: AppColors.orangeColor,
                         )
                       : isTokenIcon
                           ? Image.asset(
                               Images.matchToken,
-                              width: 24,
-                              height: 24,
+                              width: 24.w,
+                              height: 24.h,
                             )
                           : Image.asset(
                               icon,
-                              width: 24,
-                              height: 24,
+                              width: 24.w,
+                              height: 24.h,
                               color: AppColors.mainColor,
                             ),
             ),
@@ -619,7 +619,7 @@ class _MyBalancePage extends State<MyBalancePage> with RouteAware {
                       title,
                       style: GoogleFonts.inter(
                         color: AppColors.black,
-                        fontSize: 14,
+                        fontSize: 14.sp,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -636,14 +636,14 @@ class _MyBalancePage extends State<MyBalancePage> with RouteAware {
                               width: 1,
                             ),
                           ),
-                          textStyle: const TextStyle(
+                          textStyle: TextStyle(
                             color: AppColors.blackColor,
-                            fontSize: 12,
+                            fontSize: 12.sp,
                           ),
-                          child: const Icon(
+                          child: Icon(
                             Icons.info_outline,
                             color: AppColors.lightGrey,
-                            size: 16,
+                            size: 16.sp,
                           ),
                         ),
                       ),
@@ -653,7 +653,7 @@ class _MyBalancePage extends State<MyBalancePage> with RouteAware {
                 Text(
                   value,
                   style: GoogleFonts.montserrat(
-                    fontSize: 16,
+                    fontSize: 16.sp,
                     fontWeight: FontWeight.w700,
                     color: AppColors.black,
                   ),

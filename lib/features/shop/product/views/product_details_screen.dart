@@ -157,7 +157,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
               press: () {
                 customModalBottomSheet(
                   context,
-                  height: MediaQuery.of(context).size.height * 0.92,
+                  height: MediaQuery.of(context).size.height * 0.85,
                   child: ProductBuyNowScreen(
                     product: _product!,
                     sizes: _sizes,
@@ -272,7 +272,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
               press: () {
                 customModalBottomSheet(
                   context,
-                  height: MediaQuery.of(context).size.height * 0.92,
+                  height: MediaQuery.of(context).size.height * 0.85,
                   child: Scaffold(
                     appBar: AppBar(
                       title: const Text('Product Details'),
@@ -324,7 +324,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
               press: () {
                 customModalBottomSheet(
                   context,
-                  height: MediaQuery.of(context).size.height * 0.92,
+                  height: MediaQuery.of(context).size.height * 0.85,
                   child: Scaffold(
                     appBar: AppBar(
                       title: const Text('Shipping Information'),
@@ -397,7 +397,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
             ),
             SliverToBoxAdapter(
               child: SizedBox(
-                height: 220,
+                height: 220.h,
                 child: _relatedProducts.isEmpty
                     ? const Center(child: Text('No related products'))
                     : ListView.builder(

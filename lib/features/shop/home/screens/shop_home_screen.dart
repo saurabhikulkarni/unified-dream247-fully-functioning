@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:unified_dream247/features/shop/services/cart_service.dart';
 
@@ -79,9 +80,9 @@ class _ShopHomeScreenState extends State<ShopHomeScreen> {
                     ),
                     child: Text(
                       _cartItemCount > 99 ? '99+' : _cartItemCount.toString(),
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: Colors.white,
-                        fontSize: 10,
+                        fontSize: 10.sp,
                         fontWeight: FontWeight.bold,
                       ),
                       textAlign: TextAlign.center,
@@ -97,7 +98,7 @@ class _ShopHomeScreenState extends State<ShopHomeScreen> {
           // Banner Section
           SliverToBoxAdapter(
             child: Container(
-              height: 200,
+              height: 200.h,
               margin: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
@@ -113,7 +114,7 @@ class _ShopHomeScreenState extends State<ShopHomeScreen> {
                       'Welcome to Shop',
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 28,
+                        fontSize: 28.sp,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -122,7 +123,7 @@ class _ShopHomeScreenState extends State<ShopHomeScreen> {
                       'Discover amazing products',
                       style: TextStyle(
                         color: Colors.white70,
-                        fontSize: 16,
+                        fontSize: 16.sp,
                       ),
                     ),
                   ],
@@ -141,19 +142,19 @@ class _ShopHomeScreenState extends State<ShopHomeScreen> {
                   const Text(
                     'Categories',
                     style: TextStyle(
-                      fontSize: 20,
+                      fontSize: 20.sp,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   const SizedBox(height: 12),
                   SizedBox(
-                    height: 100,
+                    height: 100.h,
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
                       itemCount: 5,
                       itemBuilder: (context, index) {
                         return Container(
-                          width: 100,
+                          width: 100.w,
                           margin: const EdgeInsets.only(right: 12),
                           decoration: BoxDecoration(
                             color: Colors.grey[200],
@@ -167,7 +168,7 @@ class _ShopHomeScreenState extends State<ShopHomeScreen> {
                               Text(
                                 'Category ${index + 1}',
                                 style: TextStyle(
-                                  fontSize: 12,
+                                  fontSize: 12.sp,
                                   color: Colors.grey[800],
                                 ),
                               ),

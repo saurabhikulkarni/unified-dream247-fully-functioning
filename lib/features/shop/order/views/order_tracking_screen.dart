@@ -124,7 +124,7 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen> {
                   Text(
                     'Please try again later',
                     style: TextStyle(
-                      fontSize: 14,
+                      fontSize: 14.sp,
                       color: Colors.grey.shade600,
                     ),
                   ),

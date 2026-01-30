@@ -78,7 +78,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
             // Navigate back to unified home screen
-            context.go('/');
+            context.go(RouteNames.home);
           },
         ),
         title: const Text('Profile'),

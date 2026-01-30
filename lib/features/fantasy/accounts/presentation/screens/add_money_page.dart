@@ -684,7 +684,7 @@ class _AddMoneyPage extends State<AddMoneyPage> {
                                         const Text('Get '),
                                         Image.asset(
                                           Images.tokenImage,
-                                          height: 20,
+                                          height: 20.h,
                                         ),
                                         Text(_amountController.text),
                                       ],
@@ -695,9 +695,9 @@ class _AddMoneyPage extends State<AddMoneyPage> {
                                     const SizedBox(height: 6),
                                     Text(
                                       _errorText!,
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         color: AppColors.mainLightColor,
-                                        fontSize: 12,
+                                        fontSize: 12.sp,
                                       ),
                                     ),
                                   ],
@@ -874,7 +874,7 @@ class _AddMoneyPage extends State<AddMoneyPage> {
         FocusScope.of(context).unfocus();
       },
       child: Container(
-        height: 45,
+        height: 45.h,
         width: 80.w,
         decoration: BoxDecoration(
           gradient: const LinearGradient(
@@ -897,7 +897,7 @@ class _AddMoneyPage extends State<AddMoneyPage> {
             style: GoogleFonts.poppins(
               color: AppColors.white,
               fontWeight: FontWeight.w600,
-              fontSize: 14,
+              fontSize: 14.sp,
             ),
           ),
         ),
@@ -923,12 +923,12 @@ class _AddMoneyPage extends State<AddMoneyPage> {
             child: Text(
               textAlign: TextAlign.center,
               'Free Rewards',
-              style: GoogleFonts.poppins(color: AppColors.white, fontSize: 20),
+              style: GoogleFonts.poppins(color: AppColors.white, fontSize: 20.sp),
             ),
           ),
           Container(
             width: screenWidth * 0.9,
-            height: 200,
+            height: 200.h,
             padding: const EdgeInsets.all(10),
             decoration: const BoxDecoration(
               color: AppColors.white,
@@ -953,14 +953,14 @@ class _AddMoneyPage extends State<AddMoneyPage> {
                     children: [
                       Image.asset(
                         Images.matchToken,
-                        height: 50,
+                        height: 50.h,
                       ),
                       5.verticalSpace,
                       DashedUnderlineText(
                         text: 'Game Tokens',
                         style: GoogleFonts.poppins(
                           color: AppColors.letterColor,
-                          fontSize: 15,
+                          fontSize: 15.sp,
                         ),
                       ),
                     ],
@@ -973,7 +973,7 @@ class _AddMoneyPage extends State<AddMoneyPage> {
                     '+',
                     style: GoogleFonts.poppins(
                       color: AppColors.blackColor,
-                      fontSize: 20,
+                      fontSize: 20.sp,
                     ),
                   ),
                 ),
@@ -984,7 +984,7 @@ class _AddMoneyPage extends State<AddMoneyPage> {
                      
                       child: Image.asset(
                         Images.mysteryBox,
-                        height: 50,
+                        height: 50.h,
                       ),
                     ),
                     5.verticalSpace,
@@ -992,7 +992,7 @@ class _AddMoneyPage extends State<AddMoneyPage> {
                       'Mystery Box',
                       style: GoogleFonts.poppins(
                         color: AppColors.letterColor,
-                        fontSize: 15,
+                        fontSize: 15.sp,
                       ),
                     ),
                   ],
@@ -1196,7 +1196,7 @@ class _AddMoneyPage extends State<AddMoneyPage> {
 
   Widget singleItemOfferCode(OffersModel? data, BuildContext context) {
     return Container(
-      height: 150,
+      height: 150.h,
       width: MediaQuery.of(context).size.width * 0.8,
       margin: const EdgeInsets.only(top: 5, left: 5, right: 15),
       decoration: BoxDecoration(
@@ -1235,7 +1235,7 @@ class _AddMoneyPage extends State<AddMoneyPage> {
                       '${data?.title}',
                       style: GoogleFonts.poppins(
                         fontWeight: FontWeight.w600,
-                        fontSize: 14,
+                        fontSize: 14.sp,
                         color: AppColors.letterColor,
                       ),
                     ),
@@ -1431,7 +1431,7 @@ class _AddMoneyPage extends State<AddMoneyPage> {
                   curve: Curves.elasticOut,
                   child: Image.asset(
                     Images.mysteryBox,
-                    height: 160,
+                    height: 160.h,
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -1439,7 +1439,7 @@ class _AddMoneyPage extends State<AddMoneyPage> {
                   'Tap to open your Mystery Box!',
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 16,
+                    fontSize: 16.sp,
                     fontWeight: FontWeight.w600,
                   ),
                 ),

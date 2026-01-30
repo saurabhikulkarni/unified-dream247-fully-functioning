@@ -150,7 +150,7 @@ class _LandingPageState extends State<LandingPage> {
                   'Loading Game Zone...',
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 16,
+                    fontSize: 16.sp,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -184,7 +184,7 @@ class _LandingPageState extends State<LandingPage> {
                     'Unable to load Game Zone',
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: 20,
+                      fontSize: 20.sp,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -192,9 +192,9 @@ class _LandingPageState extends State<LandingPage> {
                   Text(
                     _initError!,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: Colors.white70,
-                      fontSize: 14,
+                      fontSize: 14.sp,
                     ),
                   ),
                   const SizedBox(height: 24),
@@ -274,7 +274,7 @@ class _LandingPageState extends State<LandingPage> {
       child: SafeArea(
         top: false,
         child: SizedBox(
-          height: 64,
+          height: 64.h,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
@@ -318,14 +318,14 @@ class _LandingPageState extends State<LandingPage> {
         children: [
           Icon(
             icon,
-            size: 22,
+            size: 22.sp,
             color: isSelected ? AppColors.secondMainColor : Colors.grey,
           ),
           const SizedBox(height: 4),
           Text(
             label,
             style: TextStyle(
-              fontSize: 11,
+              fontSize: 11.sp,
               fontWeight: FontWeight.w600,
               color: isSelected ? AppColors.secondMainColor : Colors.grey,
             ),
