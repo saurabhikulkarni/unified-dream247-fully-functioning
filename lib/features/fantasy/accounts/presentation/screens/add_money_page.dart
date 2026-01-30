@@ -107,7 +107,6 @@ class _AddMoneyPage extends State<AddMoneyPage> {
       // 1️⃣ First, ensure we have a valid Fantasy token
       String? token = prefs.getString('token');
       if (token == null || token.isEmpty) {
-        debugPrint('⚠️ [ADD_MONEY] No fantasy token found, fetching...');
 
         final phone = prefs.getString('user_phone') ?? '';
         final name = prefs.getString('user_name') ?? '';
@@ -122,7 +121,6 @@ class _AddMoneyPage extends State<AddMoneyPage> {
 
           if (token != null && token.isNotEmpty) {
             await prefs.setString('token', token);
-            debugPrint('✅ [ADD_MONEY] Fantasy token refreshed');
           } else {
             debugPrint('❌ [ADD_MONEY] Could not obtain fantasy token');
           }
@@ -130,32 +128,27 @@ class _AddMoneyPage extends State<AddMoneyPage> {
           debugPrint(
               '❌ [ADD_MONEY] No phone number available for token refresh',);
         }
-      } else {
-        debugPrint('✅ [ADD_MONEY] Fantasy token exists');
       }
+
 
       // 2️⃣ Check if app data is already loaded (has payment gateway config)
       final hasAppData =
           AppSingleton.singleton.appData.androidpaymentgateway != null;
 
       if (!hasAppData) {
-        debugPrint('📥 [ADD_MONEY] Loading app data...');
         final homeUsecases = HomeUsecases(
           HomeDatasource(ApiImplWithAccessToken()),
         );
         await homeUsecases.getAppDataWithHeader(context);
-        debugPrint('✅ [ADD_MONEY] App data loaded');
       }
 
       // 3️⃣ Check if user data is loaded
       if (userData == null) {
-        debugPrint('📥 [ADD_MONEY] Loading user data...');
         final userUsecases =
             UserUsecases(UserDatasource(ApiImplWithAccessToken()));
         
         try {
-          final result = await userUsecases.getUserDetails(context);
-          debugPrint('📥 [ADD_MONEY] getUserDetails result: $result');
+          await userUsecases.getUserDetails(context);
           
           // Wait a moment for provider update
           await Future.delayed(const Duration(milliseconds: 200));
@@ -172,8 +165,6 @@ class _AddMoneyPage extends State<AddMoneyPage> {
         }
         
         if (userData == null) {
-          debugPrint('⚠️ [ADD_MONEY] userData is still null after fetch attempt');
-          debugPrint('⚠️ [ADD_MONEY] Trying to load from local storage...');
           
           try {
             final userDataString = await AppStorage.getStorageValueString('userData');
@@ -181,14 +172,11 @@ class _AddMoneyPage extends State<AddMoneyPage> {
               final decodedData = jsonDecode(userDataString);
               if (decodedData is Map<String, dynamic>) {
                 userData = UserFullDetailsResponse.fromJson(decodedData);
-                debugPrint('✅ [ADD_MONEY] User data restored from local storage');
               }
             }
           } catch (e) {
             debugPrint('❌ [ADD_MONEY] Error loading from local storage: $e');
           }
-        } else {
-          debugPrint('✅ [ADD_MONEY] User data loaded: ${userData?.name ?? userData?.team ?? "Unknown"}');
         }
       }
     } catch (e) {
@@ -213,9 +201,6 @@ class _AddMoneyPage extends State<AddMoneyPage> {
   }
 
   Future<void> _createRazorpayOrder() async {
-    debugPrint('🔄 [ADD_CASH] Creating Razorpay order...');
-    debugPrint(
-        '💰 [ADD_CASH] Amount: ${_amountController.text}, PromoId: $promoId',);
 
     final res = await accountsUsecases.requestAddCash(
       context,
@@ -223,8 +208,6 @@ class _AddMoneyPage extends State<AddMoneyPage> {
       _amountController.text,
       promoId,
     );
-
-    debugPrint('📥 [ADD_CASH] Response: $res');
 
     if (res == null) {
       debugPrint(
@@ -244,10 +227,8 @@ class _AddMoneyPage extends State<AddMoneyPage> {
       return;
     }
 
-    debugPrint('✅ [ADD_CASH] Order created successfully');
     _lastTxnId = res['data']['txnid'];
     _razorpayOrderId = res['data']['order_id'];
-    debugPrint('📋 [ADD_CASH] Order ID: $_razorpayOrderId, TxnId: $_lastTxnId');
     _openCheckout();
   }
 
@@ -299,7 +280,6 @@ class _AddMoneyPage extends State<AddMoneyPage> {
     try {
       final authToken = await _getAuthToken();
       if (authToken == null) {
-        debugPrint('⚠️ [SHOP_SYNC] No auth token available, skipping sync');
         return;
       }
 
@@ -318,11 +298,7 @@ class _AddMoneyPage extends State<AddMoneyPage> {
           )
           .timeout(const Duration(seconds: 10));
 
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        final data = jsonDecode(response.body);
-        debugPrint('✅ [SHOP_SYNC] Shop tokens synced successfully');
-        debugPrint('📊 [SHOP_SYNC] New shop balance: ${data['newBalance']}');
-      } else {
+      if (response.statusCode != 200 && response.statusCode != 201) {
         debugPrint('❌ [SHOP_SYNC] Failed to sync: ${response.statusCode}');
         debugPrint('❌ [SHOP_SYNC] Response: ${response.body}');
       }
@@ -341,7 +317,6 @@ class _AddMoneyPage extends State<AddMoneyPage> {
           prefs.getString('auth_token') ??
           prefs.getString('fantasy_token');
     } catch (e) {
-      debugPrint('⚠️ [SHOP_SYNC] Error getting auth token: $e');
       return null;
     }
   }
@@ -373,30 +348,24 @@ class _AddMoneyPage extends State<AddMoneyPage> {
         // Payment successful - sync tokens from backend
         final amount = double.parse(_amountController.text);
 
-        debugPrint('💰 [ADD_MONEY] Payment verified successfully. Amount to add: $amount');
-
         // Initialize wallet service
         await walletService.initialize();
 
         // 1️⃣ Add shop tokens to Hygraph (1 RS = 1 shop token)
         await walletService.addShopTokens(amount);
-        debugPrint('✅ [ADD_MONEY] Added $amount shop tokens to Hygraph');
 
         // 2️⃣ Add game tokens explicitly (not relying on backend auto-add)
         try {
           // Get current game tokens
           final currentGameTokens = await walletService.getGameTokens();
-          debugPrint('📊 [ADD_MONEY] Current game tokens before add: $currentGameTokens');
           
           // Add the amount to game tokens
           final newGameTokens = currentGameTokens + amount;
           await walletService.setGameTokens(newGameTokens);
-          debugPrint('✅ [ADD_MONEY] Added $amount game tokens. New balance: $newGameTokens');
           
           // 3️⃣ Also refresh from Fantasy backend to sync server-side changes
           final gameTokensService = GetIt.instance<GameTokensService>();
           await gameTokensService.refreshGameTokens();
-          debugPrint('✅ [ADD_MONEY] Game tokens refreshed from Fantasy backend');
         } catch (e) {
           debugPrint('❌ [ADD_MONEY] Error adding game tokens: $e');
           // Don't fail - local addition already happened
@@ -409,7 +378,6 @@ class _AddMoneyPage extends State<AddMoneyPage> {
             paymentId: response.paymentId ?? '',
             orderId: response.orderId ?? '',
           );
-          debugPrint('✅ [ADD_MONEY] Shop backend synced with new tokens');
         } catch (e) {
           debugPrint('⚠️ [ADD_MONEY] Warning: Shop backend sync failed: $e (non-critical)');
         }
@@ -419,11 +387,9 @@ class _AddMoneyPage extends State<AddMoneyPage> {
           try {
             final shopTokensProvider = context.read<ShopTokensProvider>();
             await shopTokensProvider.forceRefresh();
-            debugPrint('✅ [ADD_MONEY] Shop tokens provider refreshed');
             
             final walletProvider = context.read<WalletDetailsProvider>();
             await walletProvider.refreshWalletDetails(context);
-            debugPrint('✅ [ADD_MONEY] Game tokens provider refreshed');
           } catch (e) {
             debugPrint('⚠️ [ADD_MONEY] Error refreshing providers: $e');
           }
@@ -1187,8 +1153,7 @@ class _AddMoneyPage extends State<AddMoneyPage> {
                     );
                     final amount = num.parse(_amountController.text);
 
-                    debugPrint(
-                        '💳 [ADD_CASH] Initiating payment: amount=$amount, min=$minLimit, max=$maxLimit',);
+
 
                     if (amount >= minLimit && amount <= maxLimit) {
                       await _createRazorpayOrder();

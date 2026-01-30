@@ -71,22 +71,12 @@ class ApiImpl {
           },
         );
 
-        debugPrint('============ METHOD =================');
-        debugPrint(method);
-        debugPrint('============ HEADERS ================');
-        debugPrint(options.headers.toString());
-        debugPrint('============ BODY ===================');
-        debugPrint(body?.toString() ?? 'No Body');
-
         final response = await _dio.request(
           url,
           data: body,
           queryParameters: queryParameters,
           options: options,
         );
-
-        debugPrint('============ RESPONSE ===============');
-        debugPrint(response.data.toString());
 
         if (response.statusCode != null && response.statusCode! >= 400) {
           throw DioException(
@@ -100,7 +90,6 @@ class ApiImpl {
       } on DioException catch (e) {
         // If 401, token might have expired during request, try refresh
         if (e.response?.statusCode == 401 && attempt == 0) {
-          debugPrint('Token expired, attempting refresh...');
           final authService = core_auth.AuthService();
           await authService.initialize();
           final newToken = await authService.refreshAccessToken(ApiConstants.fantasyBackendUrl);
@@ -112,12 +101,11 @@ class ApiImpl {
           }
         }
         
-        debugPrint('Dio error: ${e.message}');
         if (attempt == retryCount - 1) rethrow;
       } on TimeoutException {
-        debugPrint('Request timed out. Retrying...');
+        // Retry on timeout
       } on SocketException catch (_) {
-        debugPrint('No internet. Retrying...');
+        // Retry on network error
       }
 
       attempt++;

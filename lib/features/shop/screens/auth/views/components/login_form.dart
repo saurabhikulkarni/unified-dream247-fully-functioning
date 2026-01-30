@@ -135,9 +135,6 @@ class _LogInFormState extends State<LogInForm> {
 
       // ✅ Store Hygraph userId for later use when saving session
       _hygraphUserId = existingUser.id;
-      debugPrint(
-        '📝 [LOGIN] Found existing user with Hygraph ID: $_hygraphUserId',
-      );
     } catch (e) {
       // If user check fails, continue with OTP anyway (fallback)
       print('⚠️ [LOGIN] Error checking user existence: $e');
@@ -157,12 +154,6 @@ class _LogInFormState extends State<LogInForm> {
         _sessionId = result['sessionId'];
         _otpController.clear(); // Clear previous OTP if any
       });
-
-      if (foundation.kDebugMode) {
-        debugPrint('✅ [OTP_SEND] OTP sent successfully');
-        debugPrint('✅ [OTP_SEND] SessionID saved: ${_sessionId ?? "NULL"}');
-        debugPrint('✅ [OTP_SEND] Message: ${result['message']}');
-      }
 
       _startResendTimer();
       if (mounted) {
@@ -218,17 +209,6 @@ class _LogInFormState extends State<LogInForm> {
         requestBody['sessionId'] = _sessionId;
       }
 
-      // Debug logging
-      if (foundation.kDebugMode) {
-        debugPrint('📱 [OTP_VERIFY] Verifying OTP...');
-        debugPrint('📱 [OTP_VERIFY] Phone: $phone');
-        debugPrint('📱 [OTP_VERIFY] OTP: $otp');
-        debugPrint('📱 [OTP_VERIFY] SessionID: ${_sessionId ?? "NULL"}');
-        debugPrint('📱 [OTP_VERIFY] Request Body: $requestBody');
-        debugPrint(
-            '📱 [OTP_VERIFY] Endpoint: ${ApiConstants.shopBackendUrl}${ApiConstants.verifyOtpEndpoint}');
-      }
-
       // Call unified verify-otp endpoint
       final response = await http
           .post(
@@ -239,11 +219,6 @@ class _LogInFormState extends State<LogInForm> {
             body: jsonEncode(requestBody),
           )
           .timeout(const Duration(seconds: 30));
-
-      if (foundation.kDebugMode) {
-        debugPrint('📱 [OTP_VERIFY] Response Status: ${response.statusCode}');
-        debugPrint('📱 [OTP_VERIFY] Response Body: ${response.body}');
-      }
 
       final data = jsonDecode(response.body);
 
@@ -286,9 +261,6 @@ class _LogInFormState extends State<LogInForm> {
             user['authToken'] ??
             '';
 
-        debugPrint('📝 [OTP_VERIFY] Parsed User ID: $userId');
-        debugPrint('🔑 [OTP_VERIFY] Parsed Auth Token: $authToken');
-
         if (userId.isEmpty || authToken.isEmpty) {
           debugPrint(
             '❌ [OTP_VERIFY] Critical data missing! userId: $userId, token: $authToken',
@@ -310,11 +282,6 @@ class _LogInFormState extends State<LogInForm> {
           modules: ['shop', 'fantasy'],
           refreshToken: refreshToken,
         );
-
-        debugPrint('✅ [OTP_VERIFY] Unified session saved');
-        debugPrint('   - User ID: $userId');
-        debugPrint('   - Shop Tokens: $shopTokens');
-        debugPrint('   - Token works for both Shop & Fantasy APIs');
 
         // Sync shop tokens to Hygraph so they're available for future app sessions
         // This ensures the ShopTokensProvider can fetch correct balance from Hygraph
@@ -387,13 +354,9 @@ class _LogInFormState extends State<LogInForm> {
       Navigator.of(context).pop();
     }
 
-    print('📱 [LOGIN] OTP Verification result: ${result['success']}');
-    print('📱 [LOGIN] OTP Verification message: ${result['message']}');
-
     if (result['success'] == true) {
       // ✅ The unified token from Shop backend is already saved in verifyOtpUnified()
       // It works for both Shop and Fantasy APIs - no need to fetch separately!
-      debugPrint('✅ [LOGIN] Login successful - unified token saved');
 
       return true;
     } else {

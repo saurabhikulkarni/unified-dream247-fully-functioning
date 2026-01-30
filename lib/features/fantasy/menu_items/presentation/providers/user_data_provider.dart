@@ -10,11 +10,6 @@ class UserDataProvider extends ChangeNotifier {
   UserFullDetailsResponse? get userData => _userData;
 
   void setUserData(UserFullDetailsResponse? value) async {
-    if (value == null) {
-      debugPrint('⚠️ [UserDataProvider] Attempting to set null userData');
-    } else {
-      debugPrint('✅ [UserDataProvider] Setting user data: ${value.name ?? value.team ?? value.id ?? "Unknown"}');
-    }
     _userData = value;
     notifyListeners();
   }
@@ -24,8 +19,6 @@ class UserDataProvider extends ChangeNotifier {
       final userDataString = await AppStorage.getStorageValueString('userData');
 
       if (userDataString == null || userDataString.isEmpty) {
-        debugPrint('📦 [UserDataProvider] No user data found in SharedPreferences.');
-        debugPrint('📦 [UserDataProvider] This is normal if Fantasy module is initializing...');
         _userData = null;
         // DON'T redirect to login - let LandingPage handle authentication
         // The LandingPage will fetch user data during initialization
@@ -36,7 +29,6 @@ class UserDataProvider extends ChangeNotifier {
       final dynamic decodedData = jsonDecode(userDataString);
       if (decodedData is Map<String, dynamic>) {
         _userData = UserFullDetailsResponse.fromJson(decodedData);
-        debugPrint('✅ [UserDataProvider] User data loaded: ${_userData?.name ?? _userData?.team ?? "Unknown"}');
       } else {
         throw Exception('Decoded data is not a valid Map<String, dynamic>.');
       }

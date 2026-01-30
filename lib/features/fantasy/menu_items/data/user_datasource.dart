@@ -277,10 +277,7 @@ class UserDatasource extends UserRepositories {
             'Authorization': 'Bearer $token',
           },
         ),
-        onSendProgress: (sent, total) {
-          final percent = (sent / total * 100).toStringAsFixed(0);
-          debugPrint('📦 Upload progress: $percent%');
-        },
+
       );
 
       final res = response.data;
@@ -363,24 +360,18 @@ class UserDatasource extends UserRepositories {
   Future<bool?> getUserDetails(BuildContext context) async {
     try {
       final url = APIServerUrl.userServerUrl + APIServerUrl.getUserDetails;
-      debugPrint('🔄 [USER_DATASOURCE] Fetching user details from: $url');
 
       final response = await clientwithToken.get(url);
 
       var res = response.data;
-      debugPrint('📥 [USER_DATASOURCE] Response status: ${response.statusCode}');
-      debugPrint('📥 [USER_DATASOURCE] Response data: $res');
 
       if (ApiServerUtil.validateStatusCode(response.statusCode ?? 200)) {
-        debugPrint('✅ [USER_DATASOURCE] Status code is valid: ${response.statusCode}');
         
         if (res != null && res[ApiResponseString.success] == true) {
-          debugPrint('✅ [USER_DATASOURCE] API success = true');
           
           final userData = res[ApiResponseString.data];
           if (userData != null) {
             final userDetails = UserFullDetailsResponse.fromJson(userData);
-            debugPrint('✅ [USER_DATASOURCE] User details parsed: ${userDetails.name ?? userDetails.team ?? "Unknown"}');
 
             // Save userId
             final userId = userData[ApiResponseString.userId];
@@ -389,19 +380,16 @@ class UserDatasource extends UserRepositories {
                 AppStorageKeys.userId,
                 userId.toString(),
               );
-              debugPrint('✅ [USER_DATASOURCE] userId saved: $userId');
             }
 
             // Save complete userData to storage
             final userDataJson = jsonEncode(userDetails.toJson());
             await AppStorage.saveToStorageString('userData', userDataJson);
-            debugPrint('✅ [USER_DATASOURCE] userData saved to storage');
 
             // Update provider
             if (context.mounted) {
               Provider.of<UserDataProvider>(context, listen: false)
                   .setUserData(userDetails);
-              debugPrint('✅ [USER_DATASOURCE] Provider updated with user data');
 
               // Fetch wallet details
               final accountsUsecases = AccountsUsecases(

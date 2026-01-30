@@ -31,13 +31,9 @@ class UserIdHelper {
         '';
       
       if (userId.isEmpty) {
-        debugPrint('⚠️ [USER_ID_HELPER] No userId found in storage');
         return '';
       }
       
-      if (kDebugMode) {
-        debugPrint('✅ [USER_ID_HELPER] UserId found: ${userId.substring(0, userId.length > 20 ? 20 : userId.length)}...');
-      }
       return userId;
     } catch (e) {
       debugPrint('❌ [USER_ID_HELPER] Error getting userId: $e');
@@ -70,26 +66,6 @@ class UserIdHelper {
   
   /// Debug: Print all stored authentication keys
   static Future<void> debugPrintStoredKeys() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      final allKeys = prefs.getKeys();
-      
-      debugPrint('🔍 [USER_ID_HELPER] All stored keys:');
-      for (var key in allKeys) {
-        if (key.toLowerCase().contains('user') || 
-            key.toLowerCase().contains('auth') || 
-            key.toLowerCase().contains('token') ||
-            key.toLowerCase().contains('phone') ||
-            key.toLowerCase().contains('id')) {
-          final value = prefs.get(key);
-          final valueStr = value is String 
-            ? (value.length > 30 ? '${value.substring(0, 30)}...' : value)
-            : value.toString();
-          debugPrint('  • $key = $valueStr');
-        }
-      }
-    } catch (e) {
-      debugPrint('❌ [USER_ID_HELPER] Error printing keys: $e');
-    }
+    // Debug method - implementation removed
   }
 }

@@ -122,8 +122,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) async {
     emit(const AuthLoading());
 
-    print('🔐 [AUTH_BLOC] Verifying OTP for phone: ${event.phone}');
-
     final result = await verifyOtpUseCase(
       phone: event.phone,
       otp: event.otp,
@@ -132,12 +130,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     result.fold(
       (failure) {
         final errorMessage = ErrorHandler.getErrorMessage(failure);
-        print('🔐 [AUTH_BLOC] OTP verification failed: $errorMessage');
         emit(AuthError(errorMessage));
       },
       (user) async {
-        print(
-            '🔐 [AUTH_BLOC] OTP verified successfully for user: ${user.name}');
         // Save unified session for shop and fantasy after successful OTP verification
         try {
           final authToken = await localDataSource.getAccessToken();
@@ -150,10 +145,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             phoneVerified: true,
             authToken: authToken,
           );
-          print('🔐 [AUTH_BLOC] Session saved successfully');
           emit(Authenticated(user));
         } catch (e) {
-          print('🔐 [AUTH_BLOC] Failed to save session: $e');
           emit(AuthError(
               'OTP verification successful but failed to save session: ${e.toString()}'));
         }
@@ -181,20 +174,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       final user = await localDataSource.getCachedUser();
       final accessToken = await localDataSource.getAccessToken();
 
-      debugPrint('🔍 [AUTH_BLOC] Checking auth status...');
-      debugPrint('   - Cached user: ${user != null ? user.name : "null"}');
-      debugPrint(
-          '   - Access token: ${accessToken != null ? "present" : "null"}');
-
       if (user != null && accessToken != null && accessToken.isNotEmpty) {
-        debugPrint('✅ [AUTH_BLOC] Valid session found - user authenticated');
         emit(Authenticated(user.toEntity()));
       } else {
-        debugPrint('❌ [AUTH_BLOC] No valid session - user unauthenticated');
         emit(const Unauthenticated());
       }
     } catch (e) {
-      debugPrint('❌ [AUTH_BLOC] Error checking auth status: $e');
       emit(const Unauthenticated());
     }
   }

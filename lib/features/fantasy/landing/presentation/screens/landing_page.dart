@@ -38,7 +38,6 @@ class _LandingPageState extends State<LandingPage> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('fantasy_auth_token', fantasyToken);
     await prefs.setString('token', fantasyToken); // Also save as 'token' for API client compatibility
-    debugPrint('✅ [FANTASY] Fantasy Auth Token saved to SharedPreferences (fantasy_auth_token & token)');
   }
 
   @override
@@ -67,16 +66,12 @@ class _LandingPageState extends State<LandingPage> {
 
     try {
       // Only load app data and wallet, skip token/userId checks
-      debugPrint('📥 [LANDING_PAGE] Loading app data with payment gateway config...');
       await homeUsecases.getAppDataWithHeader(context);
-      debugPrint('✅ [LANDING_PAGE] App data loaded successfully');
       if (mounted) {
-        debugPrint('📥 [LANDING_PAGE] Loading wallet details...');
         final accountsUsecases = AccountsUsecases(
           AccountsDatasource(ApiImpl(), ApiImplWithAccessToken()),
         );
         await accountsUsecases.myWalletDetails(context);
-        debugPrint('✅ [LANDING_PAGE] Wallet details loaded');
       }
       checkIfFirstLaunch();
       if (mounted) {

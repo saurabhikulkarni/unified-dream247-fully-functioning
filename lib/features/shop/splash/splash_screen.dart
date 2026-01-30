@@ -68,10 +68,8 @@ class _SplashScreenState extends State<SplashScreen>
       if (!mounted) return;
 
       if (isLoggedIn) {
-        debugPrint('🚀 [SPLASH] Navigating to home (persistent session active)');
         context.go(RouteNames.home);
       } else {
-        debugPrint('🔐 [SPLASH] No active session - redirecting to login');
         context.go(RouteNames.login);
       }
     } catch (e) {
@@ -99,33 +97,23 @@ class _SplashScreenState extends State<SplashScreen>
       final userId = authService.getUserId();
       final token = authService.getAuthToken();
 
-      debugPrint('🔍 [SPLASH] Session check:');
-      debugPrint('   - isLoggedIn: $isLoggedIn');
-      debugPrint('   - userId: ${userId != null ? "${userId.substring(0, userId.length > 10 ? 10 : userId.length)}..." : "null"}');
-      debugPrint('   - hasToken: ${token != null && token.isNotEmpty}');
-
       // ✅ User is logged in if they have a valid session
       // Only require: isLoggedIn flag AND userId
       // Token can be refreshed later if missing
       if (isLoggedIn && userId != null && userId.isNotEmpty) {
-        debugPrint('✅ [SPLASH] Valid session found - user stays logged in');
         
         // Start token refresh timer if token exists (background task)
         if (token != null && token.isNotEmpty) {
-          debugPrint('🔑 [SPLASH] Token present - starting refresh timer');
           final tokenService = TokenService();
           tokenService.startTokenRefreshTimer(token);
           
           // Try to refresh token in background (non-blocking)
           _refreshTokenInBackground(authService, token);
-        } else {
-          debugPrint('⚠️ [SPLASH] No token but session exists - will refresh on next API call');
         }
         
         return true;
       }
 
-      debugPrint('❌ [SPLASH] No valid session found');
       return false;
     } catch (e) {
       debugPrint('❌ [SPLASH] Error checking session: $e');
@@ -143,21 +131,10 @@ class _SplashScreenState extends State<SplashScreen>
       final userId = prefs.getString('user_id');
       final altUserId = prefs.getString('userId');
       
-      debugPrint('🔍 [SPLASH] Fallback session check:');
-      debugPrint('   - is_logged_in: $isLoggedIn');
-      debugPrint('   - user_id: $userId');
-      debugPrint('   - userId: $altUserId');
-      
       // User is logged in if flag is set AND we have some user ID
       final hasValidSession = isLoggedIn && 
           ((userId != null && userId.isNotEmpty) || 
            (altUserId != null && altUserId.isNotEmpty));
-      
-      if (hasValidSession) {
-        debugPrint('✅ [SPLASH] Fallback: Valid session found');
-      } else {
-        debugPrint('❌ [SPLASH] Fallback: No valid session');
-      }
       
       return hasValidSession;
     } catch (e) {
@@ -169,15 +146,8 @@ class _SplashScreenState extends State<SplashScreen>
   /// Refresh token in background without blocking navigation
   Future<void> _refreshTokenInBackground(core_auth.AuthService authService, String token) async {
     try {
-      debugPrint('🔄 [BACKGROUND] Attempting token refresh...');
       final newToken = await authService.refreshAccessToken();
-      if (newToken != null) {
-        debugPrint('✅ [BACKGROUND] Token refreshed successfully');
-      } else {
-        debugPrint('⚠️ [BACKGROUND] Token refresh returned null - will retry on next API call');
-      }
     } catch (e) {
-      debugPrint('⚠️ [BACKGROUND] Token refresh failed: $e - will retry on next API call');
       // Don't logout - let the API interceptor handle token refresh on demand
     }
   }

@@ -55,25 +55,20 @@ class FCMService {
     await androidPlugin?.createNotificationChannel(soundChannel);
     await androidPlugin?.createNotificationChannel(silentChannel);
 
-    // 📱 FCM token
+    // FCM token
     String? token = await _messaging.getToken();
     if (token != null && token.isNotEmpty) {
-      debugPrint('📱 FCM Token: $token');
       await AppStorage.saveToStorageString(
         AppStorageKeys.fcmToken,
         token,
       );
     }
 
-    // 📢 Topic subscription
+    // Topic subscription
     await _messaging.subscribeToTopic('All');
-    debugPrint('✅ Subscribed to topic: All');
 
-    // 🚨 FOREGROUND NOTIFICATION FIX (KEY PART)
+    // FOREGROUND NOTIFICATION FIX (KEY PART)
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      if (kDebugMode) {
-        print('📩 Foreground message: ${message.notification?.title}');
-      }
 
       if (message.notification != null) {
         _showForegroundNotification(message);

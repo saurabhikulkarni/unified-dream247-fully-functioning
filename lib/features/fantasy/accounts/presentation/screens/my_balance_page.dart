@@ -71,13 +71,11 @@ class _MyBalancePage extends State<MyBalancePage> with RouteAware {
   @override
   void didPopNext() {
     // Called when returning to this page from another page (e.g., after adding cash or order)
-    debugPrint('🔄 [WALLET] ⬆️ RETURN_TO_WALLET: Page regained focus, refreshing all data...');
     _refreshAllData();
   }
 
   /// Refresh all wallet data (shop tokens, game tokens, wallet details)
   Future<void> _refreshAllData() async {
-    debugPrint('🔄 [ACCOUNTS] Starting full refresh...');
     lastRefreshTime = null; // Reset throttle to force refresh
 
     // Small delay to ensure backend has processed any pending transactions
@@ -85,24 +83,19 @@ class _MyBalancePage extends State<MyBalancePage> with RouteAware {
 
     // Force refresh wallet details from backend
     await accountsUsecases.myWalletDetails(context);
-    debugPrint('✅ [ACCOUNTS] Wallet details refreshed');
 
     // Load full wallet data
     await _loadFullWalletBalance();
-    debugPrint('✅ [ACCOUNTS] Full wallet balance loaded');
 
     // Refresh individual token components
     await _loadShopTokens();
     await _loadGameTokens();
-    debugPrint('✅ [ACCOUNTS] Individual tokens refreshed');
 
     if (mounted) {
       setState(() {
         // Force UI rebuild
       });
-      debugPrint('✅ [ACCOUNTS] UI state updated');
     }
-    debugPrint('✅ [ACCOUNTS] Auto-refresh complete');
   }
 
   /// Initialize Fantasy module data if not already loaded
@@ -114,7 +107,6 @@ class _MyBalancePage extends State<MyBalancePage> with RouteAware {
       // 1️⃣ First, ensure we have a valid Fantasy token
       String? token = prefs.getString('token');
       if (token == null || token.isEmpty) {
-        debugPrint('⚠️ [WALLET] No fantasy token found, fetching...');
 
         final phone = prefs.getString('user_phone') ?? '';
         final name = prefs.getString('user_name') ?? '';
@@ -129,15 +121,8 @@ class _MyBalancePage extends State<MyBalancePage> with RouteAware {
 
           if (token != null && token.isNotEmpty) {
             await prefs.setString('token', token);
-            debugPrint('✅ [WALLET] Fantasy token refreshed');
-          } else {
-            debugPrint('❌ [WALLET] Could not obtain fantasy token');
           }
-        } else {
-          debugPrint('❌ [WALLET] No phone number available for token refresh');
         }
-      } else {
-        debugPrint('✅ [WALLET] Fantasy token exists');
       }
 
       // 2️⃣ Check if app data is already loaded (has payment gateway config)
@@ -145,20 +130,16 @@ class _MyBalancePage extends State<MyBalancePage> with RouteAware {
           AppSingleton.singleton.appData.androidpaymentgateway != null;
 
       if (!hasAppData) {
-        debugPrint(
-            '📥 [WALLET] Loading app data (navigated directly to wallet)...',);
         final homeUsecases = HomeUsecases(
           HomeDatasource(ApiImplWithAccessToken()),
         );
         await homeUsecases.getAppDataWithHeader(context);
-        debugPrint('✅ [WALLET] App data loaded');
       }
 
       // 3️⃣ Load user details if not already loaded
       final userUsecases =
           UserUsecases(UserDatasource(ApiImplWithAccessToken()));
       await userUsecases.getUserDetails(context);
-      debugPrint('✅ [WALLET] User details loaded');
     } catch (e) {
       debugPrint('⚠️ [WALLET] Error initializing Fantasy data: $e');
     }
@@ -172,8 +153,6 @@ class _MyBalancePage extends State<MyBalancePage> with RouteAware {
       // Fetch from Fantasy backend
       final gameTokens = await walletService.getGameTokens();
       setState(() {});
-
-      debugPrint('📊 [FANTASY_WALLET] Game tokens synced: $gameTokens');
     } catch (e) {
       debugPrint('⚠️ [FANTASY_WALLET] Error loading game tokens: $e');
     }
@@ -181,12 +160,8 @@ class _MyBalancePage extends State<MyBalancePage> with RouteAware {
 
   /// Load shop tokens from unified wallet service
   Future<void> _loadShopTokens() async {
-    debugPrint('📲 [WALLET] Loading shop tokens from wallet service...');
     await walletService.initialize();
     final shopTokens = await walletService.getShopTokens();
-    
-    debugPrint('💰 [WALLET] ✅ FETCHED_SHOP_TOKENS: $shopTokens');
-    debugPrint('   - Source: SharedPreferences (updated by order deduction)');
     
     setState(() {
       _shopTokens = shopTokens;
@@ -197,8 +172,6 @@ class _MyBalancePage extends State<MyBalancePage> with RouteAware {
       try {
         final shopTokensProvider = context.read<ShopTokensProvider>();
         await shopTokensProvider.updateTokens(shopTokens.toInt());
-        debugPrint(
-            '✅ [WALLET] 📤 SYNCED_TO_PROVIDER: Shop tokens updated in provider to ${shopTokens.toInt()}',);
       } catch (e) {
         debugPrint('⚠️ [WALLET] Could not sync to provider: $e');
       }
@@ -232,18 +205,11 @@ class _MyBalancePage extends State<MyBalancePage> with RouteAware {
           _totalAdded = (walletData['totalAdded'] as num?)?.toDouble() ?? 0.0;
         });
 
-        debugPrint('✅ [WALLET_SCREEN] Full wallet loaded');
-        debugPrint('   Shop Tokens: $_shopTokens');
-        debugPrint('   Total Spent: $_totalSpent');
-        debugPrint('   Total Added: $_totalAdded');
-
         // Sync shop tokens to ShopTokensProvider
         if (mounted) {
           try {
             final shopTokensProvider = context.read<ShopTokensProvider>();
             await shopTokensProvider.updateTokens(_shopTokens.toInt());
-            debugPrint(
-                '✅ [WALLET_SCREEN] Shop tokens synced to provider: ${_shopTokens.toInt()}',);
           } catch (e) {
             debugPrint('⚠️ [WALLET_SCREEN] Could not sync to provider: $e');
           }
@@ -435,8 +401,6 @@ class _MyBalancePage extends State<MyBalancePage> with RouteAware {
                                           builder: (_) => const AddMoneyPage(),),
                                     );
                                     // Always refresh when returning, regardless of result
-                                    debugPrint(
-                                        '🔄 [ACCOUNTS] Returned from Add Money (result: $result), refreshing...',);
                                     await _refreshAllData();
                                   },
                                 ),

@@ -21,10 +21,6 @@ class ContestJoinService {
     String? contestName,
     String? description,
   }) async {
-    debugPrint(
-      '🎮 [CONTEST_JOIN] Joining contest: $contestId, Entry fee: $entryFee tokens',
-    );
-
     try {
       // Step 1: Verify sufficient balance locally (UX optimization)
       final cachedTokens = await _cache.getTokens();
@@ -34,8 +30,6 @@ class ContestJoinService {
           ContestJoinErrorCode.insufficientBalance,
         );
       }
-
-      debugPrint('✅ [CONTEST_JOIN] Balance verified: ${cachedTokens.balance}');
 
       // Step 2: Call backend debit endpoint
       final response = await _debitTokensFromBackend(
@@ -55,10 +49,6 @@ class ContestJoinService {
       final newBalance = (response['data']?['balance'] ?? 0).toDouble();
       final transactionId = response['data']?['transaction_id'] as String? ?? '';
 
-      debugPrint('✅ [CONTEST_JOIN] Tokens debited: $entryFee');
-      debugPrint('   New balance: $newBalance');
-      debugPrint('   Transaction ID: $transactionId');
-
       // Step 4: Update local cache with new balance
       await _updateCacheAfterDebit(
         newBalance: newBalance,
@@ -66,8 +56,6 @@ class ContestJoinService {
         transactionId: transactionId,
         contestId: contestId,
       );
-
-      debugPrint('✅ [CONTEST_JOIN] Cache updated successfully');
 
       // Return success response
       return ContestJoinResponse(
@@ -102,8 +90,6 @@ class ContestJoinService {
       const url = 'debit-tokens'; // Relative path
       final fullUrl = '${APIServerUrl.userServerUrl}$url';
 
-      debugPrint('🔄 [CONTEST_JOIN] Calling debit endpoint: $fullUrl');
-
       final body = {
         'amount': amount,
         'type': 'contest_join',
@@ -111,20 +97,16 @@ class ContestJoinService {
         'description': description,
       };
 
-      debugPrint('   Request body: $body');
-
       final response = await _apiClient.post(fullUrl, body: body);
       final data = response.data;
 
       if (data is! Map<String, dynamic>) {
-        debugPrint('❌ [CONTEST_JOIN] Invalid response format');
         return {
           'success': false,
           'message': 'Invalid response format from server',
         };
       }
 
-      debugPrint('✅ [CONTEST_JOIN] Backend response received');
       return data;
     } catch (e) {
       debugPrint('❌ [CONTEST_JOIN] Backend call failed: $e');
@@ -144,9 +126,6 @@ class ContestJoinService {
   }) async {
     try {
       final oldTokens = await _cache.getTokens();
-      if (oldTokens == null) {
-        debugPrint('⚠️ [CONTEST_JOIN] No cached tokens found, creating new');
-      }
 
       // Create debit transaction
       final transaction = Transaction(
@@ -170,7 +149,6 @@ class ContestJoinService {
 
       // Save to cache
       await _cache.saveTokens(updatedTokens);
-      debugPrint('✅ [CONTEST_JOIN] Cache updated: new balance = $newBalance');
     } catch (e) {
       debugPrint('❌ [CONTEST_JOIN] Error updating cache: $e');
       rethrow;
@@ -186,9 +164,6 @@ class ContestJoinService {
       }
 
       final hasEnough = tokens.balance >= requiredAmount;
-      debugPrint(
-        '[CONTEST_JOIN] Token verification: ${tokens.balance} >= $requiredAmount = $hasEnough',
-      );
       return hasEnough;
     } catch (e) {
       debugPrint('❌ [CONTEST_JOIN] Error verifying tokens: $e');

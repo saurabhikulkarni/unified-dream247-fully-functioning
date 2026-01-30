@@ -58,11 +58,6 @@ class AuthService {
       // Clean mobile number
       final cleanMobile = mobileNumber.replaceAll(RegExp(r'[^\d]'), '');
 
-      if (kDebugMode) {
-        debugPrint('📱 [AUTH] Sending OTP to: $cleanMobile');
-        debugPrint('📱 [AUTH] URL: ${ApiConfig.shopSendOtpEndpoint}');
-      }
-
       final response = await http
           .post(
             Uri.parse(ApiConfig.shopSendOtpEndpoint),
@@ -72,10 +67,6 @@ class AuthService {
           .timeout(const Duration(seconds: ApiConfig.requestTimeoutSeconds));
 
       final data = jsonDecode(response.body);
-
-      if (kDebugMode) {
-        debugPrint('📱 [AUTH] Send OTP Response: ${response.statusCode}');
-      }
 
       return {
         'success': data['success'] ?? false,
@@ -100,11 +91,6 @@ class AuthService {
     try {
       final cleanMobile = mobileNumber.replaceAll(RegExp(r'[^\d]'), '');
 
-      if (kDebugMode) {
-        debugPrint('📱 [AUTH] Verifying OTP for: $cleanMobile');
-        debugPrint('📱 [AUTH] URL: ${ApiConfig.shopVerifyOtpEndpoint}');
-      }
-
       final response = await http
           .post(
             Uri.parse(ApiConfig.shopVerifyOtpEndpoint),
@@ -120,11 +106,6 @@ class AuthService {
           .timeout(const Duration(seconds: ApiConfig.requestTimeoutSeconds));
 
       final data = jsonDecode(response.body);
-
-      if (kDebugMode) {
-        debugPrint('📱 [AUTH] Verify OTP Response: ${response.statusCode}');
-        debugPrint('📱 [AUTH] Success: ${data['success']}');
-      }
 
       if (data['success'] == true) {
         // Save tokens
@@ -244,12 +225,6 @@ class AuthService {
     try {
       final cleanMobile = mobileNumber.replaceAll(RegExp(r'[^\d]'), '');
 
-      if (kDebugMode) {
-        debugPrint('🔗 [AUTH] Login from Shop to Fantasy backend');
-        debugPrint('🔗 [AUTH] Hygraph User ID: $hygraphUserId');
-        debugPrint('🔗 [AUTH] URL: ${ApiConfig.fantasyUserLoginEndpoint}');
-      }
-
       // Fantasy backend add-temporary-user expects mobile_number only
       // It will return a temporary user entry and send OTP
       final response = await http
@@ -264,11 +239,6 @@ class AuthService {
           .timeout(const Duration(seconds: ApiConfig.requestTimeoutSeconds));
 
       final data = jsonDecode(response.body);
-
-      if (kDebugMode) {
-        debugPrint('🔗 [AUTH] Fantasy Login Response: ${response.statusCode}');
-        debugPrint('🔗 [AUTH] Success: ${data['status'] ?? data['success']}');
-      }
 
       if (data['status'] == true || data['success'] == true) {
         // Extract tokens from response (support both auth_key and fantasy_auth_key)
@@ -285,14 +255,6 @@ class AuthService {
             data['data']?['fantasy_sync_status'] ?? data['fantasy_sync_status'];
         final fantasySyncError =
             data['data']?['fantasy_sync_error'] ?? data['fantasy_sync_error'];
-
-        // Log sync status for debugging
-        if (kDebugMode) {
-          debugPrint('🔗 [AUTH] Fantasy Sync Status: $fantasySyncStatus');
-          if (fantasySyncError != null) {
-            debugPrint('⚠️ [AUTH] Fantasy Sync Error: $fantasySyncError');
-          }
-        }
 
         // Store sync status in SharedPreferences for later access
         if (fantasySyncStatus != null) {
@@ -340,9 +302,6 @@ class AuthService {
         );
         await _saveUnifiedUser(user);
 
-        debugPrint('✅ [AUTH] Fantasy login successful');
-        debugPrint('✅ [AUTH] Fantasy User ID: $fantasyUserId');
-
         return {
           'success': true,
           'message': data['message'] ?? 'Login successful',
@@ -385,11 +344,6 @@ class AuthService {
     if (authToken.isNotEmpty) {
       await _prefs?.setString(StorageConstants.authToken, authToken);
       await _prefs?.setString('token', authToken); // Ensure legacy key is set
-      debugPrint('✅ [AUTH] Token saved: ${authToken.length} chars');
-    } else {
-      debugPrint(
-        '⚠️ [AUTH] Skipping token save - empty token provided (keeping existing)',
-      );
     }
 
     await _prefs?.setString('mobile_number', mobileNumber);
@@ -428,10 +382,6 @@ class AuthService {
 
     // User is logged in if any login flag is true AND we have a valid token
     final result = (isShopLoggedIn || isFantasyLoggedIn) && hasValidToken;
-
-    debugPrint(
-      '🔐 [AUTH] isLoggedIn check: shop=$isShopLoggedIn, fantasy=$isFantasyLoggedIn, token=${hasValidToken ? "valid" : "missing"} => $result',
-    );
 
     return result;
   }
@@ -640,7 +590,6 @@ class AuthService {
   /// and synchronizes the bearer token if present.
   Future<Map<String, dynamic>?> syncFantasyVersion() async {
     try {
-      debugPrint('🔄 [AUTH] Syncing Fantasy Version...');
       final token = getAuthToken();
 
       final response = await http.get(
@@ -651,14 +600,11 @@ class AuthService {
         },
       ).timeout(const Duration(seconds: ApiConfig.requestTimeoutSeconds));
 
-      debugPrint('🔄 [AUTH] Version Response: ${response.statusCode}');
-
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
 
         // 1. Store full response data
         await _prefs?.setString('fantasy_version_data', response.body);
-        debugPrint('✅ [AUTH] Fantasy version data saved to session');
 
         // 2. Extract and sync token if present
         String? newToken;
@@ -673,17 +619,13 @@ class AuthService {
         if (newToken != null && newToken.isNotEmpty) {
           // Verify if it's different from current
           if (newToken != token) {
-            debugPrint('♻️ [AUTH] Updating Auth Token from Version API');
             await _prefs?.setString(StorageConstants.authToken, newToken);
             await _prefs?.setString('token', newToken); // Legacy compatibility
-          } else {
-            debugPrint('✅ [AUTH] Token is already up to date');
           }
         }
 
         return data is Map<String, dynamic> ? data : {'data': data};
       } else {
-        debugPrint('❌ [AUTH] Version Sync Failed: ${response.statusCode}');
         return null;
       }
     } catch (e) {

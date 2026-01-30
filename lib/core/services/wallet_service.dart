@@ -52,13 +52,11 @@ class UnifiedWalletService {
   Future<void> initialize() async {
     _prefs = await SharedPreferences.getInstance();
     await _gameTokensCache.initialize();
-    debugPrint('✅ [UNIFIED_WALLET] Service initialized with GraphQL backend');
   }
 
   /// Register ShopTokensProvider for instant UI updates
   void setShopTokensProvider(dynamic provider) {
     _shopTokensProvider = provider;
-    debugPrint('✅ [UNIFIED_WALLET] ShopTokensProvider registered for instant updates');
   }
 
   // ==================== SHOP TOKENS ====================
@@ -79,7 +77,6 @@ class UnifiedWalletService {
           value = cachedValue.toDouble();
         }
         if (value > 0) {
-          debugPrint('📊 [UNIFIED_WALLET] Shop tokens (from SharedPreferences cache): $value');
           return value;
         }
       }
@@ -98,13 +95,11 @@ class UnifiedWalletService {
       // If backend has value, sync to local storage
       if (backendTokens > 0) {
         await _prefs?.setDouble(StorageConstants.shopTokens, backendTokens);
-        debugPrint('📊 [UNIFIED_WALLET] Shop tokens (from GraphQL backend): $backendTokens');
         return backendTokens;
       }
       
       // Backend returned 0 - keep using cached value if available
       final cached = _safeGetDouble(StorageConstants.shopTokens);
-      debugPrint('⚠️ [UNIFIED_WALLET] Backend returned 0, keeping cached value: $cached');
       return cached;
     } catch (e) {
       // Fallback to local storage on any error
@@ -118,7 +113,6 @@ class UnifiedWalletService {
   Future<void> setShopTokens(double amount) async {
     await _ensureInitialized();
     await _prefs?.setDouble(StorageConstants.shopTokens, amount);
-    debugPrint('✅ [UNIFIED_WALLET] Shop tokens synced locally: $amount');
   }
 
   /// Add shop tokens from payment (syncs to backend)
@@ -142,9 +136,6 @@ class UnifiedWalletService {
       if (result['success'] == true) {
         final newBalance = result['newBalance'] as double? ?? 0.0;
         await _prefs?.setDouble(StorageConstants.shopTokens, newBalance);
-        
-        debugPrint('✅ [UNIFIED_WALLET] Added $amount shop tokens (Backend)');
-        debugPrint('💰 New balance: $newBalance');
       }
     } catch (e) {
       debugPrint('❌ [UNIFIED_WALLET] Error adding tokens: $e');
@@ -167,10 +158,6 @@ class UnifiedWalletService {
     String? itemName,
     String? orderId,
   }) async {
-    debugPrint('=== [UNIFIED_WALLET] deductShopTokens CALLED ===');
-    debugPrint('   - Amount: $amount');
-    debugPrint('   - ItemName: $itemName');
-    debugPrint('   - OrderID: $orderId');
     
     await _ensureInitialized();
     
@@ -187,14 +174,11 @@ class UnifiedWalletService {
         // Try to get from provider if available (this is the actual UI balance)
         if (_shopTokensProvider != null) {
           current = _shopTokensProvider!.shopTokens;
-          debugPrint('📊 [UNIFIED_WALLET] Got balance from Provider: $current');
         } else {
           // Fallback to SharedPreferences
           current = await getShopTokens();
-          debugPrint('📊 [UNIFIED_WALLET] Got balance from SharedPreferences: $current');
         }
       } catch (e) {
-        debugPrint('⚠️ [UNIFIED_WALLET] Error getting balance, trying SharedPreferences: $e');
         current = await getShopTokens();
       }
       
@@ -202,10 +186,6 @@ class UnifiedWalletService {
         debugPrint('❌ [UNIFIED_WALLET] Insufficient shop tokens. Have: $current, Need: $amount');
         return false;
       }
-
-      debugPrint('🔄 [UNIFIED_WALLET] Starting token deduction...');
-      debugPrint('   - Current balance: $current');
-      debugPrint('   - Amount to deduct: $amount');
 
       // PRIMARY: Try REST endpoint FIRST (this is the reliable method with your backend)
       final restSuccess = await _deductFromFantasyBackend(
@@ -215,12 +195,10 @@ class UnifiedWalletService {
       );
       
       if (restSuccess) {
-        debugPrint('✅ [UNIFIED_WALLET] REST deduction successful');
         return true;
       }
       
       // FALLBACK: If REST fails, deduct locally as last resort
-      debugPrint('⚠️ [UNIFIED_WALLET] REST deduction failed, using local fallback');
       final newAmount = current - amount;
       await setShopTokens(newAmount);
       
@@ -266,18 +244,14 @@ class UnifiedWalletService {
           final balanceStr = data['data']['balance']?.toString() ?? '0';
           final fantasyBalance = double.tryParse(balanceStr)?.toInt() ?? 0;
           
-          debugPrint('🔄 [UNIFIED_WALLET] Fantasy balance after deduction: $fantasyBalance');
-          
           // If Fantasy has different balance than expected, update to Fantasy's value
           if (fantasyBalance != expectedBalance.toInt()) {
-            debugPrint('⚠️ [UNIFIED_WALLET] Syncing from Fantasy (GraphQL returned $expectedBalance, Fantasy has $fantasyBalance)');
             await _prefs?.setInt(StorageConstants.shopTokens, fantasyBalance);
           }
         }
       }
     } catch (e) {
       // Silent fail - this is just a sanity check
-      debugPrint('ℹ️ [UNIFIED_WALLET] Fantasy refresh check skipped: $e');
     }
   }
 
@@ -287,28 +261,15 @@ class UnifiedWalletService {
     required String orderId,
     required String itemName,
   }) async {
-    debugPrint('═══════════════════════════════════════════════════════');
-    debugPrint('🔄 [FANTASY_DEDUCT] *** METHOD ENTRY POINT ***');
-    debugPrint('   Amount: $amount');
-    debugPrint('   OrderID: $orderId');
-    debugPrint('   ItemName: $itemName');
-    
     try {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('token') ?? prefs.getString('auth_token');
       
-      debugPrint('🔄 [FANTASY_DEDUCT] Token check: ${token != null ? "✓ Token found" : "✗ NO TOKEN"}');
       if (token == null) {
-        debugPrint('❌ [FANTASY_DEDUCT] No auth token available - RETURNING FALSE');
         return false;
       }
 
       final url = '${ApiConfig.fantasyBaseUrl}/user/wallet/deduct-shop-tokens';
-      
-      debugPrint('🔄 [FANTASY_DEDUCT] Attempting Fantasy backend deduction');
-      debugPrint('   - Endpoint: user/wallet/deduct-shop-tokens');
-      debugPrint('   - Amount: $amount');
-      debugPrint('   - Order Reference: $orderId');
 
       try {
         final requestBody = {
@@ -316,9 +277,6 @@ class UnifiedWalletService {
           'orderReference': orderId,
           'description': 'Product purchase - $itemName',
         };
-        
-        debugPrint('🔄 [FANTASY_DEDUCT] Request Body: $requestBody');
-        debugPrint('🔄 [FANTASY_DEDUCT] Making HTTP POST request...');
         
         final response = await http.post(
           Uri.parse(url),
@@ -328,17 +286,10 @@ class UnifiedWalletService {
           },
           body: jsonEncode(requestBody),
         ).timeout(const Duration(seconds: 10));
-
-        debugPrint('✅ [FANTASY_DEDUCT] HTTP Response received');
-        debugPrint('📊 [FANTASY_DEDUCT] Status Code: ${response.statusCode}');
-        debugPrint('📝 [FANTASY_DEDUCT] Response Body: ${response.body}');
         
         if (response.statusCode == 200 || response.statusCode == 201) {
-          debugPrint('🔄 [FANTASY_DEDUCT] Response status OK, parsing JSON...');
-          
           try {
             final data = jsonDecode(response.body);
-            debugPrint('✅ [FANTASY_DEDUCT] Parsed response: $data');
             
             if (data['success'] == true) {
               final newBalance = double.tryParse(data['data']?['balance']?.toString() ?? '0') ?? 0;
@@ -348,17 +299,11 @@ class UnifiedWalletService {
               
               // UPDATE SHOP TOKENS PROVIDER WITH NEW BALANCE IMMEDIATELY
               if (_shopTokensProvider != null) {
-                debugPrint('🔄 [FANTASY_DEDUCT] Updating ShopTokensProvider with new balance: $newBalance');
                 _shopTokensProvider!.updateTokens(newBalance.toInt());
               }
               
-              debugPrint('✅ [FANTASY_DEDUCT] Successfully deducted $amount');
-              debugPrint('   - New balance: $newBalance');
-              debugPrint('═══════════════════════════════════════════════════════');
               return true;
             } else {
-              debugPrint('⚠️ [FANTASY_DEDUCT] Response was 200 but success != true');
-              debugPrint('   - Response: $data');
               return false;
             }
           } catch (parseError) {
@@ -366,23 +311,17 @@ class UnifiedWalletService {
             return false;
           }
         } else if (response.statusCode == 404) {
-          debugPrint('⚠️ [FANTASY_DEDUCT] Endpoint not found (404) - Backend endpoint missing?');
           return false;
         } else {
-          debugPrint('❌ [FANTASY_DEDUCT] HTTP Error ${response.statusCode}');
           return false;
         }
       } on TimeoutException catch (timeoutE) {
-        debugPrint('⏱️ [FANTASY_DEDUCT] Request timed out after 10s: $timeoutE');
         return false;
       } on SocketException catch (socketE) {
-        debugPrint('🔌 [FANTASY_DEDUCT] Network error: $socketE');
         return false;
       }
     } catch (e, st) {
       debugPrint('❌ [FANTASY_DEDUCT] Unexpected error: $e');
-      debugPrint('❌ [FANTASY_DEDUCT] Stacktrace: $st');
-      debugPrint('═══════════════════════════════════════════════════════');
       return false;
     }
   }
@@ -412,7 +351,6 @@ class UnifiedWalletService {
           final balance = double.tryParse(balanceStr)?.toInt() ?? 0;
           
           await _prefs?.setInt(StorageConstants.shopTokens, balance);
-          debugPrint('✅ [WALLET_SERVICE] Refreshed shop tokens from Fantasy: $balance');
         }
       }
     } catch (e) {
@@ -438,17 +376,14 @@ class UnifiedWalletService {
       if (balance >= 0) {
         // Sync to local cache
         await _prefs?.setDouble(StorageConstants.gameTokens, balance);
-        debugPrint('📊 [UNIFIED_WALLET] Game tokens (from Fantasy backend): $balance');
         return balance;
       }
     } catch (e) {
       // Fallback to local cache if backend fails
-      debugPrint('⚠️ [UNIFIED_WALLET] Fantasy backend fetch failed, using local cache: $e');
     }
     
     // Return cached value
     final cached = _safeGetDouble(StorageConstants.gameTokens);
-    debugPrint('💾 [UNIFIED_WALLET] Game tokens (from local cache): $cached');
     return cached;
   }
 
@@ -456,7 +391,6 @@ class UnifiedWalletService {
   Future<void> setGameTokens(double amount) async {
     await _ensureInitialized();
     await _prefs?.setDouble(StorageConstants.gameTokens, amount);
-    debugPrint('✅ [UNIFIED_WALLET] Game tokens synced locally: $amount');
   }
 
   /// Fetch game tokens from Fantasy backend
@@ -466,8 +400,6 @@ class UnifiedWalletService {
       // Import fantasy accounts datasource
       // This method calls Fantasy's user-wallet-details endpoint
       // Response: {success: true, data: {balance: 5000, winning: 0, bonus: 100}}
-      
-      debugPrint('🔄 [UNIFIED_WALLET] Fetching game tokens from Fantasy backend...');
       
       // For now, return -1 to indicate need for backend call
       // This will be called from Fantasy module using proper API client
@@ -491,7 +423,6 @@ class UnifiedWalletService {
         // Update local cache
         await _prefs?.setDouble(StorageConstants.gameTokens, balance);
         await _gameTokensCache.updateBalance(balance);
-        debugPrint('✅ [UNIFIED_WALLET] Game tokens synced with Fantasy: $balance');
         return true;
       }
       
@@ -523,7 +454,6 @@ class UnifiedWalletService {
       );
 
       await _gameTokensCache.addTransaction(transaction);
-      debugPrint('✅ [UNIFIED_WALLET] Transaction added: $type - $amount');
     } catch (e) {
       debugPrint('❌ [UNIFIED_WALLET] Error adding transaction: $e');
     }
@@ -588,7 +518,7 @@ class UnifiedWalletService {
         ),);
       }
 
-      debugPrint('✅ [UNIFIED_WALLET] Fetched ${transactions.length} transactions from backend');
+
       return transactions;
     } catch (e) {
       debugPrint('⚠️ [UNIFIED_WALLET] Backend transaction fetch failed: $e');
@@ -647,7 +577,6 @@ class UnifiedWalletService {
       };
       
       _lastBackendSync = DateTime.now();
-      debugPrint('✅ [UNIFIED_WALLET] Synced wallet data from backend');
       return _cachedWalletData!;
     } catch (e) {
       debugPrint('⚠️ [UNIFIED_WALLET] Wallet sync failed: $e');
@@ -762,8 +691,6 @@ class UnifiedWalletService {
       // Update cache
       _cachedWalletData = wallet;
       _lastBackendSync = DateTime.now();
-      
-      debugPrint('✅ [UNIFIED_WALLET] Successfully synced with backend');
     } catch (e) {
       debugPrint('❌ [UNIFIED_WALLET] Backend sync failed: $e');
     }

@@ -47,7 +47,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 cacheWidth: 720, // Limit decoded image size to reduce memory
                 cacheHeight: 720,
                 errorBuilder: (context, error, stackTrace) {
-                  debugPrint('❌ [SIGNUP] Image load error: $error');
                   return Container(
                     color: const Color(0xFF6B4099),
                     child: const Center(
@@ -115,15 +114,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       final fantasyUserId = _signUpFormState.getFantasyUserId();
                       final isNewUser = _signUpFormState.isNewUser();
 
-                      debugPrint('📝 [SIGNUP] OTP verified. Backend response:');
-                      debugPrint('📝 [SIGNUP] userId: $userId');
-                      debugPrint(
-                          '📝 [SIGNUP] authToken: ${authToken != null ? "present (${authToken.length} chars)" : "null"}');
-                      debugPrint(
-                          '📝 [SIGNUP] fantasyToken: ${fantasyToken != null ? "present (${fantasyToken.length} chars)" : "null"}');
-                      debugPrint('📝 [SIGNUP] fantasyUserId: $fantasyUserId');
-                      debugPrint('📝 [SIGNUP] isNewUser: $isNewUser');
-
                       if (phone == null || phone.isEmpty) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
@@ -148,7 +138,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         // No need to call Hygraph directly - backend handles this!
 
                         if (userId == null || userId.isEmpty) {
-                          debugPrint('❌ [SIGNUP] No userId from backend!');
                           if (mounted) {
                             Navigator.of(context).pop();
                             ScaffoldMessenger.of(context).showSnackBar(
@@ -161,9 +150,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           }
                           return;
                         }
-
-                        debugPrint(
-                            '✅ [SIGNUP] User created by backend. UserId: $userId');
 
                         // Initialize services
                         final authService = AuthService();
@@ -180,10 +166,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         // Use authToken as primary (should work for both Shop & Fantasy APIs)
                         // This matches login flow which uses unified token from backend
                         String? finalToken = authToken;
-                        
-                        debugPrint('🔑 [SIGNUP] Using token for session:');
-                        debugPrint('   - Primary token (authToken): ${authToken != null ? "present" : "null"}');
-                        debugPrint('   - Fantasy token field: ${fantasyToken != null ? "present" : "null"}');
 
                         // Save login session
                         await authService.saveLoginSession(
@@ -220,35 +202,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           await prefs.setString('auth_token', finalToken);
                         }
 
-                        // Debug: Verify flags were saved
-                        debugPrint('🔐 [SIGNUP] Session flags after save:');
-                        debugPrint('   - is_logged_in: ${prefs.getBool('is_logged_in')}');
-                        debugPrint('   - is_logged_in_fantasy: ${prefs.getBool('is_logged_in_fantasy')}');
-                        debugPrint('   - user_id: ${prefs.getString('user_id')}');
-                        debugPrint('   - token: ${prefs.getString('token') != null ? "present" : "null"}');
-
-                        debugPrint('✅ [SIGNUP] User session saved - persistent login enabled');
-
                         // ✅ FINAL VALIDATION: Verify session is complete before navigation
                         final savedToken = prefs.getString('token');
                         final savedAuthToken = prefs.getString('auth_token');
                         final savedIsLoggedIn = prefs.getBool('is_logged_in');
                         final savedUserId = prefs.getString('user_id');
 
-                        debugPrint('🔐 [SIGNUP] FINAL SESSION VALIDATION:');
-                        debugPrint('   - is_logged_in: $savedIsLoggedIn');
-                        debugPrint(
-                            '   - is_logged_in_fantasy: ${prefs.getBool('is_logged_in_fantasy')}');
-                        debugPrint('   - user_id: $savedUserId');
-                        debugPrint(
-                            '   - token present: ${savedToken != null && savedToken.isNotEmpty}');
-                        debugPrint(
-                            '   - auth_token present: ${savedAuthToken != null && savedAuthToken.isNotEmpty}');
-
                         // Verify userId is saved (token is optional for Shop-only mode)
                         if (savedUserId == null || savedUserId.isEmpty) {
-                          debugPrint(
-                              '❌ [SIGNUP] UserId not saved properly! Aborting navigation.');
                           if (mounted) {
                             Navigator.of(context).pop();
                             ScaffoldMessenger.of(context).showSnackBar(
@@ -261,20 +222,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           }
                           return;
                         }
-
-                        // Debug: Verify flags were saved
-                        debugPrint('🔐 [SIGNUP] Session flags after save:');
-                        debugPrint(
-                            '   - is_logged_in: ${prefs.getBool('is_logged_in')}');
-                        debugPrint(
-                            '   - is_logged_in_fantasy: ${prefs.getBool('is_logged_in_fantasy')}');
-                        debugPrint(
-                            '   - user_id: ${prefs.getString('user_id')}');
-                        debugPrint(
-                            '   - token: ${prefs.getString('token') != null ? "present" : "null"}');
-
-                        debugPrint(
-                            '✅ [SIGNUP] User session saved - persistent login enabled');
 
                         if (!mounted) return;
                         Navigator.of(context).pop(); // Hide loading
@@ -291,7 +238,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         context.go(RouteNames.home);
                       } catch (e, stackTrace) {
                         debugPrint('❌ [SIGNUP] Exception during signup: $e');
-                        debugPrint('❌ [SIGNUP] Stack trace: $stackTrace');
                         if (mounted) {
                           Navigator.of(context).pop(); // Hide loading
                           ScaffoldMessenger.of(context).showSnackBar(

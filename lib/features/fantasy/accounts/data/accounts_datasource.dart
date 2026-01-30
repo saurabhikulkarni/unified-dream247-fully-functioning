@@ -342,12 +342,10 @@ class AccountsDatasource implements AccountsRepositories {
   Future<BalanceModel?>? myWalletDetails(BuildContext context) async {
     try {
       final url = '${APIServerUrl.userServerUrl}${APIServerUrl.myWalletDetails}';
-      debugPrint('🔄 [WALLET_API] Fetching wallet details');
 
       final response = await clientWithToken.get(url);
 
       final res = response.data;
-      debugPrint('📥 [WALLET_API] Response status: ${response.statusCode}');
       debugPrint('📥 [WALLET_API] Response: $res');
 
       if (ApiServerUtil.validateStatusCode(response.statusCode ?? 200)) {

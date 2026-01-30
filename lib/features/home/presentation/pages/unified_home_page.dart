@@ -46,7 +46,6 @@ class _UnifiedHomePageState extends State<UnifiedHomePage>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
       // Auto-refresh both shop and game tokens when app resumes from background
-      debugPrint('🔄 [HOME] App resumed, refreshing both shop and game tokens');
       _refreshShopTokens();
       _refreshGameTokens();
     }
@@ -55,7 +54,6 @@ class _UnifiedHomePageState extends State<UnifiedHomePage>
   /// Called when this page is pushed back to the foreground (e.g., returning from wallet screen)
   @override
   void didPopNext() {
-    debugPrint('🔙 [HOME] Returning to home page - refreshing token balances');
     // Force immediate refresh of both token types when returning from another screen
     _refreshShopTokens();
     _refreshGameTokens();
@@ -69,7 +67,6 @@ class _UnifiedHomePageState extends State<UnifiedHomePage>
       if (mounted) {
         final shopTokensProvider = context.read<ShopTokensProvider>();
         shopTokensProvider.forceRefresh();
-        debugPrint('🔄 [HOME] Refreshing shop tokens on page load');
       }
     });
   }
@@ -83,7 +80,6 @@ class _UnifiedHomePageState extends State<UnifiedHomePage>
           // Fetch wallet details which populates WalletDetailsProvider
           final walletProvider = context.read<WalletDetailsProvider>();
           await walletProvider.refreshWalletDetails(context);
-          debugPrint('🔄 [HOME] Refreshed game tokens from wallet API');
         } catch (e) {
           debugPrint('⚠️ [HOME] Error refreshing game tokens: $e');
         }
@@ -111,7 +107,6 @@ class _UnifiedHomePageState extends State<UnifiedHomePage>
         try {
           final walletProvider = context.read<WalletDetailsProvider>();
           await walletProvider.refreshWalletDetails(context);
-          debugPrint('🔄 [HOME] Periodic game tokens refresh done');
         } catch (e) {
           debugPrint('⚠️ [HOME] Periodic refresh error: $e');
         }
@@ -132,14 +127,6 @@ class _UnifiedHomePageState extends State<UnifiedHomePage>
     final isLoggedIn = prefs.getBool('is_logged_in') ?? false;
     final isLoggedInFantasy = prefs.getBool('is_logged_in_fantasy') ?? false;
 
-    debugPrint('🔍 [HOME] _initAuth Check:');
-    debugPrint('   - isLoggedIn: $isLoggedIn');
-    debugPrint('   - isLoggedInFantasy: $isLoggedInFantasy');
-    debugPrint(
-        '   - token key: ${token != null ? "FOUND (${token.length} chars)" : "NULL"}',);
-    debugPrint(
-        '   - auth_token key: ${authToken != null ? "FOUND (${authToken.length} chars)" : "NULL"}',);
-
     // Check if we have any valid token
     final hasValidToken = (token != null && token.isNotEmpty) ||
         (authToken != null && authToken.isNotEmpty);
@@ -147,7 +134,6 @@ class _UnifiedHomePageState extends State<UnifiedHomePage>
 
     // SYNC CHECK: If Fantasy logged in but Shop isn't, sync the flags
     if (isLoggedInFantasy && !isLoggedIn && hasValidToken) {
-      debugPrint('🔄 [HOME] Syncing Fantasy auth to Shop flags...');
       await prefs.setBool('is_logged_in', true);
       // Ensure token is in both keys
       if (validToken != null) {
@@ -155,7 +141,6 @@ class _UnifiedHomePageState extends State<UnifiedHomePage>
         await prefs.setString('auth_token', validToken);
       }
       await _authService.initialize(); // Re-init service
-      debugPrint('✅ [HOME] Auth state synchronized');
       return; // Synced!
     }
 
@@ -163,9 +148,6 @@ class _UnifiedHomePageState extends State<UnifiedHomePage>
     // Do NOT logout if Fantasy is logged in but tokens are missing - just resync
     if (isLoggedIn && !hasValidToken) {
       // Shop is marked as logged in but has no tokens - this is a true zombie session
-      debugPrint(
-          '🧟 [HOME] Zombie Session Detected (Shop Logged In but Token=null/empty)',);
-      debugPrint('🧹 [HOME] Forcing cleanup and logout...');
 
       await _authService.logout();
 
@@ -181,17 +163,14 @@ class _UnifiedHomePageState extends State<UnifiedHomePage>
       }
     } else if (isLoggedInFantasy && !hasValidToken) {
       // Fantasy is logged in but tokens are missing - try to resync from Fantasy storage
-      debugPrint('⚠️ [HOME] Fantasy logged in but tokens missing. Clearing stale flags...');
       await prefs.remove('is_logged_in_fantasy');
       await prefs.setBool('is_logged_in', false);
     } else if (hasValidToken && validToken != null) {
       // Ensure token is synced to both keys
       if (token == null || token.isEmpty) {
-        debugPrint('🔧 [HOME] Syncing auth_token to token key');
         await prefs.setString('token', validToken);
       }
       if (authToken == null || authToken.isEmpty) {
-        debugPrint('🔧 [HOME] Syncing token to auth_token key');
         await prefs.setString('auth_token', validToken);
       }
     }
@@ -199,7 +178,7 @@ class _UnifiedHomePageState extends State<UnifiedHomePage>
 
   void _navigateToShop() {
     // Always allow navigation to shop - module check is optional
-    debugPrint('🛒 [HOME] Navigating to Shop');
+
     context.push('/shop/entry_point');
   }
 
@@ -220,7 +199,6 @@ class _UnifiedHomePageState extends State<UnifiedHomePage>
   }
 
   void _navigateToWallet() {
-    debugPrint('💰 [HOME] Navigating to Wallet');
     context.push('/fantasy/wallet');
   }
 
@@ -228,21 +206,6 @@ class _UnifiedHomePageState extends State<UnifiedHomePage>
     // Remove login check: always call get-version and navigate
     try {
       final prefs = await SharedPreferences.getInstance();
-
-      // DEBUG: Dump ALL keys to see what we actually have
-      debugPrint('🔍 [HOME] ========== SHARED PREF DUMP ==========');
-      final allKeys = prefs.getKeys();
-      for (var key in allKeys) {
-        final val = prefs.get(key);
-        // Mask long values for readability
-        String displayVal = val.toString();
-        if (displayVal.length > 50) {
-          displayVal =
-              '${displayVal.substring(0, 20)}...[MASKED]...${displayVal.substring(displayVal.length - 10)}';
-        }
-        debugPrint('🔍 [HOME] Key: $key = $displayVal');
-      }
-      debugPrint('🔍 [HOME] ======================================');
 
       // 1. Check if we have a valid token in ANY key
       String? usableToken = prefs.getString('token');
@@ -255,8 +218,6 @@ class _UnifiedHomePageState extends State<UnifiedHomePage>
 
       // 2. IMPORTANT: If retrieved token appears to be a User ID (no dots, short), DO NOT USE IT
       if (usableToken != null && !usableToken.contains('.')) {
-        debugPrint(
-            '⚠️ [HOME] Found suspicious token (likely UserID): $usableToken. Ignoring.',);
         usableToken = null;
       }
 
@@ -264,32 +225,19 @@ class _UnifiedHomePageState extends State<UnifiedHomePage>
       if (usableToken != null && usableToken.isNotEmpty) {
         final currentPrimary = prefs.getString('token');
         if (currentPrimary != usableToken) {
-          debugPrint('🔧 [HOME] Recovered/Synced Token to primary keys');
           await prefs.setString('token', usableToken);
           await prefs.setString('auth_token', usableToken);
         }
-      } else {
-        debugPrint('⚠️ [HOME] No valid token found in any key.');
       }
-
-      // Debug: Check current auth status
-      final token = _authService.getAuthToken();
-      debugPrint(
-          '🕵️ [HOME] Pre-Sync Token Check: ${token != null ? "FOUND (${token.length} chars)" : "MISSING"}',);
 
       // Sync fantasy version in background (non-blocking) to prevent 30s timeout delay
       // The endpoint is unreliable, so we don't wait for it
       _authService.syncFantasyVersion().then((data) {
-        if (data != null) {
-          debugPrint('🎮 [HOME] Fantasy Version Synced (background): ${data.keys.toList()}');
-        }
       }).catchError((e) {
-        debugPrint('⚠️ [HOME] Fantasy Version Sync failed (background): $e');
       });
     } catch (e) {
       debugPrint('❌ [HOME] Error in pre-navigation setup: $e');
     }
-    debugPrint('🎮 [HOME] Navigating to Fantasy (sync in background)');
     if (mounted) {
       context.push('/fantasy/home');
     }
@@ -297,9 +245,7 @@ class _UnifiedHomePageState extends State<UnifiedHomePage>
 
   Future<void> _loadProducts() async {
     try {
-      debugPrint('📦 [UNIFIED_HOME] Loading products from Hygraph...');
       final allProducts = await _productService.getAllProducts();
-      debugPrint('📦 [UNIFIED_HOME] Loaded ${allProducts.length} products');
 
       if (allProducts.isNotEmpty) {
         // Shuffle and take random 2 products for preview
@@ -308,9 +254,7 @@ class _UnifiedHomePageState extends State<UnifiedHomePage>
           _products = allProducts.take(2).toList();
           _isLoading = false;
         });
-        debugPrint('📦 [UNIFIED_HOME] Displaying ${_products.length} products');
       } else {
-        debugPrint('⚠️ [UNIFIED_HOME] No products found in Hygraph');
         setState(() {
           _isLoading = false;
         });
@@ -358,7 +302,6 @@ class _UnifiedHomePageState extends State<UnifiedHomePage>
           // Shop Tokens Display - Clickable to navigate to wallet
           Consumer<ShopTokensProvider>(
             builder: (context, shopTokensProvider, child) {
-              debugPrint('🪙 [HOME_HEADER] Shop tokens display: ${shopTokensProvider.shopTokens}');
               return GestureDetector(
                 onTap: () => _navigateToWallet(),
                 child: Container(
@@ -400,13 +343,8 @@ class _UnifiedHomePageState extends State<UnifiedHomePage>
               // bonus = Game Tokens, balance = Shop Tokens
               final gameTokens = double.tryParse(walletProvider.walletData?.bonus ?? '0') ?? 0;
               
-              debugPrint('💎 [HOME_DISPLAY] Game tokens display:');
-              debugPrint('   - walletData: ${walletProvider.walletData}');
-              debugPrint('   - bonus (game tokens): $gameTokens');
-              
               return GestureDetector(
                 onTap: () {
-                  debugPrint('💎 [HOME] Game tokens tapped. Value: $gameTokens');
                   _navigateToWallet();
                 },
                 child: Container(

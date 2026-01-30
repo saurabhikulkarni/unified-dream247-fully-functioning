@@ -171,8 +171,6 @@ class AuthService {
 
       // Store userId and set it in wallet/wishlist/cart services
       if (userId != null && userId.isNotEmpty) {
-        print(
-            '📝 [AUTH] Saving userId from Hygraph: ${userId.substring(0, userId.length > 20 ? 20 : userId.length)}...');
 
         // Save to all possible keys for Shop and Fantasy compatibility
         await prefs.setString(_userIdKey, userId); // user_id (primary)
@@ -195,10 +193,6 @@ class AuthService {
         await prefs.setBool(
             _isLoggedInKey, true); // Also set Shop login flag for sync
         await prefs.setString('user_phone_fantasy', phone);
-
-        print('✅ [AUTH] UserId saved to all storage keys');
-        print(
-            '✅ [AUTH] Both is_logged_in and is_logged_in_fantasy set to true');
       }
 
       // Store user phone (shared identifier across both systems)
@@ -211,17 +205,11 @@ class AuthService {
         // - 'auth_token' for core AuthService (StorageConstants.authToken)
         await prefs.setString('token', fantasyToken);
         await prefs.setString('auth_token', fantasyToken);
-        print('✅ [AUTH] Fantasy token saved successfully');
-        print('✅ [AUTH] Token length: ${fantasyToken.length}');
-        print(
-            '✅ [AUTH] Token preview: ${fantasyToken.substring(0, fantasyToken.length > 20 ? 20 : fantasyToken.length)}...');
 
         // Verify token was saved to both keys
         final tokenKey1 = prefs.getString('token');
         final tokenKey2 = prefs.getString('auth_token');
-        if (tokenKey1 == fantasyToken && tokenKey2 == fantasyToken) {
-          print('✅ [AUTH] Token verified in SharedPreferences (both keys)');
-        } else {
+        if (tokenKey1 != fantasyToken || tokenKey2 != fantasyToken) {
           print('❌ [AUTH] Token verification failed!');
           if (tokenKey1 != fantasyToken) print('  - Key "token" mismatch');
           if (tokenKey2 != fantasyToken) print('  - Key "auth_token" mismatch');
@@ -270,14 +258,6 @@ class AuthService {
         'hygraph_user_id': userId ?? '',
       };
 
-      print('🔑 [AUTH] ========== FETCHING FANTASY TOKEN ==========');
-      print('🔑 [AUTH] Phone: $cleanPhone');
-      print('🔑 [AUTH] Name: $name');
-      print('🔑 [AUTH] Hygraph UserId: $userId');
-      print('🔑 [AUTH] isNewUser: $isNewUser');
-      print('🔑 [AUTH] Backend URL: $loginEndpoint');
-      print('🔑 [AUTH] Request body: ${json.encode(body)}');
-
       // Make HTTP POST request to fantasy backend for user login/registration
       final response = await http
           .post(
@@ -289,37 +269,23 @@ class AuthService {
           )
           .timeout(const Duration(seconds: 30));
 
-      print('🔑 [AUTH] Response status: ${response.statusCode}');
-      print('🔑 [AUTH] Response body: ${response.body}');
-
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = json.decode(response.body);
-        print('🔑 [AUTH] Parsed response data: $data');
-        print('🔑 [AUTH] Response keys available: ${data.keys.toList()}');
 
         // Try different possible token keys from multiple response formats
         String? token;
 
         // Format 1: Direct token field
         token = data['token'] as String?;
-        if (token != null && token.isNotEmpty) {
-          print('✅ [AUTH] Token found in "token" field');
-        }
 
         // Format 2: accessToken field
         if (token == null || token.isEmpty) {
           token = data['accessToken'] as String?;
-          if (token != null && token.isNotEmpty) {
-            print('✅ [AUTH] Token found in "accessToken" field');
-          }
         }
 
         // Format 3: access_token field
         if (token == null || token.isEmpty) {
           token = data['access_token'] as String?;
-          if (token != null && token.isNotEmpty) {
-            print('✅ [AUTH] Token found in "access_token" field');
-          }
         }
 
         // Format 4: data.auth_key field (nested in data object)
@@ -327,44 +293,27 @@ class AuthService {
           final dataObj = data['data'];
           if (dataObj != null && dataObj is Map) {
             token = dataObj['auth_key'] as String?;
-            if (token != null && token.isNotEmpty) {
-              print('✅ [AUTH] Token found in "data.auth_key" field');
-            }
           }
         }
 
         // Format 5: Direct auth_key field
         if (token == null || token.isEmpty) {
           token = data['auth_key'] as String?;
-          if (token != null && token.isNotEmpty) {
-            print('✅ [AUTH] Token found in "auth_key" field');
-          }
         }
 
         if (token != null && token.isNotEmpty) {
-          print('✅ [AUTH] Fantasy token fetched successfully');
-          print('✅ [AUTH] Token length: ${token.length}');
-          print(
-              '✅ [AUTH] Token preview: ${token.substring(0, token.length > 50 ? 50 : token.length)}...');
-          print('🔑 [AUTH] ========== FANTASY TOKEN READY ==========');
           return token;
         } else {
           print('❌ [AUTH] No token found in any expected field');
-          print('❌ [AUTH] Response keys: ${data.keys}');
-          print('❌ [AUTH] Full response structure: $data');
-          print(
-              '❌ [AUTH] Tried fields: token, accessToken, access_token, data.auth_key, auth_key');
           return null;
         }
       } else {
         print(
             '❌ [AUTH] Fantasy token fetch failed with status: ${response.statusCode}');
-        print('❌ [AUTH] Response body: ${response.body}');
         return null;
       }
     } catch (e) {
       print('❌ [AUTH] Error fetching fantasy token: $e');
-      print('❌ [AUTH] Stack trace: ${StackTrace.current}');
       return null;
     }
   }
@@ -388,10 +337,6 @@ class AuthService {
   Future<void> unifiedLogout() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-
-      debugPrint('🔐 [LOGOUT] ========== UNIFIED LOGOUT ==========');
-      debugPrint(
-          'ℹ️ [LOGOUT] Clearing LOCAL session only - backend data is preserved');
 
       // Clear Shop LOCAL authentication (backend data is preserved)
       await prefs.setBool(_isLoggedInKey, false);
@@ -441,13 +386,6 @@ class AuthService {
       // Clear image cache to prevent memory issues on re-login
       PaintingBinding.instance.imageCache.clear();
       PaintingBinding.instance.imageCache.clearLiveImages();
-      debugPrint('🧹 [LOGOUT] Image cache cleared');
-
-      debugPrint('✅ [LOGOUT] LOCAL session cleared');
-      debugPrint(
-          '✅ [LOGOUT] Backend data (shopTokens, wallet, orders) is PRESERVED');
-      debugPrint('✅ [LOGOUT] User can login again and restore their data');
-      debugPrint('🔐 [LOGOUT] ========== LOGOUT COMPLETE ==========');
     } catch (e) {
       debugPrint('❌ Error in unified logout: $e');
     }

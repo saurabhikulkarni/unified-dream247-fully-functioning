@@ -301,35 +301,14 @@ class UpcomingMatchDatsource extends UpcomingMatchRepositories {
   ) async {
     final url =
         '${AppSingleton.singleton.appData.playerJsonUrl}playerList-${AppSingleton.singleton.matchData.realMatchkey}.json';
-
-    debugPrint('🎬 [PLAYERS_DATASOURCE] Fetching players from: $url');
     
     final response = await client.get(url);
 
     if (ApiServerUtil.validateStatusCode(response.statusCode ?? 200)) {
       final res = response.data;
-      debugPrint('🎬 [PLAYERS_DATASOURCE] Response received, player count: ${res.length}');
-      
-      if (res.isNotEmpty) {
-        // Log first player details for debugging
-        final firstPlayer = res[0];
-        debugPrint('🎬 [PLAYERS_DATASOURCE] First player raw JSON:');
-        debugPrint('   - playerid: ${firstPlayer['playerid']}');
-        debugPrint('   - name: ${firstPlayer['name']}');
-        debugPrint('   - image: ${firstPlayer['image']}');
-        debugPrint('   - All keys: ${firstPlayer.keys.toList()}');
-      }
       
       return List<CreateTeamPlayersData>.from(
-        res.map((x) {
-          final player = CreateTeamPlayersData.fromJson(x);
-          if (player.image != null && player.image!.isNotEmpty) {
-            debugPrint('✅ [PLAYERS_DATASOURCE] Player ${player.name} image: ${player.image}');
-          } else {
-            debugPrint('❌ [PLAYERS_DATASOURCE] Player ${player.name} has NO image!');
-          }
-          return player;
-        }),
+        res.map((x) => CreateTeamPlayersData.fromJson(x)),
       );
     } else {
       debugPrint('❌ [PLAYERS_DATASOURCE] API error: ${response.statusCode}');
