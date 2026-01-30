@@ -294,6 +294,26 @@ class GraphQLQueries {
     }
   ''';
 
+  // Update user profile (first name, last name)
+  static const String updateUserProfile = '''
+    mutation UpdateUserProfile(\$id: ID!, \$firstName: String!, \$lastName: String!) {
+      updateUserDetail(
+        where: {id: \$id}
+        data: {
+          firstName: \$firstName
+          lastName: \$lastName
+        }
+      ) {
+        id
+        firstName
+        lastName
+      }
+      publishUserDetail(where: {id: \$id}) {
+        id
+      }
+    }
+  ''';
+
   // Publish cart item
   static const String publishCart = '''
     mutation PublishCart(\$id: ID!) {

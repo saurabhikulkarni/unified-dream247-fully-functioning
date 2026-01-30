@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:unified_dream247/features/shop/constants.dart';
-import 'package:unified_dream247/features/fantasy/menu_items/presentation/providers/user_data_provider.dart';
-import 'package:unified_dream247/features/fantasy/menu_items/data/user_datasource.dart';
-import 'package:unified_dream247/features/fantasy/menu_items/domain/use_cases/user_usecases.dart';
-import 'package:unified_dream247/features/fantasy/core/api_server_constants/api_server_impl/api_impl_header.dart';
+import 'package:unified_dream247/features/shop/services/user_service.dart';
+import 'package:unified_dream247/features/shop/services/auth_service.dart';
 
 class UserInfoScreen extends StatefulWidget {
   const UserInfoScreen({super.key});
@@ -14,53 +12,63 @@ class UserInfoScreen extends StatefulWidget {
 }
 
 class _UserInfoScreenState extends State<UserInfoScreen> {
-  late TextEditingController _nameController;
+  late TextEditingController _firstNameController;
+  late TextEditingController _lastNameController;
   late TextEditingController _emailController;
   late TextEditingController _phoneController;
   bool _isLoading = true;
+  String? _userId;
 
   @override
   void initState() {
     super.initState();
-    _nameController = TextEditingController();
+    _firstNameController = TextEditingController();
+    _lastNameController = TextEditingController();
     _emailController = TextEditingController();
     _phoneController = TextEditingController();
-    _loadUserDataFromBackend();
+    _loadUserDataFromShop();
   }
 
-  /// Load user data from backend API
-  Future<void> _loadUserDataFromBackend() async {
+  /// Load user data from Shop backend (Hygraph)
+  Future<void> _loadUserDataFromShop() async {
     try {
-      // Fetch fresh user data from backend
-      final userUsecases = UserUsecases(UserDatasource(ApiImplWithAccessToken()));
-      await userUsecases.getUserDetails(context);
+      final prefs = await SharedPreferences.getInstance();
+      _userId = prefs.getString('user_id');
       
-      // Get user data from provider (which was updated by getUserDetails)
-      if (mounted) {
-        final userDataProvider = Provider.of<UserDataProvider>(context, listen: false);
-        final userData = userDataProvider.userData;
+      if (_userId == null || _userId!.isEmpty) {
+        debugPrint('⚠️ [EDIT_PROFILE_SHOP] No user_id found in SharedPreferences');
+        setState(() {
+          _isLoading = false;
+        });
+        return;
+      }
+
+      // Fetch user data from Hygraph
+      final userService = UserService();
+      final userData = await userService.getUserById(_userId!);
+      
+      if (mounted && userData != null) {
+        setState(() {
+          _firstNameController.text = userData.firstName;
+          _lastNameController.text = userData.lastName;
+          _emailController.text = ''; // Email not stored in Hygraph yet
+          _phoneController.text = userData.mobileNumber;
+          _isLoading = false;
+        });
         
-        if (userData != null) {
-          setState(() {
-            _nameController.text = userData.name ?? userData.team ?? '';
-            _emailController.text = userData.email ?? '';
-            _phoneController.text = userData.mobile?.toString() ?? '';
-            _isLoading = false;
-          });
-          
-          debugPrint('📱 [EDIT_PROFILE] Loaded user data from backend:');
-          debugPrint('   Name: ${userData.name}');
-          debugPrint('   Email: ${userData.email}');
-          debugPrint('   Phone: ${userData.mobile}');
-        } else {
-          setState(() {
-            _isLoading = false;
-          });
-          debugPrint('⚠️ [EDIT_PROFILE] No user data available from backend');
-        }
+        debugPrint('📱 [EDIT_PROFILE_SHOP] Loaded user data from Hygraph:');
+        debugPrint('   First Name: ${userData.firstName}');
+        debugPrint('   Last Name: ${userData.lastName}');
+        debugPrint('   Phone: ${userData.mobileNumber}');
+        debugPrint('   User ID: $_userId');
+      } else {
+        setState(() {
+          _isLoading = false;
+        });
+        debugPrint('⚠️ [EDIT_PROFILE_SHOP] No user data found in Hygraph');
       }
     } catch (e) {
-      debugPrint('❌ [EDIT_PROFILE] Error loading user data from backend: $e');
+      debugPrint('❌ [EDIT_PROFILE_SHOP] Error loading user data: $e');
       if (mounted) {
         setState(() {
           _isLoading = false;
@@ -71,15 +79,11 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
 
   @override
   void dispose() {
-    _nameController.dispose();
+    _firstNameController.dispose();
+    _lastNameController.dispose();
     _emailController.dispose();
     _phoneController.dispose();
     super.dispose();
-  }
-
-  bool _validateIndianMobileNumber(String phone) {
-    String cleanPhone = phone.replaceAll(RegExp(r'[^\d]'), '');
-    return RegExp(r'^[6-9]\d{9}$').hasMatch(cleanPhone);
   }
 
   @override
@@ -122,17 +126,32 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
           ),
           const SizedBox(height: defaultPadding * 1.5),
           Text(
-            'Full Name',
+            'First Name',
             style: Theme.of(context).textTheme.titleSmall,
           ),
           const SizedBox(height: 8),
           TextField(
-            controller: _nameController,
+            controller: _firstNameController,
             decoration: InputDecoration(
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(defaultBorderRadious),
               ),
-              hintText: 'Enter your full name',
+              hintText: 'Enter your first name',
+            ),
+          ),
+          const SizedBox(height: defaultPadding),
+          Text(
+            'Last Name',
+            style: Theme.of(context).textTheme.titleSmall,
+          ),
+          const SizedBox(height: 8),
+          TextField(
+            controller: _lastNameController,
+            decoration: InputDecoration(
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(defaultBorderRadious),
+              ),
+              hintText: 'Enter your last name',
             ),
           ),
           const SizedBox(height: defaultPadding),
@@ -143,6 +162,7 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
           const SizedBox(height: 8),
           TextField(
             controller: _emailController,
+            keyboardType: TextInputType.emailAddress,
             decoration: InputDecoration(
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(defaultBorderRadious),
@@ -172,45 +192,50 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
           const SizedBox(height: defaultPadding * 2),
           ElevatedButton(
             onPressed: () async {
-              if (_phoneController.text.isNotEmpty &&
-                  !_validateIndianMobileNumber(_phoneController.text)) {
+              // Validate inputs
+              if (_firstNameController.text.trim().isEmpty) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
-                    content: Text('Please enter a valid Indian mobile number'),
+                    content: Text('Please enter your first name'),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+                return;
+              }
+
+              if (_lastNameController.text.trim().isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Please enter your last name'),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+                return;
+              }
+
+              if (_userId == null) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('User ID not found. Please login again.'),
                     backgroundColor: Colors.red,
                   ),
                 );
                 return;
               }
               
-              // Save user data to backend
+              // Save user data to Hygraph
               try {
-                final userUsecases = UserUsecases(UserDatasource(ApiImplWithAccessToken()));
+                debugPrint('💾 [EDIT_PROFILE_SHOP] Saving profile to Hygraph...');
                 
-                // Get current user data to preserve other fields
-                final userDataProvider = Provider.of<UserDataProvider>(context, listen: false);
-                final currentUserData = userDataProvider.userData;
-                
-                // Call backend API to update profile
-                // ⚠️ DON'T send the team field - it causes "Team Name Already Exists" error
-                // Team name is managed separately in the Fantasy app's Edit Profile
-                final result = await userUsecases.updateProfile(
-                  context,
-                  currentUserData?.team ?? '', // teamName - KEEP AS IS, DON'T CHANGE
-                  _nameController.text, // name
-                  currentUserData?.state ?? '', // state
-                  currentUserData?.gender ?? '', // gender
-                  currentUserData?.city ?? '', // city
-                  currentUserData?.address ?? '', // address
-                  currentUserData?.dob ?? '', // dob
-                  currentUserData?.pincode?.toString() ?? '', // pincode
+                final userService = UserService();
+                final result = await userService.updateUserProfile(
+                  userId: _userId!,
+                  firstName: _firstNameController.text.trim(),
+                  lastName: _lastNameController.text.trim(),
                 );
                 
-                if (result == true) {
-                  debugPrint('✅ [EDIT_PROFILE] User data saved to backend successfully');
-                  
-                  // Refresh user data from backend
-                  await userUsecases.getUserDetails(context);
+                if (result) {
+                  debugPrint('✅ [EDIT_PROFILE_SHOP] Profile saved successfully');
                   
                   if (mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -219,8 +244,13 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
                         backgroundColor: Colors.green,
                       ),
                     );
+                    
+                    // Reload data to show updated info
+                    await _loadUserDataFromShop();
                   }
                 } else {
+                  debugPrint('❌ [EDIT_PROFILE_SHOP] Profile save failed');
+                  
                   if (mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
@@ -231,7 +261,7 @@ class _UserInfoScreenState extends State<UserInfoScreen> {
                   }
                 }
               } catch (e) {
-                debugPrint('❌ [EDIT_PROFILE] Error saving user data: $e');
+                debugPrint('❌ [EDIT_PROFILE_SHOP] Error saving profile: $e');
                 if (mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(

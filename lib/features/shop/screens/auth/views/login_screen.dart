@@ -88,15 +88,12 @@ class _LoginScreenState extends State<LoginScreen> {
                   GradientButton(
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
-                        // First verify OTP
+                        // Verify OTP - session is saved inside verifyOtp method
                         final otpVerified = await _loginFormState.verifyOtp();
                         if (!mounted) return;
                         
                         if (otpVerified) {
-                          // If OTP verified, save login session
-                          await _loginFormState.saveLoginSession();
-                          if (!mounted) return;
-
+                          // Navigate to home after successful login
                           context.go(RouteNames.home);
                         }
                       }

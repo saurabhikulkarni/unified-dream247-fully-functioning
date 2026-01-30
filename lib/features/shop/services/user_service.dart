@@ -447,6 +447,46 @@ class UserService {
     throw Exception('Error deducting wallet balance: Max retries exceeded');
   }
 
+  // Update user profile (first name, last name)
+  Future<bool> updateUserProfile({
+    required String userId,
+    required String firstName,
+    required String lastName,
+  }) async {
+    try {
+      debugPrint('📝 [USER_SERVICE] Updating user profile...');
+      debugPrint('   User ID: $userId');
+      debugPrint('   First Name: $firstName');
+      debugPrint('   Last Name: $lastName');
+
+      final result = await _client.mutate(
+        MutationOptions(
+          document: gql(GraphQLQueries.updateUserProfile),
+          variables: {
+            'id': userId,
+            'firstName': firstName,
+            'lastName': lastName,
+          },
+        ),
+      );
+
+      if (result.hasException) {
+        debugPrint('❌ [USER_SERVICE] Update profile error: ${result.exception}');
+        return false;
+      }
+
+      if (result.data != null && result.data!['updateUserDetail'] != null) {
+        debugPrint('✅ [USER_SERVICE] Profile updated successfully');
+        return true;
+      }
+
+      return false;
+    } catch (e) {
+      debugPrint('❌ [USER_SERVICE] Exception updating profile: $e');
+      return false;
+    }
+  }
+
   // Publish user (required for Hygraph)
   Future<void> _publishUser(String userId) async {
     try {
