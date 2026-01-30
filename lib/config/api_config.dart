@@ -78,6 +78,9 @@ class ApiConfig {
   
   // Shop API Endpoints - Wallet
   static String get shopWalletBalanceEndpoint => '$shopApiUrl/wallet/shop-tokens-only';
+  
+  // Shop API Endpoints - Orders
+  static String get shopPlaceOrderEndpoint => '$shopApiUrl/orders/place';
 
   // ─────────────────────────────────────────────────────────────────────────
   // FANTASY BACKEND (Digital Ocean)

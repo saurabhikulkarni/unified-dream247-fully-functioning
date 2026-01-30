@@ -79,7 +79,7 @@ class OrderServiceGraphQL {
       }
 
       // Call REST API
-      final url = '${ApiConfig.shopBackendUrl}/api/orders/place';
+      final url = ApiConfig.shopPlaceOrderEndpoint;
       if (kDebugMode) {
         print('🌐 [ORDER_API] Calling: $url');
       }
