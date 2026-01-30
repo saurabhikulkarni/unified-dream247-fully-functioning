@@ -1,21 +1,14 @@
 import 'dart:async';
-import 'dart:convert';
 
-import 'package:flutter/foundation.dart' as foundation;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:unified_dream247/config/api_config.dart';
 import 'package:unified_dream247/config/routes/route_names.dart';
-import 'package:unified_dream247/core/constants/api_constants.dart';
 import 'package:unified_dream247/core/services/auth_service.dart' as core_auth;
 import 'package:unified_dream247/features/shop/components/gradient_button.dart';
 import 'package:unified_dream247/features/shop/services/auth_service.dart';
 import 'package:unified_dream247/features/shop/services/msg91_service.dart';
 import 'package:unified_dream247/features/shop/services/user_service.dart';
-import 'package:unified_dream247/features/shop/services/order_service_graphql.dart';
-import 'package:unified_dream247/features/shop/models/product_model.dart';
 import 'package:unified_dream247/features/shop/constants.dart';
 
 class LogInForm extends StatefulWidget {
@@ -73,7 +66,6 @@ class _LogInFormState extends State<LogInForm> {
   }
 
   String? _sessionId; // Store session ID from OTP send response
-  String? _hygraphUserId; // Store Hygraph user ID from existing user check
 
   Future<void> _sendOtp() async {
     // Validate Indian mobile number before sending OTP
@@ -132,12 +124,18 @@ class _LogInFormState extends State<LogInForm> {
         }
         return;
       }
-
-      // ✅ Store Hygraph userId for later use when saving session
-      _hygraphUserId = existingUser.id;
     } catch (e) {
-      // If user check fails, continue with OTP anyway (fallback)
-      print('⚠️ [LOGIN] Error checking user existence: $e');
+      // If user check fails, show error and stop
+      if (mounted) {
+        Navigator.of(context).pop();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Error checking account. Please try again.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+      return;
     }
 
     // Send OTP via MSG91 service (backend API)
@@ -192,142 +190,10 @@ class _LogInFormState extends State<LogInForm> {
     return _nameController.text.trim();
   }
 
-  /// Verify OTP using unified backend endpoint
-  Future<Map<String, dynamic>> verifyOtpUnified() async {
-    try {
-      final phoneRaw = _phoneController.text.trim();
-      final phone = phoneRaw.replaceAll(RegExp(r'[^\d]'), '');
-      final otp = _otpController.text.trim();
-      final name = _nameController.text.trim();
-
-      final requestBody = <String, dynamic>{
-        'mobileNumber': phone,
-        'otp': otp,
-      };
-
-      if (_sessionId != null && _sessionId!.isNotEmpty) {
-        requestBody['sessionId'] = _sessionId;
-      }
-
-      // Call unified verify-otp endpoint
-      final response = await http
-          .post(
-            Uri.parse(
-              '${ApiConstants.shopBackendUrl}${ApiConstants.verifyOtpEndpoint}',
-            ),
-            headers: {'Content-Type': 'application/json'},
-            body: jsonEncode(requestBody),
-          )
-          .timeout(const Duration(seconds: 30));
-
-      final data = jsonDecode(response.body);
-
-      if (data['success'] == true) {
-        final user = data['user'] ?? {}; // Handle null user object
-        final refreshToken = data['refreshToken'];
-
-        // Store shopTokens balance
-        final prefs = await SharedPreferences.getInstance();
-        final shopTokens = user['shopTokens'] ?? 0;
-        await prefs.setInt('shop_tokens', shopTokens);
-
-        // Extract and store Fantasy sync status fields for debugging
-        final fantasySyncStatus = user['fantasy_sync_status'];
-        final fantasySyncError = user['fantasy_sync_error'];
-
-        if (fantasySyncStatus != null) {
-          await prefs.setString('fantasy_sync_status', fantasySyncStatus);
-        }
-        if (fantasySyncError != null) {
-          await prefs.setString('fantasy_sync_error', fantasySyncError);
-        }
-
-        // Store all unified auth data using core auth service
-        final coreAuthService = core_auth.AuthService();
-        await coreAuthService.initialize();
-
-        // FALLBACK STRATEGY: Use _hygraphUserId if response doesn't contain ID
-        // Check both 'user' object and root-level fields
-        final userId = data['userId'] ??
-            data['id'] ??
-            user['id'] ??
-            user['userId'] ??
-            user['hygraph_user_id'] ??
-            _hygraphUserId ??
-            '';
-        final authToken = data['authToken'] ??
-            data['token'] ??
-            user['token'] ??
-            user['authToken'] ??
-            '';
-
-        if (userId.isEmpty || authToken.isEmpty) {
-          debugPrint(
-            '❌ [OTP_VERIFY] Critical data missing! userId: $userId, token: $authToken',
-          );
-          return {
-            'success': false,
-            'message': 'Login failed: Missing required user data (ID/Token)',
-          };
-        }
-
-        await coreAuthService.saveUserSession(
-          userId: userId,
-          authToken: authToken,
-          mobileNumber: phone,
-          name: name.isNotEmpty ? name : (user['name'] ?? ''),
-          fantasyUserId: user['fantasy_user_id'] ?? user['fantasyUserId'],
-          shopEnabled: true,
-          fantasyEnabled: true,
-          modules: ['shop', 'fantasy'],
-          refreshToken: refreshToken,
-        );
-
-        // Sync shop tokens to Hygraph so they're available for future app sessions
-        // This ensures the ShopTokensProvider can fetch correct balance from Hygraph
-        // Always sync, even if 0, to ensure Hygraph has the latest value
-        if (userId.isNotEmpty) {
-          // try {
-          //   debugPrint(
-          //       '🔄 [OTP_VERIFY] Syncing shop tokens to Hygraph: $shopTokens tokens');
-          //   final orderService = OrderServiceGraphQL();
-          // //  final syncSuccess = await orderService.syncShopTokensToHygraph(
-          //     userId: userId,
-          //     shopTokens: shopTokens.toInt(),
-          //   );
-          //   if (syncSuccess) {
-          //     debugPrint(
-          //         '✅ [OTP_VERIFY] Shop tokens synced to Hygraph successfully');
-          //   } else {
-          //     debugPrint(
-          //         '⚠️ [OTP_VERIFY] Shop tokens sync to Hygraph failed (non-critical)');
-          //   }
-          // } catch (e) {
-          //   debugPrint(
-          //       '⚠️ [OTP_VERIFY] Error syncing shop tokens: $e (non-critical)');
-          //   // Non-critical sync failure, don't block login
-          // }
-        } else {
-          debugPrint(
-              '⚠️ [OTP_VERIFY] No userId available for shop tokens sync');
-        }
-
-        return {'success': true, 'message': 'Login successful'};
-      }
-
-      return {
-        'success': false,
-        'message': data['message'] ?? 'OTP verification failed',
-      };
-    } catch (e) {
-      debugPrint('❌ [OTP_VERIFY] Error: $e');
-      return {'success': false, 'message': 'Error: $e'};
-    }
-  }
-
   Future<bool> verifyOtp() async {
     final phone = _phoneController.text.replaceAll(RegExp(r'[^\d]'), '');
     final otp = _otpController.text.trim();
+    final name = _nameController.text.trim();
 
     if (otp.isEmpty || otp.length < 4) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -346,8 +212,14 @@ class _LogInFormState extends State<LogInForm> {
       builder: (context) => const Center(child: CircularProgressIndicator()),
     );
 
-    // Verify OTP using UNIFIED endpoint which handles tokens properly
-    final result = await verifyOtpUnified();
+    // Verify OTP via MSG91 service - backend handles everything:
+    // - Validates OTP
+    // - Returns user data, tokens, etc.
+    final result = await msg91Service.verifyOtp(
+      mobileNumber: phone,
+      otp: otp,
+      sessionId: _sessionId,
+    );
 
     // Hide loading indicator
     if (mounted) {
@@ -355,10 +227,86 @@ class _LogInFormState extends State<LogInForm> {
     }
 
     if (result['success'] == true) {
-      // ✅ The unified token from Shop backend is already saved in verifyOtpUnified()
-      // It works for both Shop and Fantasy APIs - no need to fetch separately!
+      // Extract data from backend response
+      final user = result['user'] ?? {};
+      final userId = result['userId']?.toString() ??
+          result['id']?.toString() ??
+          user['id']?.toString() ??
+          user['userId']?.toString();
 
-      return true;
+      final authToken = result['authToken']?.toString() ??
+          result['token']?.toString() ??
+          user['token']?.toString();
+
+      final fantasyUserId = result['fantasy_user_id']?.toString() ??
+          result['fantasyUserId']?.toString() ??
+          user['fantasy_user_id']?.toString();
+
+      if (userId == null || userId.isEmpty) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Login failed: No user ID received'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+        return false;
+      }
+
+      // Save session locally
+      try {
+        final authService = AuthService();
+        final coreAuthService = core_auth.AuthService();
+        final prefs = await SharedPreferences.getInstance();
+
+        await coreAuthService.initialize();
+
+        // Save to Shop AuthService
+        await authService.saveLoginSession(
+          phone: phone,
+          name: name.isNotEmpty ? name : (user['name'] ?? ''),
+          phoneVerified: true,
+          userId: userId,
+          fantasyToken: authToken,
+        );
+
+        // Save to core AuthService
+        await coreAuthService.saveUserSession(
+          userId: userId,
+          authToken: authToken ?? '',
+          mobileNumber: phone,
+          name: name.isNotEmpty ? name : (user['name'] ?? ''),
+          fantasyUserId: fantasyUserId,
+          shopEnabled: true,
+          fantasyEnabled: true,
+          modules: ['shop', 'fantasy'],
+        );
+
+        // Set login flags
+        await prefs.setBool('is_logged_in', true);
+        await prefs.setBool('is_logged_in_fantasy', true);
+        await prefs.setString('user_id', userId);
+        await prefs.setString('userId', userId);
+        await prefs.setString('mobile_number', phone);
+
+        if (authToken != null && authToken.isNotEmpty) {
+          await prefs.setString('token', authToken);
+          await prefs.setString('auth_token', authToken);
+        }
+
+        return true;
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error saving session: $e'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+        return false;
+      }
     } else {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
