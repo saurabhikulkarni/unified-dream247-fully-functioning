@@ -320,26 +320,26 @@ class _LogInFormState extends State<LogInForm> {
         // This ensures the ShopTokensProvider can fetch correct balance from Hygraph
         // Always sync, even if 0, to ensure Hygraph has the latest value
         if (userId.isNotEmpty) {
-          try {
-            debugPrint(
-                '🔄 [OTP_VERIFY] Syncing shop tokens to Hygraph: $shopTokens tokens');
-            final orderService = OrderServiceGraphQL();
-            final syncSuccess = await orderService.syncShopTokensToHygraph(
-              userId: userId,
-              shopTokens: shopTokens.toInt(),
-            );
-            if (syncSuccess) {
-              debugPrint(
-                  '✅ [OTP_VERIFY] Shop tokens synced to Hygraph successfully');
-            } else {
-              debugPrint(
-                  '⚠️ [OTP_VERIFY] Shop tokens sync to Hygraph failed (non-critical)');
-            }
-          } catch (e) {
-            debugPrint(
-                '⚠️ [OTP_VERIFY] Error syncing shop tokens: $e (non-critical)');
-            // Non-critical sync failure, don't block login
-          }
+          // try {
+          //   debugPrint(
+          //       '🔄 [OTP_VERIFY] Syncing shop tokens to Hygraph: $shopTokens tokens');
+          //   final orderService = OrderServiceGraphQL();
+          // //  final syncSuccess = await orderService.syncShopTokensToHygraph(
+          //     userId: userId,
+          //     shopTokens: shopTokens.toInt(),
+          //   );
+          //   if (syncSuccess) {
+          //     debugPrint(
+          //         '✅ [OTP_VERIFY] Shop tokens synced to Hygraph successfully');
+          //   } else {
+          //     debugPrint(
+          //         '⚠️ [OTP_VERIFY] Shop tokens sync to Hygraph failed (non-critical)');
+          //   }
+          // } catch (e) {
+          //   debugPrint(
+          //       '⚠️ [OTP_VERIFY] Error syncing shop tokens: $e (non-critical)');
+          //   // Non-critical sync failure, don't block login
+          // }
         } else {
           debugPrint(
               '⚠️ [OTP_VERIFY] No userId available for shop tokens sync');

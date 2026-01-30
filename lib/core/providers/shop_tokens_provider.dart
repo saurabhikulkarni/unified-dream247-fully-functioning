@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:unified_dream247/config/api_config.dart';
 import 'package:unified_dream247/core/services/wallet_service.dart';
 
 /// Provider for managing shopTokens state
@@ -110,11 +111,9 @@ class ShopTokensProvider extends ChangeNotifier {
       // Use the working wallet endpoint that returns balance (shop tokens)
       // Endpoint: /user/user-wallet-details returns {success: true, data: {balance: 2000.00, ...}}
       // This is from Fantasy backend, same as working merge-shop-and-fantasy branch
-      final baseUrl = dotenv.env['UserServerUrl'] ??
-          'http://134.209.158.211:4000/user/';
-      final url = '${baseUrl}user-wallet-details';
+      final url = '${ApiConfig.fantasyUserUrl}user-wallet-details';
 
-      debugPrint('🔄 [SHOP_TOKENS_PROVIDER] Fetching from Fantasy backend: $url');
+      debugPrint('🔄 [SHOP_TOKENS_PROVIDER] Fetching from Fantasy backend');
       debugPrint(
           '🔄 [SHOP_TOKENS_PROVIDER] Token: ${authToken.substring(0, 20)}...',);
 

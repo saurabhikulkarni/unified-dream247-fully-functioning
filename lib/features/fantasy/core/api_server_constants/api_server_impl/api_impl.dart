@@ -71,8 +71,6 @@ class ApiImpl {
           },
         );
 
-        debugPrint('============ ENDPOINT ===============');
-        debugPrint(url);
         debugPrint('============ METHOD =================');
         debugPrint(method);
         debugPrint('============ HEADERS ================');

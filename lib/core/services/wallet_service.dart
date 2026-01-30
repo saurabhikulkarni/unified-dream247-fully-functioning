@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
 import 'dart:io';
+import 'package:unified_dream247/config/api_config.dart';
 import 'package:unified_dream247/core/constants/storage_constants.dart';
 import 'package:unified_dream247/features/shop/models/shop_transaction_model.dart';
 import 'package:unified_dream247/features/shop/services/order_service_graphql.dart';
@@ -249,8 +250,7 @@ class UnifiedWalletService {
       
       if (token == null) return;
 
-      const baseUrl = 'http://134.209.158.211:4000';
-      final url = '$baseUrl/user/user-wallet-details';
+      final url = '${ApiConfig.fantasyUserUrl}user-wallet-details';
       
       final response = await http.get(
         Uri.parse(url),
@@ -303,11 +303,10 @@ class UnifiedWalletService {
         return false;
       }
 
-      const baseUrl = 'http://134.209.158.211:4000';
-      final url = '$baseUrl/user/wallet/deduct-shop-tokens';
+      final url = '${ApiConfig.fantasyBaseUrl}/user/wallet/deduct-shop-tokens';
       
       debugPrint('🔄 [FANTASY_DEDUCT] Attempting Fantasy backend deduction');
-      debugPrint('   - URL: $url');
+      debugPrint('   - Endpoint: user/wallet/deduct-shop-tokens');
       debugPrint('   - Amount: $amount');
       debugPrint('   - Order Reference: $orderId');
 
@@ -396,8 +395,7 @@ class UnifiedWalletService {
       
       if (token == null) return;
 
-      const baseUrl = 'http://134.209.158.211:4000';
-      final url = '$baseUrl/user/user-wallet-details';
+      final url = '${ApiConfig.fantasyUserUrl}user-wallet-details';
       
       final response = await http.get(
         Uri.parse(url),

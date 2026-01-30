@@ -122,8 +122,6 @@ class ApiImplWithAccessToken {
           validateStatus: (status) => true,
         );
         if (showLog) {
-          debugPrint('============ ENDPOINT ===============');
-          debugPrint(url);
           debugPrint('============ METHOD =================');
           debugPrint(method);
           debugPrint('============ HEADERS ================');

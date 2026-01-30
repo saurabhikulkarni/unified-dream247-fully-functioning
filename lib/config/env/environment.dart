@@ -1,30 +1,14 @@
 /// Environment configuration
+/// Now delegates to ApiConfig for all API URLs
+import 'package:unified_dream247/config/api_config.dart';
+
 class Environment {
   // Environment type
   static const String env = String.fromEnvironment('ENV', defaultValue: 'dev');
   
-  // API URLs
-  static String get ecommerceApiUrl {
-    switch (env) {
-      case 'prod':
-        return 'https://api-ap-south-1.hygraph.com/v2/';
-      case 'staging':
-        return 'https://api-ap-south-1.hygraph.com/v2/';
-      default:
-        return 'https://api-ap-south-1.hygraph.com/v2/';
-    }
-  }
-  
-  static String get gamingApiUrl {
-    switch (env) {
-      case 'prod':
-        return 'http://134.209.158.211:4000/';
-      case 'staging':
-        return 'http://134.209.158.211:4000/';
-      default:
-        return 'http://134.209.158.211:4000/';
-    }
-  }
+  // API URLs - delegated to ApiConfig for centralized configuration
+  static String get ecommerceApiUrl => ApiConfig.hygraphEndpoint;
+  static String get gamingApiUrl => ApiConfig.fantasyBaseUrl;
   
   // Feature flags
   static bool get enableAnalytics => env == 'prod';

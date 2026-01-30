@@ -1,13 +1,12 @@
 /// API Server URLs for fantasy gaming backend
+/// Now uses centralized ApiConfig for base URL configuration
 library;
 
+import 'package:unified_dream247/config/api_config.dart';
+
 class ApiServerUrls {
-  // Base URLs
-  static const String devBaseUrl = 'http://134.209.158.211:4000';
-  static const String prodBaseUrl = 'http://134.209.158.211:4000';
-  
-  // Current base URL (change based on environment)
-  static String get baseUrl => prodBaseUrl;
+  // Use centralized configuration instead of hardcoded URLs
+  static String get baseUrl => ApiConfig.fantasyBaseUrl;
   
   // Authentication endpoints
   static const String login = '/auth/login';
