@@ -1,5 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:unified_dream247/features/fantasy/core/api_server_constants/api_server_impl/api_impl.dart';
 import 'package:unified_dream247/features/fantasy/core/api_server_constants/api_server_impl/api_impl_header.dart';
@@ -138,14 +139,14 @@ class _LandingPageState extends State<LandingPage> {
               end: Alignment.bottomCenter,
             ),
           ),
-          child: const Center(
+          child: Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                CircularProgressIndicator(
+                const CircularProgressIndicator(
                   valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 Text(
                   'Loading Game Zone...',
                   style: TextStyle(
@@ -180,7 +181,7 @@ class _LandingPageState extends State<LandingPage> {
                 children: [
                   const Icon(Icons.error_outline, color: Colors.white, size: 64),
                   const SizedBox(height: 20),
-                  const Text(
+                  Text(
                     'Unable to load Game Zone',
                     style: TextStyle(
                       color: Colors.white,

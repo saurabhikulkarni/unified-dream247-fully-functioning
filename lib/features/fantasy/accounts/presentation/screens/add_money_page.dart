@@ -1435,7 +1435,7 @@ class _AddMoneyPage extends State<AddMoneyPage> {
                   ),
                 ),
                 const SizedBox(height: 20),
-                const Text(
+                Text(
                   'Tap to open your Mystery Box!',
                   style: TextStyle(
                     color: Colors.white,

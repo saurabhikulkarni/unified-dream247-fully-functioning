@@ -106,7 +106,7 @@ class _ShopHomeScreenState extends State<ShopHomeScreen> {
                 ),
                 borderRadius: BorderRadius.circular(16),
               ),
-              child: const Center(
+              child: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -139,7 +139,7 @@ class _ShopHomeScreenState extends State<ShopHomeScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     'Categories',
                     style: TextStyle(
                       fontSize: 20.sp,

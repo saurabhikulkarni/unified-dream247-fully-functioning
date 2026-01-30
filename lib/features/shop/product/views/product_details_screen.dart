@@ -397,7 +397,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
             ),
             SliverToBoxAdapter(
               child: SizedBox(
-                height: 220.h,
+                height: 220,
                 child: _relatedProducts.isEmpty
                     ? const Center(child: Text('No related products'))
                     : ListView.builder(
