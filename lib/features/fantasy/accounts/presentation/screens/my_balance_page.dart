@@ -108,7 +108,6 @@ class _MyBalancePage extends State<MyBalancePage> with RouteAware {
       // 1️⃣ First, ensure we have a valid Fantasy token
       String? token = prefs.getString('token');
       if (token == null || token.isEmpty) {
-
         final phone = prefs.getString('user_phone') ?? '';
         final name = prefs.getString('user_name') ?? '';
 
@@ -163,7 +162,7 @@ class _MyBalancePage extends State<MyBalancePage> with RouteAware {
   Future<void> _loadShopTokens() async {
     await walletService.initialize();
     final shopTokens = await walletService.getShopTokens();
-    
+
     setState(() {
       _shopTokens = shopTokens;
     });
@@ -179,47 +178,39 @@ class _MyBalancePage extends State<MyBalancePage> with RouteAware {
     }
   }
 
-  /// Load full wallet balance from optimized endpoint
+  /// Load full wallet balance from local cache (fallback approach)
   Future<void> _loadFullWalletBalance() async {
     try {
-      final authToken = await _getWalletAuthToken();
-      if (authToken == null) {
-        debugPrint('⚠️ [WALLET_SCREEN] No auth token, using fallback');
-        return;
-      }
+      debugPrint(
+          '⚠️ [WALLET_SCREEN] Wallet balance endpoint removed, using local cache');
 
-      final response = await http.get(
-        Uri.parse(ApiConfig.fantasyWalletBalanceEndpoint),
-        headers: {
-          'Authorization': 'Bearer $authToken',
-          'Content-Type': 'application/json',
-        },
-      ).timeout(const Duration(seconds: 8));
+      // Wallet balance endpoint removed - using local cache only
+      // In the future, if a new endpoint becomes available, it can be integrated here
+      final prefs = await SharedPreferences.getInstance();
 
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        final walletData = data['data'] ?? data;
+      setState(() {
+        _shopTokens = (prefs.getDouble('shopTokens') ??
+                prefs.getInt('shop_tokens')?.toDouble()) ??
+            0.0;
+        _totalSpent = (prefs.getDouble('totalSpent') ??
+                prefs.getInt('total_spent')?.toDouble()) ??
+            0.0;
+        _totalAdded = (prefs.getDouble('totalAdded') ??
+                prefs.getInt('total_added')?.toDouble()) ??
+            0.0;
+      });
 
-        setState(() {
-          _shopTokens = (walletData['shopTokens'] as num?)?.toDouble() ?? 0.0;
-          _totalSpent = (walletData['totalSpent'] as num?)?.toDouble() ?? 0.0;
-          _totalAdded = (walletData['totalAdded'] as num?)?.toDouble() ?? 0.0;
-        });
-
-        // Sync shop tokens to ShopTokensProvider
-        if (mounted) {
-          try {
-            final shopTokensProvider = context.read<ShopTokensProvider>();
-            await shopTokensProvider.updateTokens(_shopTokens.toInt());
-          } catch (e) {
-            debugPrint('⚠️ [WALLET_SCREEN] Could not sync to provider: $e');
-          }
+      // Sync shop tokens to ShopTokensProvider
+      if (mounted) {
+        try {
+          final shopTokensProvider = context.read<ShopTokensProvider>();
+          await shopTokensProvider.updateTokens(_shopTokens.toInt());
+        } catch (e) {
+          debugPrint('⚠️ [WALLET_SCREEN] Could not sync to provider: $e');
         }
-      } else {
-        debugPrint('❌ [WALLET_SCREEN] Failed: ${response.statusCode}');
       }
     } catch (e) {
-      debugPrint('❌ [WALLET_SCREEN] Error loading full wallet: $e');
+      debugPrint('❌ [WALLET_SCREEN] Error loading wallet from cache: $e');
     }
   }
 
@@ -386,10 +377,12 @@ class _MyBalancePage extends State<MyBalancePage> with RouteAware {
                                 _walletInfoTile(
                                   icon: Images.icDeposit,
                                   title: 'Shop Token',
-                                  value: AppUtils.stringifyNumber(num.parse(
-                                          walletData?.balance.toString() ?? '0',),
-                                      // num.parse(_shopTokens.toStringAsFixed(0))
-                                      ),
+                                  value: AppUtils.stringifyNumber(
+                                    num.parse(
+                                      walletData?.balance.toString() ?? '0',
+                                    ),
+                                    // num.parse(_shopTokens.toStringAsFixed(0))
+                                  ),
                                   color: AppColors.lightGreen.withAlpha(20),
                                   isShopToken: true,
                                   gradientButton: true,
@@ -399,7 +392,8 @@ class _MyBalancePage extends State<MyBalancePage> with RouteAware {
                                     final result = await Navigator.push<bool>(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (_) => const AddMoneyPage(),),
+                                        builder: (_) => const AddMoneyPage(),
+                                      ),
                                     );
                                     // Always refresh when returning, regardless of result
                                     await _refreshAllData();

@@ -49,7 +49,7 @@ class _ProductBuyNowScreenState extends State<ProductBuyNowScreen> {
   @override
   void initState() {
     super.initState();
-    
+
     // Validate and set initial size index
     if (widget.sizes.isNotEmpty) {
       // Check if initialSizeIndex is valid and has stock
@@ -58,14 +58,14 @@ class _ProductBuyNowScreenState extends State<ProductBuyNowScreen> {
         _selectedSizeIndex = widget.initialSizeIndex;
       } else {
         // Find first size with stock
-        final firstAvailableIndex = widget.sizes
-            .indexWhere((size) => size.quantity > 0);
+        final firstAvailableIndex =
+            widget.sizes.indexWhere((size) => size.quantity > 0);
         _selectedSizeIndex = firstAvailableIndex >= 0 ? firstAvailableIndex : 0;
       }
     } else {
       _selectedSizeIndex = widget.initialSizeIndex;
     }
-    
+
     _loadWalletBalance();
     _checkWishlistStatus();
   }
@@ -101,11 +101,11 @@ class _ProductBuyNowScreenState extends State<ProductBuyNowScreen> {
 
   Future<void> _toggleWishlist() async {
     final newState = await wishlistService.toggleWishlist(widget.product);
-    
+
     setState(() {
       _isInWishlist = newState;
     });
-    
+
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -128,7 +128,8 @@ class _ProductBuyNowScreenState extends State<ProductBuyNowScreen> {
       setState(() {
         walletBalance = shopTokensProvider.shopTokens.toDouble();
       });
-      debugPrint('💰 [PRODUCT_BUY_NOW] Wallet balance from provider: $walletBalance');
+      debugPrint(
+          '💰 [PRODUCT_BUY_NOW] Wallet balance from provider: $walletBalance');
     } catch (e) {
       debugPrint('⚠️ [PRODUCT_BUY_NOW] Error loading wallet balance: $e');
     }
@@ -151,7 +152,7 @@ class _ProductBuyNowScreenState extends State<ProductBuyNowScreen> {
   void _addToCart() async {
     // Check if size is selected and has stock
     SizeModel? sizeToAdd = selectedSize;
-    
+
     // If product has sizes, ensure one is selected
     if (widget.sizes.isNotEmpty && sizeToAdd == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -163,13 +164,13 @@ class _ProductBuyNowScreenState extends State<ProductBuyNowScreen> {
       );
       return;
     }
-    
+
     // Check stock availability
     if (sizeToAdd != null && sizeToAdd.quantity <= 0) {
       _showOutOfStockDialog();
       return;
     }
-    
+
     // Create a size model from selected size name if no API sizes
     if (sizeToAdd == null && availableSizes.isNotEmpty) {
       sizeToAdd = SizeModel(
@@ -245,10 +246,10 @@ class _ProductBuyNowScreenState extends State<ProductBuyNowScreen> {
           ElevatedButton.icon(
             onPressed: () async {
               context.pop();
-              
+
               // Add to wishlist
               await _toggleWishlist();
-              
+
               // Register stock alert
               final userId = UserService.getCurrentUserId();
               if (userId != null && widget.product.id != null) {
@@ -259,11 +260,12 @@ class _ProductBuyNowScreenState extends State<ProductBuyNowScreen> {
                   sizeName: selectedSize?.sizeName ?? selectedSizeName,
                   userId: userId,
                 );
-                
+
                 if (mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
-                      content: Text('We\'ll notify you when this item is back in stock!'),
+                      content: Text(
+                          'We\'ll notify you when this item is back in stock!'),
                       backgroundColor: Colors.green,
                       duration: Duration(seconds: 2),
                     ),
@@ -295,13 +297,13 @@ class _ProductBuyNowScreenState extends State<ProductBuyNowScreen> {
       );
       return;
     }
-    
+
     // Check if size is selected and has stock
     if (selectedSize != null && selectedSize!.quantity <= 0) {
       _showOutOfStockDialog();
       return;
     }
-    
+
     // Show confirmation dialog
     showDialog(
       context: context,
@@ -414,7 +416,7 @@ class _ProductBuyNowScreenState extends State<ProductBuyNowScreen> {
   Future<void> _addToCartAndNavigate() async {
     // Check if size is selected and has stock
     SizeModel? sizeToAdd = selectedSize;
-    
+
     // If product has sizes, ensure one is selected
     if (widget.sizes.isNotEmpty && sizeToAdd == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -426,13 +428,13 @@ class _ProductBuyNowScreenState extends State<ProductBuyNowScreen> {
       );
       return;
     }
-    
+
     // Check stock availability
     if (sizeToAdd != null && sizeToAdd.quantity <= 0) {
       _showOutOfStockDialog();
       return;
     }
-    
+
     // Create a size model from selected size name if no API sizes
     if (sizeToAdd == null && availableSizes.isNotEmpty) {
       sizeToAdd = SizeModel(
@@ -472,21 +474,20 @@ class _ProductBuyNowScreenState extends State<ProductBuyNowScreen> {
       );
       // Navigate to cart screen after a brief delay
       await Future.delayed(const Duration(milliseconds: 500));
-      
+
       if (!mounted) return;
-      
+
       // Close the product buy now modal first
       context.pop();
-      
+
       // Then navigate to cart screen
-      context.push('/shop/checkout');
-      
+      context.push('/shop/cart');
     } catch (e) {
       if (!mounted) return;
-      
+
       // Close loading dialog
       context.pop();
-      
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Error adding to cart: ${e.toString()}'),
@@ -543,7 +544,9 @@ class _ProductBuyNowScreenState extends State<ProductBuyNowScreen> {
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(
-                horizontal: defaultPadding / 2, vertical: defaultPadding,),
+              horizontal: defaultPadding / 2,
+              vertical: defaultPadding,
+            ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -561,7 +564,9 @@ class _ProductBuyNowScreenState extends State<ProductBuyNowScreen> {
                   icon: SvgPicture.asset(
                     'assets/icons/Wishlist.svg',
                     colorFilter: ColorFilter.mode(
-                      _isInWishlist ? Colors.red : Theme.of(context).textTheme.bodyLarge!.color!,
+                      _isInWishlist
+                          ? Colors.red
+                          : Theme.of(context).textTheme.bodyLarge!.color!,
                       BlendMode.srcIn,
                     ),
                   ),
@@ -574,7 +579,8 @@ class _ProductBuyNowScreenState extends State<ProductBuyNowScreen> {
               slivers: [
                 SliverToBoxAdapter(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: defaultPadding),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: defaultPadding),
                     child: AspectRatio(
                       aspectRatio: 1.05,
                       child: widget.product.image.isNotEmpty
@@ -592,7 +598,8 @@ class _ProductBuyNowScreenState extends State<ProductBuyNowScreen> {
                         Expanded(
                           child: UnitPrice(
                             price: widget.product.price,
-                            priceAfterDiscount: widget.product.priceAfetDiscount,
+                            priceAfterDiscount:
+                                widget.product.priceAfetDiscount,
                           ),
                         ),
                         ProductQuantity(
@@ -651,7 +658,7 @@ class _ProductBuyNowScreenState extends State<ProductBuyNowScreen> {
                         ),
                         const SizedBox(height: defaultPadding / 2),
                         Text(
-                          widget.product.description ?? 
+                          widget.product.description ??
                               'Premium quality product with excellent durability.',
                         ),
                       ],
@@ -674,7 +681,8 @@ class _ProductBuyNowScreenState extends State<ProductBuyNowScreen> {
                   ),
                 ),
                 const SliverToBoxAdapter(
-                    child: SizedBox(height: defaultPadding),),
+                  child: SizedBox(height: defaultPadding),
+                ),
               ],
             ),
           ),

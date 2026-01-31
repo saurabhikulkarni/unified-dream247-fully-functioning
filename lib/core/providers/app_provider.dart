@@ -11,7 +11,7 @@ class AppProvider extends ChangeNotifier {
   int shopTokens = 0;
   Timer? _refreshTimer;
   bool _isRefreshing = false;
-  
+
   // Refresh interval in seconds (default: 30 seconds)
   final int refreshInterval;
 
@@ -26,7 +26,7 @@ class AppProvider extends ChangeNotifier {
       shopTokens = prefs.getInt('shop_tokens') ?? 0;
       debugPrint('💰 [APP_PROVIDER] Initialized shopTokens: $shopTokens');
       notifyListeners();
-      
+
       // Start periodic refresh after initialization
       _startPeriodicRefresh();
     } catch (e) {
@@ -41,7 +41,8 @@ class AppProvider extends ChangeNotifier {
     _refreshTimer = Timer.periodic(Duration(seconds: refreshInterval), (_) {
       refreshShopTokens();
     });
-    debugPrint('🔄 [APP_PROVIDER] Periodic refresh started (interval: ${refreshInterval}s)');
+    debugPrint(
+        '🔄 [APP_PROVIDER] Periodic refresh started (interval: ${refreshInterval}s)');
   }
 
   /// Refresh shopTokens from backend
@@ -54,7 +55,7 @@ class AppProvider extends ChangeNotifier {
     try {
       _isRefreshing = true;
       final prefs = await SharedPreferences.getInstance();
-      
+
       // Check if user is logged in first
       final isLoggedIn = prefs.getBool('is_logged_in') ?? false;
       if (!isLoggedIn) {
@@ -62,11 +63,11 @@ class AppProvider extends ChangeNotifier {
         _isRefreshing = false;
         return;
       }
-      
-      final authToken = prefs.getString('token') ?? 
-                       prefs.getString('auth_token') ?? 
-                       prefs.getString('fantasy_token');
-      
+
+      final authToken = prefs.getString('token') ??
+          prefs.getString('auth_token') ??
+          prefs.getString('fantasy_token');
+
       if (authToken == null || authToken.isEmpty) {
         // No token but logged in - this shouldn't happen normally
         _isRefreshing = false;
@@ -80,12 +81,23 @@ class AppProvider extends ChangeNotifier {
           'Content-Type': 'application/json',
         },
       ).timeout(const Duration(seconds: 5));
-      
+
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        final newShopTokens = (data['data']?['shopTokens'] as num?)?.toInt() ?? 
-                             (data['shopTokens'] as num?)?.toInt() ?? 0;
-        
+        int newShopTokens = 0;
+
+        // Handle different response formats
+        if (data['success'] == true && data['data'] != null) {
+          // Format from user-wallet-details: {success: true, data: {balance: 2000.00, ...}}
+          final balanceStr = data['data']['balance']?.toString() ?? '0';
+          newShopTokens = double.tryParse(balanceStr)?.toInt() ?? 0;
+        } else {
+          // Fallback to original format
+          newShopTokens = (data['data']?['shopTokens'] as num?)?.toInt() ??
+              (data['shopTokens'] as num?)?.toInt() ??
+              0;
+        }
+
         // Only notify listeners if value changed
         if (newShopTokens != shopTokens) {
           shopTokens = newShopTokens;
