@@ -41,14 +41,16 @@ class _AddressSelectionScreenState extends State<AddressSelectionScreen> {
         return;
       }
 
-      final fetchedAddresses = await addressService.getAddressesByUserId(userId);
+      final fetchedAddresses =
+          await addressService.getAddressesByUserId(userId);
       setState(() {
         addresses = fetchedAddresses;
         _isLoading = false;
         // Auto-select default address if available, otherwise select first address
         if (addresses.isNotEmpty) {
           try {
-            final defaultAddress = addresses.firstWhere((addr) => addr.isDefault);
+            final defaultAddress =
+                addresses.firstWhere((addr) => addr.isDefault);
             _selectedAddressId = defaultAddress.id;
           } catch (e) {
             // No default address found, select first address
@@ -108,9 +110,10 @@ class _AddressSelectionScreenState extends State<AddressSelectionScreen> {
                       const SizedBox(height: defaultPadding),
                       Text(
                         _errorMessage!,
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              color: Colors.red,
-                            ),
+                        style:
+                            Theme.of(context).textTheme.titleMedium?.copyWith(
+                                  color: Colors.red,
+                                ),
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: defaultPadding),
@@ -166,9 +169,11 @@ class _AddressSelectionScreenState extends State<AddressSelectionScreen> {
                             itemCount: addresses.length,
                             itemBuilder: (context, index) {
                               final address = addresses[index];
-                              final isSelected = _selectedAddressId == address.id;
+                              final isSelected =
+                                  _selectedAddressId == address.id;
                               return Card(
-                                margin: const EdgeInsets.only(bottom: defaultPadding),
+                                margin: const EdgeInsets.only(
+                                    bottom: defaultPadding),
                                 color: isSelected
                                     ? primaryColor.withOpacity(0.1)
                                     : null,
@@ -180,9 +185,11 @@ class _AddressSelectionScreenState extends State<AddressSelectionScreen> {
                                     });
                                   },
                                   child: Padding(
-                                    padding: const EdgeInsets.all(defaultPadding),
+                                    padding:
+                                        const EdgeInsets.all(defaultPadding),
                                     child: Row(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         // Radio button
                                         Radio<String>(
@@ -194,11 +201,13 @@ class _AddressSelectionScreenState extends State<AddressSelectionScreen> {
                                             });
                                           },
                                         ),
-                                        const SizedBox(width: defaultPadding / 2),
+                                        const SizedBox(
+                                            width: defaultPadding / 2),
                                         // Address details
                                         Expanded(
                                           child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
                                             children: [
                                               Row(
                                                 children: [
@@ -209,46 +218,59 @@ class _AddressSelectionScreenState extends State<AddressSelectionScreen> {
                                                           .textTheme
                                                           .titleSmall
                                                           ?.copyWith(
-                                                            fontWeight: FontWeight.bold,
+                                                            fontWeight:
+                                                                FontWeight.bold,
                                                           ),
                                                     ),
                                                   ),
                                                   if (address.isDefault)
                                                     Container(
-                                                      padding: const EdgeInsets.symmetric(
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
                                                         horizontal: 8,
                                                         vertical: 4,
                                                       ),
                                                       decoration: BoxDecoration(
-                                                        color: primaryColor.withOpacity(0.1),
-                                                        borderRadius: BorderRadius.circular(4),
+                                                        color: primaryColor
+                                                            .withOpacity(0.1),
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(4),
                                                       ),
                                                       child: const Text(
                                                         'Default',
                                                         style: TextStyle(
                                                           fontSize: 12,
                                                           color: primaryColor,
-                                                          fontWeight: FontWeight.w600,
+                                                          fontWeight:
+                                                              FontWeight.w600,
                                                         ),
                                                       ),
                                                     ),
                                                 ],
                                               ),
-                                              const SizedBox(height: defaultPadding / 4),
+                                              const SizedBox(
+                                                  height: defaultPadding / 4),
                                               Text(
                                                 address.fullAddress,
-                                                style: Theme.of(context).textTheme.bodyMedium,
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyMedium,
                                               ),
-                                              if (address.phoneNumber.isNotEmpty)
+                                              if (address
+                                                  .phoneNumber.isNotEmpty)
                                                 Padding(
-                                                  padding: const EdgeInsets.only(top: 4),
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          top: 4),
                                                   child: Text(
                                                     'Phone: ${address.phoneNumber}',
                                                     style: Theme.of(context)
                                                         .textTheme
                                                         .bodySmall
                                                         ?.copyWith(
-                                                          color: Colors.grey[600],
+                                                          color:
+                                                              Colors.grey[600],
                                                         ),
                                                   ),
                                                 ),
@@ -324,4 +346,3 @@ class _AddressSelectionScreenState extends State<AddressSelectionScreen> {
     );
   }
 }
-

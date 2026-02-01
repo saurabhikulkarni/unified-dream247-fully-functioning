@@ -67,6 +67,18 @@ class _CartScreenState extends State<CartScreen> {
     );
   }
 
+  // Check if any items in cart are out of stock
+  bool _hasOutOfStockItems() {
+    return cartItems.any((item) {
+      // If item has a size, check if that size is out of stock
+      if (item.size != null) {
+        return item.size!.quantity <= 0;
+      }
+      // If no size selected but product requires size, consider it out of stock
+      return item.product != null;
+    });
+  }
+
   void _removeItem(String cartItemId) async {
     try {
       await cartService.removeFromLocalCart(cartItemId);
@@ -723,7 +735,7 @@ class _CartScreenState extends State<CartScreen> {
                       ),
                       const SizedBox(height: defaultPadding),
                       GradientButton(
-                        onPressed: () {
+                        onPressed: _hasOutOfStockItems() ? null : () {
                           _proceedToPayment(context);
                         },
                         child: Row(

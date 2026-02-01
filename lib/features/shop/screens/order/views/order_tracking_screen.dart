@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:unified_dream247/features/shop/constants.dart';
 import 'package:unified_dream247/features/shop/services/shiprocket_service.dart';
 import 'package:unified_dream247/features/shop/config/shiprocket_config.dart';
@@ -31,39 +32,43 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen> {
     try {
       // Check if credentials are configured
       const isConfigured = ShiprocketConfig.email != 'YOUR_SHIPROCKET_EMAIL';
-      
+
       print('Shiprocket configured: $isConfigured');
       print('Fetching tracking for order ID: ${widget.orderId}');
-      
+
       if (isConfigured) {
         // Try to fetch real tracking data from Shiprocket by Order ID
         print('Attempting to fetch from Shiprocket API...');
-        var trackingData = await ShiprocketService.getOrderTracking(widget.orderId);
-        
+        var trackingData =
+            await ShiprocketService.getOrderTracking(widget.orderId);
+
         // If order ID tracking fails, try AWB code (if available in orderId)
         if (trackingData == null && widget.orderId.length >= 10) {
           print('Order ID tracking failed, trying AWB code...');
           // Might be an AWB code, try tracking by AWB
-          trackingData = await ShiprocketService.getTrackingByAWB(widget.orderId);
+          trackingData =
+              await ShiprocketService.getTrackingByAWB(widget.orderId);
         }
-        
+
         if (trackingData != null) {
           print('✅ Successfully fetched real Shiprocket data');
           return trackingData;
         }
-        
+
         // API configured but tracking failed - show error instead of silent fallback
         print('❌ Shiprocket API failed for order: ${widget.orderId}');
-        
+
         // Check if backend proxy is configured
         final hasProxy = ShiprocketConfig.proxyUrl.isNotEmpty;
-        
+
         if (kIsWeb && !hasProxy) {
-          print('⚠️ CORS Error: Shiprocket API cannot be called directly from browser');
+          print(
+              '⚠️ CORS Error: Shiprocket API cannot be called directly from browser');
           print('   This is expected on Flutter Web without backend proxy');
           print('   Solutions:');
           print('   1. Test on mobile device (Android/iOS)');
-          print('   2. Use a backend proxy server (set ShiprocketConfig.proxyUrl)');
+          print(
+              '   2. Use a backend proxy server (set ShiprocketConfig.proxyUrl)');
         } else {
           print('This could mean:');
           print('  1. Order ID does not exist in Shiprocket');
@@ -95,6 +100,13 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen> {
       appBar: AppBar(
         title: const Text('Track Order'),
         centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            // Navigate back to the orders screen instead of generic pop
+            context.go('/shop/orders');
+          },
+        ),
       ),
       body: FutureBuilder<ShiprocketOrderData?>(
         future: _trackingFuture,
@@ -217,7 +229,9 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen> {
   }
 
   Widget _buildOrderStatusCard(
-      ShiprocketOrderData trackingData, BuildContext context,) {
+    ShiprocketOrderData trackingData,
+    BuildContext context,
+  ) {
     Color statusColor = _getStatusColor(trackingData.orderStatus);
 
     return Container(
@@ -330,7 +344,9 @@ class _OrderTrackingScreenState extends State<OrderTrackingScreen> {
           const SizedBox(height: defaultPadding),
           _buildDetailRow('Courier', trackingData.courierName ?? 'N/A'),
           _buildDetailRow(
-              'Tracking Number', trackingData.trackingNumber ?? 'N/A',),
+            'Tracking Number',
+            trackingData.trackingNumber ?? 'N/A',
+          ),
         ],
       ),
     );

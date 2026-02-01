@@ -33,6 +33,7 @@ import '../../features/shop/screens/address/views/add_address_screen.dart';
 import '../../features/shop/screens/discover/views/discover_screen.dart';
 import '../../features/shop/screens/category/views/category_products_screen.dart';
 import '../../features/shop/screens/checkout/views/address_selection_screen.dart';
+import '../../features/shop/screens/checkout/views/checkout_screen.dart';
 import '../../features/shop/screens/checkout/views/order_confirmation_screen.dart';
 // WalletScreen removed - using fantasy MyBalancePage as unified wallet
 import '../../features/shop/screens/user_info/views/user_info_screen.dart';
@@ -60,7 +61,8 @@ import 'route_names.dart';
 
 /// Global RouteObserver for tracking navigation events
 /// Used by pages to auto-refresh when returning from other screens
-final RouteObserver<ModalRoute<void>> routeObserver = RouteObserver<ModalRoute<void>>();
+final RouteObserver<ModalRoute<void>> routeObserver =
+    RouteObserver<ModalRoute<void>>();
 
 /// GoRouter configuration for the application
 class AppRouter {
@@ -94,9 +96,11 @@ class AppRouter {
         debugPrint('   - is_logged_in: $isLoggedIn');
         debugPrint('   - is_logged_in_fantasy: $isLoggedInFantasy');
         debugPrint(
-            '   - token: ${token != null ? "${token.length} chars" : "NULL"}',);
+          '   - token: ${token != null ? "${token.length} chars" : "NULL"}',
+        );
         debugPrint(
-            '   - auth_token: ${authToken != null ? "${authToken.length} chars" : "NULL"}',);
+          '   - auth_token: ${authToken != null ? "${authToken.length} chars" : "NULL"}',
+        );
         debugPrint('   - isAuthenticated: $isAuthenticated');
 
         // If Fantasy login exists but Shop doesn't, sync the flags
@@ -107,9 +111,11 @@ class AppRouter {
 
         if (!isAuthenticated) {
           debugPrint(
-              '🔐 [ROUTER] Unauthenticated user trying to access Fantasy route',);
+            '🔐 [ROUTER] Unauthenticated user trying to access Fantasy route',
+          );
           debugPrint(
-              '🔐 [ROUTER] Redirecting from ${state.matchedLocation} to /login',);
+            '🔐 [ROUTER] Redirecting from ${state.matchedLocation} to /login',
+          );
           // Redirect to login if accessing fantasy routes without authentication
           return '/login';
         }
@@ -284,6 +290,48 @@ class AppRouter {
       GoRoute(
         path: '/shop/checkout',
         name: 'shop_checkout',
+        pageBuilder: (context, state) {
+          // Get passed data from state.extra
+          final extra = state.extra as Map<String, dynamic>?;
+          final selectedAddressId = extra?['selectedAddressId'] as String?;
+          final cartItems = extra?['cartItems'] as List?;
+          final totalAmount = extra?['totalAmount'] as double?;
+
+          if (selectedAddressId == null ||
+              cartItems == null ||
+              totalAmount == null) {
+            // Fallback: redirect back to address selection
+            Future.microtask(() => context.go('/shop/checkout'));
+            return MaterialPage(
+              key: state.pageKey,
+              child: Scaffold(
+                body: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.error, size: 48, color: Colors.red),
+                      const SizedBox(height: 16),
+                      const Text('Invalid checkout data'),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          }
+
+          return MaterialPage(
+            key: state.pageKey,
+            child: CheckoutScreen(
+              selectedAddressId: selectedAddressId,
+              cartItems: cartItems.cast(),
+              totalAmount: totalAmount,
+            ),
+          );
+        },
+      ),
+      GoRoute(
+        path: '/shop/checkout/address',
+        name: 'shop_address_selection',
         pageBuilder: (context, state) => MaterialPage(
           key: state.pageKey,
           child: const AddressSelectionScreen(),
@@ -414,8 +462,11 @@ class AppRouter {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.help_outline,
-                        size: 80, color: Theme.of(context).primaryColor,),
+                    Icon(
+                      Icons.help_outline,
+                      size: 80,
+                      color: Theme.of(context).primaryColor,
+                    ),
                     const SizedBox(height: 24),
                     const Text(
                       'Need Help?',
