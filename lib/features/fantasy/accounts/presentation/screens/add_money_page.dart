@@ -229,6 +229,14 @@ class _AddMoneyPage extends State<AddMoneyPage> {
 
     _lastTxnId = res['data']['txnid'];
     _razorpayOrderId = res['data']['order_id'];
+    
+    if (_lastTxnId == null || _lastTxnId!.isEmpty) {
+      debugPrint('❌ [ADD_CASH] Missing transaction ID');
+      appToast('Error: Transaction ID not generated', context);
+      return;
+    }
+    
+    debugPrint('✅ [ADD_CASH] Order created - TxnID: $_lastTxnId, OrderID: $_razorpayOrderId');
     _openCheckout();
   }
 
@@ -395,20 +403,31 @@ class _AddMoneyPage extends State<AddMoneyPage> {
           }
         }
 
-        appToast(res['message'] ?? 'Payment Successful', context);
-        setState(() => _showMysteryBox = true);
+        // Clear Razorpay listeners to prevent duplicate/delayed callbacks
+        _razorpay?.clear();
+        
+        if (mounted) {
+          appToast(res['message'] ?? 'Payment Successful', context);
+          setState(() => _showMysteryBox = true);
+        }
       } else {
-        appToast(res?['message'] ?? 'Payment Verification Failed', context);
-        setState(() => _isPaymentFlowLocked = false); // Reset lock on error
+        if (mounted) {
+          appToast(res?['message'] ?? 'Payment Verification Failed', context);
+          setState(() => _isPaymentFlowLocked = false); // Reset lock on error
+        }
       }
     } catch (e) {
       debugPrint('❌ [ADD_MONEY] Error in payment success handler: $e');
-      appToast('Error processing payment: $e', context);
-      setState(() => _isPaymentFlowLocked = false); // Reset lock on error
+      if (mounted) {
+        appToast('Error processing payment: $e', context);
+        setState(() => _isPaymentFlowLocked = false); // Reset lock on error
+      }
     }
   }
 
   void _handlePaymentError(PaymentFailureResponse response) {
+    if (!mounted) return; // Don't show error if page is disposed
+    
     setState(() => _isPaymentFlowLocked = false); // Reset lock on error
     appToast('Payment Failed: ${response.message}', context);
     debugPrint(
@@ -1452,8 +1471,15 @@ class _AddMoneyPage extends State<AddMoneyPage> {
   }
 
   Future<void> _openMysteryBox() async {
-    if (_lastTxnId == null) return;
+    if (_lastTxnId == null || _lastTxnId!.isEmpty) {
+      debugPrint('❌ [MYSTERY_BOX] No transaction ID available');
+      if (mounted) {
+        appToast('Error: Cannot open mystery box - no transaction ID', context);
+      }
+      return;
+    }
 
+    debugPrint('🎁 [MYSTERY_BOX] Opening mystery box for txnId: $_lastTxnId');
     setState(() => _showMysteryBox = false);
 
     final res = await accountsUsecases.openMysteryBox(
@@ -1521,8 +1547,8 @@ class _AddMoneyPage extends State<AddMoneyPage> {
                       color: AppColors.mainColor,
                       text: 'Awesome!',
                       onTap: () {
-                        Navigator.pop(context);
-                        Navigator.pop(context);
+                        Navigator.pop(context); // Close win dialog
+                        Navigator.pop(context, true); // Close AddMoneyPage with success=true
                         _confettiController.stop();
                       },
                     ),
@@ -1550,7 +1576,15 @@ class _AddMoneyPage extends State<AddMoneyPage> {
   void dispose() {
     _typingTimer?.cancel();
     _amountController.dispose();
-    _razorpay?.clear();
+    
+    // Clear all Razorpay event listeners before disposing
+    try {
+      _razorpay?.clear();
+      _razorpay = null;
+    } catch (e) {
+      debugPrint('⚠️ [ADD_MONEY] Error clearing Razorpay: $e');
+    }
+    
     _confettiController.dispose();
     super.dispose();
   }

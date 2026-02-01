@@ -80,7 +80,7 @@ class _MyBalancePage extends State<MyBalancePage> with RouteAware {
     lastRefreshTime = null; // Reset throttle to force refresh
 
     // Small delay to ensure backend has processed any pending transactions
-    await Future.delayed(const Duration(milliseconds: 500));
+    await Future.delayed(const Duration(milliseconds: 800));
 
     // Force refresh wallet details from backend
     await accountsUsecases.myWalletDetails(context);
@@ -211,19 +211,6 @@ class _MyBalancePage extends State<MyBalancePage> with RouteAware {
       }
     } catch (e) {
       debugPrint('❌ [WALLET_SCREEN] Error loading wallet from cache: $e');
-    }
-  }
-
-  /// Get auth token from SharedPreferences
-  Future<String?> _getWalletAuthToken() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      return prefs.getString('token') ??
-          prefs.getString('auth_token') ??
-          prefs.getString('fantasy_token');
-    } catch (e) {
-      debugPrint('⚠️ [WALLET_SCREEN] Error getting auth token: $e');
-      return null;
     }
   }
 
@@ -395,8 +382,18 @@ class _MyBalancePage extends State<MyBalancePage> with RouteAware {
                                         builder: (_) => const AddMoneyPage(),
                                       ),
                                     );
-                                    // Always refresh when returning, regardless of result
-                                    await _refreshAllData();
+                                  
+                                  // Always refresh when returning
+                                  debugPrint('💰 [WALLET] Returned from Add Money (success: $result)');
+                                  
+                                  // Force complete refresh of all wallet data
+                                  await _refreshAllData();
+                                  
+                                  // Show success message if payment was successful
+                                  if (result == true && mounted) {
+                                    // Payment successful - data already refreshed
+                                    debugPrint('✅ [WALLET] Payment completed successfully, wallet refreshed');
+                                  }
                                   },
                                 ),
                                 const SizedBox(height: 12),
