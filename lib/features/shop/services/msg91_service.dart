@@ -193,9 +193,9 @@ class Msg91Service {
         requestBody['lastName'] = lastName;
       }
       
-      // Include referrer code if provided (optional)
+      // Include referral code if provided (optional)
       if (referrerCode != null && referrerCode.isNotEmpty) {
-        requestBody['referrerCode'] = referrerCode;
+        requestBody['referalCode'] = referrerCode;
       }
 
       if (kDebugMode) {

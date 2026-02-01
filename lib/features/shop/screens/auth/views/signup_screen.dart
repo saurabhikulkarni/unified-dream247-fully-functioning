@@ -114,6 +114,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       final userId = _signUpFormState.getVerifiedUserId();
                       final authToken = _signUpFormState.getVerifiedToken();
                       final fantasyUserId = _signUpFormState.getFantasyUserId();
+                      final referralCode = _signUpFormState.getReferralCode();
 
                       if (userId == null || userId.isEmpty || authToken == null || authToken.isEmpty) {
                         ScaffoldMessenger.of(context).showSnackBar(
@@ -148,11 +149,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           }
                         }
                         
+                        // Save referral code if user entered one
+                        if (referralCode != null && referralCode.isNotEmpty) {
+                          await prefs.setString('referral_code', referralCode);
+                          
+                          if (kDebugMode) {
+                            print('✅ [SIGNUP] Referral code saved: $referralCode');
+                          }
+                        }
+                        
                         if (kDebugMode) {
                           print('✅ [SIGNUP] Session saved successfully');
                           print('   - userId: $userId');
                           print('   - phone: $phone');
                           print('   - fantasy_user_id: $fantasyUserId');
+                          print('   - referral_code: $referralCode');
                         }
                         
                         if (!mounted) return;

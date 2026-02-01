@@ -140,6 +140,7 @@ class _SignUpFormState extends State<SignUpForm> {
   String? _verifiedToken; // Store auth token returned from backend
   String? _verifiedFantasyToken; // Store fantasy token returned from backend
   String? _verifiedFantasyUserId; // Store fantasy_user_id returned from backend
+  String? _verifiedReferralCode; // Store referral code returned from backend (if user entered one)
   bool _isNewUser = false; // Track if this is a new user signup
   
   Future<bool> verifyOtp() async {
@@ -219,6 +220,14 @@ class _SignUpFormState extends State<SignUpForm> {
                                result['fantasyUserId']?.toString() ?? 
                                user['fantasy_user_id']?.toString() ?? 
                                user['fantasyUserId']?.toString();
+      
+      // Referral code (if user entered one and backend returned it)
+      _verifiedReferralCode = result['referalCode']?.toString() ?? 
+                              result['referralCode']?.toString() ?? 
+                              result['referrerCode']?.toString() ?? 
+                              user['referalCode']?.toString() ?? 
+                              user['referralCode']?.toString() ?? 
+                              user['referrerCode']?.toString();
                              
       _isNewUser = result['isNewUser'] == true;
       
@@ -247,6 +256,9 @@ class _SignUpFormState extends State<SignUpForm> {
   
   /// Get the fantasy user ID returned from backend after OTP verification
   String? getFantasyUserId() => _verifiedFantasyUserId;
+  
+  /// Get the referral code returned from backend after OTP verification (if user entered one)
+  String? getReferralCode() => _verifiedReferralCode;
   
   /// Check if this is a new user signup
   bool isNewUser() => _isNewUser;
